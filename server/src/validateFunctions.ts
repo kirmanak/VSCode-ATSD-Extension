@@ -89,23 +89,26 @@ export function undefinedForVariables(textDocument: TextDocument, hasDiagnosticR
 	const result: Diagnostic[] = [];
 
 	const text = textDocument.getText();
-	const forPattern = /(for\s(\w+?)\sin\s\w+?)\s([\s\S]*?)\sendfor/gm;
-	const variablePattern = /@\{(\w+)\}/g;
+	const forPattern = /\bfor\s+?[-_\w\d]+?\s+?in\b|\bendfor\b|@\{[-_\w\d]+?\}/g;
+	const forDeclaration = /\bfor\s+?([-_\w\d]+?)\s+?in\b/;
+	const variablePattern = /@\{([-_\w\d]+?)\}/;
+	const endForRegex = /\bendfor\b/;
 
-	let matchingFor: RegExpExecArray;
-	while (matchingFor = forPattern.exec(text)) {
-		const forDeclarationLength = matchingFor[1].length;
-		const forVariable = matchingFor[2];
-		const forContents = matchingFor[3];
-		let matchingVariable: RegExpExecArray;
-		while (matchingVariable = variablePattern.exec(forContents)) {
-			const foundVariable = matchingVariable[1];
-			if (foundVariable != forVariable) {
+	let matching: RegExpExecArray;
+	let possibleVariables: string[] = [];
+	while (matching = forPattern.exec(text)) {
+		if (endForRegex.test(matching[0])) {
+			if (possibleVariables.length != 0) possibleVariables.pop();
+		} else if (variablePattern.test(matching[0])) {
+			const foundVariable: string = variablePattern.exec(matching[0])[1];
+			if (possibleVariables.find((value: string, _index: number, _array: string[]): boolean => {
+				return foundVariable === value;
+			}) === undefined) {
 				let diagnostic: Diagnostic = {
 					severity: DiagnosticSeverity.Error,
 					range: {
-						start: textDocument.positionAt(forDeclarationLength + matchingFor.index + matchingVariable.index + 3),
-						end: textDocument.positionAt(forDeclarationLength + matchingFor.index + matchingVariable.index + foundVariable.length + 3)
+						start: textDocument.positionAt(matching.index + 3),
+						end: textDocument.positionAt(matching.index + 3 + foundVariable.length)
 					},
 					message: `${foundVariable} is undefined`,
 					source: diagnosticSource
@@ -117,12 +120,15 @@ export function undefinedForVariables(textDocument: TextDocument, hasDiagnosticR
 								uri: textDocument.uri,
 								range: diagnostic.range
 							},
-							message: `For loop variable is ${forVariable}, but found ${foundVariable}`
+							message: `${foundVariable} is used in loop, but wasn't declared`
 						}
 					];
 				}
 				result.push(diagnostic);
 			}
+		} else if (forDeclaration.test(matching[0])) {
+			const newVar = forDeclaration.exec(matching[0])[1];
+			possibleVariables.push(newVar);
 		}
 	}
 
