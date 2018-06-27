@@ -8,10 +8,20 @@ function createDoc(text: string): TextDocument {
 
 suite("Extra text in section declaration line", () => {
 
-    test("Correct declaration", () => {
+    test("Correct declaration with previous text", () => {
         const text = 
-            "some text\n"
-            "\n"
+            "some text\n" + 
+            "\n" +
+            "[series]\n" + 
+            "   alias = s1";
+        const document = createDoc(text);
+        const expected: TextEdit[] = [];
+        const result = Functions.extraTextSectionLine(document);
+        assert.deepEqual(result, expected);
+    });
+
+    test("Correct declaration without previous text", () => {
+        const text =  
             "[series]\n" + 
             "   alias = s1";
         const document = createDoc(text);
