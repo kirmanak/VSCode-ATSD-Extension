@@ -1,9 +1,8 @@
-import { DocumentFormattingParams, TextDocuments, TextEdit } from 'vscode-languageserver';
 import * as Shared from './sharedFunctions';
+import { TextEdit, TextDocument } from 'vscode-languageserver';
 
-export function extraTextSectionLine(params: DocumentFormattingParams, documents: TextDocuments): TextEdit[] {
+export function extraTextSectionLine(document: TextDocument): TextEdit[] {
 	let edits: TextEdit[] = [];
-	let document = documents.get(params.textDocument.uri);
 	let text = Shared.deleteComments(document.getText());
 	let target = /(.*)\[.*\](.*)/g; // incorrect formatting
 	let purpose = /\[.*\]/; // correct formatting
