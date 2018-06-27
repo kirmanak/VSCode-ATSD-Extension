@@ -1,7 +1,8 @@
 import {
-    createConnection, Diagnostic, DidChangeConfigurationNotification, InitializeParams,
-    ProposedFeatures, TextDocument, TextDocuments,
+    createConnection, Diagnostic, DidChangeConfigurationNotification, DocumentFormattingParams,
+    InitializeParams, ProposedFeatures, TextDocument, TextDocuments, TextEdit,
 } from "vscode-languageserver/lib/main";
+import * as formatFunctions from "./formatFunctions";
 import * as jsDomCaller from "./jsdomCaller";
 import Validator from "./Validator";
 
@@ -24,6 +25,7 @@ connection.onInitialize((params: InitializeParams) => {
 
     return {
         capabilities: {
+            documentFormattingProvider: true,
             textDocumentSync: documents.syncKind,
         },
     };
@@ -103,6 +105,16 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
     // Send the computed diagnostics to VSCode.
     connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
 }
+
+connection.onDocumentFormatting((params: DocumentFormattingParams): TextEdit[] => {
+    const edits: TextEdit[] = [];
+    const document = documents.get(params.textDocument.uri);
+    formatFunctions.extraTextSectionLine(document).forEach((edit) => {
+        edits.push(edit);
+    });
+
+    return edits;
+});
 
 // Make the text document manager listen on the connection
 // for open, change and close text document events
