@@ -112,6 +112,12 @@ connection.onDocumentFormatting((params: DocumentFormattingParams): TextEdit[] =
     formatFunctions.extraTextSectionLine(document).forEach((edit) => {
         edits.push(edit);
     });
+    formatFunctions.megaFunction(document).forEach((edit) => {
+        edits.push(edit);
+    });
+    formatFunctions.severalStatementsPerLine(document).forEach((edit) => {
+        edits.push(edit);
+    });
 
     return edits;
 });
