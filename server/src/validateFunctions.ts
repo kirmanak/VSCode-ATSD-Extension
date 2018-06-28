@@ -7,41 +7,43 @@ export function nonExistentAliases(textDocument: TextDocument, hasDiagnosticRela
 	const result: Diagnostic[] = [];
 
 	const text = Shared.deleteComments(textDocument.getText());
-	const aliasRegex = /alias\s*?=\s*?(\w[-\w\d_])/g;
-	const deAliasRegex = /value\((['"])(.*)\1\)/g;
+	const bothRegex = /alias\s*?=\s*?(\w[-\w\d_])|value\((['"])(.*)\2\)/g;
+	const deAliasRegex = /value\((['"])(.*)\1\)/;
+	const aliasRegex = /alias\s*?=\s*?(\w[-\w\d_])/;
 
 	let matching: RegExpExecArray;
 	let aliases: String[] = [];
 
-	while (matching = aliasRegex.exec(text)) {
-		aliases.push(matching[1]);
-	}
-
-	while (matching = deAliasRegex.exec(text)) {
-		const deAlias = matching[2];
-		if (!aliases.find(alias => alias === deAlias)) {
-			const deAliasStart = matching.index + 'value("'.length;
-			const diagnostic: Diagnostic = {
-				severity: DiagnosticSeverity.Error,
-				range: {
-					start: textDocument.positionAt(deAliasStart),
-					end: textDocument.positionAt(deAliasStart + matching[2].length)
-				},
-				message: "Non-existent alias",
-				source: diagnosticSource
-			};
-			if (hasDiagnosticRelatedInformationCapability) {
-				diagnostic.relatedInformation = [
-					{
-						location: {
-							uri: textDocument.uri,
-							range: diagnostic.range
-						},
-						message: `The alias is referred, but never declared.`
-					}
-				];
+	while (matching = bothRegex.exec(text)) {
+		const line = matching[0];
+		if (deAliasRegex.test(line)) {
+			const deAlias = matching[3];
+			if (!aliases.find(alias => alias === deAlias)) {
+				const deAliasStart = matching.index + 'value("'.length;
+				const diagnostic: Diagnostic = {
+					severity: DiagnosticSeverity.Error,
+					range: {
+						start: textDocument.positionAt(deAliasStart),
+						end: textDocument.positionAt(deAliasStart + matching[3].length)
+					},
+					message: "Non-existent alias",
+					source: diagnosticSource
+				};
+				if (hasDiagnosticRelatedInformationCapability) {
+					diagnostic.relatedInformation = [
+						{
+							location: {
+								uri: textDocument.uri,
+								range: diagnostic.range
+							},
+							message: `The alias is referred, but never declared.`
+						}
+					];
+				}
+				result.push(diagnostic);
 			}
-			result.push(diagnostic);
+		} else if (aliasRegex.test(line)) {
+			aliases.push(matching[1]);
 		}
 	}
 
