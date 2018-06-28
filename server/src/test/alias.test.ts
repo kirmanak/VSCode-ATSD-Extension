@@ -48,6 +48,21 @@ suite("Incorrect dealias tests", () => {
         assert.deepEqual(result, expected);
     });
 
+
+
+    test("One alias, one correct dealias before the declaration", () => {
+        const text =
+        "value = value('s1') * 2\n" +
+        "alias = s1";
+        const document = createDoc(text);
+        const expected: Diagnostic[] = [createDiagnostic({
+            uri: document.uri,
+            range: { start: { line: 0, character: 15}, end: { line: 0, character: 17} }
+        })];
+        const result = Functions.nonExistentAliases(document, true);
+        assert.deepEqual(result, expected);
+    });
+
     test("One alias, two incorrect dealiases", () => {
         const text =
             "alias = s1\n" +
