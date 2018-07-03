@@ -1,4 +1,4 @@
-import { Range, Diagnostic, DiagnosticSeverity, TextDocument } from "vscode-languageserver/lib/main";
+import { Diagnostic, DiagnosticSeverity, TextDocument } from "vscode-languageserver/lib/main";
 import * as Shared from './sharedFunctions';
 
 const diagnosticSource = "Axibase Visual Plugin";
@@ -137,45 +137,30 @@ export function validateUnfinishedList(textDocument: TextDocument, hasDiagnostic
 	const result: Diagnostic[] = [];
 
 	const text = Shared.deleteComments(textDocument.getText());
-	const listDeclaration = /list .+ = .+,\s*$/g;
+	const listDeclaration = /list.+=.+,\s*$/gm;
 	const endList = /endlist/g;
 
 	let matching: RegExpExecArray;
-	let counter = 0;
-	let lastDeclaredRange: Range;
 
-	while ((matching = listDeclaration.exec(text)) || (matching = endList.exec(text))) {
-		if (endList.test(matching[0])) {
-			if (counter == 0) {
-				// new diagnostic
-			} else {
-				counter--;
-			}
-		} else {
-			counter++;
-			lastDeclaredRange = {
-				start: textDocument.positionAt(matching.index),
-				end: textDocument.positionAt(matching.index + matching[0].length)
+	while (matching = listDeclaration.exec(text)) { 
+		if (!endList.exec(text)) {
+			const diagnostic: Diagnostic = {
+				severity: DiagnosticSeverity.Error,
+				range: { 
+					start: textDocument.positionAt(matching.index), 
+					end: textDocument.positionAt(matching.index + matching[0].length) 
+				},
+				message: "list is not closed",
+				source: diagnosticSource
 			};
+			if (hasDiagnosticRelatedInformationCapability) {
+				diagnostic.relatedInformation = [{
+					location: {uri: textDocument.uri, range: diagnostic.range },
+					message: 'Delete comma or add endlist keyword'
+				}];
+			}
+			result.push(diagnostic);
 		}
-	}
-
-	if (counter > 0) {
-		const diagnostic: Diagnostic = {
-			severity: DiagnosticSeverity.Error,
-			range: lastDeclaredRange,
-			message: "list is not closed",
-			source: diagnosticSource
-		};
-		if (hasDiagnosticRelatedInformationCapability) {
-			diagnostic.relatedInformation = [{
-				location: {uri: textDocument.uri, range: diagnostic.range },
-				message: 'Delete comma or add endlist keyword'
-			}];
-		}
-		result.push(diagnostic);
-	} else if (counter < 0) {
-		// new diagnostic
 	}
 
 
