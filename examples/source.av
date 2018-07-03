@@ -25,7 +25,9 @@ server-aggregate = true
   metric = cpu_busy
   label-format = entity: statistic: period
     
-list servers = nurswgvml006, nurswgvml007
+list servers = nurswgvml006, 
+  nurswgvml007
+endlist
     
 for server in servers
 [series]

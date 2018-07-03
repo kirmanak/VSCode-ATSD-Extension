@@ -1,4 +1,4 @@
-import { Diagnostic, DiagnosticSeverity, TextDocument } from "vscode-languageserver/lib/main";
+import { Range, Diagnostic, DiagnosticSeverity, TextDocument } from "vscode-languageserver/lib/main";
 import * as Shared from './sharedFunctions';
 
 const diagnosticSource = "Axibase Visual Plugin";
@@ -107,7 +107,7 @@ export function undefinedForVariables(textDocument: TextDocument, hasDiagnosticR
 			if (possibleVariables.find((value: string, _index: number, _array: string[]): boolean => {
 				return foundVariable === value;
 			}) === undefined) {
-				let diagnostic: Diagnostic = {
+				const diagnostic: Diagnostic = {
 					severity: DiagnosticSeverity.Error,
 					range: {
 						start: textDocument.positionAt(matching.index + 2),
@@ -117,15 +117,10 @@ export function undefinedForVariables(textDocument: TextDocument, hasDiagnosticR
 					source: diagnosticSource
 				};
 				if (hasDiagnosticRelatedInformationCapability) {
-					diagnostic.relatedInformation = [
-						{
-							location: {
-								uri: textDocument.uri,
-								range: diagnostic.range
-							},
-							message: `${foundVariable} is used in loop, but wasn't declared`
-						}
-					];
+					diagnostic.relatedInformation = [{
+						location: {uri: textDocument.uri, range: diagnostic.range },
+						message: `${foundVariable} is used in loop, but wasn't declared`
+					}];
 				}
 				result.push(diagnostic);
 			}
@@ -134,6 +129,55 @@ export function undefinedForVariables(textDocument: TextDocument, hasDiagnosticR
 			possibleVariables.push(newVar);
 		}
 	}
+
+	return result;
+}
+
+export function validateUnfinishedList(textDocument: TextDocument, hasDiagnosticRelatedInformationCapability: boolean): Diagnostic[] {
+	const result: Diagnostic[] = [];
+
+	const text = Shared.deleteComments(textDocument.getText());
+	const listDeclaration = /list .+ = .+,\s*$/g;
+	const endList = /endlist/g;
+
+	let matching: RegExpExecArray;
+	let counter = 0;
+	let lastDeclaredRange: Range;
+
+	while ((matching = listDeclaration.exec(text)) || (matching = endList.exec(text))) {
+		if (endList.test(matching[0])) {
+			if (counter == 0) {
+				// new diagnostic
+			} else {
+				counter--;
+			}
+		} else {
+			counter++;
+			lastDeclaredRange = {
+				start: textDocument.positionAt(matching.index),
+				end: textDocument.positionAt(matching.index + matching[0].length)
+			};
+		}
+	}
+
+	if (counter > 0) {
+		const diagnostic: Diagnostic = {
+			severity: DiagnosticSeverity.Error,
+			range: lastDeclaredRange,
+			message: "list is not closed",
+			source: diagnosticSource
+		};
+		if (hasDiagnosticRelatedInformationCapability) {
+			diagnostic.relatedInformation = [{
+				location: {uri: textDocument.uri, range: diagnostic.range },
+				message: 'Delete comma or add endlist keyword'
+			}];
+		}
+		result.push(diagnostic);
+	} else if (counter < 0) {
+		// new diagnostic
+	}
+
 
 	return result;
 }
