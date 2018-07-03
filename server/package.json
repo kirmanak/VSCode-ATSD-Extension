@@ -12,10 +12,7 @@
 	},
 	"dependencies": {
 		"@types/levenshtein": "^1.0.1",
-		"@types/shelljs": "^0.8.0",
-		"fs": "0.0.1-security",
 		"levenshtein": "^1.0.5",
-		"shelljs": "^0.8.2",
 		"vscode-languageserver": "^4.1.3"
 	},
 	"scripts": {
