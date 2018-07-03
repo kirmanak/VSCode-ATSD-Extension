@@ -26,7 +26,7 @@ suite("Unfinished list", () => {
 
 	test("One correct oneline list", () => {
 		const text =
-			`list servers = vps, vds\n`;
+			'list servers = vps, vds\n';
 		const document: TextDocument = createDoc(text);
 		const expected: Diagnostic[] = [];
 		const result = Functions.validateUnfinishedList(document, true);
@@ -35,8 +35,8 @@ suite("Unfinished list", () => {
 
 	test("One correct multiline list", () => {
 		const text =
-			`list servers = vps, \n` + 
-			'	vds\n' + 
+			'list servers = vps, \n' +
+			'	vds\n' +
 			'endlist';
 		const document: TextDocument = createDoc(text);
 		const expected: Diagnostic[] = [];
@@ -46,8 +46,8 @@ suite("Unfinished list", () => {
 
 	test("One incorrect multiline list", () => {
 		const text =
-			`list servers = vps, \n` + 
-			'	vds\n' + 
+			'list servers = vps, \n' +
+			'	vds\n' +
 			'edlist';
 		const document: TextDocument = createDoc(text);
 		const expected: Diagnostic[] = [ createDiagnostic({
@@ -56,6 +56,27 @@ suite("Unfinished list", () => {
 		})];
 		const result = Functions.validateUnfinishedList(document, true);
 		assert.deepEqual(result, expected);
+	});
+
+	test("Three lists, one incorrect", () => {
+		const text =
+			'list servers = vps, \n' +
+			'	vds\n' +
+			'endlist\n' +
+			'list servers = vps, \n' +
+			'	vds\n' +
+			'edlist\n' +
+			'list servers = vps, \n' +
+			'	vds\n' +
+			'endlist\n';
+		const document: TextDocument = createDoc(text);
+		const expected: Diagnostic[] = [ createDiagnostic({
+			range: { start: { line: 6, character: 0 }, end: {line: 6, character: 20 } },
+			uri: document.uri
+		})];
+		const result = Functions.validateUnfinishedList(document, true);
+		assert.deepEqual(result, expected);
+
 	});
 
 });

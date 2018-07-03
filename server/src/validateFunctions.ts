@@ -155,7 +155,7 @@ export function validateUnfinishedList(textDocument: TextDocument, hasDiagnostic
 			};
 			if (hasDiagnosticRelatedInformationCapability) {
 				diagnostic.relatedInformation = [{
-					location: {uri: textDocument.uri, range: diagnostic.range },
+					location: { uri: textDocument.uri, range: diagnostic.range },
 					message: 'Delete comma or add endlist keyword'
 				}];
 			}
