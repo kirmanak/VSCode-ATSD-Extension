@@ -192,7 +192,8 @@ const dictionary: string[] = [
 	"link-animate", "mode", "bundle", "link-thresholds", "title", "dialog-maximize",
 	"display-panels", "expand-panels", "periods", "buttons", "timespan", "end-time",
 	"timezone", "offset-right", "widgets-per-row", "url", "context-path", "method-path",
-	"url-parameters", "update-interval", "batch-update", "batch-size"
+	"url-parameters", "update-interval", "batch-update", "batch-size", "height-units",
+	"server-aggregate", "step-line", "nodes", "links"
 ];
 
 function isAbsent(word: string): boolean {
@@ -219,8 +220,8 @@ export function spellingCheck(textDocument: TextDocument, hasDiagnosticRelatedIn
 	const result: Diagnostic[] = [];
 
 	const text = Shared.deleteComments(textDocument.getText());
-	const sectionRegex = /\[[ \t]*(\w+)[ \t]*\]/g;
-	const varNameRegex = /(\S+)[ \t]*=/g;
+	const sectionRegex = /\[\s*(\w+)\s*\]/g;
+	const varNameRegex = /(\S+)\s*=/g;
 	let match: RegExpExecArray;
 
 	while ((match = sectionRegex.exec(text)) || (match = varNameRegex.exec(text))) {
