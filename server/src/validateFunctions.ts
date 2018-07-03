@@ -220,14 +220,22 @@ export function spellingCheck(textDocument: TextDocument, hasDiagnosticRelatedIn
 	const result: Diagnostic[] = [];
 
 	const text = Shared.deleteComments(textDocument.getText());
+	const bothRegex = /\[\s*(\w+)\s*\]|(\S+)\s*=/g;
 	const sectionRegex = /\[\s*(\w+)\s*\]/g;
-	const varNameRegex = /(\S+)\s*=/g;
 	let match: RegExpExecArray;
+	let isTags = false;
 
-	while ((match = sectionRegex.exec(text)) || (match = varNameRegex.exec(text))) {
-		const word = match[1];
+	while (match = bothRegex.exec(text)) {
+		if (/\[\s*tags\s*\]/g.exec(match[0])) {
+			console.log(`"${match[0]}" matches [tags] regexp`);
+			isTags = true;
+		} else if (sectionRegex.test(match[0])) {
+			isTags = false;
+		}
 
-		if (isAbsent(match[1])) {
+		const word = (match[1]) ? match[1] : match[2];
+		console.log(`match is ${match[0]}, isAbsent is ${isAbsent(word)} and isTags is ${isTags}`);
+		if (isAbsent(word) && !isTags) {
 			const suggestion: string = lowestLevenshtein(word);
 			let diagnostic: Diagnostic = {
 				severity: DiagnosticSeverity.Warning,
