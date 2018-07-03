@@ -138,7 +138,7 @@ export function validateUnfinishedList(textDocument: TextDocument, hasDiagnostic
 
 	const text = Shared.deleteComments(textDocument.getText());
 	const listDeclaration = /list.+=.+,\s*$/gm;
-	const endList = /endlist/g;
+	const endList = /\bendlist\b/g;
 
 	let matching: RegExpExecArray;
 
