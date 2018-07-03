@@ -67,6 +67,9 @@ function validateTextDocument(textDocument: TextDocument) {
 	validateFunctions.validateUnfinishedList(textDocument, hasDiagnosticRelatedInformationCapability).forEach(element => {
 		diagnostics.push(element);
 	});
+	validateFunctions.spellingCheck(textDocument, hasDiagnosticRelatedInformationCapability).forEach(element => {
+		diagnostics.push(element);
+	});
 
 	// Send the computed diagnostics to VSCode.
 	connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });

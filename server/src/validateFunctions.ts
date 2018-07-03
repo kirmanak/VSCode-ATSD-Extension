@@ -1,5 +1,6 @@
 import { Diagnostic, DiagnosticSeverity, TextDocument } from "vscode-languageserver/lib/main";
 import * as Shared from './sharedFunctions';
+import * as Levenshtein from 'levenshtein';
 
 const diagnosticSource = "Axibase Visual Plugin";
 
@@ -163,6 +164,93 @@ export function validateUnfinishedList(textDocument: TextDocument, hasDiagnostic
 		}
 	}
 
+	return result;
+}
+
+const dictionary: string[] = [
+	"widget", "series", "configuration",
+	"node", "start-time", "link", "tags", "group",
+	"id", "label", "alias", "value", "type", 
+	"tooltip", "left-units", "top-units", "time-span",
+	"ahead-time-span", "colors", "legend-position",
+	"scale", "scale-x", "scale-y", "min-range", "max-range",
+	"min-range-right", "max-range-right", "min-range-force",
+	"max-range-force", "min-range-right-force", "rotate-ticks",
+	"max-range-right-force", "centralize-ticks", "centralize-columns",
+	"axis-title", "axis-title-right", "style", "header-style", "class",
+	"markers", "format", "label-format", "day-format", "cache", "limit",
+	"audio-onload", "display-panels", "expand-panels", "metric", "table",
+	"attribute", "entity", "entities", "entity-group", "entity-expression",
+	"tag-expression", "statistic", "period", "align", "interpolate", 
+	"interpolate-extend", "rate", "rate-counter", "replace-value", 
+	"data-type", "forecast-name", "style", "alias", "alert-expression", 
+	"alert-style", "audio-alert", "group-keys", "group-statistic", "group-period",
+	"group-first", "group-interpolate", "group-interpolate-extend", "series-limit",
+	"exact-match", "merge-fields", "color", "axis", "format", "display", "enabled",
+	"refresh-interval", "retry-refresh-interval", "error-refresh-interval",
+	"width-units", "parent", "update-interval", "link-colors", "link-widths",
+	"link-animate", "mode", "bundle", "link-thresholds", "title", "dialog-maximize",
+	"display-panels", "expand-panels", "periods", "buttons", "timespan", "end-time",
+	"timezone", "offset-right", "widgets-per-row", "url", "context-path", "method-path",
+	"url-parameters", "update-interval", "batch-update", "batch-size"
+];
+
+function isAbsent(word: string): boolean {
+	return dictionary.find((value: string) => {
+		return value === word;
+	}) === undefined;
+}
+
+function lowestLevenshtein(word: string): string {
+	let min: number = new Levenshtein(dictionary[0], word).distance;
+	let suggestion = dictionary[0];
+	dictionary.forEach((value: string) => {
+		const distance = new Levenshtein(value, word).distance;
+		if (distance < min) {
+			min = distance;
+			suggestion = value;
+		}
+	});
+
+	return suggestion;
+}
+
+export function spellingCheck(textDocument: TextDocument, hasDiagnosticRelatedInformationCapability: boolean): Diagnostic[] {
+	const result: Diagnostic[] = [];
+
+	const text = Shared.deleteComments(textDocument.getText());
+	const sectionRegex = /\[[ \t]*(\w+)[ \t]*\]/g;
+	const varNameRegex = /(\S+)[ \t]*=/g;
+	let match: RegExpExecArray;
+
+	while ((match = sectionRegex.exec(text)) || (match = varNameRegex.exec(text))) {
+		const word = match[1];
+
+		if (isAbsent(match[1])) {
+			const suggestion: string = lowestLevenshtein(word);
+			let diagnostic: Diagnostic = {
+				severity: DiagnosticSeverity.Warning,
+				range: {
+					start: textDocument.positionAt(match.index),
+					end: textDocument.positionAt(match.index + match[0].length)
+				},
+				message: `${word} is unknown`,
+				source: diagnosticSource
+			};
+			if (hasDiagnosticRelatedInformationCapability) {
+				diagnostic.relatedInformation = [
+					{
+						location: {
+							uri: textDocument.uri,
+							range: diagnostic.range
+						},
+						message: `${word} is unknown. Did you mean ${suggestion}?`
+					}
+				];
+			}
+			result.push(diagnostic);
+		}
+	}
 
 	return result;
 }
