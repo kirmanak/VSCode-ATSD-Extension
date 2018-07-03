@@ -39,7 +39,7 @@ suite("Spelling checks", () => {
 			createDiagnostic({
 				uri: document.uri, 
 				range: { start: { line: 3, character: 1}, end: { line: 3, character: 9} }
-			}, "starttime", "start-time") 
+			}, "startime", "start-time") 
 		];
 		const result = Functions.spellingCheck(document, true);
 		assert.deepEqual(result, expected);

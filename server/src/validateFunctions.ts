@@ -234,14 +234,13 @@ export function spellingCheck(textDocument: TextDocument, hasDiagnosticRelatedIn
 		}
 
 		const word = (match[1]) ? match[1] : match[2];
-		console.log(`match is ${match[0]}, isAbsent is ${isAbsent(word)} and isTags is ${isTags}`);
 		if (isAbsent(word) && !isTags) {
 			const suggestion: string = lowestLevenshtein(word);
 			let diagnostic: Diagnostic = {
 				severity: DiagnosticSeverity.Warning,
 				range: {
 					start: textDocument.positionAt(match.index),
-					end: textDocument.positionAt(match.index + match[0].length)
+					end: textDocument.positionAt(match.index + word.length)
 				},
 				message: `${word} is unknown`,
 				source: diagnosticSource
