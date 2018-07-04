@@ -227,7 +227,6 @@ export function spellingCheck(textDocument: TextDocument, hasDiagnosticRelatedIn
 
 	while (match = bothRegex.exec(text)) {
 		if (/\[\s*tags\s*\]/g.exec(match[0])) {
-			console.log(`"${match[0]}" matches [tags] regexp`);
 			isTags = true;
 		} else if (sectionRegex.test(match[0])) {
 			isTags = false;

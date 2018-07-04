@@ -6,17 +6,17 @@ function createDoc(text: string): TextDocument {
 	return TextDocument.create("testDoc", "atsd-visual", 0, text);
 }
 
-function createDiagnostic(location: Location, mispelling: string, suggestion: string): Diagnostic {
+function createDiagnostic(location: Location, misspelling: string, suggestion: string): Diagnostic {
 	const diagnostic: Diagnostic = {
 		severity: DiagnosticSeverity.Warning,
 		range: location.range,
-		message: `${mispelling} is unknown`,
+		message: `${misspelling} is unknown`,
 		source: diagnosticSource,
 		relatedInformation: []
 	};
 	diagnostic.relatedInformation.push({
 		location: location,
-		message: `${mispelling} is unknown. Did you mean ${suggestion}?`
+		message: `${misspelling} is unknown. Did you mean ${suggestion}?`
 	});
 	return diagnostic;
 }
