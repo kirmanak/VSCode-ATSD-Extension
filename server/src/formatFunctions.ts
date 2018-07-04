@@ -1,6 +1,8 @@
 import { TextDocument, TextEdit } from "vscode-languageserver";
 import * as Shared from "./sharedFunctions";
 
+const INDENT_SIZE = 2;
+
 export function extraTextSectionLine(document: TextDocument): TextEdit[] {
     const edits: TextEdit[] = [];
     const text = Shared.deleteComments(document.getText());
@@ -58,35 +60,48 @@ export function severalStatementsPerLine(document: TextDocument): TextEdit[] {
     return edits;
 }
 
+function isNested(current: string, previous: string): boolean {
+	return current === "widget" && previous === "group" || 
+		current === "widget" && previous === "configuration" || 
+		current === "node" && previous === "widget" ||
+		current === "link" && previous === "widget" ||
+		current === "series" && previous === "link" ||
+		current === "tags" && previous === "series";
+}
+
+function isSameLevel(current: string, previous: string): boolean {
+	return current === previous || 
+		current === "group" && previous === "configuration" || 
+		current === "link" && previous === "node" || 
+		current === "node" && previous === "link";
+}
+
 export function megaFunction(document: TextDocument): TextEdit[] {
-    const edits: TextEdit[] = [];
-    const text = Shared.deleteComments(document.getText());
-    const sectionDeclaration = /\[.+\]/g;
-    const assignment = /[-_\d\w]+[ \t]*=[ \t]*[-_\t\d\w ,.("")]+/g;
-    let match = sectionDeclaration.exec(text);
+	const edits: TextEdit[] = [];
+	const text = Shared.deleteComments(document.getText());
+	const sectionDeclaration = /([ \t]*)\[(\w+)\]([\s\S]+?)(?=\s*\[|$)/g;
+	let indentCounter: number = INDENT_SIZE;
+	let previousSection: string[] = [];
+	let section: RegExpExecArray; 
 
-    while (match) {
-        const line = match[0];
-        const range = {
-            end: document.positionAt(match.index + match[0].length),
-            start: document.positionAt(match.index),
-        };
-        if (sectionDeclaration.test(line)) {
-            if (text.charAt(match.index - 1) !== "\n") { // if there is something extra before section declaration
-                edits.push({
-                    newText: "\n" + line,
-                    range,
-                });
-            }
-            if (text.charAt(match.index + match[0].length + 1) !== "\n") {
-                edits.push({
-                    newText: line + "\n",
-                    range,
-                });
-            }
-        }
-        match = sectionDeclaration.exec(text);
-    }
+	while (section = sectionDeclaration.exec(text)) {
+		const indent = section[1];
+		const sectionName = section[2];
+		// const content = section[3];
+		if (isNested(sectionName, previousSection[previousSection.length - 1])) {
+			indentCounter += INDENT_SIZE;
+		} else if (!isSameLevel(sectionName, previousSection[previousSection.length - 1])) { 
+			indentCounter -= INDENT_SIZE;
+			previousSection.pop();
+		} else {
+			previousSection.pop();
+		}
+		if (indent.length != indentCounter) {
+			console.log(`section is "${sectionName}", previous is "${previousSection[previousSection.length - 1]}",\n` + 
+				`indent length is ${indent.length}, expected ${indentCounter}`);
+		}
+		previousSection.push(sectionName);
+	}
 
-    return edits;
+	return edits;
 }
