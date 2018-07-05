@@ -17,11 +17,8 @@ suite("Spelling checks", () => {
 			"	startime = 30 minute\n";
 		const document: TextDocument = createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
-			{ uri: document.uri, range: { start: { line: 2, character: 1}, end: { line: 2, character: 10} } },
-			DiagnosticSeverity.Error, "starttime is unknown. Did you mean start-time?", true
-		), Shared.createDiagnostic(
 			{ uri: document.uri, range: { start: { line: 3, character: 1}, end: { line: 3, character: 9} } },
-			DiagnosticSeverity.Error, "startime is unknown. Did you mean start-time?", true
+			DiagnosticSeverity.Error, "startime is unknown. Did you mean starttime?", true
 		)];
 		const result = Functions.spellingCheck(document, true);
 		assert.deepEqual(result, expected);
