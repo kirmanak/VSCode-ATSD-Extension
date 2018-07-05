@@ -247,7 +247,6 @@ export function ifValidation(textDocument: TextDocument, hasDiagnosticRelatedInf
 				start: textDocument.positionAt(match.index),
 				end: textDocument.positionAt(match.index + match[0].length)
 			};
-			console.log(`${match[0]} matches, opened if counter is ${openedIfCounter}`);
 		} else {
 			if (openedIfCounter < 1) {
 				const diagnostic: Diagnostic = {
@@ -269,10 +268,8 @@ export function ifValidation(textDocument: TextDocument, hasDiagnosticRelatedInf
 			} else if (/\bendif\b/.test(match[0])) {
 				openedIfCounter--;
 			}
-			console.log(`${match[0]} matches, opened if counter is ${openedIfCounter}`);
 		}
 	}
-	console.log(`loop is over, opened if couner is ${openedIfCounter}`);
 	if (openedIfCounter !== 0) { 
 		const diagnostic: Diagnostic = {
 			severity: DiagnosticSeverity.Error, range: lastIf,
