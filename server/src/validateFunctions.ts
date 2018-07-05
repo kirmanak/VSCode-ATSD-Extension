@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-import { Location, Diagnostic, DiagnosticSeverity, TextDocument } from "vscode-languageserver/lib/main";
-=======
-import { Range, Diagnostic, DiagnosticSeverity, TextDocument } from "vscode-languageserver/lib/main";
->>>>>>> add if else elseif endif validation
+import { Location, Range, Diagnostic, DiagnosticSeverity, TextDocument } from 'vscode-languageserver';
 import * as Shared from './sharedFunctions';
 import * as Levenshtein from 'levenshtein';
 
@@ -231,7 +227,7 @@ export function spellingCheck(textDocument: TextDocument, isRelatedInfoSupported
 	return result;
 }
 
-export function ifValidation(textDocument: TextDocument, hasDiagnosticRelatedInformationCapability: boolean): Diagnostic[] {
+export function ifValidation(textDocument: TextDocument, isRelatedInfoSupported: boolean): Diagnostic[] {
 	const result: Diagnostic[] = [];
 
 	const text = Shared.deleteComments(textDocument.getText());
@@ -249,21 +245,17 @@ export function ifValidation(textDocument: TextDocument, hasDiagnosticRelatedInf
 			};
 		} else {
 			if (openedIfCounter < 1) {
-				const diagnostic: Diagnostic = {
-					severity: DiagnosticSeverity.Error,
+				const location: Location = { 
+					uri: textDocument.uri, 
 					range: {
 						start: textDocument.positionAt(match.index),
 						end: textDocument.positionAt(match.index + match[0].length)
-					},
-					message: `"${match[0]}" has no matching "if"`,
-					source: diagnosticSource
+					}
 				};
-				if (hasDiagnosticRelatedInformationCapability) {
-					diagnostic.relatedInformation = [{
-						location: { uri: textDocument.uri, range: diagnostic.range },
-						message: `"${match[0]}" requires a previously declared "if"`
-					}];
-				}
+				const diagnostic: Diagnostic = Shared.createDiagnostic(
+					location, DiagnosticSeverity.Error, 
+					`"${match[0]}" has no matching "if"`, isRelatedInfoSupported
+				);
 				result.push(diagnostic);
 			} else if (/\bendif\b/.test(match[0])) {
 				openedIfCounter--;
@@ -271,16 +263,11 @@ export function ifValidation(textDocument: TextDocument, hasDiagnosticRelatedInf
 		}
 	}
 	if (openedIfCounter !== 0) { 
-		const diagnostic: Diagnostic = {
-			severity: DiagnosticSeverity.Error, range: lastIf,
-			message: `"if" has no matching "endif"`, source: diagnosticSource
-		};
-		if (hasDiagnosticRelatedInformationCapability) {
-			diagnostic.relatedInformation = [{
-				location: { uri: textDocument.uri, range: diagnostic.range },
-				message: `"if" must be finished with "endif"`
-			}];
-		}
+		const location: Location = { uri: textDocument.uri, range: lastIf };
+		const diagnostic: Diagnostic = Shared.createDiagnostic(
+			location, DiagnosticSeverity.Error, 
+			`"if" has no matching "endif"`, isRelatedInfoSupported
+		);
 		result.push(diagnostic);
 	}
 

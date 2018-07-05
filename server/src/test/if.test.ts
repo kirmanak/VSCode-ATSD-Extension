@@ -1,23 +1,12 @@
-import { TextDocument, Diagnostic, Location, DiagnosticSeverity } from "vscode-languageserver/lib/main";
+import { TextDocument, Diagnostic, DiagnosticSeverity } from "vscode-languageserver";
 import * as assert from 'assert';
 import * as Functions from '../validateFunctions';
+import * as Shared from '../sharedFunctions';
 
 function createDoc(text: string): TextDocument {
 	return TextDocument.create("testDoc", "atsd-visual", 0, text);
 }
 
-function createDiagnostic(location: Location, message: string, relatedMessage: string): Diagnostic {
-	const diagnostic: Diagnostic = {
-		severity: DiagnosticSeverity.Error, range: location.range, 
-		message: message, source: diagnosticSource,
-	};
-	diagnostic.relatedInformation = [{
-		location: location, message: relatedMessage
-	}];
-	return diagnostic;
-}
-
-const diagnosticSource = "Axibase Visual Plugin";
 suite("Unmatched endfor tests", () => {
 
 	test("One correct if-elseif-endif", () => {
@@ -64,12 +53,12 @@ suite("Unmatched endfor tests", () => {
 			"    endif\n" +
 			"endfor\n";
 		const document: TextDocument = createDoc(text);
-		const expected: Diagnostic[] = [createDiagnostic(
-			{ uri: document.uri, range: { start: { line: 3, character: 4 }, end: { line: 3, character: 10 } } }, 
-			`"elseif" has no matching "if"`, `"elseif" requires a previously declared "if"`
-		), createDiagnostic(
-			{ uri: document.uri, range: { start: { line: 5, character: 4 }, end: { line: 5, character: 9 } } }, 
-			`"endif" has no matching "if"`, `"endif" requires a previously declared "if"`
+		const expected: Diagnostic[] = [Shared.createDiagnostic(
+			{ uri: document.uri, range: { start: { line: 3, character: 4 }, end: { line: 3, character: 10 } } },
+			DiagnosticSeverity.Error, '"elseif" has no matching "if"', true
+		), Shared.createDiagnostic(
+			{ uri: document.uri, range: { start: { line: 5, character: 4 }, end: { line: 5, character: 9 } } },
+			DiagnosticSeverity.Error, '"endif" has no matching "if"', true
 		)];
 		const result = Functions.ifValidation(document, true);
 		assert.deepEqual(result, expected);
@@ -85,12 +74,12 @@ suite("Unmatched endfor tests", () => {
 			"    endif\n" +
 			"endfor\n";
 		const document: TextDocument = createDoc(text);
-		const expected: Diagnostic[] = [createDiagnostic(
-			{ uri: document.uri, range: { start: { line: 3, character: 4 }, end: { line: 3, character: 8 } } }, 
-			`"else" has no matching "if"`, `"else" requires a previously declared "if"`
-		), createDiagnostic(
-			{ uri: document.uri, range: { start: { line: 5, character: 4 }, end: { line: 5, character: 9 } } }, 
-			`"endif" has no matching "if"`, `"endif" requires a previously declared "if"`
+		const expected: Diagnostic[] = [Shared.createDiagnostic(
+			{ uri: document.uri, range: { start: { line: 3, character: 4 }, end: { line: 3, character: 8 } } },
+			DiagnosticSeverity.Error, '"else" has no matching "if"', true
+		), Shared.createDiagnostic(
+			{ uri: document.uri, range: { start: { line: 5, character: 4 }, end: { line: 5, character: 9 } } },
+			DiagnosticSeverity.Error, '"endif" has no matching "if"', true
 		)];
 		const result = Functions.ifValidation(document, true);
 		assert.deepEqual(result, expected);
