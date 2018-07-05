@@ -20,7 +20,7 @@ suite("Undefined variable in for loop", () => {
 			"endfor";
 		const document: TextDocument = createDoc(text);
 		const expected: Diagnostic[] = [];
-		const result = Functions.undefinedForVariables(document, true);
+		const result = Functions.undefinedForVariables(document);
 		assert.deepEqual(result, expected);
 	});
 
@@ -31,7 +31,7 @@ suite("Undefined variable in for loop", () => {
 			"endfor";
 		const document: TextDocument = createDoc(text);
 		const expected: Diagnostic[] = [];
-		const result = Functions.undefinedForVariables(document, true);
+		const result = Functions.undefinedForVariables(document);
 		assert.deepEqual(result, expected);
 	});
 
@@ -45,7 +45,7 @@ suite("Undefined variable in for loop", () => {
 			"endfor";
 		const document: TextDocument = createDoc(text);
 		const expected: Diagnostic[] = [];
-		const result = Functions.undefinedForVariables(document, true);
+		const result = Functions.undefinedForVariables(document);
 		assert.deepEqual(result, expected);
 	});
 
@@ -57,9 +57,9 @@ suite("Undefined variable in for loop", () => {
 		const document: TextDocument = createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
 			{ uri: document.uri, range: { start: { line: 1, character: 14 }, end: { line: 1, character: 14 + firstVar.length } } },
-			DiagnosticSeverity.Error, `${firstVar} is used in loop, but wasn't declared`, true
+			DiagnosticSeverity.Error, `${firstVar} is used in loop, but wasn't declared`
 		)];
-		const result = Functions.undefinedForVariables(document, true);
+		const result = Functions.undefinedForVariables(document);
 		assert.deepEqual(result, expected);
 	});
 
@@ -74,12 +74,12 @@ suite("Undefined variable in for loop", () => {
 		const document: TextDocument = createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
 			{ uri: document.uri, range: { start: { line: 1, character: 14 }, end: { line: 1, character: 14 + firstVar.length } } },
-			DiagnosticSeverity.Error, `${firstVar} is used in loop, but wasn't declared`, true
+			DiagnosticSeverity.Error, `${firstVar} is used in loop, but wasn't declared`
 		), Shared.createDiagnostic(
 			{ uri: document.uri, range: { start: { line: 4, character: 14 }, end: { line: 4, character: 14 + secondVar.length } } },
-			DiagnosticSeverity.Error, `${secondVar} is used in loop, but wasn't declared`, true
+			DiagnosticSeverity.Error, `${secondVar} is used in loop, but wasn't declared`
 		)];
-		const result = Functions.undefinedForVariables(document, true);
+		const result = Functions.undefinedForVariables(document);
 		assert.deepEqual(result, expected);
 	});
 
@@ -94,9 +94,9 @@ suite("Undefined variable in for loop", () => {
 		const document: TextDocument = createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
 			{ uri: document.uri, range: { start: { line: 1, character: 14 }, end: { line: 1, character: 14 + firstVar.length } } },
-			DiagnosticSeverity.Error, `${firstVar} is used in loop, but wasn't declared`, true
+			DiagnosticSeverity.Error, `${firstVar} is used in loop, but wasn't declared`
 		)];
-		const result = Functions.undefinedForVariables(document, true);
+		const result = Functions.undefinedForVariables(document);
 		assert.deepEqual(result, expected);
 	});
 
@@ -110,7 +110,7 @@ suite("Undefined variable in for loop", () => {
 			"   endfor\n" +
 			"endfor";
 		const document: TextDocument = createDoc(text);
-		const result = Functions.undefinedForVariables(document, true);
+		const result = Functions.undefinedForVariables(document);
 		assert.deepEqual(result, []);
 	});
 
@@ -126,9 +126,9 @@ suite("Undefined variable in for loop", () => {
 		const document: TextDocument = createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
 			{ uri: document.uri, range: { start: { line: 3, character: 18 }, end: { line: 3, character: 18 + thirdVar.length } } },
-			DiagnosticSeverity.Error, `${thirdVar} is used in loop, but wasn't declared`, true
+			DiagnosticSeverity.Error, `${thirdVar} is used in loop, but wasn't declared`
 		)];
-		const result = Functions.undefinedForVariables(document, true);
+		const result = Functions.undefinedForVariables(document);
 		assert.deepEqual(result, expected);
 	});
 });

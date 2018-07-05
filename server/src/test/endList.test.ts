@@ -14,7 +14,7 @@ suite("Unfinished list", () => {
 			'list servers = vps, vds\n';
 		const document: TextDocument = createDoc(text);
 		const expected: Diagnostic[] = [];
-		const result = Functions.validateUnfinishedList(document, true);
+		const result = Functions.validateUnfinishedList(document);
 		assert.deepEqual(result, expected);
 	});
 
@@ -25,7 +25,7 @@ suite("Unfinished list", () => {
 			'endlist';
 		const document: TextDocument = createDoc(text);
 		const expected: Diagnostic[] = [];
-		const result = Functions.validateUnfinishedList(document, true);
+		const result = Functions.validateUnfinishedList(document);
 		assert.deepEqual(result, expected);
 	});
 
@@ -37,9 +37,9 @@ suite("Unfinished list", () => {
 		const document: TextDocument = createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
 			{ uri: document.uri, range: { start: { line: 0, character: 0 }, end: {line: 0, character: 20 } } },
-			DiagnosticSeverity.Error, "list is not closed. Use 'endlist' keyword", true
+			DiagnosticSeverity.Error, "list is not closed. Use 'endlist' keyword"
 		)];
-		const result = Functions.validateUnfinishedList(document, true);
+		const result = Functions.validateUnfinishedList(document);
 		assert.deepEqual(result, expected);
 	});
 
@@ -57,9 +57,9 @@ suite("Unfinished list", () => {
 		const document: TextDocument = createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
 			{ uri: document.uri, range: { start: { line: 6, character: 0 }, end: {line: 6, character: 20 } } },
-			DiagnosticSeverity.Error, "list is not closed. Use 'endlist' keyword", true
+			DiagnosticSeverity.Error, "list is not closed. Use 'endlist' keyword"
 		)];
-		const result = Functions.validateUnfinishedList(document, true);
+		const result = Functions.validateUnfinishedList(document);
 		assert.deepEqual(result, expected);
 
 	});

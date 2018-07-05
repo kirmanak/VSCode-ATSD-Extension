@@ -22,7 +22,7 @@ suite("If elseif else endif validation tests", () => {
 			"endfor\n";
 		const document: TextDocument = createDoc(text);
 		const expected: Diagnostic[] = [];
-		const result = Functions.ifValidation(document, true);
+		const result = Functions.ifValidation(document);
 		assert.deepEqual(result, expected);
 	});
 
@@ -39,7 +39,7 @@ suite("If elseif else endif validation tests", () => {
 			"endfor\n";
 		const document: TextDocument = createDoc(text);
 		const expected: Diagnostic[] = [];
-		const result = Functions.ifValidation(document, true);
+		const result = Functions.ifValidation(document);
 		assert.deepEqual(result, expected);
 	});
 
@@ -55,12 +55,12 @@ suite("If elseif else endif validation tests", () => {
 		const document: TextDocument = createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
 			{ uri: document.uri, range: { start: { line: 3, character: 4 }, end: { line: 3, character: 10 } } },
-			DiagnosticSeverity.Error, '"elseif" has no matching "if"', true
+			DiagnosticSeverity.Error, '"elseif" has no matching "if"'
 		), Shared.createDiagnostic(
 			{ uri: document.uri, range: { start: { line: 5, character: 4 }, end: { line: 5, character: 9 } } },
-			DiagnosticSeverity.Error, '"endif" has no matching "if"', true
+			DiagnosticSeverity.Error, '"endif" has no matching "if"'
 		)];
-		const result = Functions.ifValidation(document, true);
+		const result = Functions.ifValidation(document);
 		assert.deepEqual(result, expected);
 	});
 
@@ -76,12 +76,12 @@ suite("If elseif else endif validation tests", () => {
 		const document: TextDocument = createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
 			{ uri: document.uri, range: { start: { line: 3, character: 4 }, end: { line: 3, character: 8 } } },
-			DiagnosticSeverity.Error, '"else" has no matching "if"', true
+			DiagnosticSeverity.Error, '"else" has no matching "if"'
 		), Shared.createDiagnostic(
 			{ uri: document.uri, range: { start: { line: 5, character: 4 }, end: { line: 5, character: 9 } } },
-			DiagnosticSeverity.Error, '"endif" has no matching "if"', true
+			DiagnosticSeverity.Error, '"endif" has no matching "if"'
 		)];
-		const result = Functions.ifValidation(document, true);
+		const result = Functions.ifValidation(document);
 		assert.deepEqual(result, expected);
 	});
 

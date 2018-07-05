@@ -15,7 +15,7 @@ suite("Incorrect dealias tests", () => {
 			"value = value('s1') * 2";
 		const document = createDoc(text);
 		const expected: Diagnostic[] = [];
-		const result = Functions.nonExistentAliases(document, true);
+		const result = Functions.nonExistentAliases(document);
 		assert.deepEqual(result, expected);
 	});
 
@@ -26,9 +26,9 @@ suite("Incorrect dealias tests", () => {
 		const document = createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
 			{ uri: document.uri, range: { start: { line: 1, character: 15 }, end: { line: 1, character: 17 } } },
-			DiagnosticSeverity.Error, "The alias s2 is reffered, but never declared", true
+			DiagnosticSeverity.Error, "The alias s2 is reffered, but never declared"
 		)];
-		const result = Functions.nonExistentAliases(document, true);
+		const result = Functions.nonExistentAliases(document);
 		assert.deepEqual(result, expected);
 	});
 
@@ -41,9 +41,9 @@ suite("Incorrect dealias tests", () => {
 		const document = createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
 			{ uri: document.uri, range: { start: { line: 0, character: 15}, end: { line: 0, character: 17} } },
-			DiagnosticSeverity.Error, "The alias s1 is reffered, but never declared", true
+			DiagnosticSeverity.Error, "The alias s1 is reffered, but never declared"
 		)];
-		const result = Functions.nonExistentAliases(document, true);
+		const result = Functions.nonExistentAliases(document);
 		assert.deepEqual(result, expected);
 	});
 
@@ -55,12 +55,12 @@ suite("Incorrect dealias tests", () => {
 		const document = createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
 			{ uri: document.uri, range: { start: { line: 1, character: 15 }, end: { line: 1, character: 17 } } },
-			DiagnosticSeverity.Error, "The alias s2 is reffered, but never declared", true
+			DiagnosticSeverity.Error, "The alias s2 is reffered, but never declared"
 		), Shared.createDiagnostic(
 			{ uri: document.uri, range: { start: { line: 2, character: 15 }, end: { line: 2, character: 17 } } },
-			DiagnosticSeverity.Error, "The alias s3 is reffered, but never declared", true
+			DiagnosticSeverity.Error, "The alias s3 is reffered, but never declared"
 		)];
-		const result = Functions.nonExistentAliases(document, true);
+		const result = Functions.nonExistentAliases(document);
 		assert.deepEqual(result, expected);
 	});
 
@@ -72,7 +72,7 @@ suite("Incorrect dealias tests", () => {
 			"value = value('s2') * 2";
 		const document = createDoc(text);
 		const expected: Diagnostic[] = [];
-		const result = Functions.nonExistentAliases(document, true);
+		const result = Functions.nonExistentAliases(document);
 		assert.deepEqual(result, expected);
 	});
 
@@ -85,9 +85,9 @@ suite("Incorrect dealias tests", () => {
 		const document = createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
 			{ uri: document.uri, range: { start: { line: 2, character: 15}, end: { line: 2, character: 17} } },
-			DiagnosticSeverity.Error, "The alias s3 is reffered, but never declared", true
+			DiagnosticSeverity.Error, "The alias s3 is reffered, but never declared"
 		)];
-		const result = Functions.nonExistentAliases(document, true);
+		const result = Functions.nonExistentAliases(document);
 		assert.deepEqual(result, expected);
 	});
 });

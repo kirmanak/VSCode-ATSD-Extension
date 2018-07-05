@@ -18,9 +18,9 @@ suite("Spelling checks", () => {
 		const document: TextDocument = createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
 			{ uri: document.uri, range: { start: { line: 3, character: 1}, end: { line: 3, character: 9} } },
-			DiagnosticSeverity.Error, "startime is unknown. Did you mean starttime?", true
+			DiagnosticSeverity.Error, "startime is unknown. Did you mean starttime?"
 		)];
-		const result = Functions.spellingCheck(document, true);
+		const result = Functions.spellingCheck(document);
 		assert.deepEqual(result, expected);
 	});
 

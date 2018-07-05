@@ -16,7 +16,7 @@ suite("Unmatched endfor tests", () => {
             "endfor";
         const document: TextDocument = createDoc(text);
         const expected: Diagnostic[] = [];
-        const result = Functions.unmatchedEndFor(document, true);
+        const result = Functions.unmatchedEndFor(document);
         assert.deepEqual(result, expected);
     });
 
@@ -30,7 +30,7 @@ suite("Unmatched endfor tests", () => {
             "endfor";
         const document: TextDocument = createDoc(text);
         const expected: Diagnostic[] = [];
-        const result = Functions.unmatchedEndFor(document, true);
+        const result = Functions.unmatchedEndFor(document);
         assert.deepEqual(result, expected);
     });
 
@@ -41,9 +41,9 @@ suite("Unmatched endfor tests", () => {
         const document: TextDocument = createDoc(text);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
 		{ uri: document.uri, range: { start: { line: 0, character: 0 }, end: { line: 0, character: 3 } } },
-		DiagnosticSeverity.Error, "For loop has no matching endfor", true
+		DiagnosticSeverity.Error, "For loop has no matching endfor"
 	)];
-        const result = Functions.unmatchedEndFor(document, true);
+        const result = Functions.unmatchedEndFor(document);
         assert.deepEqual(result, expected);
     });
 
@@ -56,12 +56,12 @@ suite("Unmatched endfor tests", () => {
         const document: TextDocument = createDoc(text);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
 		{ uri: document.uri, range: { start: { line: 0, character: 0 }, end: { line: 0, character: 3 } } },
-		DiagnosticSeverity.Error, "For loop has no matching endfor", true
+		DiagnosticSeverity.Error, "For loop has no matching endfor"
 	), Shared.createDiagnostic(
 		{ uri: document.uri, range: { start: { line: 2, character: 0 }, end: { line: 2, character: 3 } } },
-		DiagnosticSeverity.Error, "For loop has no matching endfor", true
+		DiagnosticSeverity.Error, "For loop has no matching endfor"
 	)];
-        const result = Functions.unmatchedEndFor(document, true);
+        const result = Functions.unmatchedEndFor(document);
         assert.deepEqual(result, expected);
     });
 
@@ -76,9 +76,9 @@ suite("Unmatched endfor tests", () => {
         const document: TextDocument = createDoc(text);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
 		{ uri: document.uri, range: { start: { line: 2, character: 0 }, end: { line: 2, character: 3 } } },
-		DiagnosticSeverity.Error, "For loop has no matching endfor", true
+		DiagnosticSeverity.Error, "For loop has no matching endfor"
 	)];
-        const result = Functions.unmatchedEndFor(document, true);
+        const result = Functions.unmatchedEndFor(document);
         assert.deepEqual(result, expected);
     });
 });

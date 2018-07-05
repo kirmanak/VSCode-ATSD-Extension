@@ -2,7 +2,7 @@ import { Location, Range, Diagnostic, DiagnosticSeverity, TextDocument } from 'v
 import * as Shared from './sharedFunctions';
 import * as Levenshtein from 'levenshtein';
 
-export function nonExistentAliases(textDocument: TextDocument, isRelatedInfoSupported: boolean): Diagnostic[] {
+export function nonExistentAliases(textDocument: TextDocument): Diagnostic[] {
 	const result: Diagnostic[] = [];
 
 	const text = Shared.deleteComments(textDocument.getText());
@@ -28,7 +28,7 @@ export function nonExistentAliases(textDocument: TextDocument, isRelatedInfoSupp
 				};
 				const diagnostic: Diagnostic = Shared.createDiagnostic(
 					location, DiagnosticSeverity.Error, 
-					`The alias ${deAlias} is reffered, but never declared`, isRelatedInfoSupported
+					`The alias ${deAlias} is reffered, but never declared`
 				);
 				result.push(diagnostic);
 			}
@@ -40,7 +40,7 @@ export function nonExistentAliases(textDocument: TextDocument, isRelatedInfoSupp
 	return result;
 }
 
-export function unmatchedEndFor(textDocument: TextDocument, isRelatedInfoSupported: boolean): Diagnostic[] {
+export function unmatchedEndFor(textDocument: TextDocument): Diagnostic[] {
 	const result: Diagnostic[] = [];
 
 	const text = Shared.deleteComments(textDocument.getText());
@@ -60,7 +60,7 @@ export function unmatchedEndFor(textDocument: TextDocument, isRelatedInfoSupport
 			};
 			const diagnostic: Diagnostic = Shared.createDiagnostic(
 				location, DiagnosticSeverity.Error, 
-				"For loop has no matching endfor", isRelatedInfoSupported
+				"For loop has no matching endfor"
 			);
 			result.push(diagnostic);
 		}
@@ -69,7 +69,7 @@ export function unmatchedEndFor(textDocument: TextDocument, isRelatedInfoSupport
 	return result;
 }
 
-export function undefinedForVariables(textDocument: TextDocument, isRelatedInfoSupported: boolean): Diagnostic[] {
+export function undefinedForVariables(textDocument: TextDocument): Diagnostic[] {
 	const result: Diagnostic[] = [];
 
 	const text = Shared.deleteComments(textDocument.getText());
@@ -97,7 +97,7 @@ export function undefinedForVariables(textDocument: TextDocument, isRelatedInfoS
 				};
 				const diagnostic: Diagnostic = Shared.createDiagnostic(
 					location, DiagnosticSeverity.Error, 
-					`${foundVariable} is used in loop, but wasn't declared`, isRelatedInfoSupported
+					`${foundVariable} is used in loop, but wasn't declared`
 				);
 				result.push(diagnostic);
 			}
@@ -110,7 +110,7 @@ export function undefinedForVariables(textDocument: TextDocument, isRelatedInfoS
 	return result;
 }
 
-export function validateUnfinishedList(textDocument: TextDocument, isRelatedInfoSupported: boolean): Diagnostic[] {
+export function validateUnfinishedList(textDocument: TextDocument): Diagnostic[] {
 	const result: Diagnostic[] = [];
 
 	const text = Shared.deleteComments(textDocument.getText());
@@ -130,7 +130,7 @@ export function validateUnfinishedList(textDocument: TextDocument, isRelatedInfo
 			};
 			const diagnostic: Diagnostic = Shared.createDiagnostic(
 				location, DiagnosticSeverity.Error, 
-				"list is not closed. Use 'endlist' keyword", isRelatedInfoSupported
+				"list is not closed. Use 'endlist' keyword"
 			);
 			result.push(diagnostic);
 		}
@@ -188,7 +188,7 @@ function lowestLevenshtein(word: string): string {
 	return suggestion;
 }
 
-export function spellingCheck(textDocument: TextDocument, isRelatedInfoSupported: boolean): Diagnostic[] {
+export function spellingCheck(textDocument: TextDocument): Diagnostic[] {
 	const result: Diagnostic[] = [];
 
 	const text = Shared.deleteComments(textDocument.getText());
@@ -218,7 +218,7 @@ export function spellingCheck(textDocument: TextDocument, isRelatedInfoSupported
 			};
 			const diagnostic: Diagnostic = Shared.createDiagnostic(
 				location, DiagnosticSeverity.Error, 
-				`${word} is unknown. Did you mean ${suggestion}?`, isRelatedInfoSupported
+				`${word} is unknown. Did you mean ${suggestion}?`
 			);
 			result.push(diagnostic);
 		}
@@ -227,7 +227,7 @@ export function spellingCheck(textDocument: TextDocument, isRelatedInfoSupported
 	return result;
 }
 
-export function ifValidation(textDocument: TextDocument, isRelatedInfoSupported: boolean): Diagnostic[] {
+export function ifValidation(textDocument: TextDocument): Diagnostic[] {
 	const result: Diagnostic[] = [];
 
 	const text = Shared.deleteComments(textDocument.getText());
@@ -254,7 +254,7 @@ export function ifValidation(textDocument: TextDocument, isRelatedInfoSupported:
 				};
 				const diagnostic: Diagnostic = Shared.createDiagnostic(
 					location, DiagnosticSeverity.Error, 
-					`"${match[0]}" has no matching "if"`, isRelatedInfoSupported
+					`"${match[0]}" has no matching "if"`
 				);
 				result.push(diagnostic);
 			} else if (/\bendif\b/.test(match[0])) {
@@ -266,7 +266,7 @@ export function ifValidation(textDocument: TextDocument, isRelatedInfoSupported:
 		const location: Location = { uri: textDocument.uri, range: lastIf };
 		const diagnostic: Diagnostic = Shared.createDiagnostic(
 			location, DiagnosticSeverity.Error, 
-			`"if" has no matching "endif"`, isRelatedInfoSupported
+			`"if" has no matching "endif"`
 		);
 		result.push(diagnostic);
 	}

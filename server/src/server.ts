@@ -17,7 +17,6 @@ let documents: TextDocuments = new TextDocuments();
 
 let hasConfigurationCapability: boolean = false;
 let hasWorkspaceFolderCapability: boolean = false;
-let hasDiagnosticRelatedInformationCapability: boolean = false;
 
 connection.onInitialize((params: InitializeParams) => {
 	let capabilities = params.capabilities;
@@ -26,7 +25,6 @@ connection.onInitialize((params: InitializeParams) => {
 	// If not, we will fall back using global settings
 	hasConfigurationCapability = capabilities.workspace && !!capabilities.workspace.configuration;
 	hasWorkspaceFolderCapability = capabilities.workspace && !!capabilities.workspace.workspaceFolders;
-	hasDiagnosticRelatedInformationCapability = capabilities.textDocument && capabilities.textDocument.publishDiagnostics && capabilities.textDocument.publishDiagnostics.relatedInformation;
 
 	return {
 		capabilities: {
@@ -55,22 +53,22 @@ documents.onDidChangeContent((change) => {
 
 function validateTextDocument(textDocument: TextDocument) {
 	let diagnostics: Diagnostic[] = [];
-	validateFunctions.unmatchedEndFor(textDocument, hasDiagnosticRelatedInformationCapability).forEach(element => {
+	validateFunctions.unmatchedEndFor(textDocument).forEach(element => {
 		diagnostics.push(element);
 	});
-	validateFunctions.undefinedForVariables(textDocument, hasDiagnosticRelatedInformationCapability).forEach(element => {
+	validateFunctions.undefinedForVariables(textDocument).forEach(element => {
 		diagnostics.push(element);
 	});
-	validateFunctions.nonExistentAliases(textDocument, hasDiagnosticRelatedInformationCapability).forEach(element => {
+	validateFunctions.nonExistentAliases(textDocument).forEach(element => {
 		diagnostics.push(element);
 	});
-	validateFunctions.validateUnfinishedList(textDocument, hasDiagnosticRelatedInformationCapability).forEach(element => {
+	validateFunctions.validateUnfinishedList(textDocument).forEach(element => {
 		diagnostics.push(element);
 	});
-	validateFunctions.spellingCheck(textDocument, hasDiagnosticRelatedInformationCapability).forEach(element => {
+	validateFunctions.spellingCheck(textDocument).forEach(element => {
 		diagnostics.push(element);
 	});
-	validateFunctions.ifValidation(textDocument, hasDiagnosticRelatedInformationCapability).forEach(element => {
+	validateFunctions.ifValidation(textDocument).forEach(element => {
 		diagnostics.push(element);
 	});
 
