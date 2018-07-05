@@ -140,10 +140,10 @@ export function validateUnfinishedList(textDocument: TextDocument, isRelatedInfo
 }
 
 const dictionary: string[] = [
-	"widget", "series", "configuration",
-	"node", "start-time", "link", "tags", "group",
-	"id", "label", "alias", "value", "type",
-	"tooltip", "left-units", "top-units", "time-span",
+	"widget", "series", "configuration", "threshold", "starttime",
+	"node", "start-time", "link", "tags", "group", "endtime",
+	"id", "label", "alias", "value", "type", "offset-left",
+	"tooltip", "left-units", "top-units", "time-span", "pointer-position",
 	"ahead-time-span", "colors", "legend-position",
 	"scale", "scale-x", "scale-y", "min-range", "max-range",
 	"min-range-right", "max-range-right", "min-range-force",
