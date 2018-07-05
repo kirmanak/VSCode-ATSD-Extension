@@ -144,7 +144,7 @@ const dictionary: string[] = [
 	"node", "start-time", "link", "tags", "group", "endtime",
 	"id", "label", "alias", "value", "type", "offset-left",
 	"tooltip", "left-units", "top-units", "time-span", "pointer-position",
-	"ahead-time-span", "colors", "legend-position",
+	"ahead-time-span", "colors", "legend-position", "color-range",
 	"scale", "scale-x", "scale-y", "min-range", "max-range",
 	"min-range-right", "max-range-right", "min-range-force",
 	"max-range-force", "min-range-right-force", "rotate-ticks",
@@ -165,7 +165,8 @@ const dictionary: string[] = [
 	"display-panels", "expand-panels", "periods", "buttons", "timespan", "end-time",
 	"timezone", "offset-right", "widgets-per-row", "url", "context-path", "method-path",
 	"url-parameters", "update-interval", "batch-update", "batch-size", "height-units",
-	"server-aggregate", "step-line", "nodes", "links"
+	"server-aggregate", "step-line", "nodes", "links", "summarize-period", "disconnect-count",
+	"dropdown", "offset-top", "offset-bottom", "last-marker", "time-offset"
 ];
 
 function isAbsent(word: string): boolean {
