@@ -70,6 +70,9 @@ function validateTextDocument(textDocument: TextDocument) {
 	validateFunctions.spellingCheck(textDocument, hasDiagnosticRelatedInformationCapability).forEach(element => {
 		diagnostics.push(element);
 	});
+	validateFunctions.ifValidation(textDocument, hasDiagnosticRelatedInformationCapability).forEach(element => {
+		diagnostics.push(element);
+	});
 
 	// Send the computed diagnostics to VSCode.
 	connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });

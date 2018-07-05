@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import { Location, Diagnostic, DiagnosticSeverity, TextDocument } from "vscode-languageserver/lib/main";
+=======
+import { Range, Diagnostic, DiagnosticSeverity, TextDocument } from "vscode-languageserver/lib/main";
+>>>>>>> add if else elseif endif validation
 import * as Shared from './sharedFunctions';
 import * as Levenshtein from 'levenshtein';
 
@@ -222,6 +226,65 @@ export function spellingCheck(textDocument: TextDocument, isRelatedInfoSupported
 			);
 			result.push(diagnostic);
 		}
+	}
+
+	return result;
+}
+
+export function ifValidation(textDocument: TextDocument, hasDiagnosticRelatedInformationCapability: boolean): Diagnostic[] {
+	const result: Diagnostic[] = [];
+
+	const text = Shared.deleteComments(textDocument.getText());
+	const regex = /\bif\b|\belseif\b|\belse\b|\bendif\b/g;
+	let match: RegExpExecArray;
+	let openedIfCounter = 0;
+	let lastIf: Range;
+
+	while (match = regex.exec(text)) {
+		if (/\bif\b/.test(match[0])) {
+			openedIfCounter++;
+			lastIf = {
+				start: textDocument.positionAt(match.index),
+				end: textDocument.positionAt(match.index + match[0].length)
+			};
+			console.log(`${match[0]} matches, opened if counter is ${openedIfCounter}`);
+		} else {
+			if (openedIfCounter < 1) {
+				const diagnostic: Diagnostic = {
+					severity: DiagnosticSeverity.Error,
+					range: {
+						start: textDocument.positionAt(match.index),
+						end: textDocument.positionAt(match.index + match[0].length)
+					},
+					message: `"${match[0]}" has no matching "if"`,
+					source: diagnosticSource
+				};
+				if (hasDiagnosticRelatedInformationCapability) {
+					diagnostic.relatedInformation = [{
+						location: { uri: textDocument.uri, range: diagnostic.range },
+						message: `"${match[0]}" requires a previously declared "if"`
+					}];
+				}
+				result.push(diagnostic);
+			} else if (/\bendif\b/.test(match[0])) {
+				openedIfCounter--;
+			}
+			console.log(`${match[0]} matches, opened if counter is ${openedIfCounter}`);
+		}
+	}
+	console.log(`loop is over, opened if couner is ${openedIfCounter}`);
+	if (openedIfCounter !== 0) { 
+		const diagnostic: Diagnostic = {
+			severity: DiagnosticSeverity.Error, range: lastIf,
+			message: `"if" has no matching "endif"`, source: diagnosticSource
+		};
+		if (hasDiagnosticRelatedInformationCapability) {
+			diagnostic.relatedInformation = [{
+				location: { uri: textDocument.uri, range: diagnostic.range },
+				message: `"if" must be finished with "endif"`
+			}];
+		}
+		result.push(diagnostic);
 	}
 
 	return result;
