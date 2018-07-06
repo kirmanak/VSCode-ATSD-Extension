@@ -7,6 +7,10 @@ function createDoc(text: string): TextDocument {
 	return TextDocument.create("testDoc", "atsd-visual", 0, text);
 }
 
+const elseIfError = "elseif has no matching if";
+const elseError = "else has no matching if";
+const endIfError = 'endif has no matching if';
+
 suite("If elseif else endif validation tests", () => {
 
 	test("One correct if-elseif-endif", () => {
@@ -22,7 +26,7 @@ suite("If elseif else endif validation tests", () => {
 			"endfor\n";
 		const document: TextDocument = createDoc(text);
 		const expected: Diagnostic[] = [];
-		const result = Functions.ifValidation(document);
+		const result = Functions.lineByLine(document);
 		assert.deepEqual(result, expected);
 	});
 
@@ -39,7 +43,7 @@ suite("If elseif else endif validation tests", () => {
 			"endfor\n";
 		const document: TextDocument = createDoc(text);
 		const expected: Diagnostic[] = [];
-		const result = Functions.ifValidation(document);
+		const result = Functions.lineByLine(document);
 		assert.deepEqual(result, expected);
 	});
 
@@ -55,12 +59,12 @@ suite("If elseif else endif validation tests", () => {
 		const document: TextDocument = createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
 			{ uri: document.uri, range: { start: { line: 3, character: 4 }, end: { line: 3, character: 10 } } },
-			DiagnosticSeverity.Error, '"elseif" has no matching "if"'
+			DiagnosticSeverity.Error, elseIfError
 		), Shared.createDiagnostic(
 			{ uri: document.uri, range: { start: { line: 5, character: 4 }, end: { line: 5, character: 9 } } },
-			DiagnosticSeverity.Error, '"endif" has no matching "if"'
+			DiagnosticSeverity.Error, endIfError
 		)];
-		const result = Functions.ifValidation(document);
+		const result = Functions.lineByLine(document);
 		assert.deepEqual(result, expected);
 	});
 
@@ -76,14 +80,13 @@ suite("If elseif else endif validation tests", () => {
 		const document: TextDocument = createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
 			{ uri: document.uri, range: { start: { line: 3, character: 4 }, end: { line: 3, character: 8 } } },
-			DiagnosticSeverity.Error, '"else" has no matching "if"'
+			DiagnosticSeverity.Error, elseError
 		), Shared.createDiagnostic(
 			{ uri: document.uri, range: { start: { line: 5, character: 4 }, end: { line: 5, character: 9 } } },
-			DiagnosticSeverity.Error, '"endif" has no matching "if"'
+			DiagnosticSeverity.Error, endIfError
 		)];
-		const result = Functions.ifValidation(document);
+		const result = Functions.lineByLine(document);
 		assert.deepEqual(result, expected);
 	});
-
 
 });

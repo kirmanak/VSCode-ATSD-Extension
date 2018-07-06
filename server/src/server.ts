@@ -52,8 +52,8 @@ documents.onDidChangeContent((change) => {
 });
 
 function validateTextDocument(textDocument: TextDocument) {
-	let diagnostics: Diagnostic[] = [];
-	validateFunctions.unmatchedEndFor(textDocument).forEach(element => {
+	const diagnostics: Diagnostic[] = [];
+	validateFunctions.lineByLine(textDocument).forEach(element => {
 		diagnostics.push(element);
 	});
 	validateFunctions.undefinedForVariables(textDocument).forEach(element => {
@@ -62,13 +62,7 @@ function validateTextDocument(textDocument: TextDocument) {
 	validateFunctions.nonExistentAliases(textDocument).forEach(element => {
 		diagnostics.push(element);
 	});
-	validateFunctions.validateUnfinishedList(textDocument).forEach(element => {
-		diagnostics.push(element);
-	});
 	validateFunctions.spellingCheck(textDocument).forEach(element => {
-		diagnostics.push(element);
-	});
-	validateFunctions.ifValidation(textDocument).forEach(element => {
 		diagnostics.push(element);
 	});
 
