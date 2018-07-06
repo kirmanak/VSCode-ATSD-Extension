@@ -194,7 +194,7 @@ export function spellingCheck(textDocument: TextDocument): Diagnostic[] {
 	const result: Diagnostic[] = [];
 
 	const text = Shared.deleteComments(textDocument.getText());
-	const bothRegex = /(^\s*)\[(\w+)\]|(^\s*)(\S+)\s*=/gm;
+	const bothRegex = /(^\s*\[)(\w+)\]|(^\s*)(\S+)\s*=/gm;
 	const sectionRegex = /\[\s*(\w+)\s*\]/g;
 	let match: RegExpExecArray;
 	let isTags = false;
