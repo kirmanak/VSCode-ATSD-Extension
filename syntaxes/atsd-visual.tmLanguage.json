@@ -11,27 +11,27 @@
 			"patterns": [
 				{
 					"name": "entity.name.class",
-					"match": "(?<![\\d\\w])\\[[a-z]+\\](?![\\w\\d])"
+					"match": "\\[[a-z]+\\]"
 				},
 				{
 					"name": "keyword.control",
-					"match": "(?<![\\d\\w])(for|endfor|in|list|endlist|var|if|elseif|else|endif)(?![\\w\\d])"
+					"match": "\\b(for|endfor|in|list|endlist|var|if|elseif|else|endif)\\b"
 				},
 				{
 					"name": "entity.name.function",
-					"match": "[a-zA-Z][A-Za-z0-9_]+?(?=\\(.*?\\))"
+					"match": "\\w[\\w\\d]+(?=\\(.*?\\))"
 				},
 				{
 					"name": "support.variable",
-					"match": "(?<![\\d\\w])@\\{.+\\}(?![\\w\\d])"
+					"match": "@\\{.+\\}"
 				},
 				{
 					"name": "string.quoted",
-					"match": "(?<![\\d\\w])(['\"]).+\\1(?![\\w\\d])"
+					"match": "(['\"]).+?\\1"
 				},
 				{
 					"name": "keyword.operator",
-					"match": "(->|=)"
+					"match": "->|="
 				},
 				{
 					"name": "comment.block",
@@ -44,11 +44,11 @@
 				}, 
 				{
 					"name": "variable.name",
-					"match": "(?<![\\d\\w])\\w[-\\w\\d_]+?(?=\\s*=)"
+					"match": "\\b\\w[-\\w\\d_]+?(?=\\s*=)"
 				},
 				{
 					"name": "constant.numeric",
-					"match": "(?<!\\w)[0-9]+?(?![\\w\\d])"
+					"match": "\\b[0-9]+\\b"
 				}
 			]
 		}
