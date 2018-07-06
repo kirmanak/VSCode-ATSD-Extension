@@ -184,7 +184,7 @@ class FoundKeyword {
 
 class ControlSequenceUtil {
 	public static parseControlSequence(line: string, i: number): FoundKeyword | null {
-		const regex = /\b(for|endfor|if|elseif|else|endif|script|endscript|list|endlist)\b/;
+		const regex = /\b(endfor|elseif|endif|endscript|endlist|script|else|if|list|for)\b/;
 		const match = regex.exec(line);
 		if (match === null) return null;
 		return {
@@ -222,12 +222,6 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 
 	for (let i = 0; i < lines.length; i++) {
 		let line = lines[i];
-		if (commentMatch = /\/\*/.exec(line)) {
-			isComment = true;
-			line = line.substring(0, commentMatch.index);
-		} else if (commentMatch = /#\*/.exec(line)) {
-			line = line.substring(0, commentMatch.index);
-		}
 		if (isComment) {
 			if (commentMatch = /\*\//.exec(line)) {
 				commentLength = commentMatch.index + 2;
@@ -237,8 +231,17 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 				continue;
 			}
 		}
+		if (commentMatch = /\/\*/.exec(line)) {
+			isComment = true;
+			line = line.substring(0, commentMatch.index);
+		} else if (commentMatch = /#\*/.exec(line)) {
+			line = line.substring(0, commentMatch.index);
+		}
 		const foundKeyword = ControlSequenceUtil.parseControlSequence(line, i);
-		if (foundKeyword === null) continue;
+		if (foundKeyword === null) {
+			commentLength = 0;
+			continue;
+		}
 		if (isScript) {
 			if (foundKeyword.keyword === ControlSequence.EndScript) {
 				isScript = false;
