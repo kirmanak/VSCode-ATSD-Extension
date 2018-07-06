@@ -44,7 +44,7 @@ export function nonExistentAliases(textDocument: TextDocument): Diagnostic[] {
 export function unmatchedEndFor(textDocument: TextDocument): Diagnostic[] {
 	const result: Diagnostic[] = [];
 
-	const text = Shared.deleteComments(textDocument.getText());
+	const text = Shared.deleteInlineJS(Shared.deleteComments(textDocument.getText()));
 	const regexFor = /\bfor\b/g;
 	const regexEndFor = /\bendfor\b/g;
 
@@ -73,7 +73,7 @@ export function unmatchedEndFor(textDocument: TextDocument): Diagnostic[] {
 export function undefinedForVariables(textDocument: TextDocument): Diagnostic[] {
 	const result: Diagnostic[] = [];
 
-	const text = Shared.deleteComments(textDocument.getText());
+	const text = Shared.deleteInlineJS(Shared.deleteComments(textDocument.getText()));
 	const forPattern = /\bfor\s+?[-_\w\d]+?\s+?in\b|\bendfor\b|@\{[-_\w\d]+?\}/g;
 	const forDeclaration = /\bfor\s+?([-_\w\d]+?)\s+?in\b/;
 	const variablePattern = /@\{([-_\w\d]+?)\}/;
@@ -114,7 +114,7 @@ export function undefinedForVariables(textDocument: TextDocument): Diagnostic[] 
 export function validateUnfinishedList(textDocument: TextDocument): Diagnostic[] {
 	const result: Diagnostic[] = [];
 
-	const text = Shared.deleteComments(textDocument.getText());
+	const text = Shared.deleteInlineJS(Shared.deleteComments(textDocument.getText()));
 	const listDeclaration = /list.+=.+,\s*$/gm;
 	const endList = /\bendlist\b/g;
 
@@ -193,7 +193,7 @@ function lowestLevenshtein(word: string): string {
 export function spellingCheck(textDocument: TextDocument): Diagnostic[] {
 	const result: Diagnostic[] = [];
 
-	const text = Shared.deleteComments(textDocument.getText());
+	const text = Shared.deleteInlineJS(Shared.deleteComments(textDocument.getText()));
 	const bothRegex = /(^\s*)\[(\w+)\]|(^\s*)(\S+)\s*=/gm;
 	const sectionRegex = /\[\s*(\w+)\s*\]/g;
 	let match: RegExpExecArray;
@@ -232,7 +232,7 @@ export function spellingCheck(textDocument: TextDocument): Diagnostic[] {
 export function ifValidation(textDocument: TextDocument): Diagnostic[] {
 	const result: Diagnostic[] = [];
 
-	const text = Shared.deleteComments(textDocument.getText());
+	const text = Shared.deleteInlineJS(Shared.deleteComments(textDocument.getText()));
 	const regex = /\bif\b|\belseif\b|\belse\b|\bendif\b/g;
 	let match: RegExpExecArray;
 	let openedIfCounter = 0;

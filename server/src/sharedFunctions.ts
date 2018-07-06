@@ -28,3 +28,26 @@ export function deleteComments(text: string): string {
 
 	return text;
 }
+
+export function deleteInlineJS(text: string): string {
+	const toReplaceRegex = /script([\s\S]*)endscript|(?:replace-)?value[ \t]=[ \t]([\s\S]*)$/gm;
+	let matching: RegExpExecArray;
+
+	while (matching = toReplaceRegex.exec(text)) {
+		if (matching[1]) {
+			let spaces = "";
+			for (let i = 0; i < matching[1].length; i++) {
+				spaces += " ";
+			}
+			text.substring(0, matching.index) + spaces + text.substring(matching.index + matching[0].length);
+		} else {
+			let spaces = "";
+			for (let i = 0; i < matching[2].length; i++) {
+				spaces += " ";
+			}
+			text.substring(0, matching.index) + spaces + text.substring(matching.index + matching[0].length);
+		}
+	}
+
+	return text
+}
