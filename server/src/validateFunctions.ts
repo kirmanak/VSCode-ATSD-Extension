@@ -222,12 +222,33 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 	const result: Diagnostic[] = [];
 	const lines: string[] = textDocument.getText().split('\n');
 	const nestedStack: FoundKeyword[] = [];
+	let commentMatch: RegExpExecArray;
 	let isScript = false;
+	let isComment = false;
+	let commentLength = 0;
 
 	for (let i = 0; i < lines.length; i++) {
-		const line = lines[i];
+		let line = lines[i];
+		
+		if (commentMatch = /\/\*/.exec(line)) {
+			isComment = true;
+			line = line.substring(0, commentMatch.index);
+		} else if (commentMatch = /#\*/.exec(line)) {
+			line = line.substring(0, commentMatch.index);
+		}
+		if (isComment) {
+			if (commentMatch = /\*\//.exec(line)) {
+				commentLength = commentMatch.index + 2;
+				line = line.substring(commentLength);
+				isComment = false;
+			} else {
+				continue;
+			}
+		}
 		const foundKeyword = ControlSequenceUtil.parseControlSequence(line, i);
 		if (foundKeyword === null) continue;
+		foundKeyword.range.start.character += commentLength;
+		foundKeyword.range.end.character += commentLength;
 		switch (foundKeyword.keyword) {
 			case ControlSequence.EndIf: {
 				const sequence = nestedStack.pop();
