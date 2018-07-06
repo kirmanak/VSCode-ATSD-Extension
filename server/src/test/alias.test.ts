@@ -90,4 +90,16 @@ suite("Incorrect dealias tests", () => {
 		const result = Functions.nonExistentAliases(document);
 		assert.deepEqual(result, expected);
 	});
+
+	test("Declared series, indents are used, correct alias and dealias", () => {
+		const text = 
+			"[series]\n" +
+			"	alias = src\n"
+			"[series]\n" + 
+			"	value = value('src');\n";
+		const document = createDoc(text);
+		const expected: Diagnostic[] = [];
+		const result = Functions.nonExistentAliases(document);
+		assert.deepEqual(result, expected);
+	})
 });

@@ -6,19 +6,20 @@ export function nonExistentAliases(textDocument: TextDocument): Diagnostic[] {
 	const result: Diagnostic[] = [];
 
 	const text = Shared.deleteComments(textDocument.getText());
-	const bothRegex = /alias\s*?=\s*?(\w[-\w\d_])|value\((['"])(.*)\2\)/g;
-	const deAliasRegex = /value\((['"])(.*)\1\)/;
-	const aliasRegex = /alias\s*?=\s*?(\w[-\w\d_])/;
+	const bothRegex = /^[\t ]*alias[\t ]*=[\t ]*(\S*)[\t ]*$|^[ \t]*value[ \t]*=[ \t\S]*value\((['"])(\S*)\2\)[ \t\S]*$/gm;
+	const deAliasRegex = /(^[ \t]*value[ \t]*=[ \t\S]*value\((['"]))(\S*)\2\)[ \t\S]*$/m;
+	const aliasRegex = /^[\t ]*alias[\t ]*=[\t ]*(\S*)[\t ]*$/m;
 
 	let matching: RegExpExecArray;
+	let matchingDealias: RegExpExecArray;
 	let aliases: String[] = [];
 
 	while (matching = bothRegex.exec(text)) {
 		const line = matching[0];
-		if (deAliasRegex.test(line)) {
-			const deAlias = matching[3];
+		if (matchingDealias = deAliasRegex.exec(line)) {
+			const deAlias = matchingDealias[3];
 			if (!aliases.find(alias => alias === deAlias)) {
-				const deAliasStart = matching.index + 'value("'.length;
+				const deAliasStart = matching.index + matchingDealias[1].length;
 				const location: Location = { 
 					uri: textDocument.uri, 
 					range: {
