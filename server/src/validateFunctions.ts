@@ -29,7 +29,7 @@ export function nonExistentAliases(textDocument: TextDocument): Diagnostic[] {
 				};
 				const diagnostic: Diagnostic = Shared.createDiagnostic(
 					location, DiagnosticSeverity.Error, 
-					`The alias ${deAlias} is reffered, but never declared`
+					`The alias ${deAlias} is referred, but never declared`
 				);
 				result.push(diagnostic);
 			}
