@@ -143,10 +143,10 @@ export function validateUnfinishedList(textDocument: TextDocument): Diagnostic[]
 const dictionary: string[] = [
 	"widget", "series", "configuration", "threshold", "starttime",
 	"node", "start-time", "link", "tags", "group", "endtime",
-	"id", "label", "alias", "value", "type", "offset-left",
+	"id", "label", "alias", "value", "type", "offset-left", "options",
 	"tooltip", "left-units", "top-units", "time-span", "pointer-position",
 	"ahead-time-span", "colors", "legend-position", "color-range",
-	"scale", "scale-x", "scale-y", "min-range", "max-range",
+	"scale", "scale-x", "scale-y", "min-range", "max-range", "change-field",
 	"min-range-right", "max-range-right", "min-range-force",
 	"max-range-force", "min-range-right-force", "rotate-ticks",
 	"max-range-right-force", "centralize-ticks", "centralize-columns",
@@ -155,7 +155,7 @@ const dictionary: string[] = [
 	"audio-onload", "display-panels", "expand-panels", "metric", "table",
 	"attribute", "entity", "entities", "entity-group", "entity-expression",
 	"tag-expression", "statistic", "period", "align", "interpolate",
-	"interpolate-extend", "rate", "rate-counter", "replace-value",
+	"interpolate-extend", "rate", "rate-counter", "replace-value", "disconnect-interval",
 	"data-type", "forecast-name", "style", "alias", "alert-expression",
 	"alert-style", "audio-alert", "group-keys", "group-statistic", "group-period",
 	"group-first", "group-interpolate", "group-interpolate-extend", "series-limit",
@@ -167,7 +167,7 @@ const dictionary: string[] = [
 	"timezone", "offset-right", "widgets-per-row", "url", "context-path", "method-path",
 	"url-parameters", "update-interval", "batch-update", "batch-size", "height-units",
 	"server-aggregate", "step-line", "nodes", "links", "summarize-period", "disconnect-count",
-	"dropdown", "offset-top", "offset-bottom", "last-marker", "time-offset"
+	"dropdown", "offset-top", "offset-bottom", "last-marker", "time-offset", "legend-value"
 ];
 
 function isAbsent(word: string): boolean {
