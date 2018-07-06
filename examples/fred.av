@@ -1,0 +1,59 @@
+/*
+  The Trends service relies on Axibase Times Series Database for essential data storage and processing tasks.
+  The service uses the FRED® API by the Federal Reserve Bank of St. Louis. It is not endorsed or certified by the Bank.
+  By using this service, you are agreeing to comply with the FRED® API Terms of Use at https://research.stlouisfed.org/docs/api/terms_of_use.html.
+*/
+
+[configuration]
+  import fred = fred.js
+
+  offset-right = 50
+  offset-left = 25
+  height-units = 1
+  width-units = 1
+  markers = false
+  entity = fred.stlouisfed.org
+
+[group]
+  [widget]
+    type = chart
+    starttime = 1970
+    endtime = 2018
+    title = U.S. Government Net Lending / Borrowing
+    format = '$' + currency(`billion`)
+    metric = ad01rc1q027sbea
+
+   [series]
+    style = stroke-width:4; opacity:0.5      
+    
+   [series]
+    replace-value = time == new Date('2017-10-01T00:00:00Z').getTime() ? value-1000 : value
+    alias = raw
+    style = stroke-width:4; opacity:0.5
+      
+   [series]
+    group-period = 1 year
+    group-statistic = sum
+    replace-value = value/4
+    style = stroke-width:4; opacity:0.5      
+      
+   [threshold]
+    value = 0
+    color = black
+    style = stroke-width: 3; opacity:0.3
+    label = 0 Net Surplus / Deficit
+    pointer-position = left
+        
+   [threshold]
+    value = -500
+    color = yellow
+    style = stroke-width: 3; opacity:0.3
+    label = -500 Billion USD Deficit
+    pointer-position = left
+        
+   [threshold]
+    value = -1000
+    color = red
+    style = stroke-width: 3; opacity:0.3
+    label = -1 Trillion USD Deficit
+    pointer-position = left

@@ -1,0 +1,32 @@
+[configuration]
+  height-units = 2
+  width-units = 1
+  disconnect-count = 20
+  entity = data.cityofchicago.org
+  label-format = javascript:capitalize(tagValue)
+  time-span = 6 month
+  starttime = May 2016
+  offset-right = 50
+
+[group]
+ widgets-per-row = 1
+  [widget]
+    title = Turbidity
+    format = currency + ' NTU'
+    type = chart
+    max-range-force = 300
+
+    [series]
+      metric = turbidity
+      [tags]
+       beach-name = *
+      
+  [widget]
+    title = Water Temperature
+    format = currency + '°C'
+    type = chart
+      
+    [series]
+      metric = water_temperature
+      [tags]
+       beach-name = *

@@ -1,0 +1,91 @@
+/*
+  The Trends service relies on Axibase Times Series Database for essential data storage and processing tasks.
+  The service uses the FRED® API by the Federal Reserve Bank of St. Louis. It is not endorsed or certified by the Bank.
+  By using this service, you are agreeing to comply with the FRED® API Terms of Use at https://research.stlouisfed.org/docs/api/terms_of_use.html.
+*/
+
+[configuration]
+  import fred = fred.js
+
+  offset-right = 50
+  height-units = 2
+  width-units = 1
+  
+  entity = fred.stlouisfed.org
+  metric = unrate  
+
+[group]
+[widget]
+    title = Raw Unemployment (%)
+    type = chart
+    time-span = all
+    endtime = 2019
+[series]
+  label-format = Unemployment Rate
+  format = %
+  replace-value = value/100
+  style = stroke-width:3
+[series]
+   metric = gdp
+   mode = column
+   axis = right
+   label = United States GDP
+   markers = false
+   style = opacity: 0.25; stroke-width:3
+   format = '$' + currency(`billion`)
+   label-format = US GDP
+
+[group]
+  width-units = 0.5
+[widget]
+    type = chart
+    time-span = all
+    endtime = 2019
+    legend-position = false
+    pointer-position = false
+    title = Change in Unemployment (%)
+[series]
+  alias = base
+  display = false
+    
+[series]      
+  value = fred.MonthlyChange('base')
+  alias = month
+  display = false
+[series]
+  value = avg('month')
+  format = %    
+  style = opacity: 0.5
+[series]
+  value = avg('month', '.25 year')        
+  format = %   
+[series]
+  value = avg('month', '.5 year')
+  format = %   
+[series]
+  value = avg('month', '1 year')
+  format = %    
+      
+[widget]
+    metric = gdp
+    type = chart
+    time-span = all
+    endtime = 2019
+    legend-position = false
+    pointer-position = false
+    title = Change in GDP (%)
+[series]
+  alias = gdp
+  display = false
+    
+[series]      
+  value = fred.MonthlyChange('gdp')/1000
+  alias = month
+  display = false
+
+[series]
+  value = avg('month', '.25 year')
+[series]
+  value = avg('month', '.5 year')   
+[series]
+  value = avg('month', '1 year')
