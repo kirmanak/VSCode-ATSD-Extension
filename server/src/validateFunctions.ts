@@ -212,7 +212,7 @@ class ControlSequenceUtil {
 			case "endscrpt": return ControlSequence.EndScript;
 			case "list": return ControlSequence.List;
 			case "endlist": return ControlSequence.EndList;
-			default: throw "Update control sequence switch-case!";
+			default: throw "Update control stackHead switch-case!";
 		}
 	}
 }
@@ -229,7 +229,6 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 
 	for (let i = 0; i < lines.length; i++) {
 		let line = lines[i];
-		
 		if (commentMatch = /\/\*/.exec(line)) {
 			isComment = true;
 			line = line.substring(0, commentMatch.index);
@@ -247,21 +246,40 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 		}
 		const foundKeyword = ControlSequenceUtil.parseControlSequence(line, i);
 		if (foundKeyword === null) continue;
+		if (isScript) {
+			if (foundKeyword.keyword === ControlSequence.EndScript) {
+				isScript = false;
+				const stackHead = nestedStack.pop();
+				if (stackHead === undefined || stackHead.keyword !== ControlSequence.Script) {
+					result.push(Shared.createDiagnostic(
+						{ uri: textDocument.uri, range: foundKeyword.range },
+						DiagnosticSeverity.Error, `${foundKeyword.keyword} has no matching ${ControlSequence.Script}`
+					));
+					if (stackHead !== undefined) {
+						nestedStack.push(stackHead);
+					}
+				}
+				break;
+			} else {
+				continue;
+			}
+		}
 		foundKeyword.range.start.character += commentLength;
 		foundKeyword.range.end.character += commentLength;
+		commentLength = 0;
 		switch (foundKeyword.keyword) {
 			case ControlSequence.EndIf: {
-				const sequence = nestedStack.pop();
-				if (sequence === undefined) {
+				const stackHead = nestedStack.pop();
+				if (stackHead === undefined) {
 					result.push(Shared.createDiagnostic(
 						{ uri: textDocument.uri, range: foundKeyword.range },
 						DiagnosticSeverity.Error, `${foundKeyword.keyword} has no matching ${ControlSequence.If}`
 					));
-				} else if (sequence.keyword !== ControlSequence.If) {
+				} else if (stackHead.keyword !== ControlSequence.If) {
 					const ifIndex = nestedStack.findIndex((value) => {
 						return value.keyword === ControlSequence.If;
 					});
-					nestedStack.push(sequence);
+					nestedStack.push(stackHead);
 					if (ifIndex === -1) {
 						result.push(Shared.createDiagnostic(
 							{ uri: textDocument.uri, range: foundKeyword.range },
@@ -271,62 +289,48 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 						delete nestedStack[ifIndex];
 						result.push(Shared.createDiagnostic(
 							{ uri: textDocument.uri, range: foundKeyword.range },
-							DiagnosticSeverity.Error, `if has finished before ${sequence.keyword}`
+							DiagnosticSeverity.Error, `if has finished before ${stackHead.keyword}`
 						));
 					}
 				}
 				break;
 			}
 			case ControlSequence.EndFor: {
-				const sequence = nestedStack.pop();
-				if (sequence === undefined) {
+				const stackHead = nestedStack.pop();
+				if (stackHead === undefined) {
 					result.push(Shared.createDiagnostic(
 						{ uri: textDocument.uri, range: foundKeyword.range },
 						DiagnosticSeverity.Error, `${foundKeyword.keyword} has no matching ${ControlSequence.For}`
 					));
-				} else if (sequence.keyword !== ControlSequence.For) {
+				} else if (stackHead.keyword !== ControlSequence.For) {
 					const forIndex = nestedStack.findIndex((value) => {
 						return value.keyword === ControlSequence.For;
 					});
-					nestedStack.push(sequence);
+					nestedStack.push(stackHead);
 					if (forIndex === -1) {
 						result.push(Shared.createDiagnostic(
 							{ uri: textDocument.uri, range: foundKeyword.range },
-							DiagnosticSeverity.Error, "endfor has no matching for"
+							DiagnosticSeverity.Error, `${foundKeyword.keyword} has no matching ${ControlSequence.For}`
 						));
 					} else {
 						delete nestedStack[forIndex];
 						result.push(Shared.createDiagnostic(
 							{ uri: textDocument.uri, range: foundKeyword.range },
-							DiagnosticSeverity.Error, `for has finished before ${sequence.keyword}`
+							DiagnosticSeverity.Error, `for has finished before ${stackHead.keyword}`
 						));
 					}
 				}
 				break;
 			}
-			case ControlSequence.EndScript: {
-				isScript = false;
-				const sequence = nestedStack.pop();
-				if (sequence === undefined || sequence.keyword !== ControlSequence.Script) {
-					result.push(Shared.createDiagnostic(
-						{ uri: textDocument.uri, range: foundKeyword.range },
-						DiagnosticSeverity.Error, `${foundKeyword.keyword} has no matching ${ControlSequence.Script}`
-					));
-					if (sequence !== undefined) {
-						nestedStack.push(sequence);
-					}
-				}
-				break;
-			}
 			case ControlSequence.EndList: {
-				const sequence = nestedStack.pop();
-				if (sequence === undefined) {
+				const stackHead = nestedStack.pop();
+				if (stackHead === undefined) {
 					result.push(Shared.createDiagnostic(
 						{ uri: textDocument.uri, range: foundKeyword.range },
 						DiagnosticSeverity.Error, `${foundKeyword.keyword} has no matching ${ControlSequence.List}`
 					));
-				} else if (sequence.keyword !== ControlSequence.List) {
-					nestedStack.push(sequence);
+				} else if (stackHead.keyword !== ControlSequence.List) {
+					nestedStack.push(stackHead);
 					result.push(Shared.createDiagnostic(
 						{ uri: textDocument.uri, range: foundKeyword.range },
 						DiagnosticSeverity.Error, "endlist has no matching list"
@@ -336,15 +340,15 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 			}
 			case ControlSequence.Else:
 			case ControlSequence.ElseIf: {
-				const sequence = nestedStack.pop();
-				if (sequence === undefined) {
+				const stackHead = nestedStack.pop();
+				if (stackHead === undefined) {
 					result.push(Shared.createDiagnostic(
 						{ uri: textDocument.uri, range: foundKeyword.range },
 						DiagnosticSeverity.Error, `${foundKeyword.keyword} has no matching ${ControlSequence.If}`
 					));
 				} else {
-					nestedStack.push(sequence);
-					if (sequence.keyword !== ControlSequence.If) {
+					nestedStack.push(stackHead);
+					if (stackHead.keyword !== ControlSequence.If) {
 						const ifIndex = nestedStack.findIndex((value) => {
 							return value.keyword === ControlSequence.If;
 						});
@@ -356,18 +360,14 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 						} else {
 							result.push(Shared.createDiagnostic(
 								{ uri: textDocument.uri, range: foundKeyword.range },
-								DiagnosticSeverity.Error, `${foundKeyword.keyword} has started before ${sequence} has finished`
+								DiagnosticSeverity.Error, `${foundKeyword.keyword} has started before ${stackHead} has finished`
 							));
 						}
 					}
 				}
 				break;
 			}
-			case ControlSequence.For: {
-				if (isScript) continue;
-				nestedStack.push(foundKeyword);
-				break;
-			}
+			case ControlSequence.For:
 			case ControlSequence.If: {
 				if (isScript) continue;
 				nestedStack.push(foundKeyword);
@@ -394,33 +394,33 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 	}
 
 	for (let i = 0; i < nestedStack.length; i++) {
-		const sequence = nestedStack[i];
-		switch (sequence.keyword) {
+		const nestedConstruction = nestedStack[i];
+		switch (nestedConstruction.keyword) {
 			case ControlSequence.For: {
 				result.push(Shared.createDiagnostic(
-					{ uri: textDocument.uri, range: sequence.range },
-					DiagnosticSeverity.Error, `${sequence.keyword} has no matching ${ControlSequence.EndFor}`
+					{ uri: textDocument.uri, range: nestedConstruction.range },
+					DiagnosticSeverity.Error, `${nestedConstruction.keyword} has no matching ${ControlSequence.EndFor}`
 				));
 				break;
 			}
 			case ControlSequence.If: {
 				result.push(Shared.createDiagnostic(
-					{ uri: textDocument.uri, range: sequence.range },
-					DiagnosticSeverity.Error, `${sequence.keyword} has no matching ${ControlSequence.EndIf}`
+					{ uri: textDocument.uri, range: nestedConstruction.range },
+					DiagnosticSeverity.Error, `${nestedConstruction.keyword} has no matching ${ControlSequence.EndIf}`
 				));
 				break;
 			}
 			case ControlSequence.Script: {
 				result.push(Shared.createDiagnostic(
-					{ uri: textDocument.uri, range: sequence.range },
-					DiagnosticSeverity.Error, `${sequence.keyword} has no matching ${ControlSequence.EndScript}`
+					{ uri: textDocument.uri, range: nestedConstruction.range },
+					DiagnosticSeverity.Error, `${nestedConstruction.keyword} has no matching ${ControlSequence.EndScript}`
 				));
 				break;
 			}
 			case ControlSequence.List: {
 				result.push(Shared.createDiagnostic(
-					{ uri: textDocument.uri, range: sequence.range },
-					DiagnosticSeverity.Error, `${sequence.keyword} has no matching ${ControlSequence.EndList}`
+					{ uri: textDocument.uri, range: nestedConstruction.range },
+					DiagnosticSeverity.Error, `${nestedConstruction.keyword} has no matching ${ControlSequence.EndList}`
 				));
 				break;
 			}
