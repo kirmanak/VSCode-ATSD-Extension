@@ -47,6 +47,10 @@
 					"match": "\\b\\w[-\\w\\d_]+?(?=\\s*=)"
 				},
 				{
+					"name":"constant.regexp",
+					"match": "\\b([0-9]+|true|false)\\b"
+				},
+				{
 					"name": "constant.numeric",
 					"match": "\\b[0-9]+\\b"
 				}
