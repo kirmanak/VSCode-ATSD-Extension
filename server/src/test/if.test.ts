@@ -9,7 +9,8 @@ function createDoc(text: string): TextDocument {
 
 const elseIfError = "elseif has no matching if";
 const elseError = "else has no matching if";
-const endIfError = 'endif has no matching if';
+const endIfError = "endif has no matching if";
+const ifError = "if has no matching endif";
 
 suite("If elseif else endif validation tests", () => {
 
@@ -68,7 +69,7 @@ suite("If elseif else endif validation tests", () => {
 		assert.deepEqual(result, expected);
 	});
 
-	test("One correct if-else-endif", () => {
+	test("One incorrect else-endif", () => {
 		const text =
 			"for server in servers\n" +
 			"  [series]\n" +
@@ -88,5 +89,46 @@ suite("If elseif else endif validation tests", () => {
 		const result = Functions.lineByLine(document);
 		assert.deepEqual(result, expected);
 	});
+
+	test("One incorrect else-endif with comment", () => {
+		const text =
+			"for server in servers\n" +
+			"  [series]\n" +
+			"    entity = @{server}\n" +
+			"    /* this is a comment */ else\n" +
+			"      color = yellow\n" +
+			"    endif /* a comment */ # too\n" +
+			"endfor\n";
+		const document: TextDocument = createDoc(text);
+		const expected: Diagnostic[] = [Shared.createDiagnostic(
+			{ uri: document.uri, range: { start: { line: 3, character: 29 }, end: { line: 3, character: 33 } } },
+			DiagnosticSeverity.Error, elseError
+		), Shared.createDiagnostic(
+			{ uri: document.uri, range: { start: { line: 5, character: 4 }, end: { line: 5, character: 9 } } },
+			DiagnosticSeverity.Error, endIfError
+		)];
+		const result = Functions.lineByLine(document);
+		assert.deepEqual(result, expected);
+	});
+
+	test("One incorrect if-else", () => {
+		const text =
+			"for server in servers\n" +
+			"  [series]\n" +
+			"    entity = @{server}\n" +
+			"    if server == 'nurswgvml007'\n" +
+			"      color = red\n" +
+			"    else\n" +
+			"      color = yellow\n" +
+			"endfor\n";
+		const document: TextDocument = createDoc(text);
+		const expected: Diagnostic[] = [Shared.createDiagnostic(
+			{ uri: document.uri, range: { start: { line: 3, character: 5 }, end: { line: 3, character: 7 } } },
+			DiagnosticSeverity.Error, ifError
+		)];
+		const result = Functions.lineByLine(document);
+		assert.deepEqual(result, expected);
+	});
+
 
 });
