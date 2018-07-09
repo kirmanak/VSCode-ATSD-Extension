@@ -123,7 +123,10 @@ suite("If elseif else endif validation tests", () => {
 			"endfor\n";
 		const document: TextDocument = createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
-			{ uri: document.uri, range: { start: { line: 3, character: 5 }, end: { line: 3, character: 7 } } },
+			{ uri: document.uri, range: { start: { line: 7, character: 0 }, end: { line: 7, character: 6 } } },
+			DiagnosticSeverity.Error, "for has finished before if"
+		),Shared.createDiagnostic(
+			{ uri: document.uri, range: { start: { line: 3, character: 4 }, end: { line: 3, character: 6 } } },
 			DiagnosticSeverity.Error, ifError
 		)];
 		const result = Functions.lineByLine(document);

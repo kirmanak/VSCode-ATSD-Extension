@@ -57,8 +57,8 @@ export function undefinedForVariables(textDocument: TextDocument): Diagnostic[] 
 			if (possibleVariables.length != 0) possibleVariables.pop();
 		} else if (variablePattern.test(matching[0])) {
 			const foundVariable: string = variablePattern.exec(matching[0])[1];
-			if (possibleVariables.find((value: string, _index: number, _array: string[]): boolean => {
-				return foundVariable === value;
+			if (possibleVariables.find((value: string): boolean => {
+				return (value === undefined) ? false : foundVariable === value;
 			}) === undefined) {
 				const location: Location = {
 					uri: textDocument.uri,
@@ -107,7 +107,7 @@ const dictionary: string[] = [
 
 function isAbsent(word: string): boolean {
 	return dictionary.find((value: string) => {
-		return value === word;
+		return (value === undefined) ? false : value === word;
 	}) === undefined;
 }
 
@@ -266,7 +266,7 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 						nestedStack.push(stackHead);
 						console.log("We've pushed something on the stack from script section");
 						const scriptIndex = nestedStack.findIndex((value) => {
-							return value.keyword === ControlSequence.Script;
+							return (value === undefined) ? false : value.keyword === ControlSequence.Script;
 						});
 						delete nestedStack[scriptIndex];
 					}
@@ -277,7 +277,7 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 				case ControlSequence.EndIf: {
 					const stackHead = nestedStack.pop();
 					const ifIndex = nestedStack.findIndex((value) => {
-						return value.keyword === ControlSequence.If;
+						return (value === undefined) ? false : value.keyword === ControlSequence.If;
 					});
 					if (stackHead === undefined ||
 						(stackHead.keyword !== ControlSequence.If && ifIndex === -1)) {
@@ -300,7 +300,7 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 				case ControlSequence.EndFor: {
 					const stackHead = nestedStack.pop();
 					const forIndex = nestedStack.findIndex((value) => {
-						return value.keyword === ControlSequence.For;
+						return (value === undefined) ? false : value.keyword === ControlSequence.For;
 					});
 					if (stackHead === undefined ||
 						(stackHead.keyword !== ControlSequence.For && forIndex === -1)) {
@@ -334,7 +334,7 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 				case ControlSequence.ElseIf: {
 					const stackHead = nestedStack.pop();
 					const ifIndex = nestedStack.findIndex((value) => {
-						return value.keyword === ControlSequence.If;
+						return (value === undefined) ? false : value.keyword === ControlSequence.If;
 					});
 					if (stackHead === undefined ||
 						(stackHead.keyword !== ControlSequence.If && ifIndex === -1)) {
