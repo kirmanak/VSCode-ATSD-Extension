@@ -125,32 +125,23 @@ function lowestLevenshtein(word: string): string {
 	return suggestion;
 }
 
-export function spellingCheck(textDocument: TextDocument): Diagnostic[] {
+function spellingCheck(line: string, uri: string, i: number): Diagnostic[] {
 	const result: Diagnostic[] = [];
 
-	const text = Shared.deleteComments(textDocument.getText());
 	const bothRegex = /(^\s*\[)(\w+)\]|(^\s*)(\S+)\s*=/gm;
-	const sectionRegex = /\[\s*(\w+)\s*\]/g;
 	let match: RegExpExecArray;
-	let isTags = false;
 
-	while (match = bothRegex.exec(text)) {
-		if (/\[\s*tags\s*\]/g.exec(match[0])) {
-			isTags = true;
-		} else if (sectionRegex.test(match[0])) {
-			isTags = false;
-		}
-
+	while (match = bothRegex.exec(line)) {
 		const word = (match[2]) ? match[2] : match[4];
 		const indent = (match[1]) ? match[1] : match[3];
 		const wordStart = (indent) ? match.index + indent.length : match.index;
-		if (isAbsent(word) && !isTags) {
+		if (isAbsent(word)) {
 			const suggestion: string = lowestLevenshtein(word);
 			const location: Location = {
-				uri: textDocument.uri,
+				uri: uri,
 				range: {
-					start: textDocument.positionAt(wordStart),
-					end: textDocument.positionAt(wordStart + word.length)
+					start: { line: i, character: wordStart },
+					end: { line: i, character: wordStart + word.length }
 				}
 			};
 			const diagnostic: Diagnostic = Shared.createDiagnostic(
@@ -183,13 +174,16 @@ class FoundKeyword {
 }
 
 class ControlSequenceUtil {
-	public static parseControlSequence(line: string, i: number): FoundKeyword | null {
-		const regex = /\b(endfor|elseif|endif|endscript|endlist|script|else|if|list|for)\b/;
+	public static createRegex(): RegExp {
+		return /\b(endfor|elseif|endif|endscript|endlist|script|else|if|list|for)\b/g;
+	}
+
+	public static parseControlSequence(regex: RegExp, line: string, i: number): FoundKeyword | null {
 		const match = regex.exec(line);
 		if (match === null) return null;
 		return {
 			keyword: ControlSequenceUtil.toSequence(match[1]),
-			range: { start: { line: i, character: match.index }, end: { line: i, character: match.index + match[0].length } }
+			range: { start: { line: i, character: match.index }, end: { line: i, character: match.index + match[1].length } }
 		};
 	}
 
@@ -215,208 +209,213 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 	const result: Diagnostic[] = [];
 	const lines: string[] = textDocument.getText().split('\n');
 	const nestedStack: FoundKeyword[] = [];
-	let commentMatch: RegExpExecArray;
-	let isScript = false;
-	let isComment = false;
-	let commentLength = 0;
+	let isTags = false; // to disable spelling check
+	let isComment = false, isScript = false; // to disable everything
+	let match, matchSecond: RegExpExecArray;
 
 	for (let i = 0; i < lines.length; i++) {
 		let line = lines[i];
-		if (isComment) {
-			if (commentMatch = /\*\//.exec(line)) {
-				commentLength = commentMatch.index + 2;
-				line = line.substring(commentLength);
-				isComment = false;
+
+		// handle one line comment
+		if (match = /#/.exec(line)) line = line.substring(0, match.index);
+
+		// handle tags
+		if (match = /\[tags\]/.exec(line)) isTags = true;
+		else if (match = /\[\w+\]/.exec(line)) isTags = false;
+
+		// handle multi line comments
+		if (match = /\/\*/.exec(line)) {
+			if (matchSecond = /\*\//.exec(line)) {
+				line = line.substring(0, match.index) + " " + line.substring(matchSecond.index + 2);
 			} else {
-				continue;
+				line = line.substring(0, match.index);
+				isComment = true;
 			}
-		}
-		if (commentMatch = /\/\*/.exec(line)) {
-			isComment = true;
-			line = line.substring(0, commentMatch.index);
-		} else if (commentMatch = /#\*/.exec(line)) {
-			line = line.substring(0, commentMatch.index);
-		}
-		const foundKeyword = ControlSequenceUtil.parseControlSequence(line, i);
-		if (foundKeyword === null) {
-			commentLength = 0;
-			continue;
-		}
-		if (isScript) {
+		} else if (match = /\*\//.exec(line)) {
+			if (!isComment) {
+				result.push(Shared.createDiagnostic(
+					{ uri: textDocument.uri, range: { start: { line: i, character: 0 },
+					end: { line: i, character: line.length } } },
+					DiagnosticSeverity.Error, "A multiline comment is closed, but wasn't opened"
+				));
+			}
+			line = line.substring(match.index + 2);
+			isComment = false;
+		} else if (isComment) continue;
+
+		// prepare regex to let 'g' key do its work
+		const regex = ControlSequenceUtil.createRegex();
+		let foundKeyword = ControlSequenceUtil.parseControlSequence(regex, line, i);
+		if (!isTags) spellingCheck(line, textDocument.uri, i).forEach((diagnostic) => {
+			result.push(diagnostic);
+		});
+
+		while (foundKeyword !== null) {
+
+			// handle scripts
 			if (foundKeyword.keyword === ControlSequence.EndScript) {
-				isScript = false;
-				const stackHead = nestedStack.pop();
-				if (stackHead === undefined || stackHead.keyword !== ControlSequence.Script) {
+				if (!isScript) {
 					result.push(Shared.createDiagnostic(
-						{ uri: textDocument.uri, range: foundKeyword.range },
-						DiagnosticSeverity.Error, `${foundKeyword.keyword} has no matching ${ControlSequence.Script}`
+						{ uri: textDocument.uri, range: foundKeyword.range }, DiagnosticSeverity.Error,
+						`${foundKeyword.keyword} has no matching ${ControlSequence.Script}`
 					));
-					if (stackHead !== undefined) {
+				} else {
+					isScript = false;
+					const stackHead = nestedStack.pop();
+					if (stackHead !== undefined && stackHead.keyword !== ControlSequence.Script) {
 						nestedStack.push(stackHead);
+						console.log("We've pushed something on the stack from script section");
+						const scriptIndex = nestedStack.findIndex((value) => {
+							return value.keyword === ControlSequence.Script;
+						});
+						delete nestedStack[scriptIndex];
 					}
 				}
-				break;
-			} else {
-				continue;
-			}
-		}
-		foundKeyword.range.start.character += commentLength;
-		foundKeyword.range.end.character += commentLength;
-		commentLength = 0;
-		switch (foundKeyword.keyword) {
-			case ControlSequence.EndIf: {
-				const stackHead = nestedStack.pop();
-				if (stackHead === undefined) {
-					result.push(Shared.createDiagnostic(
-						{ uri: textDocument.uri, range: foundKeyword.range },
-						DiagnosticSeverity.Error, `${foundKeyword.keyword} has no matching ${ControlSequence.If}`
-					));
-				} else if (stackHead.keyword !== ControlSequence.If) {
+			} else if (isScript) continue;
+
+			switch (foundKeyword.keyword) {
+				case ControlSequence.EndIf: {
+					const stackHead = nestedStack.pop();
 					const ifIndex = nestedStack.findIndex((value) => {
 						return value.keyword === ControlSequence.If;
 					});
-					nestedStack.push(stackHead);
-					if (ifIndex === -1) {
+					if (stackHead === undefined ||
+						(stackHead.keyword !== ControlSequence.If && ifIndex === -1)) {
+						if (stackHead !== undefined && stackHead.keyword !== ControlSequence.If)
+						nestedStack.push(stackHead);
 						result.push(Shared.createDiagnostic(
-							{ uri: textDocument.uri, range: foundKeyword.range },
-							DiagnosticSeverity.Error, "endif has no matching if"
+							{ uri: textDocument.uri, range: foundKeyword.range }, DiagnosticSeverity.Error,
+							`${foundKeyword.keyword} has no matching ${ControlSequence.If}`
 						));
-					} else {
+					} else if (stackHead.keyword !== ControlSequence.If) {
+						nestedStack.push(stackHead);
 						delete nestedStack[ifIndex];
 						result.push(Shared.createDiagnostic(
-							{ uri: textDocument.uri, range: foundKeyword.range },
-							DiagnosticSeverity.Error, `if has finished before ${stackHead.keyword}`
+							{ uri: textDocument.uri, range: foundKeyword.range }, DiagnosticSeverity.Error,
+							`${ControlSequence.If} has finished before ${stackHead.keyword}`
 						));
 					}
+					break;
 				}
-				break;
-			}
-			case ControlSequence.EndFor: {
-				const stackHead = nestedStack.pop();
-				if (stackHead === undefined) {
-					result.push(Shared.createDiagnostic(
-						{ uri: textDocument.uri, range: foundKeyword.range },
-						DiagnosticSeverity.Error, `${foundKeyword.keyword} has no matching ${ControlSequence.For}`
-					));
-				} else if (stackHead.keyword !== ControlSequence.For) {
+				case ControlSequence.EndFor: {
+					const stackHead = nestedStack.pop();
 					const forIndex = nestedStack.findIndex((value) => {
 						return value.keyword === ControlSequence.For;
 					});
-					nestedStack.push(stackHead);
-					if (forIndex === -1) {
+					if (stackHead === undefined ||
+						(stackHead.keyword !== ControlSequence.For && forIndex === -1)) {
+						if (stackHead !== undefined) nestedStack.push(stackHead);
 						result.push(Shared.createDiagnostic(
-							{ uri: textDocument.uri, range: foundKeyword.range },
-							DiagnosticSeverity.Error, `${foundKeyword.keyword} has no matching ${ControlSequence.For}`
+							{ uri: textDocument.uri, range: foundKeyword.range }, DiagnosticSeverity.Error,
+							`${foundKeyword.keyword} has no matching ${ControlSequence.For}`
 						));
-					} else {
+					} else if (stackHead.keyword !== ControlSequence.For) {
+						nestedStack.push(stackHead);
 						delete nestedStack[forIndex];
 						result.push(Shared.createDiagnostic(
-							{ uri: textDocument.uri, range: foundKeyword.range },
-							DiagnosticSeverity.Error, `for has finished before ${stackHead.keyword}`
+							{ uri: textDocument.uri, range: foundKeyword.range }, DiagnosticSeverity.Error,
+							`${ControlSequence.For} has finished before ${stackHead.keyword}`
 						));
 					}
+					break;
 				}
-				break;
-			}
-			case ControlSequence.EndList: {
-				const stackHead = nestedStack.pop();
-				if (stackHead === undefined) {
-					result.push(Shared.createDiagnostic(
-						{ uri: textDocument.uri, range: foundKeyword.range },
-						DiagnosticSeverity.Error, `${foundKeyword.keyword} has no matching ${ControlSequence.List}`
-					));
-				} else if (stackHead.keyword !== ControlSequence.List) {
-					nestedStack.push(stackHead);
-					result.push(Shared.createDiagnostic(
-						{ uri: textDocument.uri, range: foundKeyword.range },
-						DiagnosticSeverity.Error, "endlist has no matching list"
-					));
-				}
-				break;
-			}
-			case ControlSequence.Else:
-			case ControlSequence.ElseIf: {
-				const stackHead = nestedStack.pop();
-				if (stackHead === undefined) {
-					result.push(Shared.createDiagnostic(
-						{ uri: textDocument.uri, range: foundKeyword.range },
-						DiagnosticSeverity.Error, `${foundKeyword.keyword} has no matching ${ControlSequence.If}`
-					));
-				} else {
-					nestedStack.push(stackHead);
-					if (stackHead.keyword !== ControlSequence.If) {
-						const ifIndex = nestedStack.findIndex((value) => {
-							return value.keyword === ControlSequence.If;
-						});
-						if (ifIndex === -1) {
-							result.push(Shared.createDiagnostic(
-								{ uri: textDocument.uri, range: foundKeyword.range },
-								DiagnosticSeverity.Error, `${foundKeyword.keyword} has no matching ${ControlSequence.If}`
-							));
-						} else {
-							result.push(Shared.createDiagnostic(
-								{ uri: textDocument.uri, range: foundKeyword.range },
-								DiagnosticSeverity.Error, `${foundKeyword.keyword} has started before ${stackHead} has finished`
-							));
-						}
+				case ControlSequence.EndList: {
+					const stackHead = nestedStack.pop();
+					if (stackHead === undefined || stackHead.keyword !== ControlSequence.List) {
+						if (stackHead !== undefined) nestedStack.push(stackHead);
+						result.push(Shared.createDiagnostic(
+							{ uri: textDocument.uri, range: foundKeyword.range }, DiagnosticSeverity.Error,
+							`${foundKeyword.keyword} has no matching ${ControlSequence.List}`
+						));
 					}
+					break;
 				}
-				break;
-			}
-			case ControlSequence.For:
-			case ControlSequence.If: {
-				if (isScript) continue;
-				nestedStack.push(foundKeyword);
-				break;
-			}
-			case ControlSequence.List: {
-				if (isScript) continue;
-				if (/,[ \t]*$/m.test(line)) {
+				case ControlSequence.Else:
+				case ControlSequence.ElseIf: {
+					const stackHead = nestedStack.pop();
+					const ifIndex = nestedStack.findIndex((value) => {
+						return value.keyword === ControlSequence.If;
+					});
+					if (stackHead === undefined ||
+						(stackHead.keyword !== ControlSequence.If && ifIndex === -1)) {
+						result.push(Shared.createDiagnostic(
+							{ uri: textDocument.uri, range: foundKeyword.range }, DiagnosticSeverity.Error,
+							`${foundKeyword.keyword} has no matching ${ControlSequence.If}`
+						));
+					} else if (stackHead.keyword !== ControlSequence.If) {
+						result.push(Shared.createDiagnostic(
+							{ uri: textDocument.uri, range: foundKeyword.range }, DiagnosticSeverity.Error,
+							`${foundKeyword.keyword} has started before ${stackHead} has finished`
+						));
+					}
+					nestedStack.push(stackHead);
+					break;
+				}
+				case ControlSequence.For:
+				case ControlSequence.If: {
+					if (isScript) continue;
 					nestedStack.push(foundKeyword);
+					break;
 				}
-				break;
-			}
-			case ControlSequence.Script: {
-				isScript = true;
-				const scriptIndex = nestedStack.findIndex((value) => {
-					return value.keyword === ControlSequence.Script;
-				});
-				if (scriptIndex !== -1) {
-					nestedStack.push(foundKeyword);
+				case ControlSequence.List: {
+					if (isScript) continue;
+					if (/,[ \t]*$/m.test(line)) {
+						nestedStack.push(foundKeyword);
+					}
+					break;
 				}
-				break;
+				case ControlSequence.Script: {
+					if (!isScript) {
+						nestedStack.push(foundKeyword);
+						isScript = true;
+					}
+					break;
+				}
+				default: throw "Update switch-case statement!";
 			}
+
+			foundKeyword = ControlSequenceUtil.parseControlSequence(regex, line, i);
 		}
 	}
 
-	for (let i = 0; i < nestedStack.length; i++) {
+	diagnosticForLeftKeywords(nestedStack, textDocument.uri).forEach((diagnostic) => {
+		result.push(diagnostic);
+	});
+
+	return result;
+}
+
+function diagnosticForLeftKeywords(nestedStack: FoundKeyword[], uri: string): Diagnostic[] {
+	const result: Diagnostic[] = [];
+	for (let i = 0, length = nestedStack.length; i < length; i++) {
 		const nestedConstruction = nestedStack[i];
+		if (nestedConstruction === null || nestedConstruction === undefined) continue;
 		switch (nestedConstruction.keyword) {
 			case ControlSequence.For: {
 				result.push(Shared.createDiagnostic(
-					{ uri: textDocument.uri, range: nestedConstruction.range },
-					DiagnosticSeverity.Error, `${nestedConstruction.keyword} has no matching ${ControlSequence.EndFor}`
+					{ uri: uri, range: nestedConstruction.range }, DiagnosticSeverity.Error,
+					`${nestedConstruction.keyword} has no matching ${ControlSequence.EndFor}`
 				));
 				break;
 			}
 			case ControlSequence.If: {
 				result.push(Shared.createDiagnostic(
-					{ uri: textDocument.uri, range: nestedConstruction.range },
-					DiagnosticSeverity.Error, `${nestedConstruction.keyword} has no matching ${ControlSequence.EndIf}`
+					{ uri: uri, range: nestedConstruction.range }, DiagnosticSeverity.Error,
+					`${nestedConstruction.keyword} has no matching ${ControlSequence.EndIf}`
 				));
 				break;
 			}
 			case ControlSequence.Script: {
 				result.push(Shared.createDiagnostic(
-					{ uri: textDocument.uri, range: nestedConstruction.range },
-					DiagnosticSeverity.Error, `${nestedConstruction.keyword} has no matching ${ControlSequence.EndScript}`
+					{ uri: uri, range: nestedConstruction.range }, DiagnosticSeverity.Error,
+					`${nestedConstruction.keyword} has no matching ${ControlSequence.EndScript}`
 				));
 				break;
 			}
 			case ControlSequence.List: {
 				result.push(Shared.createDiagnostic(
-					{ uri: textDocument.uri, range: nestedConstruction.range },
-					DiagnosticSeverity.Error, `${nestedConstruction.keyword} has no matching ${ControlSequence.EndList}`
+					{ uri: uri, range: nestedConstruction.range }, DiagnosticSeverity.Error,
+					`${nestedConstruction.keyword} has no matching ${ControlSequence.EndList}`
 				));
 				break;
 			}
