@@ -199,7 +199,7 @@ class ControlSequenceUtil {
 			case "else": return ControlSequence.Else;
 			case "endif": return ControlSequence.EndIf;
 			case "script": return ControlSequence.Script;
-			case "endscrpt": return ControlSequence.EndScript;
+			case "endscript": return ControlSequence.EndScript;
 			case "list": return ControlSequence.List;
 			case "endlist": return ControlSequence.EndList;
 			default: throw "Update control stackHead switch-case!";
@@ -233,24 +233,20 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 		while (foundKeyword !== null) {
 			// handle scripts
 			if (foundKeyword.keyword === ControlSequence.EndScript) {
-				if (!isScript) {
+				const stackHead = nestedStack.pop();
+				if (stackHead === undefined || stackHead.keyword !== ControlSequence.Script) {
+					if (stackHead !== undefined) nestedStack.push(stackHead);
 					result.push(Shared.createDiagnostic(
 						{ uri: textDocument.uri, range: foundKeyword.range }, DiagnosticSeverity.Error,
 						`${foundKeyword.keyword} has no matching ${ControlSequence.Script}`
 					));
-				} else {
-					isScript = false;
-					const stackHead = nestedStack.pop();
-					if (stackHead !== undefined && stackHead.keyword !== ControlSequence.Script) {
-						nestedStack.push(stackHead);
-						console.log("We've pushed something on the stack from script section");
-						const scriptIndex = nestedStack.findIndex((value) => {
-							return (value === undefined) ? false : value.keyword === ControlSequence.Script;
-						});
-						delete nestedStack[scriptIndex];
-					}
-				}
-			} else if (isScript) continue;
+
+				}  
+				isScript = false;
+				foundKeyword = ControlSequenceUtil.parseControlSequence(regex, line, i);
+				if (foundKeyword === null) break;
+				else continue;
+			} else if (isScript) break;
 
 			switch (foundKeyword.keyword) {
 				case ControlSequence.EndIf: {
