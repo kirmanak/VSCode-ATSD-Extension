@@ -15,7 +15,7 @@
 				},
 				{
 					"name": "keyword.control",
-					"match": "\\b(for|endfor|in|list|endlist|var|if|elseif|else|endif)\\b"
+					"match": "\\b(script|endscript|for|endfor|in|list|endlist|var|if|elseif|else|endif)\\b"
 				},
 				{
 					"name": "entity.name.function",
