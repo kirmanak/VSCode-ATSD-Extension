@@ -155,20 +155,22 @@ function spellingCheck(line: string, uri: string, i: number): Diagnostic[] {
 		}
 	}
 
-		return result;
-	}
+	return result;
+}
 
 enum ControlSequence {
 	For = "for",
-		EndFor = "endfor",
-		If = "if",
-		ElseIf = "elseif",
-		Else = "else",
-		EndIf = "endif",
-		Script = "script",
-		EndScript = "endscript",
-		List = "list",
-		EndList = "endlist"
+	Csv = "csv",
+	EndCsv = "endcsv",
+	EndFor = "endfor",
+	If = "if",
+	ElseIf = "elseif",
+	Else = "else",
+	EndIf = "endif",
+	Script = "script",
+	EndScript = "endscript",
+	List = "list",
+	EndList = "endlist"
 }
 
 class FoundKeyword {
@@ -178,7 +180,7 @@ class FoundKeyword {
 
 class ControlSequenceUtil {
 	public static createRegex(): RegExp {
-		return /\b(endfor|elseif|endif|endscript|endlist|script|else|if|list|for)\b/g;
+		return /\b(endcsv|endfor|elseif|endif|endscript|endlist|script|else|if|list|for|csv)\b/g;
 	}
 
 	public static parseControlSequence(regex: RegExp, line: string, i: number): FoundKeyword | null {
@@ -192,6 +194,8 @@ class ControlSequenceUtil {
 
 	private static toSequence(word: string): ControlSequence {
 		switch (word) {
+			case "csv": return ControlSequence.Csv;
+			case "endcsv": return ControlSequence.EndCsv;
 			case "for": return ControlSequence.For;
 			case "endfor": return ControlSequence.EndFor;
 			case "if": return ControlSequence.If;
@@ -207,6 +211,12 @@ class ControlSequenceUtil {
 	}
 }
 
+function countCsvColumns(line: string): number {
+	const regex = /(['"]).+\1|[()-\w\d.]+/g;
+	let counter = 0;
+	while (regex.exec(line)) counter++;
+	return counter;
+}
 
 export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 	const result: Diagnostic[] = [];
@@ -214,6 +224,8 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 	const nestedStack: FoundKeyword[] = [];
 	let isTags = false; // to disable spelling check
 	let isScript = false; // to disable everything
+	let isCsv = false; // to disable everything
+	let csvColumns = 0;
 	let match: RegExpExecArray;
 
 	for (let i = 0; i < lines.length; i++) {
@@ -241,14 +253,36 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 						`${foundKeyword.keyword} has no matching ${ControlSequence.Script}`
 					));
 
-				}  
+				}
 				isScript = false;
 				foundKeyword = ControlSequenceUtil.parseControlSequence(regex, line, i);
 				if (foundKeyword === null) break;
 				else continue;
 			} else if (isScript) break;
 
+			if (isCsv && foundKeyword.keyword !== ControlSequence.EndCsv) {
+				let columns = countCsvColumns(line);
+				if (columns != csvColumns) {
+					result.push(Shared.createDiagnostic(
+						{ uri: textDocument.uri, range: { start: { line: i, character: 0 }, end: { line: i, character: line.length } } },
+						DiagnosticSeverity.Error, `Expected ${csvColumns}, but found ${columns}`
+					));
+				}
+			}
+
 			switch (foundKeyword.keyword) {
+				case ControlSequence.EndCsv: {
+					isCsv = false;
+					const stackHead = nestedStack.pop();
+					if (stackHead === undefined || stackHead.keyword != ControlSequence.Csv) {
+						if (stackHead !== undefined) nestedStack.push(stackHead);
+						result.push(Shared.createDiagnostic(
+							{ uri: textDocument.uri, range: foundKeyword.range }, DiagnosticSeverity.Error,
+							`${foundKeyword.keyword} has no matching ${ControlSequence.Csv}`
+						));
+					}
+					break;
+				}
 				case ControlSequence.EndIf: {
 					const stackHead = nestedStack.pop();
 					const ifIndex = nestedStack.findIndex((value) => {
@@ -257,7 +291,7 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 					if (stackHead === undefined ||
 						(stackHead.keyword !== ControlSequence.If && ifIndex === -1)) {
 						if (stackHead !== undefined && stackHead.keyword !== ControlSequence.If)
-						nestedStack.push(stackHead);
+							nestedStack.push(stackHead);
 						result.push(Shared.createDiagnostic(
 							{ uri: textDocument.uri, range: foundKeyword.range }, DiagnosticSeverity.Error,
 							`${foundKeyword.keyword} has no matching ${ControlSequence.If}`
@@ -326,17 +360,21 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 					nestedStack.push(stackHead);
 					break;
 				}
-				case ControlSequence.For:
-				case ControlSequence.If: {
-					if (isScript) continue;
-					nestedStack.push(foundKeyword);
-					break;
-				}
-				case ControlSequence.List: {
-					if (isScript) continue;
-					if (/,[ \t]*$/m.test(line)) {
-						nestedStack.push(foundKeyword);
+				case ControlSequence.Csv: {
+					isCsv = true;
+					let header: string;
+					if (/=\s*$/m.test(line)) {
+						header = lines[i + 1];
+					} else {
+						header = line.substring(/=/.exec(line).index + 1);
 					}
+					csvColumns = countCsvColumns(header);
+				}
+				case ControlSequence.For:
+				case ControlSequence.List: if (!/,[ \t]*$/m.test(line)) break;
+				case ControlSequence.If: {
+					if (isScript) break;
+					nestedStack.push(foundKeyword);
 					break;
 				}
 				case ControlSequence.Script: {
@@ -391,6 +429,13 @@ function diagnosticForLeftKeywords(nestedStack: FoundKeyword[], uri: string): Di
 				result.push(Shared.createDiagnostic(
 					{ uri: uri, range: nestedConstruction.range }, DiagnosticSeverity.Error,
 					`${nestedConstruction.keyword} has no matching ${ControlSequence.EndList}`
+				));
+				break;
+			}
+			case ControlSequence.Csv: {
+				result.push(Shared.createDiagnostic(
+					{ uri: uri, range: nestedConstruction.range }, DiagnosticSeverity.Error,
+					`${nestedConstruction.keyword} has no matching ${ControlSequence.EndCsv}`
 				));
 				break;
 			}
