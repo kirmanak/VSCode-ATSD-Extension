@@ -131,4 +131,29 @@ suite("Undefined variable in for loop", () => {
 		const result = Functions.undefinedForVariables(document);
 		assert.deepEqual(result, expected);
 	});
+
+	test("Arithmetic expression with correct var", () => {
+		const text =
+			`for ${firstVar} in servers\n` +
+			`   entity = @{${firstVar} + ${firstVar}}\n` +
+			"endfor";
+		const document: TextDocument = createDoc(text);
+		const expected: Diagnostic[] = [];
+		const result = Functions.undefinedForVariables(document);
+		assert.deepEqual(result, expected);
+	});
+
+	test("Arithmetic expression with incorrect var", () => {
+		const text =
+			`for ${firstVar} in servers\n` +
+			`   entity = @{${secondVar} + ${firstVar}}\n` +
+			"endfor";
+		const document: TextDocument = createDoc(text);
+		const expected: Diagnostic[] = [Shared.createDiagnostic(
+			{ uri: document.uri, range: { start: { line: 1, character: 14 }, end: { line: 1, character: 14 + secondVar.length } } },
+			DiagnosticSeverity.Error, `${secondVar} is used in loop, but wasn't declared`
+		)];
+		const result = Functions.undefinedForVariables(document);
+		assert.deepEqual(result, expected);
+	});
 });

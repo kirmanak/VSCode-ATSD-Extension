@@ -45,37 +45,40 @@ export function undefinedForVariables(textDocument: TextDocument): Diagnostic[] 
 	const result: Diagnostic[] = [];
 
 	const text = Shared.deleteComments(textDocument.getText());
-	const forPattern = /\bfor\s+?[-_\w\d]+?\s+?in\b|\bendfor\b|@\{[-_\w\d]+?\}/g;
-	const forDeclaration = /\bfor\s+?([-_\w\d]+?)\s+?in\b/;
-	const variablePattern = /@\{([-_\w\d]+?)\}/;
+	const forPattern = /\bfor\s+\w[\w\d]*\s+in\b|\bendfor\b|@{.*?\w[\w\d]*.*}/g;
+	const forDeclaration = /\bfor\s+(\w[\w\d]*)\s+in\b/;
+	const variablePattern = /(\w[\w\d]+)/g;
 	const endForRegex = /\bendfor\b/;
 
-	let matching: RegExpExecArray;
+	let matching, match: RegExpExecArray;
 	let possibleVariables: string[] = [];
 	while (matching = forPattern.exec(text)) {
 		if (endForRegex.test(matching[0])) {
 			if (possibleVariables.length != 0) possibleVariables.pop();
-		} else if (variablePattern.test(matching[0])) {
-			const foundVariable: string = variablePattern.exec(matching[0])[1];
-			if (possibleVariables.find((value: string): boolean => {
-				return (value === undefined) ? false : foundVariable === value;
-			}) === undefined) {
-				const location: Location = {
-					uri: textDocument.uri,
-					range: {
-						start: textDocument.positionAt(matching.index + 2),
-						end: textDocument.positionAt(matching.index + 2 + foundVariable.length)
-					}
-				};
-				const diagnostic: Diagnostic = Shared.createDiagnostic(
-					location, DiagnosticSeverity.Error,
-					`${foundVariable} is used in loop, but wasn't declared`
-				);
-				result.push(diagnostic);
-			}
 		} else if (forDeclaration.test(matching[0])) {
 			const newVar = forDeclaration.exec(matching[0])[1];
 			possibleVariables.push(newVar);
+		} else {
+			while (match = variablePattern.exec(matching[0])) {
+				const foundVariable: string = match[1];
+				const index = possibleVariables.findIndex((value: string): boolean => {
+					return (value === undefined) ? false : foundVariable === value;
+				});
+				if (index === -1) {
+					const location: Location = {
+						uri: textDocument.uri,
+						range: {
+							start: textDocument.positionAt(matching.index + match.index),
+							end: textDocument.positionAt(matching.index + match.index + foundVariable.length)
+						}
+					};
+					const diagnostic: Diagnostic = Shared.createDiagnostic(
+						location, DiagnosticSeverity.Error,
+						`${foundVariable} is used in loop, but wasn't declared`
+					);
+					result.push(diagnostic);
+				}
+			}
 		}
 	}
 
@@ -152,20 +155,20 @@ function spellingCheck(line: string, uri: string, i: number): Diagnostic[] {
 		}
 	}
 
-	return result;
-}
+		return result;
+	}
 
 enum ControlSequence {
 	For = "for",
-	EndFor = "endfor",
-	If = "if",
-	ElseIf = "elseif",
-	Else = "else",
-	EndIf = "endif",
-	Script = "script",
-	EndScript = "endscript",
-	List = "list",
-	EndList = "endlist"
+		EndFor = "endfor",
+		If = "if",
+		ElseIf = "elseif",
+		Else = "else",
+		EndIf = "endif",
+		Script = "script",
+		EndScript = "endscript",
+		List = "list",
+		EndList = "endlist"
 }
 
 class FoundKeyword {
