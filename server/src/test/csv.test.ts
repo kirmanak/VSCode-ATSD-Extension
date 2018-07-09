@@ -49,4 +49,19 @@ suite("CSV tests", () => {
         assert.deepEqual(result, expected);
     });
 
+    test("Incorrect csv", () => {
+        const text =
+            "csv countries = name, value1, value2\n" +
+            "   Russia, 65, 63\n" +
+            "   USA, 63, 63, 63\n" +
+            "endcsv";
+        const document = createDoc(text);
+        const expected: Diagnostic[] = [Shared.createDiagnostic(
+            { uri: document.uri, range: { start: { line: 2, character: 0 }, end: { line: 2, character: 18 } } },
+            DiagnosticSeverity.Error, "csv has no matching endcsv"
+        )];
+        const result = Functions.nonExistentAliases(document);
+        assert.deepEqual(result, expected);
+    });
+
 });

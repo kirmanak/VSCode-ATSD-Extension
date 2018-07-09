@@ -242,6 +242,16 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 			result.push(diagnostic);
 		});
 
+		if (isCsv && foundKeyword.keyword !== ControlSequence.EndCsv) {
+			let columns = countCsvColumns(line);
+			if (columns != csvColumns) {
+				result.push(Shared.createDiagnostic(
+					{ uri: textDocument.uri, range: { start: { line: i, character: 0 }, end: { line: i, character: line.length } } },
+					DiagnosticSeverity.Error, `Expected ${csvColumns}, but found ${columns}`
+				));
+			}
+		}
+
 		while (foundKeyword !== null) {
 			// handle scripts
 			if (foundKeyword.keyword === ControlSequence.EndScript) {
@@ -259,16 +269,6 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 				if (foundKeyword === null) break;
 				else continue;
 			} else if (isScript) break;
-
-			if (isCsv && foundKeyword.keyword !== ControlSequence.EndCsv) {
-				let columns = countCsvColumns(line);
-				if (columns != csvColumns) {
-					result.push(Shared.createDiagnostic(
-						{ uri: textDocument.uri, range: { start: { line: i, character: 0 }, end: { line: i, character: line.length } } },
-						DiagnosticSeverity.Error, `Expected ${csvColumns}, but found ${columns}`
-					));
-				}
-			}
 
 			switch (foundKeyword.keyword) {
 				case ControlSequence.EndCsv: {
@@ -373,7 +373,7 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 				case ControlSequence.For:
 				case ControlSequence.List: if (!/,[ \t]*$/m.test(line)) break;
 				case ControlSequence.If: {
-					if (isScript) break;
+					if (isScript) continue;
 					nestedStack.push(foundKeyword);
 					break;
 				}
