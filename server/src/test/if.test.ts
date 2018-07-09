@@ -101,7 +101,7 @@ suite("If elseif else endif validation tests", () => {
 			"endfor\n";
 		const document: TextDocument = createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
-			{ uri: document.uri, range: { start: { line: 3, character: 29 }, end: { line: 3, character: 33 } } },
+			{ uri: document.uri, range: { start: { line: 3, character: 28 }, end: { line: 3, character: 32 } } },
 			DiagnosticSeverity.Error, elseError
 		), Shared.createDiagnostic(
 			{ uri: document.uri, range: { start: { line: 5, character: 4 }, end: { line: 5, character: 9 } } },
