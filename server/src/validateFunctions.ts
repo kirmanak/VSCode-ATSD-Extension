@@ -210,44 +210,15 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 	const lines: string[] = Shared.deleteComments(textDocument.getText()).split('\n');
 	const nestedStack: FoundKeyword[] = [];
 	let isTags = false; // to disable spelling check
-	let isComment = false, isScript = false; // to disable everything
-	let match, matchSecond: RegExpExecArray;
-	let comments: Range[] = [];
+	let isScript = false; // to disable everything
+	let match: RegExpExecArray;
 
 	for (let i = 0; i < lines.length; i++) {
 		let line = lines[i];
 
-		// handle one line comment
-		if (match = /#/.exec(line)) line = line.substring(0, match.index);
-
 		// handle tags
 		if (match = /\[tags\]/.exec(line)) isTags = true;
 		else if (match = /\[\w+\]/.exec(line)) isTags = false;
-
-		// handle multi line comments
-		if (match = /\/\*/.exec(line)) {
-			if (matchSecond = /\*\//.exec(line)) {
-				line = line.substring(0, match.index) + " " + line.substring(matchSecond.index + 2);
-				comments.push({ start: { line: i, character: match.index }, 
-					end: { line: i, character: matchSecond.index + 2 } });
-			} else {
-				line = line.substring(0, match.index);
-				comments.push({ start: { line: i, character: match.index }, end: undefined });
-				isComment = true;
-			}
-		} else if (match = /\*\//.exec(line)) {
-			if (!isComment) {
-				result.push(Shared.createDiagnostic(
-					{ uri: textDocument.uri, range: { start: { line: i, character: 0 },
-						end: { line: i, character: line.length } } },
-					DiagnosticSeverity.Error, "A multiline comment is closed, but wasn't opened"
-				));
-			}
-			line = line.substring(match.index + 2);
-			const comment = comments.pop();
-			comment.end = { line: i, character: match.index + 2 };
-			isComment = false;
-		} else if (isComment) continue;
 
 		// prepare regex to let 'g' key do its work
 		const regex = ControlSequenceUtil.createRegex();
