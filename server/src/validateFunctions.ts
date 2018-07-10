@@ -224,7 +224,7 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 	const nestedStack: FoundKeyword[] = [];
 	let isTags = false; // to disable spelling check
 	let isScript = false; // to disable everything
-	let isCsv = false; // to disable everything
+	let isCsv = false; // to perform format check
 	let csvColumns = 0;
 	let match: RegExpExecArray;
 
@@ -242,7 +242,7 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 			result.push(diagnostic);
 		});
 
-		if (isCsv && foundKeyword.keyword !== ControlSequence.EndCsv) {
+		if (isCsv && (foundKeyword === null || foundKeyword.keyword !== ControlSequence.EndCsv)) {
 			let columns = countCsvColumns(line);
 			if (columns != csvColumns) {
 				result.push(Shared.createDiagnostic(
@@ -250,6 +250,7 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 					DiagnosticSeverity.Error, `Expected ${csvColumns}, but found ${columns}`
 				));
 			}
+			continue;
 		}
 
 		while (foundKeyword !== null) {
@@ -274,7 +275,7 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 				case ControlSequence.EndCsv: {
 					isCsv = false;
 					const stackHead = nestedStack.pop();
-					if (stackHead === undefined || stackHead.keyword != ControlSequence.Csv) {
+					if (stackHead === undefined || stackHead.keyword !== ControlSequence.Csv) {
 						if (stackHead !== undefined) nestedStack.push(stackHead);
 						result.push(Shared.createDiagnostic(
 							{ uri: textDocument.uri, range: foundKeyword.range }, DiagnosticSeverity.Error,
@@ -361,6 +362,7 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 					break;
 				}
 				case ControlSequence.Csv: {
+					if (isScript) continue;
 					isCsv = true;
 					let header: string;
 					if (/=\s*$/m.test(line)) {
@@ -368,10 +370,13 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 					} else {
 						header = line.substring(/=/.exec(line).index + 1);
 					}
+					console.log(header);
 					csvColumns = countCsvColumns(header);
+					nestedStack.push(foundKeyword);
+					break;
 				}
-				case ControlSequence.For:
 				case ControlSequence.List: if (!/,[ \t]*$/m.test(line)) break;
+				case ControlSequence.For:
 				case ControlSequence.If: {
 					if (isScript) continue;
 					nestedStack.push(foundKeyword);
