@@ -223,6 +223,7 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 
 	for (let i = 0; i < lines.length; i++) {
 		let line = lines[i];
+
 		// handle tags
 		if (match = /\[tags\]/.exec(line)) isTags = true;
 		else if (match = /\[\w+\]/.exec(line)) isTags = false;
@@ -234,6 +235,7 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 			result.push(diagnostic);
 		});
 
+		// validate CSV
 		if (isCsv && (foundKeyword === null || foundKeyword.keyword !== ControlSequence.EndCsv)) {
 			const columns = countCsvColumns(line);
 			if (columns != csvColumns) {
@@ -245,8 +247,8 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 			continue;
 		}
 
+		// validate for variables
 		if (isFor) {
-			
 			match = /@{.*}/.exec(line);
 			if (match !== null) {
 				const substr = match[0];
@@ -274,7 +276,7 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 			}
 		}
 
-		while (foundKeyword !== null) {
+		while (foundKeyword !== null) { // `while` can handle several keywords per line
 
 			// handle scripts
 			if (foundKeyword.keyword === ControlSequence.EndScript) {
@@ -366,7 +368,6 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 					break;
 				}
 				case ControlSequence.For: {
-					
 					nestedStack.push(foundKeyword);
 					const match = /^\s*for\s+(\w+)\s+in/.exec(line);
 					if (match !== null) {
