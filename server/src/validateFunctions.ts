@@ -86,26 +86,26 @@ export function undefinedForVariables(textDocument: TextDocument): Diagnostic[] 
 }
 
 const dictionary: string[] = [
-	"ahead-time-span", "alert-expression", "alert-style", "alias", "align", "attribute",
-	"audio-alert", "audio-onload", "axis", "axis-title", "axis-title-right", "batch-size",
-	"batch-update", "bundle", "buttons", "cache", "centralize-columns", "centralize-ticks",
-	"change-field", "class", "color", "color-range", "colors", "configuration", "context-path",
-	"data-type", "day-format", "dialog-maximize", "disconnect-count", "disconnect-interval",
-	"display", "display-panels", "dropdown", "enabled", "endtime", "end-time", "entities",
-	"entity", "entity-expression", "entity-group", "error-refresh-interval", "exact-match",
-	"expand-panels", "forecast-name", "format", "group", "group-first", "group-interpolate",
-	"group-interpolate-extend", "group-keys", "group-period", "group-statistic", "header-style",
-	"height-units", "id", "interpolate", "interpolate-extend", "label", "label-format", "last-marker",
-	"left-units", "legend-position", "legend-value", "limit", "link", "link-animate", "link-colors",
-	"links", "link-thresholds", "link-widths", "markers", "max-range", "max-range-force", "max-range-right",
-	"max-range-right-force", "merge-fields", "method-path", "metric", "min-range", "min-range-force",
-	"min-range-right", "min-range-right-force", "mode", "node", "nodes", "offset-bottom", "offset-left",
-	"offset-right", "offset-top", "onchange", "options", "parent", "period", "periods", "pointer-position",
-	"rate", "rate-counter", "refresh-interval", "replace-value", "retry-refresh-interval", "rotate-ticks",
-	"scale", "scale-x", "scale-y", "series", "series-limit", "server-aggregate", "starttime", "start-time",
-	"statistic", "step-line", "style", "summarize-period", "table", "tag-expression", "tags", "threshold",
-	"time-offset", "timespan", "time-span", "timezone", "title", "tooltip", "top-units", "type",
-	"update-interval", "url", "url-parameters", "value", "widget", "widgets-per-row", "width-units"
+	"aheadtimespan","alertexpression","alertstyle","alias","align","attribute",
+	"audioalert","audioonload","axis","axistitle","axistitleright","batchsize",
+	"batchupdate","bundle","buttons","cache","centralizecolumns","centralizeticks",
+	"changefield","class","color","colorrange","colors","configuration","contextpath",
+	"datatype","dayformat","dialogmaximize","disconnectcount","disconnectinterval",
+	"display","displaypanels","dropdown","enabled","endtime","entities","entity",
+	"entityexpression","entitygroup","errorrefreshinterval","exactmatch","expandpanels",
+	"forecastname","format","group","groupfirst","groupinterpolate","groupinterpolateextend",
+	"groupkeys","groupperiod","groupstatistic","headerstyle","heightunits","id",
+	"interpolate","interpolateextend","label","labelformat","lastmarker","leftunits",
+	"legendposition","legendvalue","limit","link","linkanimate","linkcolors","links",
+	"linkthresholds","linkwidths","markers","maxrange","maxrangeforce","maxrangeright",
+	"maxrangerightforce","mergefields","methodpath","metric","minrange","minrangeforce",
+	"minrangeright","minrangerightforce","mode","node","nodes","offsetbottom","offsetleft",
+	"offsetright","offsettop","onchange","options","parent","period","periods","pointerposition",
+	"rate","ratecounter","refreshinterval","replacevalue","retryrefreshinterval","rotateticks",
+	"scale","scalex","scaley","series","serieslimit","serveraggregate","starttime","statistic",
+	"stepline","style","summarizeperiod","table","tagexpression","tags","threshold","timeoffset",
+	"timespan","timezone","title","tooltip","topunits","type","updateinterval","url","urlparameters",
+	"value","widget","widgetsperrow","widthunits"
 ];
 
 function isAbsent(word: string): boolean {
@@ -135,7 +135,7 @@ function spellingCheck(line: string, uri: string, i: number): Diagnostic[] {
 	let match: RegExpExecArray;
 
 	while (match = bothRegex.exec(line)) {
-		const word = (match[2]) ? match[2] : match[4];
+		const word = ((match[2]) ? match[2] : match[4]).replace(/-/g,'');
 		const indent = (match[1]) ? match[1] : match[3];
 		const wordStart = (indent) ? match.index + indent.length : match.index;
 		if (isAbsent(word)) {
