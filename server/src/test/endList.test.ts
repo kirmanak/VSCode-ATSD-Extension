@@ -45,6 +45,56 @@ suite("Unfinished list", () => {
 		assert.deepEqual(result, expected);
 	});
 
+	test("One incorrect multiline list with comment before", () => {
+		const text =
+			'/* this is\n' +
+			'a comment\n' +
+			'to check correct range */\n' +
+			'\n' +
+			'list servers = vps, \n' +
+			'	vds\n' +
+			'edlist';
+		const document: TextDocument = createDoc(text);
+		const expected: Diagnostic[] = [Shared.createDiagnostic(
+			{ uri: document.uri, range: { start: { line: 4, character: 0 }, end: {line: 4, character: 4 } } },
+			DiagnosticSeverity.Error, errorMessage
+		)];
+		const result = Functions.lineByLine(document);
+		assert.deepEqual(result, expected);
+	});
+
+	test("One incorrect multiline list with comment on the line", () => {
+		const text =
+			'/* test */ list servers = vps, \n' +
+			'	vds\n' +
+			'edlist';
+		const document: TextDocument = createDoc(text);
+		const expected: Diagnostic[] = [Shared.createDiagnostic(
+			{ uri: document.uri, range: { start: { line: 0, character: 11 }, end: {line: 0, character: 15 } } },
+			DiagnosticSeverity.Error, errorMessage
+		)];
+		const result = Functions.lineByLine(document);
+		assert.deepEqual(result, expected);
+	});
+
+	test("One incorrect multiline list with comments", () => {
+		const text =
+			'/* this is\n' +
+			'a comment\n' +
+			'to check correct range */\n' +
+			'\n' +
+			'/* test */ list servers = vps, \n' +
+			'	vds\n' +
+			'edlist';
+		const document: TextDocument = createDoc(text);
+		const expected: Diagnostic[] = [Shared.createDiagnostic(
+			{ uri: document.uri, range: { start: { line: 4, character: 11 }, end: {line: 4, character: 15 } } },
+			DiagnosticSeverity.Error, errorMessage
+		)];
+		const result = Functions.lineByLine(document);
+		assert.deepEqual(result, expected);
+	});
+
 	test("Three lists, one incorrect", () => {
 		const text =
 			'list servers = vps, \n' +
