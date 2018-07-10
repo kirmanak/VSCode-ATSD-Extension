@@ -99,4 +99,13 @@ suite("Var endvar tests", () => {
         assert.deepEqual(result, expected);
     });
 
+    test("Correct var function call", () => {
+        const text =
+            `var v = getEntities('hello')`;
+        const document = createDoc(text);
+        const expected: Diagnostic[] = [];
+        const result = Functions.lineByLine(document);
+        assert.deepEqual(result, expected);
+    });
+
 });
