@@ -246,27 +246,29 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 		}
 
 		if (isFor) {
+			
 			match = /@{.*}/.exec(line);
-			if (match === null) continue;
-			const substr = match[0];
-			let startPosition = match.index;
-			const regexp = /[a-zA-Z_]\w*/g;
-			while (match = regexp.exec(substr)) {
-				const variable = match[0];
-				const forIndex = forVariables.findIndex((name) => {
-					return (name === undefined) ? false : name === variable;
-				});
-				if (forIndex === -1) {
-					const listIndex = listNames.findIndex((name) => {
+			if (match !== null) {
+				const substr = match[0];
+				let startPosition = match.index;
+				const regexp = /[a-zA-Z_]\w*/g;
+				while (match = regexp.exec(substr)) {
+					const variable = match[0];
+					const forIndex = forVariables.findIndex((name) => {
 						return (name === undefined) ? false : name === variable;
 					});
-					if (listIndex === -1) {
-						startPosition += match.index;
-						const endPosition = startPosition + variable.length;
-						result.push(Shared.createDiagnostic(
-							{ uri: textDocument.uri, range: { start: { line: i, character: startPosition }, end: { line: i, character: endPosition } } },
-							DiagnosticSeverity.Error, `${variable} is used in loop, but wasn't declared`
-						));
+					if (forIndex === -1) {
+						const listIndex = listNames.findIndex((name) => {
+							return (name === undefined) ? false : name === variable;
+						});
+						if (listIndex === -1) {
+							startPosition += match.index;
+							const endPosition = startPosition + variable.length;
+							result.push(Shared.createDiagnostic(
+								{ uri: textDocument.uri, range: { start: { line: i, character: startPosition }, end: { line: i, character: endPosition } } },
+								DiagnosticSeverity.Error, `${variable} is used in loop, but wasn't declared`
+							));
+						}
 					}
 				}
 			}
@@ -303,6 +305,7 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 					break;
 				}
 				case ControlSequence.EndFor: {
+					
 					isFor = false;
 					forVariables.pop();
 					const diagnostic = checkEnd(ControlSequence.For, nestedStack, foundKeyword, textDocument.uri);
@@ -363,6 +366,7 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 					break;
 				}
 				case ControlSequence.For: {
+					
 					nestedStack.push(foundKeyword);
 					const match = /^\s*for\s+(\w+)\s+in/.exec(line);
 					if (match !== null) {
