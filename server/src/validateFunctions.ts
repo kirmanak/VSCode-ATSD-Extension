@@ -181,6 +181,8 @@ enum ControlSequence {
 	Script = "script",
 	EndScript = "endscript",
 	List = "list",
+	Var = "var",
+	EndVar = "endvar",
 	EndList = "endlist"
 }
 
@@ -191,7 +193,7 @@ class FoundKeyword {
 
 class ControlSequenceUtil {
 	public static createRegex(): RegExp {
-		return /\b(endcsv|endfor|elseif|endif|endscript|endlist|script|else|if|list|for|csv)\b/g;
+		return /\b(endvar|endcsv|endfor|elseif|endif|endscript|endlist|script|else|if|list|for|csv|var)\b/g;
 	}
 
 	public static parseControlSequence(regex: RegExp, line: string, i: number): FoundKeyword | null {
@@ -217,6 +219,8 @@ class ControlSequenceUtil {
 			case "endscript": return ControlSequence.EndScript;
 			case "list": return ControlSequence.List;
 			case "endlist": return ControlSequence.EndList;
+			case "var": return ControlSequence.Var;
+			case "endvar": return ControlSequence.EndVar;
 			default: throw "Update control stackHead switch-case!";
 		}
 	}
@@ -324,6 +328,11 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 					if (diagnostic !== null) result.push(diagnostic);
 					break;
 				}
+				case ControlSequence.EndVar: {
+					const diagnostic = checkEnd(ControlSequence.Var, nestedStack, foundKeyword, textDocument.uri);
+					if (diagnostic !== null) result.push(diagnostic);
+					break;
+				}
 				case ControlSequence.Else:
 				case ControlSequence.ElseIf: {
 					const stackHead = nestedStack.pop();
@@ -356,6 +365,11 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 					}
 					csvColumns = countCsvColumns(header);
 					nestedStack.push(foundKeyword);
+					break;
+				}
+				case ControlSequence.Var: {
+					if (isScript) continue;
+					if (/=\s*(\[|\{)(|.*,)\s*$/m.test(line)) nestedStack.push(foundKeyword);
 					break;
 				}
 				case ControlSequence.List: if (!/,[ \t]*$/m.test(line)) break;
@@ -424,6 +438,13 @@ function diagnosticForLeftKeywords(nestedStack: FoundKeyword[], uri: string): Di
 				result.push(Shared.createDiagnostic(
 					{ uri: uri, range: nestedConstruction.range }, DiagnosticSeverity.Error,
 					`${nestedConstruction.keyword} has no matching ${ControlSequence.EndCsv}`
+				));
+				break;
+			}
+			case ControlSequence.Var: {
+				result.push(Shared.createDiagnostic(
+					{ uri: uri, range: nestedConstruction.range }, DiagnosticSeverity.Error,
+					`${nestedConstruction.keyword} has no matching ${ControlSequence.EndVar}`
 				));
 				break;
 			}
