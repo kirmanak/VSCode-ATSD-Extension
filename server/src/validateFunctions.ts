@@ -86,26 +86,26 @@ export function undefinedForVariables(textDocument: TextDocument): Diagnostic[] 
 }
 
 const dictionary: string[] = [
-	"aheadtimespan","alertexpression","alertstyle","alias","align","attribute",
-	"audioalert","audioonload","axis","axistitle","axistitleright","batchsize",
-	"batchupdate","bundle","buttons","cache","centralizecolumns","centralizeticks",
-	"changefield","class","color","colorrange","colors","configuration","contextpath",
-	"datatype","dayformat","dialogmaximize","disconnectcount","disconnectinterval",
-	"display","displaypanels","dropdown","enabled","endtime","entities","entity",
-	"entityexpression","entitygroup","errorrefreshinterval","exactmatch","expandpanels",
-	"forecastname","format","group","groupfirst","groupinterpolate","groupinterpolateextend",
-	"groupkeys","groupperiod","groupstatistic","headerstyle","heightunits","id",
-	"interpolate","interpolateextend","label","labelformat","lastmarker","leftunits",
-	"legendposition","legendvalue","limit","link","linkanimate","linkcolors","links",
-	"linkthresholds","linkwidths","markers","maxrange","maxrangeforce","maxrangeright",
-	"maxrangerightforce","mergefields","methodpath","metric","minrange","minrangeforce",
-	"minrangeright","minrangerightforce","mode","node","nodes","offsetbottom","offsetleft",
-	"offsetright","offsettop","onchange","options","parent","period","periods","pointerposition",
-	"rate","ratecounter","refreshinterval","replacevalue","retryrefreshinterval","rotateticks",
-	"scale","scalex","scaley","series","serieslimit","serveraggregate","starttime","statistic",
-	"stepline","style","summarizeperiod","table","tagexpression","tags","threshold","timeoffset",
-	"timespan","timezone","title","tooltip","topunits","type","updateinterval","url","urlparameters",
-	"value","widget","widgetsperrow","widthunits"
+	"aheadtimespan", "alertexpression", "alertstyle", "alias", "align", "attribute",
+	"audioalert", "audioonload", "axis", "axistitle", "axistitleright", "batchsize",
+	"batchupdate", "bundle", "buttons", "cache", "centralizecolumns", "centralizeticks",
+	"changefield", "class", "color", "colorrange", "colors", "configuration", "contextpath",
+	"datatype", "dayformat", "dialogmaximize", "disconnectcount", "disconnectinterval",
+	"display", "displaypanels", "dropdown", "enabled", "endtime", "entities", "entity",
+	"entityexpression", "entitygroup", "errorrefreshinterval", "exactmatch", "expandpanels",
+	"forecastname", "format", "group", "groupfirst", "groupinterpolate", "groupinterpolateextend",
+	"groupkeys", "groupperiod", "groupstatistic", "headerstyle", "heightunits", "id",
+	"interpolate", "interpolateextend", "label", "labelformat", "lastmarker", "leftunits",
+	"legendposition", "legendvalue", "limit", "link", "linkanimate", "linkcolors", "links",
+	"linkthresholds", "linkwidths", "markers", "maxrange", "maxrangeforce", "maxrangeright",
+	"maxrangerightforce", "mergefields", "methodpath", "metric", "minrange", "minrangeforce",
+	"minrangeright", "minrangerightforce", "mode", "node", "nodes", "offsetbottom", "offsetleft",
+	"offsetright", "offsettop", "onchange", "options", "parent", "period", "periods", "pointerposition",
+	"rate", "ratecounter", "refreshinterval", "replacevalue", "retryrefreshinterval", "rotateticks",
+	"scale", "scalex", "scaley", "series", "serieslimit", "serveraggregate", "starttime", "statistic",
+	"stepline", "style", "summarizeperiod", "table", "tagexpression", "tags", "threshold", "timeoffset",
+	"timespan", "timezone", "title", "tooltip", "topunits", "type", "updateinterval", "url", "urlparameters",
+	"value", "widget", "widgetsperrow", "widthunits"
 ];
 
 function isAbsent(word: string): boolean {
@@ -135,7 +135,7 @@ function spellingCheck(line: string, uri: string, i: number): Diagnostic[] {
 	let match: RegExpExecArray;
 
 	while (match = bothRegex.exec(line)) {
-		const word = ((match[2]) ? match[2] : match[4]).replace(/-/g,'');
+		const word = ((match[2]) ? match[2] : match[4]).replace(/-/g, '');
 		const indent = (match[1]) ? match[1] : match[3];
 		const wordStart = (indent) ? match.index + indent.length : match.index;
 		if (isAbsent(word)) {
@@ -218,6 +218,27 @@ function countCsvColumns(line: string): number {
 	return counter;
 }
 
+function checkEnd(expectedEnd: ControlSequence, nestedStack: FoundKeyword[], foundKeyword: FoundKeyword, uri: string): Diagnostic | null {
+	const stackHead = nestedStack.pop();
+	if (stackHead !== undefined && stackHead.keyword === expectedEnd) return null;
+	if (stackHead !== undefined) nestedStack.push(stackHead); // push found keyword back
+	const unfinishedIndex = nestedStack.findIndex((value) => {
+		return (value === undefined) ? false : value.keyword === expectedEnd;
+	});
+	if (stackHead === undefined || unfinishedIndex === -1) {
+		return Shared.createDiagnostic(
+			{ uri: uri, range: foundKeyword.range }, DiagnosticSeverity.Error,
+			`${foundKeyword.keyword} has no matching ${expectedEnd}`
+		);
+	} else {
+		delete nestedStack[unfinishedIndex];
+		return Shared.createDiagnostic(
+			{ uri: uri, range: foundKeyword.range }, DiagnosticSeverity.Error,
+			`${expectedEnd} has finished before ${stackHead.keyword}`
+		);
+	}
+}
+
 export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 	const result: Diagnostic[] = [];
 	const lines: string[] = Shared.deleteComments(textDocument.getText()).split('\n');
@@ -230,7 +251,6 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 
 	for (let i = 0; i < lines.length; i++) {
 		let line = lines[i];
-
 		// handle tags
 		if (match = /\[tags\]/.exec(line)) isTags = true;
 		else if (match = /\[\w+\]/.exec(line)) isTags = false;
@@ -274,70 +294,23 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 			switch (foundKeyword.keyword) {
 				case ControlSequence.EndCsv: {
 					isCsv = false;
-					const stackHead = nestedStack.pop();
-					if (stackHead === undefined || stackHead.keyword !== ControlSequence.Csv) {
-						if (stackHead !== undefined) nestedStack.push(stackHead);
-						result.push(Shared.createDiagnostic(
-							{ uri: textDocument.uri, range: foundKeyword.range }, DiagnosticSeverity.Error,
-							`${foundKeyword.keyword} has no matching ${ControlSequence.Csv}`
-						));
-					}
+					const diagnostic = checkEnd(ControlSequence.Csv, nestedStack, foundKeyword, textDocument.uri);
+					if (diagnostic !== null) result.push(diagnostic);
 					break;
 				}
 				case ControlSequence.EndIf: {
-					const stackHead = nestedStack.pop();
-					const ifIndex = nestedStack.findIndex((value) => {
-						return (value === undefined) ? false : value.keyword === ControlSequence.If;
-					});
-					if (stackHead === undefined ||
-						(stackHead.keyword !== ControlSequence.If && ifIndex === -1)) {
-						if (stackHead !== undefined && stackHead.keyword !== ControlSequence.If)
-							nestedStack.push(stackHead);
-						result.push(Shared.createDiagnostic(
-							{ uri: textDocument.uri, range: foundKeyword.range }, DiagnosticSeverity.Error,
-							`${foundKeyword.keyword} has no matching ${ControlSequence.If}`
-						));
-					} else if (stackHead.keyword !== ControlSequence.If) {
-						nestedStack.push(stackHead);
-						delete nestedStack[ifIndex];
-						result.push(Shared.createDiagnostic(
-							{ uri: textDocument.uri, range: foundKeyword.range }, DiagnosticSeverity.Error,
-							`${ControlSequence.If} has finished before ${stackHead.keyword}`
-						));
-					}
+					const diagnostic = checkEnd(ControlSequence.If, nestedStack, foundKeyword, textDocument.uri);
+					if (diagnostic !== null) result.push(diagnostic);
 					break;
 				}
 				case ControlSequence.EndFor: {
-					const stackHead = nestedStack.pop();
-					const forIndex = nestedStack.findIndex((value) => {
-						return (value === undefined) ? false : value.keyword === ControlSequence.For;
-					});
-					if (stackHead === undefined ||
-						(stackHead.keyword !== ControlSequence.For && forIndex === -1)) {
-						if (stackHead !== undefined) nestedStack.push(stackHead);
-						result.push(Shared.createDiagnostic(
-							{ uri: textDocument.uri, range: foundKeyword.range }, DiagnosticSeverity.Error,
-							`${foundKeyword.keyword} has no matching ${ControlSequence.For}`
-						));
-					} else if (stackHead.keyword !== ControlSequence.For) {
-						nestedStack.push(stackHead);
-						delete nestedStack[forIndex];
-						result.push(Shared.createDiagnostic(
-							{ uri: textDocument.uri, range: foundKeyword.range }, DiagnosticSeverity.Error,
-							`${ControlSequence.For} has finished before ${stackHead.keyword}`
-						));
-					}
+					const diagnostic = checkEnd(ControlSequence.For, nestedStack, foundKeyword, textDocument.uri);
+					if (diagnostic !== null) result.push(diagnostic);
 					break;
 				}
 				case ControlSequence.EndList: {
-					const stackHead = nestedStack.pop();
-					if (stackHead === undefined || stackHead.keyword !== ControlSequence.List) {
-						if (stackHead !== undefined) nestedStack.push(stackHead);
-						result.push(Shared.createDiagnostic(
-							{ uri: textDocument.uri, range: foundKeyword.range }, DiagnosticSeverity.Error,
-							`${foundKeyword.keyword} has no matching ${ControlSequence.List}`
-						));
-					}
+					const diagnostic = checkEnd(ControlSequence.List, nestedStack, foundKeyword, textDocument.uri);
+					if (diagnostic !== null) result.push(diagnostic);
 					break;
 				}
 				case ControlSequence.Else:
