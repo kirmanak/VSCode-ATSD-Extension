@@ -56,9 +56,6 @@ function validateTextDocument(textDocument: TextDocument) {
 	validateFunctions.lineByLine(textDocument).forEach(element => {
 		diagnostics.push(element);
 	});
-	validateFunctions.undefinedForVariables(textDocument).forEach(element => {
-		diagnostics.push(element);
-	});
 	validateFunctions.nonExistentAliases(textDocument).forEach(element => {
 		diagnostics.push(element);
 	});

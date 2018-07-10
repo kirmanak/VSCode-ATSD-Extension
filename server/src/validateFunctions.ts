@@ -41,50 +41,6 @@ export function nonExistentAliases(textDocument: TextDocument): Diagnostic[] {
 	return result;
 }
 
-export function undefinedForVariables(textDocument: TextDocument): Diagnostic[] {
-	const result: Diagnostic[] = [];
-
-	const text = Shared.deleteComments(textDocument.getText());
-	const forPattern = /\bfor\s+[a-zA-Z_]\w*\s+in\b|\bendfor\b|@{.*?[a-zA-Z_]\w*.*}/g;
-	const forDeclaration = /\bfor\s+([a-zA-Z_]\w*)\s+in\b/;
-	const variablePattern = /\b([a-zA-Z_]\w*)\b/g;
-	const endForRegex = /\bendfor\b/;
-
-	let matching, match: RegExpExecArray;
-	let possibleVariables: string[] = [];
-	while (matching = forPattern.exec(text)) {
-		if (endForRegex.test(matching[0])) {
-			if (possibleVariables.length != 0) possibleVariables.pop();
-		} else if (forDeclaration.test(matching[0])) {
-			const newVar = forDeclaration.exec(matching[0])[1];
-			possibleVariables.push(newVar);
-		} else {
-			while (match = variablePattern.exec(matching[0])) {
-				const foundVariable: string = match[1];
-				const index = possibleVariables.findIndex((value: string): boolean => {
-					return (value === undefined) ? false : foundVariable === value;
-				});
-				if (index === -1) {
-					const location: Location = {
-						uri: textDocument.uri,
-						range: {
-							start: textDocument.positionAt(matching.index + match.index),
-							end: textDocument.positionAt(matching.index + match.index + foundVariable.length)
-						}
-					};
-					const diagnostic: Diagnostic = Shared.createDiagnostic(
-						location, DiagnosticSeverity.Error,
-						`${foundVariable} is used in loop, but wasn't declared`
-					);
-					result.push(diagnostic);
-				}
-			}
-		}
-	}
-
-	return result;
-}
-
 const possibleOptions: string[] = [
 	"addmeta", "aheadtimespan", "alertexpression", "alertstyle", "alias", "align", "attribute", "audioalert", "audioonload", "autoeperiod", "autoperiod",
 	"autoscale", "axis", "axistitle", "axistitleright", "barcount", "batchsize", "batchupdate", "borderwidth", "bundle", "buttons", "cache", "caption",
@@ -221,7 +177,7 @@ class ControlSequenceUtil {
 			case "endlist": return ControlSequence.EndList;
 			case "var": return ControlSequence.Var;
 			case "endvar": return ControlSequence.EndVar;
-			default: throw "Update control stackHead switch-case!";
+			default: throw new Error("Update control stackHead switch-case!");
 		}
 	}
 }
@@ -260,8 +216,9 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 	const nestedStack: FoundKeyword[] = [];
 	let isTags = false; // to disable spelling check
 	let isScript = false; // to disable everything
-	let isCsv = false; // to perform format check
+	let isCsv = false, isFor = false; // to perform validation
 	let csvColumns = 0;
+	let listNames: string[] = [], forVariables: string[] = [];
 	let match: RegExpExecArray;
 
 	for (let i = 0; i < lines.length; i++) {
@@ -286,6 +243,33 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 				));
 			}
 			continue;
+		}
+
+		if (isFor) {
+			match = /@{.*}/.exec(line);
+			if (match === null) continue;
+			const substr = match[0];
+			let startPosition = match.index;
+			const regexp = /[a-zA-Z_]\w*/g;
+			while (match = regexp.exec(substr)) {
+				const variable = match[0];
+				const forIndex = forVariables.findIndex((name) => {
+					return (name === undefined) ? false : name === variable;
+				});
+				if (forIndex === -1) {
+					const listIndex = listNames.findIndex((name) => {
+						return (name === undefined) ? false : name === variable;
+					});
+					if (listIndex === -1) {
+						startPosition += match.index;
+						const endPosition = startPosition + variable.length;
+						result.push(Shared.createDiagnostic(
+							{ uri: textDocument.uri, range: { start: { line: i, character: startPosition }, end: { line: i, character: endPosition } } },
+							DiagnosticSeverity.Error, `${variable} is used in loop, but wasn't declared`
+						));
+					}
+				}
+			}
 		}
 
 		while (foundKeyword !== null) {
@@ -319,6 +303,8 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 					break;
 				}
 				case ControlSequence.EndFor: {
+					isFor = false;
+					forVariables.pop();
 					const diagnostic = checkEnd(ControlSequence.For, nestedStack, foundKeyword, textDocument.uri);
 					if (diagnostic !== null) result.push(diagnostic);
 					break;
@@ -370,8 +356,21 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 					if (/=\s*(\[|\{)(|.*,)\s*$/m.test(line)) nestedStack.push(foundKeyword);
 					break;
 				}
-				case ControlSequence.List: if (!/,[ \t]*$/m.test(line)) break;
-				case ControlSequence.For:
+				case ControlSequence.List: {
+					const match = /^\s*list\s+(\w+)\s+=/.exec(line);
+					if (match !== null) listNames.push(match[1]);
+					if (/,[ \t]*$/m.test(line)) nestedStack.push(foundKeyword);
+					break;
+				}
+				case ControlSequence.For: {
+					nestedStack.push(foundKeyword);
+					const match = /^\s*for\s+(\w+)\s+in/.exec(line);
+					if (match !== null) {
+						forVariables.push(match[1]);
+						isFor = true;
+					}
+					break;
+				}
 				case ControlSequence.If: {
 					nestedStack.push(foundKeyword);
 					break;
@@ -381,7 +380,7 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 					isScript = true;
 					break;
 				}
-				default: throw "Update switch-case statement!";
+				default: throw new Error("Update switch-case statement!");
 			}
 
 			foundKeyword = ControlSequenceUtil.parseControlSequence(regex, line, i);
