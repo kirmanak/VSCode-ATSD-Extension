@@ -15,7 +15,7 @@ suite("Script endscript tests", () => {
 			`endscript`;
 		const document: TextDocument = createDoc(text);
 		const expected: Diagnostic[] = [];
-		const result = Functions.undefinedForVariables(document);
+		const result = Functions.lineByLine(document);
 		assert.deepEqual(result, expected);
 	});
 
@@ -25,7 +25,7 @@ suite("Script endscript tests", () => {
 			`endscrpt`;
 		const document: TextDocument = createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
-			{ uri: document.uri, range: { start: { line: 0, character: 0 }, end: { line: 0, character: 6 } } }, 
+			{ uri: document.uri, range: { start: { line: 0, character: 0 }, end: { line: 0, character: 6 } } },
 			DiagnosticSeverity.Error, "script has no matching endscript"
 		)];
 		const result = Functions.lineByLine(document);
@@ -65,7 +65,7 @@ suite("Script endscript tests", () => {
 			`endscrpt`;
 		const document: TextDocument = createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
-			{ uri: document.uri, range: { start: { line: 0, character: 0 }, end: { line: 0, character: 6 } } }, 
+			{ uri: document.uri, range: { start: { line: 0, character: 0 }, end: { line: 0, character: 6 } } },
 			DiagnosticSeverity.Error, "script has no matching endscript"
 		)];
 		const result = Functions.lineByLine(document);

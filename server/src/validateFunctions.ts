@@ -86,27 +86,27 @@ export function undefinedForVariables(textDocument: TextDocument): Diagnostic[] 
 }
 
 const possibleOptions: string[] = [
-	"addmeta","aheadtimespan","alertexpression","alertstyle","alias","align","attribute","audioalert","audioonload","autoeperiod","autoperiod",
-	"autoscale","axis","axistitle","axistitleright","barcount","batchsize","batchupdate","borderwidth","bundle","buttons","cache","caption",
-	"captionstyle","centralizecolumns","centralizeticks","changefield","circle","class","color","colorrange","colors","column","columncategory",
-	"columndescription","columndisplaytype","columnentity","columnlabelformat","columnmessage","columnmetric","columnmoderationstatus","columnname",
-	"columnnewbackend","columnoid","columnpublicationappendenabled","columnpublicationdate","columnpublicationgroup","columnpublicationstage",
-	"columnrowsupdatedby","columnrule","columnseverity","columnsource","columntableid","columntags","columntime","columntype","columnvalue",
-	"columnviewtype","context","contextpath","counter","counterposition","datatype","dayformat","dialogmaximize","disconnectcount","disconnectinterval",
-	"disconnectvalue","display","displayinlegend","displaypanels","displayticks","displaytip","enabled","endtime","entities","entity","entityexpression",
-	"entitygroup","errorrefreshinterval","exactmatch","expandpanels","expandtags","fillvalue","forecastname","format","formataxis","formatcounter",
-	"formatnumbers","formattip","gradientcount","gradientintensity","groupfirst","groupinterpolate","groupinterpolateextend","groupkeys","groupperiod",
-	"groupstatistic","half","headerstyle","heightunits","hidecolumn","horizontal","horizontalgrid","id","interpolate","interpolateboundary","interpolateextend",
-	"interpolatefill","interpolatefunction","interpolateperiod","join","key","keys","label","labelformat","last","lastmarker","leftunits","legendposition",
-	"legendvalue","limit","linkanimate","linkcolorrange","linkcolors","linkdata","links","linkthresholds","linkwidths","margin","markers","maxrange","maxrangeforce",
-	"maxrangeright","maxrangerightforce","maxthreshold","maxvalue","mergecolumns","mergefields","methodpath","metric","metriclabel","minorticks","minrange","minrangeforce",
-	"minrangeright","minrangerightforce","minvalue","mode","movingaverage","multipleseries","name","nodecolors","nodeconnect","nodelabels","noderadius","nodes",
-	"nodethresholds","offsetbottom","offsetleft","offsetright","offsettop","onchange","onclick","onseriesclick","option","options","other","padding","parent","path",
-	"percentilemarkers","percentiles","period","periods","pointerposition","properties","property","rate","ratecounter","refreshinterval","reload","replacevalue","responsive",
-	"retryrefreshinterval","rightaxis","rotateticks","rowdisplay","rowstyle","scale","scalex","scaley","script","selectormode","serieslabels","serieslimit","seriestype",
-	"seriesvalue","serveraggregate","severitystyle","singleentity","size","sort","source","stack","starttime","statistic","statistics","stepline","style","summarizeperiod",
-	"table","tagexpression","tagsdropdowns","tagsdropdownsstyle","text","thresholds","ticks","ticksright","tickstime","timeoffset","timespan","timezone","title","tooltip",
-	"topaxis","topunits","totalvalue","transpose","type","updateinterval","url","urlparameters","value","verticalgrid","widgetsperrow","widthunits"
+	"addmeta", "aheadtimespan", "alertexpression", "alertstyle", "alias", "align", "attribute", "audioalert", "audioonload", "autoeperiod", "autoperiod",
+	"autoscale", "axis", "axistitle", "axistitleright", "barcount", "batchsize", "batchupdate", "borderwidth", "bundle", "buttons", "cache", "caption",
+	"captionstyle", "centralizecolumns", "centralizeticks", "changefield", "circle", "class", "color", "colorrange", "colors", "column", "columncategory",
+	"columndescription", "columndisplaytype", "columnentity", "columnlabelformat", "columnmessage", "columnmetric", "columnmoderationstatus", "columnname",
+	"columnnewbackend", "columnoid", "columnpublicationappendenabled", "columnpublicationdate", "columnpublicationgroup", "columnpublicationstage",
+	"columnrowsupdatedby", "columnrule", "columnseverity", "columnsource", "columntableid", "columntags", "columntime", "columntype", "columnvalue",
+	"columnviewtype", "context", "contextpath", "counter", "counterposition", "datatype", "dayformat", "dialogmaximize", "disconnectcount", "disconnectinterval",
+	"disconnectvalue", "display", "displayinlegend", "displaypanels", "displayticks", "displaytip", "enabled", "endtime", "entities", "entity", "entityexpression",
+	"entitygroup", "errorrefreshinterval", "exactmatch", "expandpanels", "expandtags", "fillvalue", "forecastname", "format", "formataxis", "formatcounter",
+	"formatnumbers", "formattip", "gradientcount", "gradientintensity", "groupfirst", "groupinterpolate", "groupinterpolateextend", "groupkeys", "groupperiod",
+	"groupstatistic", "half", "headerstyle", "heightunits", "hidecolumn", "horizontal", "horizontalgrid", "id", "interpolate", "interpolateboundary", "interpolateextend",
+	"interpolatefill", "interpolatefunction", "interpolateperiod", "join", "key", "keys", "label", "labelformat", "last", "lastmarker", "leftunits", "legendposition",
+	"legendvalue", "limit", "linkanimate", "linkcolorrange", "linkcolors", "linkdata", "links", "linkthresholds", "linkwidths", "margin", "markers", "maxrange", "maxrangeforce",
+	"maxrangeright", "maxrangerightforce", "maxthreshold", "maxvalue", "mergecolumns", "mergefields", "methodpath", "metric", "metriclabel", "minorticks", "minrange", "minrangeforce",
+	"minrangeright", "minrangerightforce", "minvalue", "mode", "movingaverage", "multipleseries", "name", "nodecolors", "nodeconnect", "nodelabels", "noderadius", "nodes",
+	"nodethresholds", "offsetbottom", "offsetleft", "offsetright", "offsettop", "onchange", "onclick", "onseriesclick", "option", "options", "other", "padding", "parent", "path",
+	"percentilemarkers", "percentiles", "period", "periods", "pointerposition", "properties", "property", "rate", "ratecounter", "refreshinterval", "reload", "replacevalue", "responsive",
+	"retryrefreshinterval", "rightaxis", "rotateticks", "rowdisplay", "rowstyle", "scale", "scalex", "scaley", "script", "selectormode", "serieslabels", "serieslimit", "seriestype",
+	"seriesvalue", "serveraggregate", "severitystyle", "singleentity", "size", "sort", "source", "stack", "starttime", "statistic", "statistics", "stepline", "style", "summarizeperiod",
+	"table", "tagexpression", "tagsdropdowns", "tagsdropdownsstyle", "text", "thresholds", "ticks", "ticksright", "tickstime", "timeoffset", "timespan", "timezone", "title", "tooltip",
+	"topaxis", "topunits", "totalvalue", "transpose", "type", "updateinterval", "url", "urlparameters", "value", "verticalgrid", "widgetsperrow", "widthunits"
 ];
 
 const possibleSections: string[] = [
@@ -289,6 +289,7 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 		}
 
 		while (foundKeyword !== null) {
+
 			// handle scripts
 			if (foundKeyword.keyword === ControlSequence.EndScript) {
 				const stackHead = nestedStack.pop();
@@ -298,7 +299,6 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 						{ uri: textDocument.uri, range: foundKeyword.range }, DiagnosticSeverity.Error,
 						`${foundKeyword.keyword} has no matching ${ControlSequence.Script}`
 					));
-
 				}
 				isScript = false;
 				foundKeyword = ControlSequenceUtil.parseControlSequence(regex, line, i);
@@ -355,7 +355,6 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 					break;
 				}
 				case ControlSequence.Csv: {
-					if (isScript) continue;
 					isCsv = true;
 					let header: string;
 					if (/=\s*$/m.test(line)) {
@@ -368,22 +367,18 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 					break;
 				}
 				case ControlSequence.Var: {
-					if (isScript) continue;
 					if (/=\s*(\[|\{)(|.*,)\s*$/m.test(line)) nestedStack.push(foundKeyword);
 					break;
 				}
 				case ControlSequence.List: if (!/,[ \t]*$/m.test(line)) break;
 				case ControlSequence.For:
 				case ControlSequence.If: {
-					if (isScript) continue;
 					nestedStack.push(foundKeyword);
 					break;
 				}
 				case ControlSequence.Script: {
-					if (!isScript) {
-						nestedStack.push(foundKeyword);
-						isScript = true;
-					}
+					nestedStack.push(foundKeyword);
+					isScript = true;
 					break;
 				}
 				default: throw "Update switch-case statement!";
