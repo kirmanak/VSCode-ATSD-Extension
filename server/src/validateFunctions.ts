@@ -45,9 +45,9 @@ export function undefinedForVariables(textDocument: TextDocument): Diagnostic[] 
 	const result: Diagnostic[] = [];
 
 	const text = Shared.deleteComments(textDocument.getText());
-	const forPattern = /\bfor\s+\w[\w\d]*\s+in\b|\bendfor\b|@{.*?\w[\w\d]*.*}/g;
-	const forDeclaration = /\bfor\s+(\w[\w\d]*)\s+in\b/;
-	const variablePattern = /(\w[\w\d]+)/g;
+	const forPattern = /\bfor\s+[a-zA-Z_]\w*\s+in\b|\bendfor\b|@{.*?[a-zA-Z_]\w*.*}/g;
+	const forDeclaration = /\bfor\s+([a-zA-Z_]\w*)\s+in\b/;
+	const variablePattern = /\b([a-zA-Z_]\w*)\b/g;
 	const endForRegex = /\bendfor\b/;
 
 	let matching, match: RegExpExecArray;
