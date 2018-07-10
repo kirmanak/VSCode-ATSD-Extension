@@ -85,36 +85,43 @@ export function undefinedForVariables(textDocument: TextDocument): Diagnostic[] 
 	return result;
 }
 
-const dictionary: string[] = [
-	"aheadtimespan", "alertexpression", "alertstyle", "alias", "align", "attribute",
-	"audioalert", "audioonload", "axis", "axistitle", "axistitleright", "batchsize",
-	"batchupdate", "bundle", "buttons", "cache", "centralizecolumns", "centralizeticks",
-	"changefield", "class", "color", "colorrange", "colors", "configuration", "contextpath",
-	"datatype", "dayformat", "dialogmaximize", "disconnectcount", "disconnectinterval",
-	"display", "displaypanels", "dropdown", "enabled", "endtime", "entities", "entity",
-	"entityexpression", "entitygroup", "errorrefreshinterval", "exactmatch", "expandpanels",
-	"forecastname", "format", "group", "groupfirst", "groupinterpolate", "groupinterpolateextend",
-	"groupkeys", "groupperiod", "groupstatistic", "headerstyle", "heightunits", "id",
-	"interpolate", "interpolateextend", "label", "labelformat", "lastmarker", "leftunits",
-	"legendposition", "legendvalue", "limit", "link", "linkanimate", "linkcolors", "links",
-	"linkthresholds", "linkwidths", "markers", "maxrange", "maxrangeforce", "maxrangeright",
-	"maxrangerightforce", "mergefields", "methodpath", "metric", "minrange", "minrangeforce",
-	"minrangeright", "minrangerightforce", "mode", "node", "nodes", "offsetbottom", "offsetleft",
-	"offsetright", "offsettop", "onchange", "options", "parent", "period", "periods", "pointerposition",
-	"rate", "ratecounter", "refreshinterval", "replacevalue", "retryrefreshinterval", "rotateticks",
-	"scale", "scalex", "scaley", "series", "serieslimit", "serveraggregate", "starttime", "statistic",
-	"stepline", "style", "summarizeperiod", "table", "tagexpression", "tags", "threshold", "timeoffset",
-	"timespan", "timezone", "title", "tooltip", "topunits", "type", "updateinterval", "url", "urlparameters",
-	"value", "widget", "widgetsperrow", "widthunits"
+const possibleOptions: string[] = [
+	"addmeta","aheadtimespan","alertexpression","alertstyle","alias","align","attribute","audioalert","audioonload","autoeperiod","autoperiod",
+	"autoscale","axis","axistitle","axistitleright","barcount","batchsize","batchupdate","borderwidth","bundle","buttons","cache","caption",
+	"captionstyle","centralizecolumns","centralizeticks","changefield","circle","class","color","colorrange","colors","column","columncategory",
+	"columndescription","columndisplaytype","columnentity","columnlabelformat","columnmessage","columnmetric","columnmoderationstatus","columnname",
+	"columnnewbackend","columnoid","columnpublicationappendenabled","columnpublicationdate","columnpublicationgroup","columnpublicationstage",
+	"columnrowsupdatedby","columnrule","columnseverity","columnsource","columntableid","columntags","columntime","columntype","columnvalue",
+	"columnviewtype","context","contextpath","counter","counterposition","datatype","dayformat","dialogmaximize","disconnectcount","disconnectinterval",
+	"disconnectvalue","display","displayinlegend","displaypanels","displayticks","displaytip","enabled","endtime","entities","entity","entityexpression",
+	"entitygroup","errorrefreshinterval","exactmatch","expandpanels","expandtags","fillvalue","forecastname","format","formataxis","formatcounter",
+	"formatnumbers","formattip","gradientcount","gradientintensity","groupfirst","groupinterpolate","groupinterpolateextend","groupkeys","groupperiod",
+	"groupstatistic","half","headerstyle","heightunits","hidecolumn","horizontal","horizontalgrid","id","interpolate","interpolateboundary","interpolateextend",
+	"interpolatefill","interpolatefunction","interpolateperiod","join","key","keys","label","labelformat","last","lastmarker","leftunits","legendposition",
+	"legendvalue","limit","linkanimate","linkcolorrange","linkcolors","linkdata","links","linkthresholds","linkwidths","margin","markers","maxrange","maxrangeforce",
+	"maxrangeright","maxrangerightforce","maxthreshold","maxvalue","mergecolumns","mergefields","methodpath","metric","metriclabel","minorticks","minrange","minrangeforce",
+	"minrangeright","minrangerightforce","minvalue","mode","movingaverage","multipleseries","name","nodecolors","nodeconnect","nodelabels","noderadius","nodes",
+	"nodethresholds","offsetbottom","offsetleft","offsetright","offsettop","onchange","onclick","onseriesclick","option","options","other","padding","parent","path",
+	"percentilemarkers","percentiles","period","periods","pointerposition","properties","property","rate","ratecounter","refreshinterval","reload","replacevalue","responsive",
+	"retryrefreshinterval","rightaxis","rotateticks","rowdisplay","rowstyle","scale","scalex","scaley","script","selectormode","serieslabels","serieslimit","seriestype",
+	"seriesvalue","serveraggregate","severitystyle","singleentity","size","sort","source","stack","starttime","statistic","statistics","stepline","style","summarizeperiod",
+	"table","tagexpression","tagsdropdowns","tagsdropdownsstyle","text","thresholds","ticks","ticksright","tickstime","timeoffset","timespan","timezone","title","tooltip",
+	"topaxis","topunits","totalvalue","transpose","type","updateinterval","url","urlparameters","value","verticalgrid","widgetsperrow","widthunits"
 ];
 
-function isAbsent(word: string): boolean {
+const possibleSections: string[] = [
+	"column", "configuration", "dropdown", "group", "keys", "link",
+	"node", "option", "other", "properties", "property", "series",
+	"tag", "tags", "threshold", "widget"
+];
+
+function isAbsent(word: string, dictionary: string[]): boolean {
 	return dictionary.find((value: string) => {
 		return (value === undefined) ? false : value === word;
 	}) === undefined;
 }
 
-function lowestLevenshtein(word: string): string {
+function lowestLevenshtein(word: string, dictionary: string[]): string {
 	let min: number = new Levenshtein(dictionary[0], word).distance;
 	let suggestion = dictionary[0];
 	dictionary.forEach((value: string) => {
@@ -135,11 +142,15 @@ function spellingCheck(line: string, uri: string, i: number): Diagnostic[] {
 	let match: RegExpExecArray;
 
 	while (match = bothRegex.exec(line)) {
-		const word = ((match[2]) ? match[2] : match[4]).replace(/-/g, '');
+		const word = (match[2]) ? match[2] : match[4];
+		const withoutDash = word.replace(/-/g, '');
 		const indent = (match[1]) ? match[1] : match[3];
 		const wordStart = (indent) ? match.index + indent.length : match.index;
-		if (isAbsent(word)) {
-			const suggestion: string = lowestLevenshtein(word);
+		let dictionary: string[];
+		if (/\[\w+\]/.test(line)) dictionary = possibleSections;
+		else dictionary = possibleOptions;
+		if (isAbsent(withoutDash, dictionary)) {
+			const suggestion: string = lowestLevenshtein(withoutDash, dictionary);
 			const location: Location = {
 				uri: uri,
 				range: {
