@@ -243,11 +243,11 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 		});
 
 		if (isCsv && (foundKeyword === null || foundKeyword.keyword !== ControlSequence.EndCsv)) {
-			let columns = countCsvColumns(line);
+			const columns = countCsvColumns(line);
 			if (columns != csvColumns) {
 				result.push(Shared.createDiagnostic(
 					{ uri: textDocument.uri, range: { start: { line: i, character: 0 }, end: { line: i, character: line.length } } },
-					DiagnosticSeverity.Error, `Expected ${csvColumns}, but found ${columns}`
+					DiagnosticSeverity.Error, `Expected ${csvColumns} columns, but found ${columns}`
 				));
 			}
 			continue;
@@ -370,7 +370,6 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 					} else {
 						header = line.substring(/=/.exec(line).index + 1);
 					}
-					console.log(header);
 					csvColumns = countCsvColumns(header);
 					nestedStack.push(foundKeyword);
 					break;

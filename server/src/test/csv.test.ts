@@ -18,7 +18,7 @@ suite("CSV tests", () => {
             "endcsv";
         const document = createDoc(text);
         const expected: Diagnostic[] = [];
-        const result = Functions.nonExistentAliases(document);
+        const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
     });
 
@@ -30,7 +30,7 @@ suite("CSV tests", () => {
             "endcsv";
         const document = createDoc(text);
         const expected: Diagnostic[] = [];
-        const result = Functions.nonExistentAliases(document);
+        const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
     });
 
@@ -42,10 +42,13 @@ suite("CSV tests", () => {
             "encsv";
         const document = createDoc(text);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
+            { uri: document.uri, range: { start: { line: 3, character: 0 }, end: { line: 3, character: 5 } } },
+            DiagnosticSeverity.Error, "Expected 3 columns, but found 1"
+	), Shared.createDiagnostic(
             { uri: document.uri, range: { start: { line: 0, character: 0 }, end: { line: 0, character: 3 } } },
             DiagnosticSeverity.Error, "csv has no matching endcsv"
         )];
-        const result = Functions.nonExistentAliases(document);
+        const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
     });
 
@@ -58,9 +61,9 @@ suite("CSV tests", () => {
         const document = createDoc(text);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             { uri: document.uri, range: { start: { line: 2, character: 0 }, end: { line: 2, character: 18 } } },
-            DiagnosticSeverity.Error, "csv has no matching endcsv"
+            DiagnosticSeverity.Error, "Expected 3 columns, but found 4"
         )];
-        const result = Functions.nonExistentAliases(document);
+        const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
     });
 
