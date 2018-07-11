@@ -4,22 +4,23 @@ import {
 	createConnection, TextDocuments, TextDocument, Diagnostic,
 	ProposedFeatures, InitializeParams, DidChangeConfigurationNotification
 } from 'vscode-languageserver';
+import * as jsDomCaller from './jsdomCaller';
 
 import * as validateFunctions from './validateFunctions';
 
 // Create a connection for the server. The connection uses Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
-let connection = createConnection(ProposedFeatures.all);
+const connection = createConnection(ProposedFeatures.all);
 
 // Create a simple text document manager. The text document manager
 // supports full document sync only
-let documents: TextDocuments = new TextDocuments();
+const documents: TextDocuments = new TextDocuments();
 
 let hasConfigurationCapability: boolean = false;
 let hasWorkspaceFolderCapability: boolean = false;
 
 connection.onInitialize((params: InitializeParams) => {
-	let capabilities = params.capabilities;
+	const capabilities = params.capabilities;
 
 	// Does the client support the `workspace/configuration` request?
 	// If not, we will fall back using global settings
@@ -45,10 +46,24 @@ connection.onInitialized(() => {
 	}
 });
 
+/*
+documents.onDidSave((listener) => {
+	const textDocument = listener.document;
+	const diagnostics = jsDomCaller.validate(textDocument, isRelatedInfoSupported);
+
+	// Send the computed diagnostics to VSCode.
+	connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
+});
+*/
+
 // The content of a text document has changed. This event is emitted
 // when the text document first opened or when its content has changed.
 documents.onDidChangeContent((change) => {
-	validateTextDocument(change.document);
+	const textDocument = change.document;
+	const diagnostics = validateTextDocument(change.document);
+
+	// Send the computed diagnostics to VSCode.
+	connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
 });
 
 function validateTextDocument(textDocument: TextDocument) {
@@ -57,9 +72,11 @@ function validateTextDocument(textDocument: TextDocument) {
 	validateFunctions.lineByLine(textDocument).forEach(element => {
 		diagnostics.push(element);
 	});
+	jsDomCaller.validate(textDocument).forEach(element => {
+		diagnostics.push(element);
+	});
 
-	// Send the computed diagnostics to VSCode.
-	connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
+	return diagnostics;
 }
 
 

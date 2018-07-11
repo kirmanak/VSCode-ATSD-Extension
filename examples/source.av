@@ -40,8 +40,12 @@ for server in servers
     period = 10 minute      
 endfor
 
-for srv in servers
-[series]
-  entity = @{srv}
-  data-type = forecast
+for server in servers
+  [series]
+    entity = @{server}
+    if server == 'nurswgvml007'
+      color = red
+    elseif server == 'nurswgvml006'
+      color = yellow
+    endif
 endfor
