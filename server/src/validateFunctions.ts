@@ -47,18 +47,21 @@ const possibleSections: string[] = [
 	"tag", "tags", "threshold", "widget"
 ];
 
-function lowestLevenshtein(word: string, dictionary: string[]): string {
+function suggestionMessage(word: string, dictionary: string[]): string | null {
+	let message = `${word} is unknown.`;
+	if (dictionary.length === 0) return message;
 	let min: number = new Levenshtein(dictionary[0], word).distance;
 	let suggestion = dictionary[0];
-	dictionary.forEach((value: string) => {
+	for (let i = 1, len = dictionary.length; i < len; i++) {
+		const value = dictionary[i];
 		const distance = new Levenshtein(value, word).distance;
 		if (distance < min) {
 			min = distance;
 			suggestion = value;
 		}
-	});
-
-	return suggestion;
+	}
+	message += ` Suggestion: ${suggestion}`;
+	return message;
 }
 
 function spellingCheck(line: string, uri: string, i: number): Diagnostic[] {
@@ -76,7 +79,7 @@ function spellingCheck(line: string, uri: string, i: number): Diagnostic[] {
 		if (/\[\w+\]/.test(line)) dictionary = possibleSections;
 		else dictionary = possibleOptions;
 		if (!dictionary.find(value => value === withoutDash)) {
-			const suggestion: string = lowestLevenshtein(withoutDash, dictionary);
+			const message = suggestionMessage(withoutDash, dictionary);
 			const location: Location = {
 				uri: uri,
 				range: {
@@ -84,10 +87,7 @@ function spellingCheck(line: string, uri: string, i: number): Diagnostic[] {
 					end: { line: i, character: wordStart + word.length }
 				}
 			};
-			const diagnostic: Diagnostic = Shared.createDiagnostic(
-				location, DiagnosticSeverity.Error,
-				`${word} is unknown. Did you mean ${suggestion}?`
-			);
+			const diagnostic: Diagnostic = Shared.createDiagnostic(location, DiagnosticSeverity.Error, message);
 			result.push(diagnostic);
 		}
 	}
@@ -212,6 +212,7 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 				const deAlias = match[3];
 				if (!aliases.find(alias => alias === deAlias)) {
 					const deAliasStart = match[1].length;
+					const message = suggestionMessage(deAlias, aliases);
 					result.push(Shared.createDiagnostic(
 						{
 							uri: textDocument.uri,
@@ -219,7 +220,7 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 								start: { line: i, character: deAliasStart },
 								end: { line: i, character: deAliasStart + deAlias.length }
 							}
-						}, DiagnosticSeverity.Error, `The alias ${deAlias} is referred, but never declared`
+						}, DiagnosticSeverity.Error, message
 					));
 				}
 			}
@@ -254,15 +255,15 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 				const variable = match[0];
 				if (!forVariables.find(name => name === variable) && !listNames.find(name => name === variable)) {
 					startPosition += match.index;
-					const endPosition = startPosition + variable.length;
+					const message = suggestionMessage(variable, forVariables);
 					result.push(Shared.createDiagnostic(
 						{
 							uri: textDocument.uri,
 							range: {
 								start: { line: i, character: startPosition },
-								end: { line: i, character: endPosition }
+								end: { line: i, character: startPosition + variable.length }
 							}
-						}, DiagnosticSeverity.Error, `${variable} is used in loop, but wasn't declared`
+						}, DiagnosticSeverity.Error, message
 					));
 				}
 			}
@@ -364,17 +365,22 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 					nestedStack.push(foundKeyword);
 					if (match = /^\s*for\s+(\w+)\s+in/m.exec(line)) forVariables.push(match[1]);
 					if (match = /^(\s*for\s+\w+\s+in\s+)(\w+)\s*$/m.exec(line)) {
-						if (!listNames.find(name => name === match[2]) 
-							&& !varNames.find(name => name === match[2])) {
-								result.push(Shared.createDiagnostic(
-									{
-										uri: textDocument.uri,
-										range: {
-											start: { line: i, character: match[1].length},
-											end: { line: i, character: match[1].length + match[2].length},
-										}
-									}, DiagnosticSeverity.Error, `${match[2]} is unknown. Declare a var or a list`
-								));
+						const variable = match[2];
+						if (!listNames.find(name => name === variable)
+							&& !varNames.find(name => name === variable)) {
+							const dictionary: string[] = [];
+							listNames.forEach(name => dictionary.push(name));
+							varNames.forEach(name => dictionary.push(name));
+							const message = suggestionMessage(variable, dictionary);
+							result.push(Shared.createDiagnostic(
+								{
+									uri: textDocument.uri,
+									range: {
+										start: { line: i, character: match[1].length },
+										end: { line: i, character: match[1].length + variable.length },
+									}
+								}, DiagnosticSeverity.Error, message
+							));
 						}
 					}
 					break;
