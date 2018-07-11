@@ -3,27 +3,42 @@ import * as Shared from './sharedFunctions';
 import * as Levenshtein from 'levenshtein';
 
 const possibleOptions: string[] = [
-	"addmeta", "aheadtimespan", "alertexpression", "alertstyle", "alias", "align", "attribute", "audioalert", "audioonload", "autoeperiod", "autoperiod",
-	"autoscale", "axis", "axistitle", "axistitleright", "barcount", "batchsize", "batchupdate", "borderwidth", "bundle", "buttons", "cache", "caption",
-	"captionstyle", "centralizecolumns", "centralizeticks", "changefield", "circle", "class", "color", "colorrange", "colors", "column", "columncategory",
-	"columndescription", "columndisplaytype", "columnentity", "columnlabelformat", "columnmessage", "columnmetric", "columnmoderationstatus", "columnname",
-	"columnnewbackend", "columnoid", "columnpublicationappendenabled", "columnpublicationdate", "columnpublicationgroup", "columnpublicationstage",
-	"columnrowsupdatedby", "columnrule", "columnseverity", "columnsource", "columntableid", "columntags", "columntime", "columntype", "columnvalue",
-	"columnviewtype", "context", "contextpath", "counter", "counterposition", "datatype", "dayformat", "dialogmaximize", "disconnectcount", "disconnectinterval",
-	"disconnectvalue", "display", "displayinlegend", "displaypanels", "displayticks", "displaytip", "enabled", "endtime", "entities", "entity", "entityexpression",
-	"entitygroup", "errorrefreshinterval", "exactmatch", "expandpanels", "expandtags", "fillvalue", "forecastname", "format", "formataxis", "formatcounter",
-	"formatnumbers", "formattip", "gradientcount", "gradientintensity", "groupfirst", "groupinterpolate", "groupinterpolateextend", "groupkeys", "groupperiod",
-	"groupstatistic", "half", "headerstyle", "heightunits", "hidecolumn", "horizontal", "horizontalgrid", "id", "interpolate", "interpolateboundary", "interpolateextend",
-	"interpolatefill", "interpolatefunction", "interpolateperiod", "join", "key", "keys", "label", "labelformat", "last", "lastmarker", "leftunits", "legendposition",
-	"legendvalue", "limit", "linkanimate", "linkcolorrange", "linkcolors", "linkdata", "links", "linkthresholds", "linkwidths", "margin", "markers", "maxrange", "maxrangeforce",
-	"maxrangeright", "maxrangerightforce", "maxthreshold", "maxvalue", "mergecolumns", "mergefields", "methodpath", "metric", "metriclabel", "minorticks", "minrange", "minrangeforce",
-	"minrangeright", "minrangerightforce", "minvalue", "mode", "movingaverage", "multipleseries", "name", "nodecolors", "nodeconnect", "nodelabels", "noderadius", "nodes",
-	"nodethresholds", "offsetbottom", "offsetleft", "offsetright", "offsettop", "onchange", "onclick", "onseriesclick", "option", "options", "other", "padding", "parent", "path",
-	"percentilemarkers", "percentiles", "period", "periods", "pointerposition", "properties", "property", "rate", "ratecounter", "refreshinterval", "reload", "replacevalue", "responsive",
-	"retryrefreshinterval", "rightaxis", "rotateticks", "rowdisplay", "rowstyle", "scale", "scalex", "scaley", "script", "selectormode", "serieslabels", "serieslimit", "seriestype",
-	"seriesvalue", "serveraggregate", "severitystyle", "singleentity", "size", "sort", "source", "stack", "starttime", "statistic", "statistics", "stepline", "style", "summarizeperiod",
-	"table", "tagexpression", "tagsdropdowns", "tagsdropdownsstyle", "text", "thresholds", "ticks", "ticksright", "tickstime", "timeoffset", "timespan", "timezone", "title", "tooltip",
-	"topaxis", "topunits", "totalvalue", "transpose", "type", "updateinterval", "url", "urlparameters", "value", "verticalgrid", "widgetsperrow", "widthunits"
+	"addmeta", "aheadtimespan", "alertexpression", "alertstyle", "alias", "align",
+	"attribute", "audioalert", "audioonload", "autoeperiod", "autoperiod", "autoscale",
+	"axis", "axistitle", "axistitleright", "barcount", "batchsize", "batchupdate",
+	"borderwidth", "bundle", "buttons", "cache", "caption", "captionstyle",
+	"centralizecolumns", "centralizeticks", "changefield", "circle", "class", "color",
+	"colorrange", "colors", "column", "columncategory", "columndescription",
+	"columndisplaytype", "columnentity", "columnlabelformat", "columnmessage",
+	"columnmetric", "columnmoderationstatus", "columnname", "columnnewbackend", "columnoid",
+	"columnpublicationappendenabled", "columnpublicationdate", "columnpublicationgroup",
+	"columnpublicationstage", "columnrowsupdatedby", "columnrule", "columnseverity",
+	"columnsource", "columntableid", "columntags", "columntime", "columntype", "columnvalue",
+	"columnviewtype", "context", "contextpath", "counter", "counterposition", "datatype",
+	"dayformat", "dialogmaximize", "disconnectcount", "disconnectinterval", "disconnectvalue",
+	"display", "displayinlegend", "displaypanels", "displayticks", "displaytip", "enabled",
+	"endtime", "entities", "entity", "entityexpression", "entitygroup", "errorrefreshinterval",
+	"exactmatch", "expandpanels", "expandtags", "fillvalue", "forecastname", "format", "formataxis",
+	"formatcounter", "formatnumbers", "formattip", "gradientcount", "gradientintensity", "groupfirst",
+	"groupinterpolate", "groupinterpolateextend", "groupkeys", "groupperiod", "groupstatistic", "half",
+	"headerstyle", "heightunits", "hidecolumn", "horizontal", "horizontalgrid", "id", "interpolate",
+	"interpolateboundary", "interpolateextend", "interpolatefill", "interpolatefunction",
+	"interpolateperiod", "join", "key", "keys", "label", "labelformat", "last", "lastmarker", "leftunits",
+	"legendposition", "legendvalue", "limit", "linkanimate", "linkcolorrange", "linkcolors", "linkdata",
+	"links", "linkthresholds", "linkwidths", "margin", "markers", "maxrange", "maxrangeforce", "maxrangeright",
+	"maxrangerightforce", "maxthreshold", "maxvalue", "mergecolumns", "mergefields", "methodpath", "metric",
+	"metriclabel", "minorticks", "minrange", "minrangeforce", "minrangeright", "minrangerightforce", "minvalue",
+	"mode", "movingaverage", "multipleseries", "name", "nodecolors", "nodeconnect", "nodelabels", "noderadius",
+	"nodes", "nodethresholds", "offsetbottom", "offsetleft", "offsetright", "offsettop", "onchange", "onclick",
+	"onseriesclick", "option", "options", "other", "padding", "parent", "path", "percentilemarkers",
+	"percentiles", "period", "periods", "pointerposition", "properties", "property", "rate", "ratecounter",
+	"refreshinterval", "reload", "replacevalue", "responsive", "retryrefreshinterval", "rightaxis", "rotateticks",
+	"rowdisplay", "rowstyle", "scale", "scalex", "scaley", "script", "selectormode", "serieslabels", "serieslimit",
+	"seriestype", "seriesvalue", "serveraggregate", "severitystyle", "singleentity", "size", "sort", "source",
+	"stack", "starttime", "statistic", "statistics", "stepline", "style", "summarizeperiod", "table",
+	"tagexpression", "tagsdropdowns", "tagsdropdownsstyle", "text", "thresholds", "ticks", "ticksright", "tickstime",
+	"timeoffset", "timespan", "timezone", "title", "tooltip", "topaxis", "topunits", "totalvalue", "transpose",
+	"type", "updateinterval", "url", "urlparameters", "value", "verticalgrid", "widgetsperrow", "widthunits"
 ];
 
 const possibleSections: string[] = [
@@ -31,10 +46,6 @@ const possibleSections: string[] = [
 	"node", "option", "other", "properties", "property", "series",
 	"tag", "tags", "threshold", "widget"
 ];
-
-function isAbsent(word: string, dictionary: string[]): boolean {
-	return dictionary.find(value => value === word) === undefined;
-}
 
 function lowestLevenshtein(word: string, dictionary: string[]): string {
 	let min: number = new Levenshtein(dictionary[0], word).distance;
@@ -64,7 +75,7 @@ function spellingCheck(line: string, uri: string, i: number): Diagnostic[] {
 		let dictionary: string[];
 		if (/\[\w+\]/.test(line)) dictionary = possibleSections;
 		else dictionary = possibleOptions;
-		if (isAbsent(withoutDash, dictionary)) {
+		if (!dictionary.find(value => value === withoutDash)) {
 			const suggestion: string = lowestLevenshtein(withoutDash, dictionary);
 			const location: Location = {
 				uri: uri,
@@ -152,7 +163,7 @@ function checkEnd(expectedEnd: ControlSequence, nestedStack: FoundKeyword[], fou
 	const stackHead = nestedStack.pop();
 	if (stackHead !== undefined && stackHead.keyword === expectedEnd) return null;
 	if (stackHead !== undefined) nestedStack.push(stackHead); // push found keyword back
-	const unfinishedIndex = nestedStack.findIndex(value => 
+	const unfinishedIndex = nestedStack.findIndex(value =>
 		(value === undefined) ? false : value.keyword === expectedEnd
 	);
 	if (stackHead === undefined || unfinishedIndex === -1) {
@@ -222,12 +233,12 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 			const columns = countCsvColumns(line);
 			if (columns != csvColumns) {
 				result.push(Shared.createDiagnostic(
-					{ 
-						uri: textDocument.uri, 
-						range: { 
-							start: { line: i, character: 0 }, 
-							end: { line: i, character: line.length } 
-						} 
+					{
+						uri: textDocument.uri,
+						range: {
+							start: { line: i, character: 0 },
+							end: { line: i, character: line.length }
+						}
 					}, DiagnosticSeverity.Error, `Expected ${csvColumns} columns, but found ${columns}`
 				));
 			}
@@ -235,31 +246,24 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 		}
 
 		// validate for variables
-		if (isFor) {
-			match = /@{.*}/.exec(line);
-			if (match !== null) {
-				const substr = match[0];
-				let startPosition = match.index;
-				const regexp = /[a-zA-Z_]\w*/g;
-				while (match = regexp.exec(substr)) {
-					const variable = match[0];
-					const forIndex = forVariables.findIndex(name => name === variable);
-					if (forIndex === -1) {
-						const listIndex = listNames.findIndex(name => name === variable);
-						if (listIndex === -1) {
-							startPosition += match.index;
-							const endPosition = startPosition + variable.length;
-							result.push(Shared.createDiagnostic(
-								{ 
-									uri: textDocument.uri, 
-									range: { 
-										start: { line: i, character: startPosition }, 
-										end: { line: i, character: endPosition } 
-									} 
-								}, DiagnosticSeverity.Error, `${variable} is used in loop, but wasn't declared`
-							));
-						}
-					}
+		if (isFor && (match = /@{.*}/.exec(line))) {
+			const substr = match[0];
+			let startPosition = match.index;
+			const regexp = /[a-zA-Z_]\w*/g;
+			while (match = regexp.exec(substr)) {
+				const variable = match[0];
+				if (!forVariables.find(name => name === variable) && !listNames.find(name => name === variable)) {
+					startPosition += match.index;
+					const endPosition = startPosition + variable.length;
+					result.push(Shared.createDiagnostic(
+						{
+							uri: textDocument.uri,
+							range: {
+								start: { line: i, character: startPosition },
+								end: { line: i, character: endPosition }
+							}
+						}, DiagnosticSeverity.Error, `${variable} is used in loop, but wasn't declared`
+					));
 				}
 			}
 		}
@@ -315,11 +319,11 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 				case ControlSequence.Else:
 				case ControlSequence.ElseIf: {
 					const stackHead = nestedStack.pop();
-					const ifIndex = nestedStack.findIndex(value => 
+					const ifKeyword = nestedStack.find(value =>
 						(value === undefined) ? false : value.keyword === ControlSequence.If
 					);
 					if (stackHead === undefined ||
-						(stackHead.keyword !== ControlSequence.If && ifIndex === -1)) {
+						(stackHead.keyword !== ControlSequence.If && ifKeyword === undefined)) {
 						result.push(Shared.createDiagnostic(
 							{ uri: textDocument.uri, range: foundKeyword.range }, DiagnosticSeverity.Error,
 							`${foundKeyword.keyword} has no matching ${ControlSequence.If}`
