@@ -35,10 +35,7 @@ suite("Incorrect dealias tests", () => {
 			"value = value('s1') * 2\n" +
 			"alias = s1";
 		const document = Shared.createDoc(text);
-		const expected: Diagnostic[] = [Shared.createDiagnostic(
-			{ uri: document.uri, range: { start: { line: 0, character: 15}, end: { line: 0, character: 17} } },
-			DiagnosticSeverity.Error, Shared.errorMessage("s1", null)
-		)];
+		const expected: Diagnostic[] = [];
 		const result = Functions.lineByLine(document);
 		assert.deepEqual(result, expected);
 	});

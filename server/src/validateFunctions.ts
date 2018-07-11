@@ -18,13 +18,13 @@ const possibleOptions: string[] = [
 	"dayformat", "dialogmaximize", "disconnectcount", "disconnectinterval", "disconnectvalue",
 	"display", "displayinlegend", "displaypanels", "displayticks", "displaytip", "enabled",
 	"endtime", "entities", "entity", "entityexpression", "entitygroup", "errorrefreshinterval",
-	"exactmatch", "expandpanels", "expandtags", "fillvalue", "forecastname", "format", "formataxis",
-	"formatcounter", "formatnumbers", "formattip", "gradientcount", "gradientintensity", "groupfirst",
-	"groupinterpolate", "groupinterpolateextend", "groupkeys", "groupperiod", "groupstatistic", "half",
-	"headerstyle", "heightunits", "hidecolumn", "horizontal", "horizontalgrid", "id", "interpolate",
-	"interpolateboundary", "interpolateextend", "interpolatefill", "interpolatefunction",
-	"interpolateperiod", "join", "key", "keys", "label", "labelformat", "last", "lastmarker", "leftunits",
-	"legendposition", "legendvalue", "limit", "linkanimate", "linkcolorrange", "linkcolors", "linkdata",
+	"exactmatch", "expandpanels", "expandtags", "fillvalue", "forecastname", "forecaststyle",
+	"format", "formataxis", "formatcounter", "formatnumbers", "formattip", "gradientcount",
+	"gradientintensity", "groupfirst", "groupinterpolate", "groupinterpolateextend", "groupkeys",
+	"groupperiod", "groupstatistic", "half", "headerstyle", "heightunits", "hidecolumn", "horizontal",
+	"horizontalgrid", "id", "interpolate", "interpolateboundary", "interpolateextend",
+	"interpolatefill", "interpolatefunction", "interpolateperiod", "join", "key", "keys", "label",
+	"labelformat", "last", "lastmarker", "leftunits", "legendposition", "legendvalue", "limit", "linkanimate",
 	"links", "linkthresholds", "linkwidths", "margin", "markers", "maxrange", "maxrangeforce", "maxrangeright",
 	"maxrangerightforce", "maxthreshold", "maxvalue", "mergecolumns", "mergefields", "methodpath", "metric",
 	"metriclabel", "minorticks", "minrange", "minrangeforce", "minrangeright", "minrangerightforce", "minvalue",
@@ -38,7 +38,12 @@ const possibleOptions: string[] = [
 	"stack", "starttime", "statistic", "statistics", "stepline", "style", "summarizeperiod", "table",
 	"tagexpression", "tagsdropdowns", "tagsdropdownsstyle", "text", "thresholds", "ticks", "ticksright", "tickstime",
 	"timeoffset", "timespan", "timezone", "title", "tooltip", "topaxis", "topunits", "totalvalue", "transpose",
-	"type", "updateinterval", "url", "urlparameters", "value", "verticalgrid", "widgetsperrow", "widthunits"
+	"type", "updateinterval", "url", "urlparameters", "value", "verticalgrid", "widgetsperrow", "widthunits",
+	"linkcolorrange", "linkcolors", "linkdata", "marker", "paletteticks", "rotatepaletteticks", "icon",
+	"summarizestatistic", "severity", "group", "rangemerge", "displaytags", "tag", "hideemptycolumns",
+	"displayvalues", "labellastvalue", "formatheaders", "contextheight", "interval", "rowalertstyle",
+	"hourformat", "iconalertstyle", "iconposition", "iconcolor", "iconalertexpression", "ringwidth",
+	"maxfontsize", "expand", "negativestyle", "columndate"
 ];
 
 const possibleSections: string[] = [
@@ -65,19 +70,19 @@ function suggestionMessage(word: string, dictionary: string[]): string | null {
 function spellingCheck(line: string, uri: string, i: number): Diagnostic[] {
 	const result: Diagnostic[] = [];
 
-	const bothRegex = /(^\s*\[)(\w+)\]|(^\s*)(\S+)\s*=/gm;
+	const bothRegex = /(^[ \t]*\[)(\w+)\][ \t]*$|(^\s*)['"]?([-\w]+?)['"]?\s*=/gm;
 	let match: RegExpExecArray;
 
 	while (match = bothRegex.exec(line)) {
-		const word = (match[2]) ? match[2] : match[4];
+		const word = ((match[2]) ? match[2] : match[4]).toLowerCase();
 		const withoutDash = word.replace(/-/g, '');
 		const indent = (match[1]) ? match[1] : match[3];
 		const wordStart = (indent) ? match.index + indent.length : match.index;
 		let dictionary: string[];
-		if (/\[\w+\]/.test(line)) dictionary = possibleSections;
+		if (/^[ \t]*\[\w+\][ \t]*$/.test(line)) dictionary = possibleSections;
 		else dictionary = possibleOptions;
 		if (!dictionary.find(value => value === withoutDash)) {
-			const message = suggestionMessage(withoutDash, dictionary);
+			const message = suggestionMessage(word, dictionary);
 			const location: Location = {
 				uri: uri,
 				range: {
@@ -117,15 +122,16 @@ class FoundKeyword {
 
 class ControlSequenceUtil {
 	public static createRegex(): RegExp {
-		return /\b(endvar|endcsv|endfor|elseif|endif|endscript|endlist|script|else|if|list|for|csv|var)\b/g;
+		return /^([ \t]*)(endvar|endcsv|endfor|elseif|endif|endscript|endlist|script|else|if|list|for|csv|var)\b/gm;
 	}
 
 	public static parseControlSequence(regex: RegExp, line: string, i: number): FoundKeyword | null {
 		const match = regex.exec(line);
 		if (match === null) return null;
+		const keywordStart = match[1].length;
 		return {
-			keyword: ControlSequenceUtil.toSequence(match[1]),
-			range: { start: { line: i, character: match.index }, end: { line: i, character: match.index + match[1].length } }
+			keyword: ControlSequenceUtil.toSequence(match[2]),
+			range: { start: { line: i, character: keywordStart }, end: { line: i, character: keywordStart + match[2].length } }
 		};
 	}
 
@@ -151,7 +157,7 @@ class ControlSequenceUtil {
 }
 
 function countCsvColumns(line: string): number {
-	const regex = /(['"]).+\1|[()-\w\d.]+/g;
+	const regex = /(['"]).+?\1|[()-\w\d.]+/g;
 	let counter = 0;
 	while (regex.exec(line)) counter++;
 	return counter;
@@ -178,49 +184,46 @@ function checkEnd(expectedEnd: ControlSequence, nestedStack: FoundKeyword[], fou
 	}
 }
 
+class DeAlias {
+	value: string;
+	position: Range;
+}
+
 export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 	const result: Diagnostic[] = [];
 	const lines: string[] = Shared.deleteComments(textDocument.getText()).split('\n');
 	const nestedStack: FoundKeyword[] = [];
-	let isTags = false; // to disable spelling check
+	let isUserDefined = false; // to disable spelling check
 	let isScript = false; // to disable everything
 	let isCsv = false, isFor = false; // to perform validation
 	let csvColumns = 0; // to validate csv
 	const listNames: string[] = [], forVariables: string[] = []; // to validate @{var}
-	const varNames: string[] = []; // to validate `in ...` statements
-	const aliases: string[] = []; // to validate `value = value('alias')`
-	const deAliasRegex = /(^\s*value\s*=.*value\((['"]))(\S*)\2\).*$/m;
-	const aliasRegex = /^\s*alias\s*=\s*(\S*)\s*$/m;
+	const varNames: string[] = [], csvNames: string[] = []; // to validate `in ...` statements
+	const aliases: string[] = [], deAliases: DeAlias[] = []; // to validate `value = value('alias')`
+	const deAliasRegex = /(^\s*value\s*=.*value\((['"]))(\w+)\2\).*$/m;
+	const aliasRegex = /^\s*alias\s*=\s*(\w+)\s*$/m;
 	let match: RegExpExecArray;
 
 	for (let i = 0; i < lines.length; i++) {
 		let line = lines[i];
 
 		// handle tags
-		if (match = /\[tags\]/.exec(line)) isTags = true;
-		else if (match = /\[\w+\]/.exec(line)) isTags = false;
+		if (match = /^[\t ]*\[(tags?|keys)\][\t ]*/m.exec(line)) isUserDefined = true;
+		else if (isUserDefined && (match = /^[\t ]*\[\w+\][\t ]*/m.exec(line)) !== null) isUserDefined = false;
 
 		// prepare regex to let 'g' key do its work
 		const regex = ControlSequenceUtil.createRegex();
 		let foundKeyword = ControlSequenceUtil.parseControlSequence(regex, line, i);
 
-		if (!isTags) {
+		if (!isUserDefined && !isScript) {
 			if (match = aliasRegex.exec(line)) aliases.push(match[1]);
 			if (match = deAliasRegex.exec(line)) {
-				const deAlias = match[3];
-				if (!aliases.find(alias => alias === deAlias)) {
-					const deAliasStart = match[1].length;
-					const message = suggestionMessage(deAlias, aliases);
-					result.push(Shared.createDiagnostic(
-						{
-							uri: textDocument.uri,
-							range: {
-								start: { line: i, character: deAliasStart },
-								end: { line: i, character: deAliasStart + deAlias.length }
-							}
-						}, DiagnosticSeverity.Error, message
-					));
-				}
+				deAliases.push({
+					value: match[3], position: {
+						start: { line: i, character: match[1].length },
+						end: { line: i, character: match[1].length + match[3].length }
+					}
+				});
 			}
 			spellingCheck(line, textDocument.uri, i).forEach((diagnostic) => {
 				result.push(diagnostic);
@@ -230,7 +233,7 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 		// validate CSV
 		if (isCsv && (foundKeyword === null || foundKeyword.keyword !== ControlSequence.EndCsv)) {
 			const columns = countCsvColumns(line);
-			if (columns != csvColumns) {
+			if (columns !== csvColumns && !/^[ \t]*$/m.test(line)) {
 				result.push(Shared.createDiagnostic(
 					{
 						uri: textDocument.uri,
@@ -245,21 +248,22 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 		}
 
 		// validate for variables
-		if (isFor && (match = /@{.*}/.exec(line))) {
+		if (isFor && (match = /@{.+?}/.exec(line))) {
 			const substr = match[0];
-			let startPosition = match.index;
+			const startPosition = match.index;
 			const regexp = /[a-zA-Z_]\w*/g;
 			while (match = regexp.exec(substr)) {
 				const variable = match[0];
-				if (!forVariables.find(name => name === variable) && !listNames.find(name => name === variable)) {
-					startPosition += match.index;
+				if (!forVariables.find(name => name === variable) && !listNames.find(name => name === variable)
+					&& !varNames.find(name => name === variable) && !csvNames.find(name => name === variable)) {
+					const position = startPosition + match.index;
 					const message = suggestionMessage(variable, forVariables);
 					result.push(Shared.createDiagnostic(
 						{
 							uri: textDocument.uri,
 							range: {
-								start: { line: i, character: startPosition },
-								end: { line: i, character: startPosition + variable.length }
+								start: { line: i, character: position },
+								end: { line: i, character: position + variable.length }
 							}
 						}, DiagnosticSeverity.Error, message
 					));
@@ -339,11 +343,12 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 				case ControlSequence.Csv: {
 					isCsv = true;
 					let header: string;
-					if (/=\s*$/m.test(line)) {
-						header = lines[i + 1];
-					} else {
-						header = line.substring(/=/.exec(line).index + 1);
+					if (/=[ \t]*$/m.test(line)) {
+						let j = i;
+						while ((header = lines[++j]) !== undefined && /^[ \t]*$/m.test(header));
 					}
+					else header = line.substring(/=/.exec(line).index + 1);
+					if (match = /csv[ \t]+(\w+)[ \t]*=/.exec(line)) csvNames.push(match[1]);
 					csvColumns = countCsvColumns(header);
 					nestedStack.push(foundKeyword);
 					break;
@@ -355,7 +360,13 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 				}
 				case ControlSequence.List: {
 					if (match = /^\s*list\s+(\w+)\s+=/.exec(line)) listNames.push(match[1]);
-					if (/,[ \t]*$/m.test(line)) nestedStack.push(foundKeyword);
+					if (/(=|,)[ \t]*$/m.test(line)) nestedStack.push(foundKeyword);
+					else {
+						let j = i;
+						while((j < lines.length) && /^[ \t]*$/m.test(lines[++j]));
+						if (j !== lines.length && (/^[ \t]*,/.test(lines[j]) || /\bendlist\b/.test(lines[j]))) 
+							nestedStack.push(foundKeyword);
+					}
 					break;
 				}
 				case ControlSequence.For: {
@@ -365,10 +376,12 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 					if (match = /^(\s*for\s+\w+\s+in\s+)(\w+)\s*$/m.exec(line)) {
 						const variable = match[2];
 						if (!listNames.find(name => name === variable)
-							&& !varNames.find(name => name === variable)) {
+							&& !varNames.find(name => name === variable)
+							&& !csvNames.find(name => name === variable)) {
 							const dictionary: string[] = [];
 							listNames.forEach(name => dictionary.push(name));
 							varNames.forEach(name => dictionary.push(name));
+							csvNames.forEach(name => dictionary.push(name));
 							const message = suggestionMessage(variable, dictionary);
 							result.push(Shared.createDiagnostic(
 								{
@@ -398,6 +411,16 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 			foundKeyword = ControlSequenceUtil.parseControlSequence(regex, line, i);
 		}
 	}
+
+	deAliases.forEach(deAlias => {
+		if (!aliases.find(alias => deAlias.value === alias)) {
+			const message = suggestionMessage(deAlias.value, aliases);
+			result.push(Shared.createDiagnostic(
+				{ uri: textDocument.uri, range: deAlias.position },
+				DiagnosticSeverity.Error, message
+			))
+		}
+	});
 
 	diagnosticForLeftKeywords(nestedStack, textDocument.uri).forEach((diagnostic) => {
 		result.push(diagnostic);
