@@ -3,10 +3,6 @@ import * as assert from 'assert';
 import * as Functions from '../validateFunctions';
 import * as Shared from '../sharedFunctions';
 
-function createDoc(text: string): TextDocument {
-	return TextDocument.create("testDoc", "atsd-visual", 0, text);
-}
-
 const firstVar = 'serv';
 const secondVar = 'server';
 const thirdVar = 'srv';
@@ -19,7 +15,7 @@ suite("Undefined variable in for loop", () => {
 			`for ${firstVar} in servers\n` +
 			`   entity = @{${firstVar}}\n` +
 			"endfor";
-		const document: TextDocument = createDoc(text);
+		const document: TextDocument = Shared.createDoc(text);
 		const expected: Diagnostic[] = [];
 		const result = Functions.lineByLine(document);
 		assert.deepEqual(result, expected);
@@ -31,7 +27,7 @@ suite("Undefined variable in for loop", () => {
 			`for ${firstVar} /* this is a comment */ in servers\n` +
 			`   entity = @{${firstVar}}\n` +
 			"endfor";
-		const document: TextDocument = createDoc(text);
+		const document: TextDocument = Shared.createDoc(text);
 		const expected: Diagnostic[] = [];
 		const result = Functions.lineByLine(document);
 		assert.deepEqual(result, expected);
@@ -46,7 +42,7 @@ suite("Undefined variable in for loop", () => {
 			`for ${firstVar} in servers\n` +
 			`   entity = @{${firstVar}}\n` +
 			"endfor";
-		const document: TextDocument = createDoc(text);
+		const document: TextDocument = Shared.createDoc(text);
 		const expected: Diagnostic[] = [];
 		const result = Functions.lineByLine(document);
 		assert.deepEqual(result, expected);
@@ -58,10 +54,10 @@ suite("Undefined variable in for loop", () => {
 			`for ${secondVar} in servers\n` +
 			`   entity = @{${firstVar}}\n` +
 			"endfor";
-		const document: TextDocument = createDoc(text);
+		const document: TextDocument = Shared.createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
 			{ uri: document.uri, range: { start: { line: 2, character: 14 }, end: { line: 2, character: 14 + firstVar.length } } },
-			DiagnosticSeverity.Error, `${firstVar} is used in loop, but wasn't declared`
+			DiagnosticSeverity.Error, Shared.errorMessage(firstVar, secondVar)
 		)];
 		const result = Functions.lineByLine(document);
 		assert.deepEqual(result, expected);
@@ -76,13 +72,13 @@ suite("Undefined variable in for loop", () => {
 			`for ${firstVar} in servers\n` +
 			`   entity = @{${secondVar}}\n` +
 			"endfor";
-		const document: TextDocument = createDoc(text);
+		const document: TextDocument = Shared.createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
 			{ uri: document.uri, range: { start: { line: 2, character: 14 }, end: { line: 2, character: 14 + firstVar.length } } },
-			DiagnosticSeverity.Error, `${firstVar} is used in loop, but wasn't declared`
+			DiagnosticSeverity.Error, Shared.errorMessage(firstVar, secondVar)
 		), Shared.createDiagnostic(
 			{ uri: document.uri, range: { start: { line: 5, character: 14 }, end: { line: 5, character: 14 + secondVar.length } } },
-			DiagnosticSeverity.Error, `${secondVar} is used in loop, but wasn't declared`
+			DiagnosticSeverity.Error, Shared.errorMessage(secondVar, firstVar)
 		)];
 		const result = Functions.lineByLine(document);
 		assert.deepEqual(result, expected);
@@ -97,10 +93,10 @@ suite("Undefined variable in for loop", () => {
 			`for ${firstVar} in servers\n` +
 			`   entity = @{${firstVar}}\n` +
 			"endfor";
-		const document: TextDocument = createDoc(text);
+		const document: TextDocument = Shared.createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
 			{ uri: document.uri, range: { start: { line: 2, character: 14 }, end: { line: 2, character: 14 + firstVar.length } } },
-			DiagnosticSeverity.Error, `${firstVar} is used in loop, but wasn't declared`
+			DiagnosticSeverity.Error, Shared.errorMessage(firstVar, secondVar)
 		)];
 		const result = Functions.lineByLine(document);
 		assert.deepEqual(result, expected);
@@ -116,7 +112,7 @@ suite("Undefined variable in for loop", () => {
 			`       entity = @{${firstVar}}\n` +
 			"   endfor\n" +
 			"endfor";
-		const document: TextDocument = createDoc(text);
+		const document: TextDocument = Shared.createDoc(text);
 		const result = Functions.lineByLine(document);
 		assert.deepEqual(result, []);
 	});
@@ -131,10 +127,10 @@ suite("Undefined variable in for loop", () => {
 			`       entity = @{${firstVar}}\n` +
 			"   endfor\n" +
 			"endfor";
-		const document: TextDocument = createDoc(text);
+		const document: TextDocument = Shared.createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
 			{ uri: document.uri, range: { start: { line: 4, character: 18 }, end: { line: 4, character: 18 + thirdVar.length } } },
-			DiagnosticSeverity.Error, `${thirdVar} is used in loop, but wasn't declared`
+			DiagnosticSeverity.Error, Shared.errorMessage(thirdVar, firstVar)
 		)];
 		const result = Functions.lineByLine(document);
 		assert.deepEqual(result, expected);
@@ -146,7 +142,7 @@ suite("Undefined variable in for loop", () => {
 			`for ${firstVar} in servers\n` +
 			`   entity = @{${firstVar} + ${firstVar}}\n` +
 			"endfor";
-		const document: TextDocument = createDoc(text);
+		const document: TextDocument = Shared.createDoc(text);
 		const expected: Diagnostic[] = [];
 		const result = Functions.lineByLine(document);
 		assert.deepEqual(result, expected);
@@ -158,10 +154,10 @@ suite("Undefined variable in for loop", () => {
 			`for ${firstVar} in servers\n` +
 			`   entity = @{${secondVar} + ${firstVar}}\n` +
 			"endfor";
-		const document: TextDocument = createDoc(text);
+		const document: TextDocument = Shared.createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
 			{ uri: document.uri, range: { start: { line: 2, character: 14 }, end: { line: 2, character: 14 + secondVar.length } } },
-			DiagnosticSeverity.Error, `${secondVar} is used in loop, but wasn't declared`
+			DiagnosticSeverity.Error, Shared.errorMessage(secondVar, firstVar)
 		)];
 		const result = Functions.lineByLine(document);
 		assert.deepEqual(result, expected);

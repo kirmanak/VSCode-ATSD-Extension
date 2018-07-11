@@ -48,8 +48,7 @@ const possibleSections: string[] = [
 ];
 
 function suggestionMessage(word: string, dictionary: string[]): string | null {
-	let message = `${word} is unknown.`;
-	if (dictionary.length === 0) return message;
+	if (dictionary.length === 0) return Shared.errorMessage(word, null);
 	let min: number = new Levenshtein(dictionary[0], word).distance;
 	let suggestion = dictionary[0];
 	for (let i = 1, len = dictionary.length; i < len; i++) {
@@ -60,8 +59,7 @@ function suggestionMessage(word: string, dictionary: string[]): string | null {
 			suggestion = value;
 		}
 	}
-	message += ` Suggestion: ${suggestion}`;
-	return message;
+	return Shared.errorMessage(word, suggestion);
 }
 
 function spellingCheck(line: string, uri: string, i: number): Diagnostic[] {

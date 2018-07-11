@@ -1,4 +1,4 @@
-import { Location, Diagnostic, DiagnosticSeverity } from 'vscode-languageserver';
+import { TextDocument, Location, Diagnostic, DiagnosticSeverity } from 'vscode-languageserver';
 
 const diagnosticSource = "Axibase Visual Plugin";
 
@@ -26,4 +26,12 @@ export function deleteComments(text: string): string {
 	}
 
 	return text;
+}
+
+export function createDoc(text: string): TextDocument {
+	return TextDocument.create("testDoc", "atsd-visual", 0, text);
+}
+
+export function errorMessage(found:string, suggestion: string): string {
+	return (suggestion === null) ? `${found} is unknown.` : `${found} is unknown. Suggestion: ${suggestion}`;
 }

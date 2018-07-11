@@ -3,10 +3,6 @@ import * as assert from 'assert';
 import * as Functions from '../validateFunctions';
 import * as Shared from '../sharedFunctions';
 
-function createDoc(text: string): TextDocument {
-    return TextDocument.create("testDoc", "atsd-visual", 0, text);
-}
-
 suite("Unmatched endfor tests", () => {
 
     test("One correct loop", () => {
@@ -15,7 +11,7 @@ suite("Unmatched endfor tests", () => {
             "for server in servers\n" +
             "   do something\n" +
             "endfor";
-        const document: TextDocument = createDoc(text);
+        const document: TextDocument = Shared.createDoc(text);
         const expected: Diagnostic[] = [];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -30,7 +26,7 @@ suite("Unmatched endfor tests", () => {
             "for server in servers\n" +
             "   do something\n" +
             "endfor";
-        const document: TextDocument = createDoc(text);
+        const document: TextDocument = Shared.createDoc(text);
         const expected: Diagnostic[] = [];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -41,7 +37,7 @@ suite("Unmatched endfor tests", () => {
             "list servers = 'srv1', 'srv2'\n" +
             "for server in servers\n" +
             "   do something\n";
-        const document: TextDocument = createDoc(text);
+        const document: TextDocument = Shared.createDoc(text);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
 		{ uri: document.uri, range: { start: { line: 1, character: 0 }, end: { line: 1, character: 3 } } },
 		DiagnosticSeverity.Error, "for has no matching endfor"
@@ -57,7 +53,7 @@ suite("Unmatched endfor tests", () => {
             "   do something\n" +
             "for server in servers\n" +
             "   do something\n";
-        const document: TextDocument = createDoc(text);
+        const document: TextDocument = Shared.createDoc(text);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
 		{ uri: document.uri, range: { start: { line: 1, character: 0 }, end: { line: 1, character: 3 } } },
 		DiagnosticSeverity.Error, "for has no matching endfor"
@@ -78,7 +74,7 @@ suite("Unmatched endfor tests", () => {
             "for server in servers\n" +
             "   do something\n" +
             "endfor";
-        const document: TextDocument = createDoc(text);
+        const document: TextDocument = Shared.createDoc(text);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
 		{ uri: document.uri, range: { start: { line: 1, character: 0 }, end: { line: 1, character: 3 } } },
 		DiagnosticSeverity.Error, "for has no matching endfor"

@@ -1,11 +1,7 @@
-import { TextDocument, Diagnostic, DiagnosticSeverity } from "vscode-languageserver/lib/main";
+import { Diagnostic, DiagnosticSeverity } from "vscode-languageserver/lib/main";
 import * as assert from 'assert';
 import * as Functions from '../validateFunctions';
 import * as Shared from '../sharedFunctions';
-
-function createDoc(text: string): TextDocument {
-    return TextDocument.create("testDoc", "atsd-visual", 0, text);
-}
 
 suite("CSV tests", () => {
 
@@ -16,7 +12,7 @@ suite("CSV tests", () => {
             "   Russia, 65, 63\n" +
             "   USA, 63, 63\n" +
             "endcsv";
-        const document = createDoc(text);
+        const document = Shared.createDoc(text);
         const expected: Diagnostic[] = [];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -28,7 +24,7 @@ suite("CSV tests", () => {
             "   Russia, 65, 63\n" +
             "   USA, 63, 63\n" +
             "endcsv";
-        const document = createDoc(text);
+        const document = Shared.createDoc(text);
         const expected: Diagnostic[] = [];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -40,7 +36,7 @@ suite("CSV tests", () => {
             "   Russia, 65, 63\n" +
             "   USA, 63, 63\n" +
             "encsv";
-        const document = createDoc(text);
+        const document = Shared.createDoc(text);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             { uri: document.uri, range: { start: { line: 3, character: 0 }, end: { line: 3, character: 5 } } },
             DiagnosticSeverity.Error, "Expected 3 columns, but found 1"
@@ -58,7 +54,7 @@ suite("CSV tests", () => {
             "   Russia, 65, 63\n" +
             "   USA, 63, 63, 63\n" +
             "endcsv";
-        const document = createDoc(text);
+        const document = Shared.createDoc(text);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             { uri: document.uri, range: { start: { line: 2, character: 0 }, end: { line: 2, character: 18 } } },
             DiagnosticSeverity.Error, "Expected 3 columns, but found 4"

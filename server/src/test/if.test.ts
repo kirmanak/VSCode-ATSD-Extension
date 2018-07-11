@@ -3,10 +3,6 @@ import * as assert from 'assert';
 import * as Functions from '../validateFunctions';
 import * as Shared from '../sharedFunctions';
 
-function createDoc(text: string): TextDocument {
-	return TextDocument.create("testDoc", "atsd-visual", 0, text);
-}
-
 const elseIfError = "elseif has no matching if";
 const elseError = "else has no matching if";
 const endIfError = "endif has no matching if";
@@ -26,7 +22,7 @@ suite("If elseif else endif validation tests", () => {
 			"      color = yellow\n" +
 			"    endif\n" +
 			"endfor\n";
-		const document: TextDocument = createDoc(text);
+		const document: TextDocument = Shared.createDoc(text);
 		const expected: Diagnostic[] = [];
 		const result = Functions.lineByLine(document);
 		assert.deepEqual(result, expected);
@@ -44,7 +40,7 @@ suite("If elseif else endif validation tests", () => {
 			"      color = yellow\n" +
 			"    endif\n" +
 			"endfor\n";
-		const document: TextDocument = createDoc(text);
+		const document: TextDocument = Shared.createDoc(text);
 		const expected: Diagnostic[] = [];
 		const result = Functions.lineByLine(document);
 		assert.deepEqual(result, expected);
@@ -60,7 +56,7 @@ suite("If elseif else endif validation tests", () => {
 			"      color = yellow\n" +
 			"    endif\n" +
 			"endfor\n";
-		const document: TextDocument = createDoc(text);
+		const document: TextDocument = Shared.createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
 			{ uri: document.uri, range: { start: { line: 4, character: 4 }, end: { line: 4, character: 10 } } },
 			DiagnosticSeverity.Error, elseIfError
@@ -82,7 +78,7 @@ suite("If elseif else endif validation tests", () => {
 			"      color = yellow\n" +
 			"    endif\n" +
 			"endfor\n";
-		const document: TextDocument = createDoc(text);
+		const document: TextDocument = Shared.createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
 			{ uri: document.uri, range: { start: { line: 4, character: 4 }, end: { line: 4, character: 8 } } },
 			DiagnosticSeverity.Error, elseError
@@ -104,7 +100,7 @@ suite("If elseif else endif validation tests", () => {
 			"      color = yellow\n" +
 			"    endif /* a comment */ # too\n" +
 			"endfor\n";
-		const document: TextDocument = createDoc(text);
+		const document: TextDocument = Shared.createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
 			{ uri: document.uri, range: { start: { line: 4, character: 28 }, end: { line: 4, character: 32 } } },
 			DiagnosticSeverity.Error, elseError
@@ -127,7 +123,7 @@ suite("If elseif else endif validation tests", () => {
 			"    else\n" +
 			"      color = yellow\n" +
 			"endfor\n";
-		const document: TextDocument = createDoc(text);
+		const document: TextDocument = Shared.createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
 			{ uri: document.uri, range: { start: { line: 8, character: 0 }, end: { line: 8, character: 6 } } },
 			DiagnosticSeverity.Error, "for has finished before if"

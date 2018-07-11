@@ -1,11 +1,7 @@
-import { TextDocument, Diagnostic, DiagnosticSeverity } from "vscode-languageserver/lib/main";
+import { Diagnostic, DiagnosticSeverity } from "vscode-languageserver/lib/main";
 import * as assert from 'assert';
 import * as Functions from '../validateFunctions';
 import * as Shared from '../sharedFunctions';
-
-function createDoc(text: string): TextDocument {
-	return TextDocument.create("testDoc", "atsd-visual", 0, text);
-}
 
 suite("Undeclared list or var", () => {
 
@@ -15,7 +11,7 @@ suite("Undeclared list or var", () => {
             "for srv in servers\n" +
             "   #do something\n" +
             "endfor\n";
-		const document = createDoc(text);
+		const document = Shared.createDoc(text);
 		const expected: Diagnostic[] = [];
 		const result = Functions.lineByLine(document);
 		assert.deepEqual(result, expected);
@@ -27,10 +23,10 @@ suite("Undeclared list or var", () => {
             "for srv in server\n" +
             "   #do something\n" +
             "endfor\n";
-		const document = createDoc(text);
+		const document = Shared.createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
             { uri: document.uri, range: { start: { line: 1, character: 11 }, end: { line: 1, character: 17 } } },
-            DiagnosticSeverity.Error, `server is unknown. Declare a var or a list`
+            DiagnosticSeverity.Error, Shared.errorMessage("server", "servers")
         )];
 		const result = Functions.lineByLine(document);
 		assert.deepEqual(result, expected);
@@ -42,10 +38,10 @@ suite("Undeclared list or var", () => {
             "for srv in server\n" +
             "   #do something\n" +
             "endfor\n";
-		const document = createDoc(text);
+		const document = Shared.createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
             { uri: document.uri, range: { start: { line: 1, character: 11 }, end: { line: 1, character: 17 } } },
-            DiagnosticSeverity.Error, `server is unknown. Declare a var or a list`
+            DiagnosticSeverity.Error, Shared.errorMessage("server", "servers")
         )];
 		const result = Functions.lineByLine(document);
 		assert.deepEqual(result, expected);
@@ -57,7 +53,7 @@ suite("Undeclared list or var", () => {
             "for srv in servers\n" +
             "   #do something\n" +
             "endfor\n";
-		const document = createDoc(text);
+		const document = Shared.createDoc(text);
 		const expected: Diagnostic[] = [];
 		const result = Functions.lineByLine(document);
 		assert.deepEqual(result, expected);
@@ -69,10 +65,10 @@ suite("Undeclared list or var", () => {
             "for srv in server\n" +
             "   #do something\n" +
             "endfor\n";
-		const document = createDoc(text);
+		const document = Shared.createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
             { uri: document.uri, range: { start: { line: 1, character: 11 }, end: { line: 1, character: 17 } } },
-            DiagnosticSeverity.Error, `server is unknown. Declare a var or a list`
+            DiagnosticSeverity.Error, Shared.errorMessage("server", "servers")
         )];
 		const result = Functions.lineByLine(document);
 		assert.deepEqual(result, expected);
@@ -84,7 +80,7 @@ suite("Undeclared list or var", () => {
             "for srv in servers\n" +
             "   #do something\n" +
             "endfor\n";
-		const document = createDoc(text);
+		const document = Shared.createDoc(text);
 		const expected: Diagnostic[] = [];
 		const result = Functions.lineByLine(document);
 		assert.deepEqual(result, expected);
@@ -98,7 +94,7 @@ suite("Undeclared list or var", () => {
             "for srv in servers\n" +
             "   #do something\n" +
             "endfor\n";
-        const document = createDoc(text);
+        const document = Shared.createDoc(text);
         const expected: Diagnostic[] = [];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -112,10 +108,10 @@ suite("Undeclared list or var", () => {
             "for srv in server\n" +
             "   #do something\n" +
             "endfor\n";
-        const document = createDoc(text);
+        const document = Shared.createDoc(text);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             { uri: document.uri, range: { start: { line: 3, character: 11 }, end: { line: 3, character: 17 } } },
-            DiagnosticSeverity.Error, `server is unknown. Declare a var or a list`
+            DiagnosticSeverity.Error, Shared.errorMessage("server", "servers")
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -130,10 +126,10 @@ suite("Undeclared list or var", () => {
             "for srv in server\n" +
             "   #do something\n" +
             "endfor\n";
-        const document = createDoc(text);
+        const document = Shared.createDoc(text);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             { uri: document.uri, range: { start: { line: 4, character: 11 }, end: { line: 4, character: 17 } } },
-            DiagnosticSeverity.Error, `server is unknown. Declare a var or a list`
+            DiagnosticSeverity.Error, Shared.errorMessage("server", "servers")
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -148,7 +144,7 @@ suite("Undeclared list or var", () => {
             "for srv in servers\n" +
             "   #do something\n" +
             "endfor\n";
-        const document = createDoc(text);
+        const document = Shared.createDoc(text);
         const expected: Diagnostic[] = [];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -163,10 +159,10 @@ suite("Undeclared list or var", () => {
             "for srv in server\n" +
             "   #do something\n" +
             "endfor\n";
-        const document = createDoc(text);
+        const document = Shared.createDoc(text);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             { uri: document.uri, range: { start: { line: 4, character: 11 }, end: { line: 4, character: 17 } } },
-            DiagnosticSeverity.Error, `server is unknown. Declare a var or a list`
+            DiagnosticSeverity.Error, Shared.errorMessage("server", "servers")
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -181,7 +177,7 @@ suite("Undeclared list or var", () => {
             "for srv in servers\n" +
             "   #do something\n" +
             "endfor\n";
-        const document = createDoc(text);
+        const document = Shared.createDoc(text);
         const expected: Diagnostic[] = [];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -196,13 +192,28 @@ suite("Undeclared list or var", () => {
             "   'srv1': 'srv2'\n" +
             "}\n" +
             "endvar\n";
-        const document = createDoc(text);
+        const document = Shared.createDoc(text);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             { uri: document.uri, range: { start: { line: 0, character: 11 }, end: { line: 0, character: 18 } } },
-            DiagnosticSeverity.Error, `servers is unknown. Declare a var or a list`
+            DiagnosticSeverity.Error, Shared.errorMessage("servers", null)
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
     });
+
+    test("Undeclared var, correct for before var", () => {
+        const text =
+            "for srv in servers\n" +
+            "   #do something\n" +
+            "endfor\n";
+        const document = Shared.createDoc(text);
+        const expected: Diagnostic[] = [Shared.createDiagnostic(
+            { uri: document.uri, range: { start: { line: 0, character: 11 }, end: { line: 0, character: 18 } } },
+            DiagnosticSeverity.Error, Shared.errorMessage("servers", null)
+        )];
+        const result = Functions.lineByLine(document);
+        assert.deepEqual(result, expected);
+    });
+
 
 });

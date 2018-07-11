@@ -3,17 +3,13 @@ import * as assert from 'assert';
 import * as Functions from '../validateFunctions';
 import * as Shared from '../sharedFunctions';
 
-function createDoc(text: string): TextDocument {
-	return TextDocument.create("testDoc", "atsd-visual", 0, text);
-}
-
 suite("Script endscript tests", () => {
 
 	test("Correct empty script", () => {
 		const text =
 			`script\n` +
 			`endscript`;
-		const document: TextDocument = createDoc(text);
+		const document: TextDocument = Shared.createDoc(text);
 		const expected: Diagnostic[] = [];
 		const result = Functions.lineByLine(document);
 		assert.deepEqual(result, expected);
@@ -23,7 +19,7 @@ suite("Script endscript tests", () => {
 		const text =
 			`script\n` +
 			`endscrpt`;
-		const document: TextDocument = createDoc(text);
+		const document: TextDocument = Shared.createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
 			{ uri: document.uri, range: { start: { line: 0, character: 0 }, end: { line: 0, character: 6 } } },
 			DiagnosticSeverity.Error, "script has no matching endscript"
@@ -37,7 +33,7 @@ suite("Script endscript tests", () => {
 			`script\n` +
 			`	for (let i = 0; i < 5; i++) {}\n` +
 			`endscript`;
-		const document: TextDocument = createDoc(text);
+		const document: TextDocument = Shared.createDoc(text);
 		const expected: Diagnostic[] = [];
 		const result = Functions.lineByLine(document);
 		assert.deepEqual(result, expected);
@@ -51,7 +47,7 @@ suite("Script endscript tests", () => {
 			`script\n` +
 			`	for (let i = 0; i < 5; i++) {}\n` +
 			`endscript`;
-		const document: TextDocument = createDoc(text);
+		const document: TextDocument = Shared.createDoc(text);
 		const expected: Diagnostic[] = [];
 		const result = Functions.lineByLine(document);
 		assert.deepEqual(result, expected);
@@ -63,7 +59,7 @@ suite("Script endscript tests", () => {
 			`endscrpt\n` +
 			`script\n` +
 			`endscrpt`;
-		const document: TextDocument = createDoc(text);
+		const document: TextDocument = Shared.createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
 			{ uri: document.uri, range: { start: { line: 0, character: 0 }, end: { line: 0, character: 6 } } },
 			DiagnosticSeverity.Error, "script has no matching endscript"
