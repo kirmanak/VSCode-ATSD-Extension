@@ -15,7 +15,7 @@ suite("Incorrect dealias tests", () => {
 			"value = value('s1') * 2";
 		const document = createDoc(text);
 		const expected: Diagnostic[] = [];
-		const result = Functions.nonExistentAliases(document);
+		const result = Functions.lineByLine(document);
 		assert.deepEqual(result, expected);
 	});
 
@@ -28,7 +28,7 @@ suite("Incorrect dealias tests", () => {
 			{ uri: document.uri, range: { start: { line: 1, character: 15 }, end: { line: 1, character: 17 } } },
 			DiagnosticSeverity.Error, "The alias s2 is referred, but never declared"
 		)];
-		const result = Functions.nonExistentAliases(document);
+		const result = Functions.lineByLine(document);
 		assert.deepEqual(result, expected);
 	});
 
@@ -43,7 +43,7 @@ suite("Incorrect dealias tests", () => {
 			{ uri: document.uri, range: { start: { line: 0, character: 15}, end: { line: 0, character: 17} } },
 			DiagnosticSeverity.Error, "The alias s1 is referred, but never declared"
 		)];
-		const result = Functions.nonExistentAliases(document);
+		const result = Functions.lineByLine(document);
 		assert.deepEqual(result, expected);
 	});
 
@@ -60,7 +60,7 @@ suite("Incorrect dealias tests", () => {
 			{ uri: document.uri, range: { start: { line: 2, character: 15 }, end: { line: 2, character: 17 } } },
 			DiagnosticSeverity.Error, "The alias s3 is referred, but never declared"
 		)];
-		const result = Functions.nonExistentAliases(document);
+		const result = Functions.lineByLine(document);
 		assert.deepEqual(result, expected);
 	});
 
@@ -72,7 +72,7 @@ suite("Incorrect dealias tests", () => {
 			"value = value('s2') * 2";
 		const document = createDoc(text);
 		const expected: Diagnostic[] = [];
-		const result = Functions.nonExistentAliases(document);
+		const result = Functions.lineByLine(document);
 		assert.deepEqual(result, expected);
 	});
 
@@ -87,7 +87,7 @@ suite("Incorrect dealias tests", () => {
 			{ uri: document.uri, range: { start: { line: 2, character: 15}, end: { line: 2, character: 17} } },
 			DiagnosticSeverity.Error, "The alias s3 is referred, but never declared"
 		)];
-		const result = Functions.nonExistentAliases(document);
+		const result = Functions.lineByLine(document);
 		assert.deepEqual(result, expected);
 	});
 
@@ -99,7 +99,7 @@ suite("Incorrect dealias tests", () => {
 			"	value = value('src');\n";
 		const document = createDoc(text);
 		const expected: Diagnostic[] = [];
-		const result = Functions.nonExistentAliases(document);
+		const result = Functions.lineByLine(document);
 		assert.deepEqual(result, expected);
 	})
 });

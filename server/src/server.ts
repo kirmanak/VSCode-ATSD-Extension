@@ -53,10 +53,8 @@ documents.onDidChangeContent((change) => {
 
 function validateTextDocument(textDocument: TextDocument) {
 	const diagnostics: Diagnostic[] = [];
+
 	validateFunctions.lineByLine(textDocument).forEach(element => {
-		diagnostics.push(element);
-	});
-	validateFunctions.nonExistentAliases(textDocument).forEach(element => {
 		diagnostics.push(element);
 	});
 

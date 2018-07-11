@@ -2,45 +2,6 @@ import { Location, Range, Diagnostic, DiagnosticSeverity, TextDocument } from 'v
 import * as Shared from './sharedFunctions';
 import * as Levenshtein from 'levenshtein';
 
-export function nonExistentAliases(textDocument: TextDocument): Diagnostic[] {
-	const result: Diagnostic[] = [];
-
-	const text = Shared.deleteComments(textDocument.getText());
-	const bothRegex = /^[\t ]*alias[\t ]*=[\t ]*(\S*)[\t ]*$|^[ \t]*value[ \t]*=[ \t\S]*value\((['"])(\S*)\2\)[ \t\S]*$/gm;
-	const deAliasRegex = /(^[ \t]*value[ \t]*=[ \t\S]*value\((['"]))(\S*)\2\)[ \t\S]*$/m;
-	const aliasRegex = /^[\t ]*alias[\t ]*=[\t ]*(\S*)[\t ]*$/m;
-
-	let matching: RegExpExecArray;
-	let matchingDealias: RegExpExecArray;
-	let aliases: String[] = [];
-
-	while (matching = bothRegex.exec(text)) {
-		const line = matching[0];
-		if (matchingDealias = deAliasRegex.exec(line)) {
-			const deAlias = matchingDealias[3];
-			if (!aliases.find(alias => alias === deAlias)) {
-				const deAliasStart = matching.index + matchingDealias[1].length;
-				const location: Location = {
-					uri: textDocument.uri,
-					range: {
-						start: textDocument.positionAt(deAliasStart),
-						end: textDocument.positionAt(deAliasStart + matching[3].length)
-					}
-				};
-				const diagnostic: Diagnostic = Shared.createDiagnostic(
-					location, DiagnosticSeverity.Error,
-					`The alias ${deAlias} is referred, but never declared`
-				);
-				result.push(diagnostic);
-			}
-		} else if (aliasRegex.test(line)) {
-			aliases.push(matching[1]);
-		}
-	}
-
-	return result;
-}
-
 const possibleOptions: string[] = [
 	"addmeta", "aheadtimespan", "alertexpression", "alertstyle", "alias", "align", "attribute", "audioalert", "audioonload", "autoeperiod", "autoperiod",
 	"autoscale", "axis", "axistitle", "axistitleright", "barcount", "batchsize", "batchupdate", "borderwidth", "bundle", "buttons", "cache", "caption",
@@ -72,9 +33,7 @@ const possibleSections: string[] = [
 ];
 
 function isAbsent(word: string, dictionary: string[]): boolean {
-	return dictionary.find((value: string) => {
-		return (value === undefined) ? false : value === word;
-	}) === undefined;
+	return dictionary.find(value => value === word) === undefined;
 }
 
 function lowestLevenshtein(word: string, dictionary: string[]): string {
@@ -193,9 +152,9 @@ function checkEnd(expectedEnd: ControlSequence, nestedStack: FoundKeyword[], fou
 	const stackHead = nestedStack.pop();
 	if (stackHead !== undefined && stackHead.keyword === expectedEnd) return null;
 	if (stackHead !== undefined) nestedStack.push(stackHead); // push found keyword back
-	const unfinishedIndex = nestedStack.findIndex((value) => {
-		return (value === undefined) ? false : value.keyword === expectedEnd;
-	});
+	const unfinishedIndex = nestedStack.findIndex(value => 
+		(value === undefined) ? false : value.keyword === expectedEnd
+	);
 	if (stackHead === undefined || unfinishedIndex === -1) {
 		return Shared.createDiagnostic(
 			{ uri: uri, range: foundKeyword.range }, DiagnosticSeverity.Error,
@@ -217,8 +176,11 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 	let isTags = false; // to disable spelling check
 	let isScript = false; // to disable everything
 	let isCsv = false, isFor = false; // to perform validation
-	let csvColumns = 0;
-	let listNames: string[] = [], forVariables: string[] = [];
+	let csvColumns = 0; // to validate csv
+	const listNames: string[] = [], forVariables: string[] = []; // to validate @{var}
+	const aliases: string[] = []; // to validate `value = value('alias')`
+	const deAliasRegex = /(^\s*value\s*=.*value\((['"]))(\S*)\2\).*$/m;
+	const aliasRegex = /^\s*alias\s*=\s*(\S*)\s*$/m;
 	let match: RegExpExecArray;
 
 	for (let i = 0; i < lines.length; i++) {
@@ -231,17 +193,42 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 		// prepare regex to let 'g' key do its work
 		const regex = ControlSequenceUtil.createRegex();
 		let foundKeyword = ControlSequenceUtil.parseControlSequence(regex, line, i);
-		if (!isTags) spellingCheck(line, textDocument.uri, i).forEach((diagnostic) => {
-			result.push(diagnostic);
-		});
+
+		if (!isTags) {
+			if (match = aliasRegex.exec(line)) aliases.push(match[1]);
+			if (match = deAliasRegex.exec(line)) {
+				const deAlias = match[3];
+				if (!aliases.find(alias => alias === deAlias)) {
+					console.log(match);
+					const deAliasStart = match[1].length;
+					result.push(Shared.createDiagnostic(
+						{
+							uri: textDocument.uri,
+							range: {
+								start: { line: i, character: deAliasStart },
+								end: { line: i, character: deAliasStart + deAlias.length }
+							}
+						}, DiagnosticSeverity.Error, `The alias ${deAlias} is referred, but never declared`
+					));
+				}
+			}
+			spellingCheck(line, textDocument.uri, i).forEach((diagnostic) => {
+				result.push(diagnostic);
+			});
+		}
 
 		// validate CSV
 		if (isCsv && (foundKeyword === null || foundKeyword.keyword !== ControlSequence.EndCsv)) {
 			const columns = countCsvColumns(line);
 			if (columns != csvColumns) {
 				result.push(Shared.createDiagnostic(
-					{ uri: textDocument.uri, range: { start: { line: i, character: 0 }, end: { line: i, character: line.length } } },
-					DiagnosticSeverity.Error, `Expected ${csvColumns} columns, but found ${columns}`
+					{ 
+						uri: textDocument.uri, 
+						range: { 
+							start: { line: i, character: 0 }, 
+							end: { line: i, character: line.length } 
+						} 
+					}, DiagnosticSeverity.Error, `Expected ${csvColumns} columns, but found ${columns}`
 				));
 			}
 			continue;
@@ -256,19 +243,20 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 				const regexp = /[a-zA-Z_]\w*/g;
 				while (match = regexp.exec(substr)) {
 					const variable = match[0];
-					const forIndex = forVariables.findIndex((name) => {
-						return (name === undefined) ? false : name === variable;
-					});
+					const forIndex = forVariables.findIndex(name => name === variable);
 					if (forIndex === -1) {
-						const listIndex = listNames.findIndex((name) => {
-							return (name === undefined) ? false : name === variable;
-						});
+						const listIndex = listNames.findIndex(name => name === variable);
 						if (listIndex === -1) {
 							startPosition += match.index;
 							const endPosition = startPosition + variable.length;
 							result.push(Shared.createDiagnostic(
-								{ uri: textDocument.uri, range: { start: { line: i, character: startPosition }, end: { line: i, character: endPosition } } },
-								DiagnosticSeverity.Error, `${variable} is used in loop, but wasn't declared`
+								{ 
+									uri: textDocument.uri, 
+									range: { 
+										start: { line: i, character: startPosition }, 
+										end: { line: i, character: endPosition } 
+									} 
+								}, DiagnosticSeverity.Error, `${variable} is used in loop, but wasn't declared`
 							));
 						}
 					}
@@ -307,7 +295,7 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 					break;
 				}
 				case ControlSequence.EndFor: {
-					
+
 					isFor = false;
 					forVariables.pop();
 					const diagnostic = checkEnd(ControlSequence.For, nestedStack, foundKeyword, textDocument.uri);
@@ -327,9 +315,9 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 				case ControlSequence.Else:
 				case ControlSequence.ElseIf: {
 					const stackHead = nestedStack.pop();
-					const ifIndex = nestedStack.findIndex((value) => {
-						return (value === undefined) ? false : value.keyword === ControlSequence.If;
-					});
+					const ifIndex = nestedStack.findIndex(value => 
+						(value === undefined) ? false : value.keyword === ControlSequence.If
+					);
 					if (stackHead === undefined ||
 						(stackHead.keyword !== ControlSequence.If && ifIndex === -1)) {
 						result.push(Shared.createDiagnostic(
