@@ -189,6 +189,7 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 	let isCsv = false, isFor = false; // to perform validation
 	let csvColumns = 0; // to validate csv
 	const listNames: string[] = [], forVariables: string[] = []; // to validate @{var}
+	const varNames: string[] = []; // to validate `in ...` statements
 	const aliases: string[] = []; // to validate `value = value('alias')`
 	const deAliasRegex = /(^\s*value\s*=.*value\((['"]))(\S*)\2\).*$/m;
 	const aliasRegex = /^\s*alias\s*=\s*(\S*)\s*$/m;
@@ -210,7 +211,6 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 			if (match = deAliasRegex.exec(line)) {
 				const deAlias = match[3];
 				if (!aliases.find(alias => alias === deAlias)) {
-					console.log(match);
 					const deAliasStart = match[1].length;
 					result.push(Shared.createDiagnostic(
 						{
@@ -351,20 +351,31 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 				}
 				case ControlSequence.Var: {
 					if (/=\s*(\[|\{)(|.*,)\s*$/m.test(line)) nestedStack.push(foundKeyword);
+					if (match = /var\s*(\w+)\s*=/.exec(line)) varNames.push(match[1]);
 					break;
 				}
 				case ControlSequence.List: {
-					const match = /^\s*list\s+(\w+)\s+=/.exec(line);
-					if (match !== null) listNames.push(match[1]);
+					if (match = /^\s*list\s+(\w+)\s+=/.exec(line)) listNames.push(match[1]);
 					if (/,[ \t]*$/m.test(line)) nestedStack.push(foundKeyword);
 					break;
 				}
 				case ControlSequence.For: {
+					isFor = true;
 					nestedStack.push(foundKeyword);
-					const match = /^\s*for\s+(\w+)\s+in/.exec(line);
-					if (match !== null) {
-						forVariables.push(match[1]);
-						isFor = true;
+					if (match = /^\s*for\s+(\w+)\s+in/m.exec(line)) forVariables.push(match[1]);
+					if (match = /^(\s*for\s+\w+\s+in\s+)(\w+)\s*$/m.exec(line)) {
+						if (!listNames.find(name => name === match[2]) 
+							&& !varNames.find(name => name === match[2])) {
+								result.push(Shared.createDiagnostic(
+									{
+										uri: textDocument.uri,
+										range: {
+											start: { line: i, character: match[1].length},
+											end: { line: i, character: match[1].length + match[2].length},
+										}
+									}, DiagnosticSeverity.Error, `${match[2]} is unknown. Declare a var or a list`
+								));
+						}
 					}
 					break;
 				}
