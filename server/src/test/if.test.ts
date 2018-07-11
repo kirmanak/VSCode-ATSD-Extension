@@ -16,12 +16,13 @@ suite("If elseif else endif validation tests", () => {
 
 	test("One correct if-elseif-endif", () => {
 		const text =
+			"list servers = 'srv1', 'srv2'\n" +
 			"for server in servers\n" +
 			"  [series]\n" +
 			"    entity = @{server}\n" +
-			"    if server == 'nurswgvml007'\n" +
+			"    if server == 'srv1'\n" +
 			"      color = red\n" +
-			"    elseif server == 'nurswgvml006'\n" +
+			"    elseif server == 'srv2'\n" +
 			"      color = yellow\n" +
 			"    endif\n" +
 			"endfor\n";
@@ -33,10 +34,11 @@ suite("If elseif else endif validation tests", () => {
 
 	test("One correct if-else-endif", () => {
 		const text =
+			"list servers = 'srv1', 'srv2'\n" +
 			"for server in servers\n" +
 			"  [series]\n" +
 			"    entity = @{server}\n" +
-			"    if server == 'nurswgvml007'\n" +
+			"    if server == 'srv1'\n" +
 			"      color = red\n" +
 			"    else\n" +
 			"      color = yellow\n" +
@@ -50,19 +52,20 @@ suite("If elseif else endif validation tests", () => {
 
 	test("One incorrect elseif-endif", () => {
 		const text =
+			"list servers = 'srv1', 'srv2'\n" +
 			"for server in servers\n" +
 			"  [series]\n" +
 			"    entity = @{server}\n" +
-			"    elseif server == 'nurswgvml006'\n" +
+			"    elseif server == 'srv1'\n" +
 			"      color = yellow\n" +
 			"    endif\n" +
 			"endfor\n";
 		const document: TextDocument = createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
-			{ uri: document.uri, range: { start: { line: 3, character: 4 }, end: { line: 3, character: 10 } } },
+			{ uri: document.uri, range: { start: { line: 4, character: 4 }, end: { line: 4, character: 10 } } },
 			DiagnosticSeverity.Error, elseIfError
 		), Shared.createDiagnostic(
-			{ uri: document.uri, range: { start: { line: 5, character: 4 }, end: { line: 5, character: 9 } } },
+			{ uri: document.uri, range: { start: { line: 6, character: 4 }, end: { line: 6, character: 9 } } },
 			DiagnosticSeverity.Error, endIfError
 		)];
 		const result = Functions.lineByLine(document);
@@ -71,6 +74,7 @@ suite("If elseif else endif validation tests", () => {
 
 	test("One incorrect else-endif", () => {
 		const text =
+			"list servers = 'srv1', 'srv2'\n" +
 			"for server in servers\n" +
 			"  [series]\n" +
 			"    entity = @{server}\n" +
@@ -80,10 +84,10 @@ suite("If elseif else endif validation tests", () => {
 			"endfor\n";
 		const document: TextDocument = createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
-			{ uri: document.uri, range: { start: { line: 3, character: 4 }, end: { line: 3, character: 8 } } },
+			{ uri: document.uri, range: { start: { line: 4, character: 4 }, end: { line: 4, character: 8 } } },
 			DiagnosticSeverity.Error, elseError
 		), Shared.createDiagnostic(
-			{ uri: document.uri, range: { start: { line: 5, character: 4 }, end: { line: 5, character: 9 } } },
+			{ uri: document.uri, range: { start: { line: 6, character: 4 }, end: { line: 6, character: 9 } } },
 			DiagnosticSeverity.Error, endIfError
 		)];
 		const result = Functions.lineByLine(document);
@@ -92,6 +96,7 @@ suite("If elseif else endif validation tests", () => {
 
 	test("One incorrect else-endif with comment", () => {
 		const text =
+			"list servers = 'srv1', 'srv2'\n" +
 			"for server in servers\n" +
 			"  [series]\n" +
 			"    entity = @{server}\n" +
@@ -101,10 +106,10 @@ suite("If elseif else endif validation tests", () => {
 			"endfor\n";
 		const document: TextDocument = createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
-			{ uri: document.uri, range: { start: { line: 3, character: 28 }, end: { line: 3, character: 32 } } },
+			{ uri: document.uri, range: { start: { line: 4, character: 28 }, end: { line: 4, character: 32 } } },
 			DiagnosticSeverity.Error, elseError
 		), Shared.createDiagnostic(
-			{ uri: document.uri, range: { start: { line: 5, character: 4 }, end: { line: 5, character: 9 } } },
+			{ uri: document.uri, range: { start: { line: 6, character: 4 }, end: { line: 6, character: 9 } } },
 			DiagnosticSeverity.Error, endIfError
 		)];
 		const result = Functions.lineByLine(document);
@@ -113,25 +118,25 @@ suite("If elseif else endif validation tests", () => {
 
 	test("One incorrect if-else", () => {
 		const text =
+			"list servers = 'srv1', 'srv2'\n" +
 			"for server in servers\n" +
 			"  [series]\n" +
 			"    entity = @{server}\n" +
-			"    if server == 'nurswgvml007'\n" +
+			"    if server == 'srv1'\n" +
 			"      color = red\n" +
 			"    else\n" +
 			"      color = yellow\n" +
 			"endfor\n";
 		const document: TextDocument = createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
-			{ uri: document.uri, range: { start: { line: 7, character: 0 }, end: { line: 7, character: 6 } } },
+			{ uri: document.uri, range: { start: { line: 8, character: 0 }, end: { line: 8, character: 6 } } },
 			DiagnosticSeverity.Error, "for has finished before if"
 		),Shared.createDiagnostic(
-			{ uri: document.uri, range: { start: { line: 3, character: 4 }, end: { line: 3, character: 6 } } },
+			{ uri: document.uri, range: { start: { line: 4, character: 4 }, end: { line: 4, character: 6 } } },
 			DiagnosticSeverity.Error, ifError
 		)];
 		const result = Functions.lineByLine(document);
 		assert.deepEqual(result, expected);
 	});
-
 
 });

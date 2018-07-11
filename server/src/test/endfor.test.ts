@@ -11,6 +11,7 @@ suite("Unmatched endfor tests", () => {
 
     test("One correct loop", () => {
         const text =
+            "list servers = 'srv1', 'srv2'\n" +
             "for server in servers\n" +
             "   do something\n" +
             "endfor";
@@ -22,6 +23,7 @@ suite("Unmatched endfor tests", () => {
 
     test("Two correct loops", () => {
         const text =
+            "list servers = 'srv1', 'srv2'\n" +
             "for server in servers\n" +
             "   do something\n" +
             "endfor\n" +
@@ -36,11 +38,12 @@ suite("Unmatched endfor tests", () => {
 
     test("One incorrect loop", () => {
         const text =
+            "list servers = 'srv1', 'srv2'\n" +
             "for server in servers\n" +
             "   do something\n";
         const document: TextDocument = createDoc(text);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
-		{ uri: document.uri, range: { start: { line: 0, character: 0 }, end: { line: 0, character: 3 } } },
+		{ uri: document.uri, range: { start: { line: 1, character: 0 }, end: { line: 1, character: 3 } } },
 		DiagnosticSeverity.Error, "for has no matching endfor"
 	)];
         const result = Functions.lineByLine(document);
@@ -49,16 +52,17 @@ suite("Unmatched endfor tests", () => {
 
     test("Two incorrect loops", () => {
         const text =
+            "list servers = 'srv1', 'srv2'\n" +
             "for server in servers\n" +
             "   do something\n" +
             "for server in servers\n" +
             "   do something\n";
         const document: TextDocument = createDoc(text);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
-		{ uri: document.uri, range: { start: { line: 0, character: 0 }, end: { line: 0, character: 3 } } },
+		{ uri: document.uri, range: { start: { line: 1, character: 0 }, end: { line: 1, character: 3 } } },
 		DiagnosticSeverity.Error, "for has no matching endfor"
 	), Shared.createDiagnostic(
-		{ uri: document.uri, range: { start: { line: 2, character: 0 }, end: { line: 2, character: 3 } } },
+		{ uri: document.uri, range: { start: { line: 3, character: 0 }, end: { line: 3, character: 3 } } },
 		DiagnosticSeverity.Error, "for has no matching endfor"
 	)];
         const result = Functions.lineByLine(document);
@@ -68,6 +72,7 @@ suite("Unmatched endfor tests", () => {
 
     test("One incorrect loop, one correct loop", () => {
         const text =
+            "list servers = 'srv1', 'srv2'\n" +
             "for server in servers\n" +
             "   do something\n" +
             "for server in servers\n" +
@@ -75,7 +80,7 @@ suite("Unmatched endfor tests", () => {
             "endfor";
         const document: TextDocument = createDoc(text);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
-		{ uri: document.uri, range: { start: { line: 0, character: 0 }, end: { line: 0, character: 3 } } },
+		{ uri: document.uri, range: { start: { line: 1, character: 0 }, end: { line: 1, character: 3 } } },
 		DiagnosticSeverity.Error, "for has no matching endfor"
 	)];
         const result = Functions.lineByLine(document);

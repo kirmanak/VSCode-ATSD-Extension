@@ -15,6 +15,7 @@ suite("Undefined variable in for loop", () => {
 
 	test("One correct loop", () => {
 		const text =
+			"list servers = 'srv1', 'srv2'\n" +
 			`for ${firstVar} in servers\n` +
 			`   entity = @{${firstVar}}\n` +
 			"endfor";
@@ -26,6 +27,7 @@ suite("Undefined variable in for loop", () => {
 
 	test("One correct loop with comment", () => {
 		const text =
+			"list servers = 'srv1', 'srv2'\n" +
 			`for ${firstVar} /* this is a comment */ in servers\n` +
 			`   entity = @{${firstVar}}\n` +
 			"endfor";
@@ -37,6 +39,7 @@ suite("Undefined variable in for loop", () => {
 
 	test("Two correct  loops", () => {
 		const text =
+			"list servers = 'srv1', 'srv2'\n" +
 			`for ${firstVar} in servers\n` +
 			`   entity = @{${firstVar}}\n` +
 			"endfor\n" +
@@ -51,12 +54,13 @@ suite("Undefined variable in for loop", () => {
 
 	test("One incorrect loop", () => {
 		const text =
+			"list servers = 'srv1', 'srv2'\n" +
 			`for ${secondVar} in servers\n` +
 			`   entity = @{${firstVar}}\n` +
 			"endfor";
 		const document: TextDocument = createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
-			{ uri: document.uri, range: { start: { line: 1, character: 14 }, end: { line: 1, character: 14 + firstVar.length } } },
+			{ uri: document.uri, range: { start: { line: 2, character: 14 }, end: { line: 2, character: 14 + firstVar.length } } },
 			DiagnosticSeverity.Error, `${firstVar} is used in loop, but wasn't declared`
 		)];
 		const result = Functions.lineByLine(document);
@@ -65,6 +69,7 @@ suite("Undefined variable in for loop", () => {
 
 	test("Two incorrect loops", () => {
 		const text =
+			"list servers = 'srv1', 'srv2'\n" +
 			`for ${secondVar} in servers\n` +
 			`   entity = @{${firstVar}}\n` +
 			"endfor\n" +
@@ -73,10 +78,10 @@ suite("Undefined variable in for loop", () => {
 			"endfor";
 		const document: TextDocument = createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
-			{ uri: document.uri, range: { start: { line: 1, character: 14 }, end: { line: 1, character: 14 + firstVar.length } } },
+			{ uri: document.uri, range: { start: { line: 2, character: 14 }, end: { line: 2, character: 14 + firstVar.length } } },
 			DiagnosticSeverity.Error, `${firstVar} is used in loop, but wasn't declared`
 		), Shared.createDiagnostic(
-			{ uri: document.uri, range: { start: { line: 4, character: 14 }, end: { line: 4, character: 14 + secondVar.length } } },
+			{ uri: document.uri, range: { start: { line: 5, character: 14 }, end: { line: 5, character: 14 + secondVar.length } } },
 			DiagnosticSeverity.Error, `${secondVar} is used in loop, but wasn't declared`
 		)];
 		const result = Functions.lineByLine(document);
@@ -85,6 +90,7 @@ suite("Undefined variable in for loop", () => {
 
 	test("One incorrect loop, one correct loop", () => {
 		const text =
+			"list servers = 'srv1', 'srv2'\n" +
 			`for ${secondVar} in servers\n` +
 			`   entity = @{${firstVar}}\n` +
 			"endfor\n" +
@@ -93,7 +99,7 @@ suite("Undefined variable in for loop", () => {
 			"endfor";
 		const document: TextDocument = createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
-			{ uri: document.uri, range: { start: { line: 1, character: 14 }, end: { line: 1, character: 14 + firstVar.length } } },
+			{ uri: document.uri, range: { start: { line: 2, character: 14 }, end: { line: 2, character: 14 + firstVar.length } } },
 			DiagnosticSeverity.Error, `${firstVar} is used in loop, but wasn't declared`
 		)];
 		const result = Functions.lineByLine(document);
@@ -102,6 +108,7 @@ suite("Undefined variable in for loop", () => {
 
 	test("One correct nested loop", () => {
 		const text =
+			"list servers = 'srv1', 'srv2'\n" +
 			`for ${secondVar} in servers\n` +
 			`   entity = @{${secondVar}}\n` +
 			`   for ${firstVar} in servers\n` +
@@ -116,6 +123,7 @@ suite("Undefined variable in for loop", () => {
 
 	test("One incorrect nested loop", () => {
 		const text =
+			"list servers = 'srv1', 'srv2'\n" +
 			`for ${secondVar} in servers\n` +
 			`   entity = @{${secondVar}}\n` +
 			`   for ${firstVar} in servers\n` +
@@ -125,7 +133,7 @@ suite("Undefined variable in for loop", () => {
 			"endfor";
 		const document: TextDocument = createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
-			{ uri: document.uri, range: { start: { line: 3, character: 18 }, end: { line: 3, character: 18 + thirdVar.length } } },
+			{ uri: document.uri, range: { start: { line: 4, character: 18 }, end: { line: 4, character: 18 + thirdVar.length } } },
 			DiagnosticSeverity.Error, `${thirdVar} is used in loop, but wasn't declared`
 		)];
 		const result = Functions.lineByLine(document);
@@ -134,6 +142,7 @@ suite("Undefined variable in for loop", () => {
 
 	test("Arithmetic expression with correct var", () => {
 		const text =
+			"list servers = 'srv1', 'srv2'\n" +
 			`for ${firstVar} in servers\n` +
 			`   entity = @{${firstVar} + ${firstVar}}\n` +
 			"endfor";
@@ -145,12 +154,13 @@ suite("Undefined variable in for loop", () => {
 
 	test("Arithmetic expression with incorrect var", () => {
 		const text =
+			"list servers = 'srv1', 'srv2'\n" +
 			`for ${firstVar} in servers\n` +
 			`   entity = @{${secondVar} + ${firstVar}}\n` +
 			"endfor";
 		const document: TextDocument = createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
-			{ uri: document.uri, range: { start: { line: 1, character: 14 }, end: { line: 1, character: 14 + secondVar.length } } },
+			{ uri: document.uri, range: { start: { line: 2, character: 14 }, end: { line: 2, character: 14 + secondVar.length } } },
 			DiagnosticSeverity.Error, `${secondVar} is used in loop, but wasn't declared`
 		)];
 		const result = Functions.lineByLine(document);
