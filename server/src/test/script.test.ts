@@ -68,5 +68,13 @@ suite("Script endscript tests", () => {
 		assert.deepEqual(result, expected);
 	});
 
+	test("script = ", () => {
+		const text =
+			` script  = new Date('2017-01-01');`;
+		const document: TextDocument = Shared.createDoc(text);
+		const expected: Diagnostic[] = [];
+		const result = Functions.lineByLine(document);
+		assert.deepEqual(result, expected);
+	});
 
 });

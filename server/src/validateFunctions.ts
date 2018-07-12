@@ -401,8 +401,10 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 					break;
 				}
 				case ControlSequence.Script: {
-					nestedStack.push(foundKeyword);
-					isScript = true;
+					if (!/^[ \t]*script[ \t]*=.*$/m.test(line)) {
+						nestedStack.push(foundKeyword);
+						isScript = true;
+					}
 					break;
 				}
 				default: throw new Error("Update switch-case statement!");
