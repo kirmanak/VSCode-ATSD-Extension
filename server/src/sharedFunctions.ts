@@ -1,6 +1,6 @@
 import { TextDocument, Location, Diagnostic, DiagnosticSeverity } from 'vscode-languageserver';
 
-const diagnosticSource = "Axibase Visual Plugin";
+const diagnosticSource = "Axibase Charts";
 
 export function createDiagnostic(location: Location, severity: DiagnosticSeverity, message: string): Diagnostic {
 	const diagnostic: Diagnostic = {

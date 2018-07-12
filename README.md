@@ -1,15 +1,15 @@
-# Axibase Visualization Syntax Highlighting
+# Axibase Charts Syntax
 
-[![Build Status](https://travis-ci.org/kirmanak/VSCode-ATSD-Extension.svg?branch=master)](https://travis-ci.org/kirmanak/VSCode-ATSD-Extension.svg)
+[![Build Status](https://travis-ci.org/kirmanak/axibase-charts-syntax.svg?branch=master)](https://travis-ci.org/kirmanak/axibase-charts-syntax.svg)
 
 VSCode extension supporting [Axibase Charts](https://github.com/axibase/charts/blob/master/README.md) syntax. The plugin performs syntax highlighting and validation.
 
 ## Installation
 
-* Clone `VSCode-ATSD-Extension` repository.
+* Clone `Axibase Charts Syntax` repository.
 
 ```bash
-git clone https://github.com/kirmanak/VSCode-ATSD-Extension.git ~/.vscode/extensions/atsd-visual
+git clone https://github.com/kirmanak/axibase-charts-syntax.git ~/.vscode/extensions/atsd-visual
 ```
 
 * `cd` into the newly created directory.
