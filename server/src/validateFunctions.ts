@@ -17,35 +17,34 @@ function suggestionMessage(word: string, dictionary: string[]): string | null {
     return Shared.errorMessage(word, suggestion);
 }
 
-function spellingCheck(line: string, uri: string, i: number): Diagnostic[] {
-    const result: Diagnostic[] = [];
-
-    const bothRegex = /(^[ \t]*\[)(\w+)\][ \t]*$|(^\s*)['"]?([-\w]+?)['"]?\s*=/gm;
+function spellingCheck(line: string, uri: string, i: number): Diagnostic | null {
     let match: RegExpExecArray;
 
-    while (match = bothRegex.exec(line)) {
-        const word = ((match[2]) ? match[2] : match[4]).toLowerCase();
-        const withoutDash = word.replace(/-/g, '');
-        const indent = (match[1]) ? match[1] : match[3];
-        const wordStart = (indent) ? match.index + indent.length : match.index;
+    /* statements like `[section] variable = value` aren't supported */
+    if ((match = /^([ \t]*\[)(\w+)\]/gm.exec(line)) || (match = /^(['" \t]*)([-\w]+)['" \t]*=/gm.exec(line))) {
+        const indent = match[1].length;
+        const word = match[2].toLowerCase();
+        const withoutDashes = word.replace('-', '');
         let dictionary: string[];
-        if (/^[ \t]*\[\w+\][ \t]*$/.test(line)) dictionary = possibleSections;
-        else dictionary = possibleOptions;
-        if (!dictionary.find(value => value === withoutDash)) {
+        if (match[0].endsWith(']')) dictionary = possibleSections;
+        else {
+            dictionary = possibleOptions;
+            if (withoutDashes.startsWith("column")) return null;
+        }
+        if (!dictionary.find(value => value === withoutDashes)) {
             const message = suggestionMessage(word, dictionary);
             const location: Location = {
                 uri: uri,
                 range: {
-                    start: { line: i, character: wordStart },
-                    end: { line: i, character: wordStart + word.length }
+                    start: { line: i, character: indent },
+                    end: { line: i, character: indent + word.length }
                 }
             };
-            const diagnostic: Diagnostic = Shared.createDiagnostic(location, DiagnosticSeverity.Error, message);
-            result.push(diagnostic);
+            return Shared.createDiagnostic(location, DiagnosticSeverity.Error, message);
         }
     }
 
-    return result;
+    return null;
 }
 
 enum ControlSequence {
@@ -175,9 +174,8 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
                     }
                 });
             }
-            spellingCheck(line, textDocument.uri, i).forEach((diagnostic) => {
-                result.push(diagnostic);
-            });
+            const misspelling = spellingCheck(line, textDocument.uri, i);
+            if (misspelling) result.push(misspelling);
         }
 
         // validate CSV
