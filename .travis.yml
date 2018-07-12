@@ -17,3 +17,8 @@ install:
 
 script:
   - npm test --silent
+
+cache:
+  directories:
+    - node_modules
+    - .vscode-test
