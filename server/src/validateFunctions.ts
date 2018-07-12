@@ -24,7 +24,7 @@ function spellingCheck(line: string, uri: string, i: number): Diagnostic | null 
     if ((match = /^([ \t]*\[)(\w+)\]/gm.exec(line)) || (match = /^(['" \t]*)([-\w]+)['" \t]*=/gm.exec(line))) {
         const indent = match[1].length;
         const word = match[2].toLowerCase();
-        const withoutDashes = word.replace('-', '');
+        const withoutDashes = word.replace(/-/g, '');
         let dictionary: string[];
         if (match[0].endsWith(']')) dictionary = possibleSections;
         else {
