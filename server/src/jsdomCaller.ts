@@ -11,11 +11,6 @@ class Statement {
 
 function parseJsStatements(text: string): Statement[] {
     const result: Statement[] = [];
-    const startScriptRegex = /\bscript\b/;
-    const endScriptRegex = /\bendscript\b/;
-    const replaceValueRegex = /(replace-value[ \t]*=[ \t]*)(\S+[ \t\S]*)$/;
-    const valueRegex = /(value[ \t]*=[ \t]*)(\S+[ \t\S]*)$/;
-    const importRegex = /import[ \t]+(\S+)[ \t]*=.+/;
     const lines = text.split('\n');
     let importList: string = "";
     let importCounter = 0;
@@ -23,13 +18,19 @@ function parseJsStatements(text: string): Statement[] {
 
     for (let i = 0, len = lines.length; i < len; i++) {
         let line = lines[i];
-        if (startScriptRegex.test(line)) {
-            const start = i + 1;
-            let content = "";
-            while ((line = lines[++i]) !== undefined && !endScriptRegex.test(line)) content += line + '\n';
+        if (/^[ \t]*script/.test(line)) {
+            let content: string;
+            let start: number;
+            if (match = /^[ \t]*script[ \t]*=(.+)$/m.exec(line)) {
+                content = match[1];
+                start = i;
+            } else {
+                start = i + 1;
+                content = "";
+                while ((line = lines[++i]) !== undefined && !/\bendscript\b/.test(line)) content += line + '\n';
+            }
             content = JSON.stringify(content);
             const call = generateCall(3);
-            console.log(lines[i-1]);
             const statement = {
                 range: {
                     start: { line: start, character: 0 },
@@ -40,14 +41,11 @@ function parseJsStatements(text: string): Statement[] {
                     `(new Function("widget","config","dialog", ${content}))\n` +
                     `.call(window, ${call})`
             };
-            console.log(statement);
             result.push(statement);
-        }
-        if (match = importRegex.exec(line)) {
+        } else if (match = /import[ \t]+(\S+)[ \t]*=.+/.exec(line)) {
             importList += `"${match[1]}",`;
             importCounter++;
-        }
-        if (match = valueRegex.exec(line)) {
+        } else if (match = /(value[ \t]*=[ \t]*)(\S+[ \t\S]*)$/.exec(line)) {
             const content = stringifyStatement(match[2]);
             const call = generateCall(40 + importCounter);
             const matchStart = match.index + match[1].length;
@@ -68,8 +66,7 @@ function parseJsStatements(text: string): Statement[] {
                     `)).call(window, ${call})`
             };
             result.push(statement);
-        }
-        if (match = replaceValueRegex.exec(line)) {
+        } else if (match = /(replace-value[ \t]*=[ \t]*)(\S+[ \t\S]*)$/.exec(line)) {
             const content = stringifyStatement(match[2]);
             const call = generateCall(4);
             const matchStart = match.index + match[1].length;
@@ -86,21 +83,6 @@ function parseJsStatements(text: string): Statement[] {
             result.push(statement);
         }
     }
-
-    /*
-    let endMatch: RegExpExecArray;
-    while (match = startScriptRegex.exec(text)) {
-        if (endMatch = endScriptRegex.exec(text)) {
-            if (endMatch.index > match.index) {
-                const statement = {
-                    content: text.substring(match.index, endMatch.index),
-                    start: match.index, end: endMatch.index
-                };
-                result.push(statement);
-            }
-        }
-    }
-    */
 
     return result;
 }
@@ -136,6 +118,7 @@ export function validate(document: TextDocument): Diagnostic[] {
         try {
             window.eval(statement.declaration);
         } catch (err) {
+            console.log(err);
             result.push(Shared.createDiagnostic({
                 uri: document.uri, range: statement.range
             }, DiagnosticSeverity.Warning, err.message
