@@ -70,7 +70,7 @@ suite("Script endscript tests", () => {
 
 	test("script = ", () => {
 		const text =
-			` script  = new Date('2017-01-01');`;
+			`	script = if (!config.isDialog) c = widget`;
 		const document: TextDocument = Shared.createDoc(text);
 		const expected: Diagnostic[] = [];
 		const result = Functions.lineByLine(document);
