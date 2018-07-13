@@ -352,8 +352,8 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
                     if (/^[ \t]*script[ \t]*=.*$/m.test(line)) {
                         let j = i;
                         while (++j < lines.length && !(/\bscript\b/.test(lines[j]) || /\bendscript\b/.test(lines[j])));
-                        if (j === lines.length) break;
-                    }
+                        if (j === lines.length || /\bscript\b/.test(lines[j])) break;
+                    } 
                     nestedStack.push(foundKeyword);
                     isScript = true;
                     break;
