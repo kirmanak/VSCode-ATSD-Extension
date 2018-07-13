@@ -8,12 +8,17 @@ suite("Spelling checks", () => {
 	test("starttime", () => {
 		const text =
 			"[series]\n" +
-			"	start-time = 15 second\n" + 
+			"	start-time = 15 second\n" +
 			"	starttime = 20 second\n" +
 			"	startime = 30 minute\n";
 		const document: TextDocument = Shared.createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
-			{ uri: document.uri, range: { start: { line: 3, character: 1}, end: { line: 3, character: 9} } },
+			{
+				uri: document.uri, range: {
+					start: { line: 3, character: 1 },
+					end: { line: 3, character: 9 }
+				}
+			},
 			DiagnosticSeverity.Error, Shared.errorMessage("startime", "starttime")
 		)];
 		const result = Functions.lineByLine(document);
@@ -26,7 +31,12 @@ suite("Spelling checks", () => {
 			"	starttime = 20 second\n";
 		const document: TextDocument = Shared.createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
-			{ uri: document.uri, range: { start: { line: 0, character: 1}, end: { line: 0, character: 6} } },
+			{
+				uri: document.uri, range: {
+					start: { line: 0, character: 1 },
+					end: { line: 0, character: 6 }
+				}
+			},
 			DiagnosticSeverity.Error, Shared.errorMessage("eries", "series")
 		)];
 		const result = Functions.lineByLine(document);
@@ -39,7 +49,12 @@ suite("Spelling checks", () => {
 			"	starttime = 20 second\n";
 		const document: TextDocument = Shared.createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
-			{ uri: document.uri, range: { start: { line: 0, character: 1}, end: { line: 0, character: 10} } },
+			{
+				uri: document.uri, range: {
+					start: { line: 0, character: 1 },
+					end: { line: 0, character: 10 }
+				}
+			},
 			DiagnosticSeverity.Error, Shared.errorMessage("starttime", "series")
 		)];
 		const result = Functions.lineByLine(document);

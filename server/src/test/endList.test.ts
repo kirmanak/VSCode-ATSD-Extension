@@ -34,7 +34,12 @@ suite("Unfinished list", () => {
 			'edlist';
 		const document: TextDocument = Shared.createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
-			{ uri: document.uri, range: { start: { line: 0, character: 0 }, end: { line: 0, character: 4 } } },
+			{
+				uri: document.uri, range: {
+					start: { line: 0, character: 0 },
+					end: { line: 0, character: 4 }
+				}
+			},
 			DiagnosticSeverity.Error, errorMessage
 		)];
 		const result = Functions.lineByLine(document);
@@ -52,7 +57,12 @@ suite("Unfinished list", () => {
 			'edlist';
 		const document: TextDocument = Shared.createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
-			{ uri: document.uri, range: { start: { line: 4, character: 0 }, end: { line: 4, character: 4 } } },
+			{
+				uri: document.uri, range: {
+					start: { line: 4, character: 0 },
+					end: { line: 4, character: 4 }
+				}
+			},
 			DiagnosticSeverity.Error, errorMessage
 		)];
 		const result = Functions.lineByLine(document);
@@ -66,7 +76,12 @@ suite("Unfinished list", () => {
 			'edlist';
 		const document: TextDocument = Shared.createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
-			{ uri: document.uri, range: { start: { line: 0, character: 11 }, end: { line: 0, character: 15 } } },
+			{
+				uri: document.uri, range: {
+					start: { line: 0, character: 11 },
+					end: { line: 0, character: 15 }
+				}
+			},
 			DiagnosticSeverity.Error, errorMessage
 		)];
 		const result = Functions.lineByLine(document);
@@ -84,7 +99,12 @@ suite("Unfinished list", () => {
 			'edlist';
 		const document: TextDocument = Shared.createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
-			{ uri: document.uri, range: { start: { line: 4, character: 11 }, end: { line: 4, character: 15 } } },
+			{
+				uri: document.uri, range: {
+					start: { line: 4, character: 11 },
+					end: { line: 4, character: 15 }
+				}
+			},
 			DiagnosticSeverity.Error, errorMessage
 		)];
 		const result = Functions.lineByLine(document);
@@ -104,7 +124,12 @@ suite("Unfinished list", () => {
 			'endlist\n';
 		const document: TextDocument = Shared.createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
-			{ uri: document.uri, range: { start: { line: 3, character: 0 }, end: { line: 3, character: 4 } } },
+			{
+				uri: document.uri, range: {
+					start: { line: 3, character: 0 },
+					end: { line: 3, character: 4 }
+				}
+			},
 			DiagnosticSeverity.Error, errorMessage
 		)];
 		const result = Functions.lineByLine(document);
@@ -130,7 +155,12 @@ suite("Unfinished list", () => {
 			"edlist";
 		const document = Shared.createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
-			{ uri: document.uri, range: { start: { line: 0, character: 0 }, end: { line: 0, character: 4 } } },
+			{
+				uri: document.uri, range: {
+					start: { line: 0, character: 0 },
+					end: { line: 0, character: 4 }
+				}
+			},
 			DiagnosticSeverity.Error, errorMessage
 		)];
 		const result = Functions.lineByLine(document);

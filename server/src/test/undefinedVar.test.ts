@@ -56,7 +56,12 @@ suite("Undefined variable in for loop", () => {
 			"endfor";
 		const document: TextDocument = Shared.createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
-			{ uri: document.uri, range: { start: { line: 2, character: 14 }, end: { line: 2, character: 14 + firstVar.length } } },
+			{
+				uri: document.uri, range: {
+					start: { line: 2, character: 14 },
+					end: { line: 2, character: 14 + firstVar.length }
+				}
+			},
 			DiagnosticSeverity.Error, Shared.errorMessage(firstVar, secondVar)
 		)];
 		const result = Functions.lineByLine(document);
@@ -74,10 +79,20 @@ suite("Undefined variable in for loop", () => {
 			"endfor";
 		const document: TextDocument = Shared.createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
-			{ uri: document.uri, range: { start: { line: 2, character: 14 }, end: { line: 2, character: 14 + firstVar.length } } },
+			{
+				uri: document.uri, range: {
+					start: { line: 2, character: 14 },
+					end: { line: 2, character: 14 + firstVar.length }
+				}
+			},
 			DiagnosticSeverity.Error, Shared.errorMessage(firstVar, secondVar)
 		), Shared.createDiagnostic(
-			{ uri: document.uri, range: { start: { line: 5, character: 14 }, end: { line: 5, character: 14 + secondVar.length } } },
+			{
+				uri: document.uri, range: {
+					start: { line: 5, character: 14 },
+					end: { line: 5, character: 14 + secondVar.length }
+				}
+			},
 			DiagnosticSeverity.Error, Shared.errorMessage(secondVar, firstVar)
 		)];
 		const result = Functions.lineByLine(document);
@@ -95,7 +110,12 @@ suite("Undefined variable in for loop", () => {
 			"endfor";
 		const document: TextDocument = Shared.createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
-			{ uri: document.uri, range: { start: { line: 2, character: 14 }, end: { line: 2, character: 14 + firstVar.length } } },
+			{
+				uri: document.uri, range: {
+					start: { line: 2, character: 14 },
+					end: { line: 2, character: 14 + firstVar.length }
+				}
+			},
 			DiagnosticSeverity.Error, Shared.errorMessage(firstVar, secondVar)
 		)];
 		const result = Functions.lineByLine(document);
@@ -129,7 +149,12 @@ suite("Undefined variable in for loop", () => {
 			"endfor";
 		const document: TextDocument = Shared.createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
-			{ uri: document.uri, range: { start: { line: 4, character: 18 }, end: { line: 4, character: 18 + thirdVar.length } } },
+			{
+				uri: document.uri, range: {
+					start: { line: 4, character: 18 },
+					end: { line: 4, character: 18 + thirdVar.length }
+				}
+			},
 			DiagnosticSeverity.Error, Shared.errorMessage(thirdVar, firstVar)
 		)];
 		const result = Functions.lineByLine(document);
@@ -156,7 +181,12 @@ suite("Undefined variable in for loop", () => {
 			"endfor";
 		const document: TextDocument = Shared.createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
-			{ uri: document.uri, range: { start: { line: 2, character: 14 }, end: { line: 2, character: 14 + secondVar.length } } },
+			{
+				uri: document.uri, range: {
+					start: { line: 2, character: 14 },
+					end: { line: 2, character: 14 + secondVar.length }
+				}
+			},
 			DiagnosticSeverity.Error, Shared.errorMessage(secondVar, firstVar)
 		)];
 		const result = Functions.lineByLine(document);
@@ -207,10 +237,16 @@ suite("Undefined variable in for loop", () => {
 			"endfor";
 		const document: TextDocument = Shared.createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
-			{ uri: document.uri, range: { start: { line: 2, character: 45 }, end: { line: 2, character: 45 + firstVar.length } } },
+			{
+				uri: document.uri, range: {
+					start: { line: 2, character: 45 },
+					end: { line: 2, character: 45 + firstVar.length }
+				}
+			},
 			DiagnosticSeverity.Error, Shared.errorMessage(firstVar, secondVar)
 		)];
 		const result = Functions.lineByLine(document);
 		assert.deepEqual(result, expected);
 	});
+
 });

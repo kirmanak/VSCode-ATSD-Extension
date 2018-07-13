@@ -23,7 +23,12 @@ suite("Script endscript tests", () => {
 			`endscrpt`;
 		const document = Shared.createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
-			{ uri: document.uri, range: { start: { line: 0, character: 0 }, end: { line: 0, character: 6 } } },
+			{
+				uri: document.uri, range: {
+					start: { line: 0, character: 0 },
+					end: { line: 0, character: 6 }
+				}
+			},
 			DiagnosticSeverity.Error, errorMessage
 		)];
 		const result = Functions.lineByLine(document);
@@ -63,7 +68,12 @@ suite("Script endscript tests", () => {
 			`endscrpt`;
 		const document = Shared.createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
-			{ uri: document.uri, range: { start: { line: 0, character: 0 }, end: { line: 0, character: 6 } } },
+			{
+				uri: document.uri, range: {
+					start: { line: 0, character: 0 },
+					end: { line: 0, character: 6 }
+				}
+			},
 			DiagnosticSeverity.Error, errorMessage
 		)];
 		const result = Functions.lineByLine(document);
@@ -97,7 +107,12 @@ suite("Script endscript tests", () => {
 			`script = `;
 		const document = Shared.createDoc(text);
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
-			{ uri: document.uri, range: { start: { line: 0, character: 0 }, end: { line: 0, character: 6 } } },
+			{
+				uri: document.uri, range: {
+					start: { line: 0, character: 0 },
+					end: { line: 0, character: 6 }
+				}
+			},
 			DiagnosticSeverity.Error, errorMessage
 		)];
 		const result = Functions.lineByLine(document);
