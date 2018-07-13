@@ -196,26 +196,29 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
         }
 
         // validate for variables
-        if (isFor && (match = /@{.+?}/.exec(line))) {
-            const substr = match[0];
-            const startPosition = match.index;
-            const regexp = /[a-zA-Z_]\w*(?!\w*["\('])/g;
-            while (match = regexp.exec(substr)) {
-                if (substr.charAt(match.index - 1) === '.') continue;
-                const variable = match[0];
-                if (!forVariables.find(name => name === variable) && !listNames.find(name => name === variable)
-                    && !varNames.find(name => name === variable) && !csvNames.find(name => name === variable)) {
-                    const position = startPosition + match.index;
-                    const message = suggestionMessage(variable, forVariables);
-                    result.push(Shared.createDiagnostic(
-                        {
-                            uri: textDocument.uri,
-                            range: {
-                                start: { line: i, character: position },
-                                end: { line: i, character: position + variable.length }
-                            }
-                        }, DiagnosticSeverity.Error, message
-                    ));
+        if (isFor) {
+            const regex = /@{.+?}/g;
+            while (match = regex.exec(line)) {
+                const substr = match[0];
+                const startPosition = match.index;
+                const regexp = /[a-zA-Z_]\w*(?!\w*["\('])/g;
+                while (match = regexp.exec(substr)) {
+                    if (substr.charAt(match.index - 1) === '.') continue;
+                    const variable = match[0];
+                    if (!forVariables.find(name => name === variable) && !listNames.find(name => name === variable)
+                        && !varNames.find(name => name === variable) && !csvNames.find(name => name === variable)) {
+                        const position = startPosition + match.index;
+                        const message = suggestionMessage(variable, forVariables);
+                        result.push(Shared.createDiagnostic(
+                            {
+                                uri: textDocument.uri,
+                                range: {
+                                    start: { line: i, character: position },
+                                    end: { line: i, character: position + variable.length }
+                                }
+                            }, DiagnosticSeverity.Error, message
+                        ));
+                    }
                 }
             }
         }

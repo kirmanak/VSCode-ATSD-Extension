@@ -199,4 +199,18 @@ suite("Undefined variable in for loop", () => {
 		assert.deepEqual(result, expected);
 	});
 
+	test("Several statements, second incorrect", () => {
+		const text =
+			"list servers = 'srv1', 'srv2'\n" +
+			`for ${secondVar} in servers\n` +
+			`   entity = @{keepAfterLast(${secondVar}, 'v')}, @{${firstVar}}\n` +
+			"endfor";
+		const document: TextDocument = Shared.createDoc(text);
+		const expected: Diagnostic[] = [Shared.createDiagnostic(
+			{ uri: document.uri, range: { start: { line: 2, character: 45 }, end: { line: 2, character: 45 + firstVar.length } } },
+			DiagnosticSeverity.Error, Shared.errorMessage(firstVar, secondVar)
+		)];
+		const result = Functions.lineByLine(document);
+		assert.deepEqual(result, expected);
+	});
 });
