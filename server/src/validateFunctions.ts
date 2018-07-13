@@ -349,10 +349,13 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
                     break;
                 }
                 case ControlSequence.Script: {
-                    if (!/^[ \t]*script[ \t]*=.*$/m.test(line)) {
-                        nestedStack.push(foundKeyword);
-                        isScript = true;
-                    }
+                    if (/^[ \t]*script[ \t]*=.*$/m.test(line)) {
+                        let j = i;
+                        while (++j < lines.length && !(/\bscript\b/.test(lines[j]) || /\bendscript\b/.test(lines[j])));
+                        if (j === lines.length) break;
+                    } 
+                    nestedStack.push(foundKeyword);
+                    isScript = true;
                     break;
                 }
                 default: throw new Error("Update switch-case statement!");
