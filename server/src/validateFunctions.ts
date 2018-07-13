@@ -353,7 +353,7 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
                         let j = i;
                         while (++j < lines.length && !(/\bscript\b/.test(lines[j]) || /\bendscript\b/.test(lines[j])));
                         if (j === lines.length) break;
-                    } 
+                    }
                     nestedStack.push(foundKeyword);
                     isScript = true;
                     break;
@@ -777,6 +777,8 @@ const possibleOptions = [
     "tag",
     "tagexpression",
     "tags",
+    "tagsdropdowns",
+    "tagsdropdownsstyle",
     "tension",
     "threshold",
     "thresholds",
