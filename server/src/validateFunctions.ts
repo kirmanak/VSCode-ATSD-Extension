@@ -354,7 +354,7 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
                         let j = i;
                         while (++j < lines.length && !(/\bscript\b/.test(lines[j]) || /\bendscript\b/.test(lines[j])));
                         if (j === lines.length || /\bscript\b/.test(lines[j])) break;
-                    } 
+                    }
                     nestedStack.push(foundKeyword);
                     isScript = true;
                     break;
@@ -476,6 +476,7 @@ const possibleOptions = [
     "capitalize",
     "caption",
     "captionstyle",
+    "case",
     "centralizecolumns",
     "centralizeticks",
     "changefield",
@@ -605,6 +606,8 @@ const possibleOptions = [
     "is",
     "join",
     "key",
+    "keys",
+    "keytagexpression",
     "label",
     "labelformat",
     "last",
@@ -689,6 +692,7 @@ const possibleOptions = [
     "nodes",
     "nodethresholds",
     "nodevalue",
+    "offset",
     "offsetbottom",
     "offsetleft",
     "offsetright",
@@ -777,6 +781,7 @@ const possibleOptions = [
     "tableheaderstyle",
     "tag",
     "tagexpression",
+    "tagoffset",
     "tags",
     "tagsdropdowns",
     "tagsdropdownsstyle",
