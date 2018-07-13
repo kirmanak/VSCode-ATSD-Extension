@@ -40,7 +40,7 @@
 				},
 				{
 					"name": "comment.line.number-sign",
-					"match": "#.*"
+					"match": "^[ \t]*#.*"
 				}, 
 				{
 					"name": "variable.name",

@@ -12,7 +12,7 @@ export function createDiagnostic(location: Location, severity: DiagnosticSeverit
 
 export function deleteComments(text: string): string {
 	const multiLine = /\/\*[\s\S]*?\*\//g;
-	const oneLine = /#.*/g;
+	const oneLine = /^[ \t]*#.*/mg;
 	let i: RegExpExecArray;
 
 	while ((i = multiLine.exec(text)) || (i = oneLine.exec(text))) {
