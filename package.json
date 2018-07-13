@@ -1,11 +1,11 @@
 {
-    "name": "axibase-visualization-syntax",
-    "displayName": "Axibase Visualization Syntax",
-    "description": "A syntax highlighting and code prettifier extension for Axibase Visualization",
+    "name": "axibase-charts-syntax",
+    "displayName": "Axibase Charts syntax",
+    "description": "Axibase Charts syntax validation and highligting extension",
     "version": "0.0.1",
     "repository": {
         "type": "git",
-        "url": "https://github.com/kirmanak/VSCode-ATSD-Extension"
+        "url": "https://github.com/kirmanak/Axibase-Charts-Syntax"
     },
     "publisher": "Axibase",
     "engines": {
@@ -19,31 +19,20 @@
             "type": "object",
             "title": "Default configuration",
             "properties": {
-                "languageServer.maxNumberOfProblems": {
-                    "scope": "resource",
-                    "type": "number",
-                    "default": 100,
-                    "description": "Controls the maximum number of problems produced by the server."
-                },
-                "languageServer.trace.server": {
-                    "scope": "window",
-                    "type": "string",
-                    "enum": [
-                        "off",
-                        "messages",
-                        "verbose"
-                    ],
-                    "default": "off",
-                    "description": "Traces the communication between VSCode and the language server."
+                "axibaseCharts.validateFunctions": {
+                    "scope": "application",
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Controls if inline JS functions are validated or not."
                 }
             }
         },
         "languages": [
             {
-                "id": "atsd-visual",
+                "id": "axibase-charts",
                 "aliases": [
-                    "ATSD Visualization",
-                    "atsd-visual"
+                    "Axibase Charts syntax",
+                    "axibase-charts"
                 ],
                 "extensions": [
                     ".av"
@@ -53,7 +42,7 @@
         ],
         "grammars": [
             {
-                "language": "atsd-visual",
+                "language": "axibase-charts",
                 "scopeName": "source.av",
                 "path": "./syntaxes/atsd-visual.tmLanguage.json"
             }
@@ -61,7 +50,7 @@
     },
     "main": "./client/out/extension",
     "activationEvents": [
-        "onLanguage:atsd-visual"
+        "onLanguage:axibase-charts"
     ],
     "scripts": {
         "vscode:prepublish": "cd client && npm run update-vscode && cd .. && npm run compile",

@@ -17,7 +17,6 @@ const connection = createConnection(ProposedFeatures.all);
 const documents: TextDocuments = new TextDocuments();
 
 let hasConfigurationCapability: boolean = false;
-let hasWorkspaceFolderCapability: boolean = false;
 
 connection.onInitialize((params: InitializeParams) => {
 	const capabilities = params.capabilities;
@@ -25,11 +24,10 @@ connection.onInitialize((params: InitializeParams) => {
 	// Does the client support the `workspace/configuration` request?
 	// If not, we will fall back using global settings
 	hasConfigurationCapability = capabilities.workspace && !!capabilities.workspace.configuration;
-	hasWorkspaceFolderCapability = capabilities.workspace && !!capabilities.workspace.workspaceFolders;
 
 	return {
 		capabilities: {
-			textDocumentSync: documents.syncKind
+			textDocumentSync: documents.syncKind,
 		}
 	}
 });
@@ -39,44 +37,83 @@ connection.onInitialized(() => {
 		// Register for all configuration changes.
 		connection.client.register(DidChangeConfigurationNotification.type, undefined);
 	}
-	if (hasWorkspaceFolderCapability) {
-		connection.workspace.onDidChangeWorkspaceFolders((_event) => {
-			connection.console.log('Workspace folder change event received.');
-		});
+});
+
+// The example settings
+interface ServerSettings {
+	validateFunctions: boolean;
+}
+
+// The global settings, used when the `workspace/configuration` request is not supported by the client.
+// Please note that this is not the case when using this server with the client provided in this example
+// but could happen with other clients.
+const defaultSettings: ServerSettings = { validateFunctions: false };
+let globalSettings: ServerSettings = defaultSettings;
+
+// Cache the settings of all open documents
+let documentSettings: Map<string, Thenable<ServerSettings>> = new Map();
+
+connection.onDidChangeConfiguration(change => {
+	console.log(change);
+	if (hasConfigurationCapability) {
+		// Reset all cached document settings
+		documentSettings.clear();
+	} else {
+		globalSettings = <ServerSettings>(
+			(change.settings.axibaseCharts || defaultSettings)
+		);
 	}
+
+	// Revalidate all open text documents
+	documents.all().forEach(validateTextDocument);
 });
 
-/*
-documents.onDidSave((listener) => {
-	const textDocument = listener.document;
-	const diagnostics = jsDomCaller.validate(textDocument, isRelatedInfoSupported);
 
-	// Send the computed diagnostics to VSCode.
-	connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
+function getDocumentSettings(resource: string): Thenable<ServerSettings> {
+	console.log("Requested");
+	if (!hasConfigurationCapability) {
+		return Promise.resolve(globalSettings);
+	}
+	let result = documentSettings.get(resource);
+	if (!result) {
+		result = connection.workspace.getConfiguration({
+			scopeUri: resource,
+			section: 'axibaseCharts'
+		});
+		documentSettings.set(resource, result);
+	}
+	return result;
+}
+
+// Only keep settings for open documents
+documents.onDidClose(e => {
+	documentSettings.delete(e.document.uri);
 });
-*/
 
 // The content of a text document has changed. This event is emitted
 // when the text document first opened or when its content has changed.
-documents.onDidChangeContent((change) => {
+documents.onDidChangeContent(change => {
 	const textDocument = change.document;
-	const diagnostics = validateTextDocument(change.document);
 
-	// Send the computed diagnostics to VSCode.
-	connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
+	validateTextDocument(textDocument).then(diagnostics => 
+		// Send the computed diagnostics to VSCode.
+		connection.sendDiagnostics({ uri: textDocument.uri, diagnostics })
+	);
 });
 
-function validateTextDocument(textDocument: TextDocument) {
+async function validateTextDocument(textDocument: TextDocument): Promise<Diagnostic[]> {
 	const diagnostics: Diagnostic[] = [];
+	const settings = await getDocumentSettings(textDocument.uri);
 
 	validateFunctions.lineByLine(textDocument).forEach(element => {
 		diagnostics.push(element);
 	});
-	jsDomCaller.validate(textDocument).forEach(element => {
+
+	if (settings.validateFunctions) jsDomCaller.validate(textDocument).forEach(element => {
 		diagnostics.push(element);
 	});
 
-	return diagnostics;
+	return Promise.resolve(diagnostics);
 }
 
 
