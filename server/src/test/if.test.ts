@@ -127,7 +127,7 @@ suite("If elseif else endif validation tests", () => {
 		const expected: Diagnostic[] = [Shared.createDiagnostic(
 			{ uri: document.uri, range: { start: { line: 8, character: 0 }, end: { line: 8, character: 6 } } },
 			DiagnosticSeverity.Error, "for has finished before if"
-		),Shared.createDiagnostic(
+		), Shared.createDiagnostic(
 			{ uri: document.uri, range: { start: { line: 4, character: 4 }, end: { line: 4, character: 6 } } },
 			DiagnosticSeverity.Error, ifError
 		)];

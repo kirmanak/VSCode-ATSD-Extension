@@ -20,4 +20,30 @@ suite("Spelling checks", () => {
 		assert.deepEqual(result, expected);
 	});
 
+	test("section eries", () => {
+		const text =
+			"[eries]\n" +
+			"	starttime = 20 second\n";
+		const document: TextDocument = Shared.createDoc(text);
+		const expected: Diagnostic[] = [Shared.createDiagnostic(
+			{ uri: document.uri, range: { start: { line: 0, character: 1}, end: { line: 0, character: 6} } },
+			DiagnosticSeverity.Error, Shared.errorMessage("eries", "series")
+		)];
+		const result = Functions.lineByLine(document);
+		assert.deepEqual(result, expected);
+	});
+
+	test("section starttime", () => {
+		const text =
+			"[starttime]\n" +
+			"	starttime = 20 second\n";
+		const document: TextDocument = Shared.createDoc(text);
+		const expected: Diagnostic[] = [Shared.createDiagnostic(
+			{ uri: document.uri, range: { start: { line: 0, character: 1}, end: { line: 0, character: 10} } },
+			DiagnosticSeverity.Error, Shared.errorMessage("starttime", "series")
+		)];
+		const result = Functions.lineByLine(document);
+		assert.deepEqual(result, expected);
+	});
+
 });

@@ -199,7 +199,7 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
         if (isFor && (match = /@{.+?}/.exec(line))) {
             const substr = match[0];
             const startPosition = match.index;
-            const regexp = /[a-zA-Z_]\w*(?!\w*\()/g;
+            const regexp = /[a-zA-Z_]\w*(?!\w*["\('])/g;
             while (match = regexp.exec(substr)) {
                 if (substr.charAt(match.index - 1) === '.') continue;
                 const variable = match[0];

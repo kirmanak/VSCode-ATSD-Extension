@@ -162,4 +162,41 @@ suite("Undefined variable in for loop", () => {
 		const result = Functions.lineByLine(document);
 		assert.deepEqual(result, expected);
 	});
+
+	test("Function + correct var", () => {
+		const text =
+			"list servers = 's1v1', 's1v2'\n" +
+			`for ${secondVar} in servers\n` +
+			`   entity = @{keepAfterLast(${secondVar}, '1')}\n` +
+			"endfor";
+		const document: TextDocument = Shared.createDoc(text);
+		const expected: Diagnostic[] = [];
+		const result = Functions.lineByLine(document);
+		assert.deepEqual(result, expected);
+	});
+
+	test("Property of a correct var", () => {
+		const text =
+			"var servers = [ { name: 'srv1' }, { name: 'srv2' } ]\n" +
+			`for ${secondVar} in servers\n` +
+			`   entity = @{${secondVar}.name}\n` +
+			"endfor";
+		const document: TextDocument = Shared.createDoc(text);
+		const expected: Diagnostic[] = [];
+		const result = Functions.lineByLine(document);
+		assert.deepEqual(result, expected);
+	});
+
+	test("String", () => {
+		const text =
+			"list servers = 'srv1', 'srv2'\n" +
+			`for ${secondVar} in servers\n` +
+			`   entity = @{keepAfterLast(${secondVar}, 'v')}\n` +
+			"endfor";
+		const document: TextDocument = Shared.createDoc(text);
+		const expected: Diagnostic[] = [];
+		const result = Functions.lineByLine(document);
+		assert.deepEqual(result, expected);
+	});
+
 });

@@ -30,7 +30,7 @@ suite("CSV tests", () => {
         assert.deepEqual(result, expected);
     });
 
-    test("Unclosed csv", () => {
+    test("Unclosed csv (header this line)", () => {
         const text =
             "csv countries = name, value1, value2\n" +
             "   Russia, 65, 63\n" +
@@ -40,7 +40,26 @@ suite("CSV tests", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             { uri: document.uri, range: { start: { line: 3, character: 0 }, end: { line: 3, character: 5 } } },
             DiagnosticSeverity.Error, "Expected 3 columns, but found 1"
-	), Shared.createDiagnostic(
+        ), Shared.createDiagnostic(
+            { uri: document.uri, range: { start: { line: 0, character: 0 }, end: { line: 0, character: 3 } } },
+            DiagnosticSeverity.Error, "csv has no matching endcsv"
+        )];
+        const result = Functions.lineByLine(document);
+        assert.deepEqual(result, expected);
+    });
+
+    test("Unclosed csv (header next line)", () => {
+        const text =
+            "csv countries = \n" +
+            "   name, value1, value2\n" +
+            "   Russia, 65, 63\n" +
+            "   USA, 63, 63\n" +
+            "encsv";
+        const document = Shared.createDoc(text);
+        const expected: Diagnostic[] = [Shared.createDiagnostic(
+            { uri: document.uri, range: { start: { line: 4, character: 0 }, end: { line: 4, character: 5 } } },
+            DiagnosticSeverity.Error, "Expected 3 columns, but found 1"
+        ), Shared.createDiagnostic(
             { uri: document.uri, range: { start: { line: 0, character: 0 }, end: { line: 0, character: 3 } } },
             DiagnosticSeverity.Error, "csv has no matching endcsv"
         )];
