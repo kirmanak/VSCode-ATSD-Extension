@@ -350,7 +350,7 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
                     break;
                 }
                 case ControlSequence.Script: {
-                    if (/^[ \t]*script[ \t]*=.*$/m.test(line)) {
+                    if (/^[ \t]*script[ \t]*=[ \t]*\S+.*$/m.test(line)) {
                         let j = i;
                         while (++j < lines.length && !(/\bscript\b/.test(lines[j]) || /\bendscript\b/.test(lines[j])));
                         if (j === lines.length || /\bscript\b/.test(lines[j])) break;
