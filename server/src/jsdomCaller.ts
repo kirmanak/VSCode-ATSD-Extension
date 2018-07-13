@@ -30,7 +30,6 @@ function parseJsStatements(text: string): Statement[] {
                 while ((line = lines[++i]) !== undefined && !/\bendscript\b/.test(line)) content += line + '\n';
             }
             content = JSON.stringify(content);
-            const call = generateCall(3);
             const statement = {
                 range: {
                     start: { line: start, character: 0 },
@@ -38,16 +37,30 @@ function parseJsStatements(text: string): Statement[] {
                 },
                 declaration:
                     `const proxy = new Proxy({}, {});\n` +
+                    `const proxyFunction = new Proxy(new Function(), {});\n` +
                     `(new Function("widget","config","dialog", ${content}))\n` +
-                    `.call(window, ${call})`
+                    `.call(window, proxyFunction, proxy, proxy)`
             };
             result.push(statement);
         } else if (match = /import[ \t]+(\S+)[ \t]*=.+/.exec(line)) {
             importList += `"${match[1]}",`;
             importCounter++;
+        } else if (match = /(replace-value[ \t]*=[ \t]*)(\S+[ \t\S]*)$/.exec(line)) {
+            const content = stringifyStatement(match[2]);
+            const matchStart = match.index + match[1].length;
+            const statement = {
+                range: {
+                    start: { line: i, character: matchStart },
+                    end: { line: i, character: matchStart + match[2].length }
+                },
+                declaration:
+                    `(new Function("value","time","previousValue","previousTime", ${content}))\n` +
+                    `.call(window, 5, 5, 5, 5)`
+            };
+            result.push(statement);
         } else if (match = /(value[ \t]*=[ \t]*)(\S+[ \t\S]*)$/.exec(line)) {
             const content = stringifyStatement(match[2]);
-            const call = generateCall(40 + importCounter);
+            const call = generateCall(importCounter);
             const matchStart = match.index + match[1].length;
             const statement = {
                 range: {
@@ -56,6 +69,8 @@ function parseJsStatements(text: string): Statement[] {
                 },
                 declaration:
                     `const proxy = new Proxy({}, {});\n` +
+                    `const proxyFunction = new Proxy(new Function(), {});\n` +
+                    `const proxyArray = new Proxy([], {});\n` +
                     `(new Function("metric","entity","tags","value","previous","movavg",\n` +
                     `"detail","forecast","forecast_deviation","lower_confidence","upper_confidence",\n` +
                     `"percentile","max","min","avg","sum","delta","counter","last","first",\n` +
@@ -63,22 +78,13 @@ function parseJsStatements(text: string): Statement[] {
                     `"threshold_duration","time","bottom","top","meta","entityTag","metricTag","median",\n` +
                     `"average","minimum","maximum","series","getValueWithOffset","getValueForDate",\n` +
                     `"getMaximumValue", ${importList} ${content}\n` +
-                    `)).call(window, ${call})`
-            };
-            result.push(statement);
-        } else if (match = /(replace-value[ \t]*=[ \t]*)(\S+[ \t\S]*)$/.exec(line)) {
-            const content = stringifyStatement(match[2]);
-            const call = generateCall(4);
-            const matchStart = match.index + match[1].length;
-            const statement = {
-                range: {
-                    start: { line: i, character: matchStart },
-                    end: { line: i, character: matchStart + match[2].length }
-                },
-                declaration:
-                    `const proxy = new Proxy({}, {});\n` +
-                    `(new Function("value","time","previousValue","previousTime", ${content}))\n` +
-                    `.call(window, ${call})`
+                    `)).call(window, proxy, proxy, proxy, proxyFunction, proxyFunction, proxyFunction, \n` +
+                    `proxyFunction, proxyFunction, proxyFunction, proxyFunction, proxyFunction, proxyFunction, \n` +
+                    `proxyFunction, proxyFunction, proxyFunction, proxyFunction, proxyFunction, proxyFunction, \n` +
+                    `proxyFunction, proxyFunction, proxyFunction, proxyFunction, proxyFunction, proxyFunction, \n` +
+                    `proxyFunction, proxyFunction, proxyFunction, proxyFunction, proxyFunction, proxyFunction, \n` +
+                    `proxyFunction, proxyFunction, proxyFunction, proxyFunction, proxyFunction, proxyFunction, \n` +
+                    `proxyArray, proxyFunction, proxyFunction, proxyFunction${call})`
             };
             result.push(statement);
         }
@@ -100,7 +106,7 @@ function stringifyStatement(content: string): string {
 
 // amount is the number of arguments required for a function
 function generateCall(amount: number): string {
-    let call = "proxy";
+    let call = ", proxy";
     for (let i = 1; i < amount; i++) {
         call += ", proxy";
     }
@@ -118,8 +124,8 @@ export function validate(document: TextDocument): Diagnostic[] {
         try {
             window.eval(statement.declaration);
         } catch (err) {
-            console.log(err);
-            result.push(Shared.createDiagnostic({
+            console.log(err.message);
+            if (/is not defined/.test(err.message)) result.push(Shared.createDiagnostic({
                 uri: document.uri, range: statement.range
             }, DiagnosticSeverity.Warning, err.message
             ))
