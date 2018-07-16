@@ -107,4 +107,16 @@ suite("CSV tests", () => {
         assert.deepEqual(result, expected);
     });
 
+    test("Correct csv with escaped whitespaces and commas", () => {
+        const text =
+            "csv countries = name, value1, value2\n" +
+            '   Russia, "6,5", 63\n' +
+            '   USA, 63, "6 3"\n' +
+            "endcsv";
+        const document = Shared.createDoc(text);
+        const expected: Diagnostic[] = [];
+        const result = Functions.lineByLine(document);
+        assert.deepEqual(result, expected);
+    });
+
 });
