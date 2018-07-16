@@ -2,7 +2,7 @@ import { Range, TextDocument, Diagnostic, DiagnosticSeverity } from "vscode-lang
 import * as Shared from './sharedFunctions';
 
 const jsdom = require("jsdom");
-const { JSDOM } = jsdom;
+const jquery = require("jquery");
 
 class Statement {
     range: Range;
@@ -47,9 +47,9 @@ function parseJsStatements(text: string): Statement[] {
             content = JSON.stringify(content);
             const statement = {
                 range: range, declaration:
-                    `const proxy = new Proxy({}, {});\n` +
-                    `const proxyFunction = new Proxy(new Function(), {});\n` +
-                    `(new Function("widget","config","dialog", ${content}))\n` +
+                    `const proxy = new Proxy({}, {});` +
+                    `const proxyFunction = new Proxy(new Function(), {});` +
+                    `(new Function("widget","config","dialog", ${content}))` +
                     `.call(window, proxyFunction, proxy, proxy)`
             };
             result.push(statement);
@@ -79,22 +79,22 @@ function parseJsStatements(text: string): Statement[] {
                     end: { line: i, character: matchStart + match[2].length }
                 },
                 declaration:
-                    `const proxy = new Proxy({}, {});\n` +
-                    `const proxyFunction = new Proxy(new Function(), {});\n` +
-                    `const proxyArray = new Proxy([], {});\n` +
-                    `(new Function("metric","entity","tags","value","previous","movavg",\n` +
-                    `"detail","forecast","forecast_deviation","lower_confidence","upper_confidence",\n` +
-                    `"percentile","max","min","avg","sum","delta","counter","last","first",\n` +
-                    `"min_value_time","max_value_time","count","threshold_count","threshold_percent",\n` +
-                    `"threshold_duration","time","bottom","top","meta","entityTag","metricTag","median",\n` +
-                    `"average","minimum","maximum","series","getValueWithOffset","getValueForDate",\n` +
-                    `"getMaximumValue", ${importList} ${content}\n` +
-                    `)).call(window, proxy, proxy, proxy, proxyFunction, proxyFunction, proxyFunction, \n` +
-                    `proxyFunction, proxyFunction, proxyFunction, proxyFunction, proxyFunction, proxyFunction, \n` +
-                    `proxyFunction, proxyFunction, proxyFunction, proxyFunction, proxyFunction, proxyFunction, \n` +
-                    `proxyFunction, proxyFunction, proxyFunction, proxyFunction, proxyFunction, proxyFunction, \n` +
-                    `proxyFunction, proxyFunction, proxyFunction, proxyFunction, proxyFunction, proxyFunction, \n` +
-                    `proxyFunction, proxyFunction, proxyFunction, proxyFunction, proxyFunction, proxyFunction, \n` +
+                    `const proxy = new Proxy({}, {});` +
+                    `const proxyFunction = new Proxy(new Function(), {});` +
+                    `const proxyArray = new Proxy([], {});` +
+                    `(new Function("metric","entity","tags","value","previous","movavg",` +
+                    `"detail","forecast","forecast_deviation","lower_confidence","upper_confidence",` +
+                    `"percentile","max","min","avg","sum","delta","counter","last","first",` +
+                    `"min_value_time","max_value_time","count","threshold_count","threshold_percent",` +
+                    `"threshold_duration","time","bottom","top","meta","entityTag","metricTag","median",` +
+                    `"average","minimum","maximum","series","getValueWithOffset","getValueForDate",` +
+                    `"getMaximumValue", ${importList} ${content}` +
+                    `)).call(window, proxy, proxy, proxy, proxyFunction, proxyFunction, proxyFunction,` +
+                    `proxyFunction, proxyFunction, proxyFunction, proxyFunction, proxyFunction, proxyFunction,` +
+                    `proxyFunction, proxyFunction, proxyFunction, proxyFunction, proxyFunction, proxyFunction,` +
+                    `proxyFunction, proxyFunction, proxyFunction, proxyFunction, proxyFunction, proxyFunction,` +
+                    `proxyFunction, proxyFunction, proxyFunction, proxyFunction, proxyFunction, proxyFunction,` +
+                    `proxyFunction, proxyFunction, proxyFunction, proxyFunction, proxyFunction, proxyFunction,` +
                     `proxyArray, proxyFunction, proxyFunction, proxyFunction${call})`
             };
             result.push(statement);
@@ -106,11 +106,11 @@ function parseJsStatements(text: string): Statement[] {
                     start: { line: i, character: matchStart },
                     end: { line: i, character: matchStart + match[2].length }
                 }, declaration:
-                    `const proxyFunction = new Proxy(new Function(), {});\n` +
-                    `(new Function("requestMetricsSeriesValues","requestEntitiesMetricsValues",\n` +
-                    `"requestPropertiesValues","requestMetricsSeriesOptions","requestEntitiesMetricsOptions",\n` +
-                    `"requestPropertiesOptions", ${content}\n` +
-                    `)).call(window, proxyFunction, proxyFunction, proxyFunction, proxyFunction,\n` +
+                    `const proxyFunction = new Proxy(new Function(), {});` +
+                    `(new Function("requestMetricsSeriesValues","requestEntitiesMetricsValues",` +
+                    `"requestPropertiesValues","requestMetricsSeriesOptions","requestEntitiesMetricsOptions",` +
+                    `"requestPropertiesOptions", ${content}` +
+                    `)).call(window, proxyFunction, proxyFunction, proxyFunction, proxyFunction,` +
                     ` proxyFunction, proxyFunction)`
             }
             result.push(statement);
@@ -145,11 +145,16 @@ export function validate(document: TextDocument): Diagnostic[] {
     const text: string = Shared.deleteComments(document.getText());
     const statements: Statement[] = parseJsStatements(text);
 
-    const dom = new JSDOM(``, { resources: "usable", runScripts: "dangerously" });
+    const dom = new jsdom.JSDOM(`<html></html>`, { runScripts: "outside-only" });
     const window = dom.window;
+    const $ = jquery(dom.window);
+    console.log($);
     statements.forEach((statement) => {
+        // statement.declaration = "try {" + statement.declaration + "} catch (err) { throw err; }";
+        const toEvaluate = `(new Function("$", ${JSON.stringify(statement.declaration)})).call(window, ${$})`;
+        console.log(toEvaluate);
         try {
-            window.eval(statement.declaration);
+            window.eval(toEvaluate);
         } catch (err) {
             result.push(Shared.createDiagnostic({
                 uri: document.uri, range: statement.range

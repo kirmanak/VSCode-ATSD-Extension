@@ -67,7 +67,5 @@
         "@types/node": "^8.0.0",
         "typescript": "2.8.3"
     },
-    "dependencies": {
-        "jsdom": "^11.11.0"
-    }
+    "dependencies": {}
 }
