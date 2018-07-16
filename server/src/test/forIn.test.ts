@@ -272,7 +272,7 @@ suite("Undeclared list or var", () => {
                     end: { line: 0, character: 12 }
                 }
             },
-            DiagnosticSeverity.Error, "Empty in statement"
+            DiagnosticSeverity.Error, "Empty 'in' statement"
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);

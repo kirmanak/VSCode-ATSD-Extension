@@ -323,26 +323,38 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
                 case ControlSequence.For: {
                     isFor = true;
                     nestedStack.push(foundKeyword);
-                    if (match = /^\s*for\s+(\w+)\s+in/m.exec(line)) forVariables.push(match[1]);
-                    if (match = /^(\s*for\s+\w+\s+in\s+)(\w+)\s*$/m.exec(line)) {
-                        const variable = match[2];
-                        if (!listNames.find(name => name === variable)
-                            && !varNames.find(name => name === variable)
-                            && !csvNames.find(name => name === variable)) {
-                            const dictionary: string[] = [];
-                            listNames.forEach(name => dictionary.push(name));
-                            varNames.forEach(name => dictionary.push(name));
-                            csvNames.forEach(name => dictionary.push(name));
-                            const message = suggestionMessage(variable, dictionary);
+                    if (match = /^\s*for\s+(\w+)\s+in/m.exec(line)) {
+                        forVariables.push(match[1]);
+                        if (match = /^(\s*for\s+\w+\s+in\s+)(\w+)\s*$/m.exec(line)) {
+                            const variable = match[2];
+                            if (!listNames.find(name => name === variable)
+                                && !varNames.find(name => name === variable)
+                                && !csvNames.find(name => name === variable)) {
+                                const dictionary: string[] = [];
+                                listNames.forEach(name => dictionary.push(name));
+                                varNames.forEach(name => dictionary.push(name));
+                                csvNames.forEach(name => dictionary.push(name));
+                                const message = suggestionMessage(variable, dictionary);
+                                result.push(Shared.createDiagnostic(
+                                    {
+                                        uri: textDocument.uri,
+                                        range: {
+                                            start: { line: i, character: match[1].length },
+                                            end: { line: i, character: match[1].length + variable.length },
+                                        }
+                                    }, DiagnosticSeverity.Error, message
+                                ));
+                            }
+                        } else {
                             result.push(Shared.createDiagnostic(
                                 {
                                     uri: textDocument.uri,
                                     range: {
-                                        start: { line: i, character: match[1].length },
-                                        end: { line: i, character: match[1].length + variable.length },
+                                        start: { line: i, character: match[1].length + 1 },
+                                        end: { line: i, character: match[1].length + 2 }
                                     }
-                                }, DiagnosticSeverity.Error, message
-                            ));
+                                }, DiagnosticSeverity.Error, "Empty 'in' statement"
+                            ))
                         }
                     }
                     break;
