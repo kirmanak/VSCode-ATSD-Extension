@@ -1,12 +1,12 @@
 {
-	"name": "atsd-visual-client",
+	"name": "axibase-charts-syntax",
 	"description": "VSCode part of a language server",
-	"author": "Axibase",
+	"author": "Kirill Kamakin",
 	"version": "0.0.1",
-	"publisher": "vscode",
+	"publisher": "Axibase",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/Mkirmanak/ATSD-Visual-Extension"
+		"url": "https://github.com/kirmanak/Axibase-Charts-Syntax"
 	},
 	"engines": {
 		"vscode": "^1.23.0"

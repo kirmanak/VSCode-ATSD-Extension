@@ -1,14 +1,15 @@
 {
-	"name": "atsd-visual-server",
-	"description": "Implementation of ATSD Visual Language Server",
+	"name": "axibase-charts-server",
+	"description": "Implementation of Axibase Charts Language Server",
 	"version": "0.0.1",
-	"author": "Axibase",
+	"author": "Kirill Kamakin",
+	"publisher": "Axibase",
 	"engines": {
 		"node": "*"
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/kirmanak/ATSD-Visual-Extension"
+		"url": "https://github.com/kirmanak/Axibase-Charts-Syntax"
 	},
 	"dependencies": {
 		"@types/levenshtein": "^1.0.1",
