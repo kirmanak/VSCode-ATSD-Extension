@@ -23,7 +23,7 @@
                     "scope": "application",
                     "type": "boolean",
                     "default": false,
-                    "description": "Controls if inline JS functions are validated or not."
+                    "description": "Controls whether inline JS functions are validated or not."
                 }
             }
         },

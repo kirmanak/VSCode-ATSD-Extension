@@ -7,12 +7,13 @@ const jquery = require("jquery");
 class Statement {
     range: Range;
     declaration: string;
+    imports: string[];
 }
 
 function parseJsStatements(text: string): Statement[] {
     const result: Statement[] = [];
     const lines = text.split('\n');
-    let importList: string = "";
+    const imports: string[] = [];
     let importCounter = 0;
     let match: RegExpExecArray;
 
@@ -31,7 +32,6 @@ function parseJsStatements(text: string): Statement[] {
                 let j = i;
                 while (++j < lines.length && !(/\bscript\b/.test(lines[j]) || /\bendscript\b/.test(lines[j])));
                 if (!(j === lines.length || /\bscript\b/.test(lines[j]))) {
-                    console.log("'script =' is multiline")
                     while ((line = lines[++i]) !== undefined && !/\bendscript\b/.test(line)) content += line + '\n';
                     range.end = { line: i - 1, character: lines[i - 1].length };
                 }
@@ -46,7 +46,7 @@ function parseJsStatements(text: string): Statement[] {
             }
             content = JSON.stringify(content);
             const statement = {
-                range: range, declaration:
+                range: range, imports: imports, declaration:
                     `const proxy = new Proxy({}, {});` +
                     `const proxyFunction = new Proxy(new Function(), {});` +
                     `(new Function("widget","config","dialog", ${content}))` +
@@ -54,7 +54,7 @@ function parseJsStatements(text: string): Statement[] {
             };
             result.push(statement);
         } else if (match = /^[ \t]*import[ \t]+(\S+)[ \t]*=.+/.exec(line)) {
-            importList += `"${match[1]}",`;
+            imports.push(match[1]);
             importCounter++;
         } else if (match = /(^[ \t]*replace-value[ \t]*=[ \t]*)(\S+[ \t\S]*)$/.exec(line)) {
             const content = stringifyStatement(match[2]);
@@ -64,6 +64,7 @@ function parseJsStatements(text: string): Statement[] {
                     start: { line: i, character: matchStart },
                     end: { line: i, character: matchStart + match[2].length }
                 },
+                imports: imports,
                 declaration:
                     `(new Function("value","time","previousValue","previousTime", ${content}))\n` +
                     `.call(window, 5, 5, 5, 5)`
@@ -73,11 +74,14 @@ function parseJsStatements(text: string): Statement[] {
             const content = stringifyStatement(match[2]);
             const call = generateCall(importCounter);
             const matchStart = match.index + match[1].length;
+            let importList = "";
+            imports.forEach(imported => importList += `"${imported}", `);
             const statement = {
                 range: {
                     start: { line: i, character: matchStart },
                     end: { line: i, character: matchStart + match[2].length }
                 },
+                imports: imports,
                 declaration:
                     `const proxy = new Proxy({}, {});` +
                     `const proxyFunction = new Proxy(new Function(), {});` +
@@ -105,7 +109,9 @@ function parseJsStatements(text: string): Statement[] {
                 range: {
                     start: { line: i, character: matchStart },
                     end: { line: i, character: matchStart + match[2].length }
-                }, declaration:
+                },
+                imports: imports,
+                declaration:
                     `const proxyFunction = new Proxy(new Function(), {});` +
                     `(new Function("requestMetricsSeriesValues","requestEntitiesMetricsValues",` +
                     `"requestPropertiesValues","requestMetricsSeriesOptions","requestEntitiesMetricsOptions",` +
@@ -148,18 +154,24 @@ export function validate(document: TextDocument): Diagnostic[] {
     const dom = new jsdom.JSDOM(`<html></html>`, { runScripts: "outside-only" });
     const window = dom.window;
     const $ = jquery(dom.window);
-    console.log($);
     statements.forEach((statement) => {
         // statement.declaration = "try {" + statement.declaration + "} catch (err) { throw err; }";
         const toEvaluate = `(new Function("$", ${JSON.stringify(statement.declaration)})).call(window, ${$})`;
-        console.log(toEvaluate);
         try {
             window.eval(toEvaluate);
         } catch (err) {
-            result.push(Shared.createDiagnostic({
+            let isImported = false;
+            statement.imports.forEach(imported => {
+                if (imported.length !== 0 && new RegExp(imported, "i").test(err.message)) {
+                    isImported = true;
+                    console.log(`"${err.message}" contains "${imported}"`);
+                }
+            });
+            if (!isImported) result.push(Shared.createDiagnostic({
                 uri: document.uri, range: statement.range
             }, DiagnosticSeverity.Warning, err.message
-            ))
+            ));
+            else console.log(err.message);
         }
     });
 
