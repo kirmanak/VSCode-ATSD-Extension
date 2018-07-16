@@ -240,7 +240,11 @@ suite("Undeclared list or var", () => {
         const text =
             "for srv in servers\n" +
             "   #do something\n" +
-            "endfor\n";
+            "endfor\n" +
+            "var servers = {\n" +
+            "   'srv1': 'srv2'\n" +
+            "}\n" +
+            "endvar\n";
         const document = Shared.createDoc(text);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
@@ -250,6 +254,25 @@ suite("Undeclared list or var", () => {
                 }
             },
             DiagnosticSeverity.Error, Shared.errorMessage("servers", null)
+        )];
+        const result = Functions.lineByLine(document);
+        assert.deepEqual(result, expected);
+    });
+
+    test("Undeclared var, incorrect for with empty in", () => {
+        const text =
+            "for srv in \n" +
+            "   #do something\n" +
+            "endfor\n";
+        const document = Shared.createDoc(text);
+        const expected: Diagnostic[] = [Shared.createDiagnostic(
+            {
+                uri: document.uri, range: {
+                    start: { line: 0, character: 11 },
+                    end: { line: 0, character: 12 }
+                }
+            },
+            DiagnosticSeverity.Error, "Empty in statement"
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
