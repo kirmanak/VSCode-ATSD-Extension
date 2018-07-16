@@ -324,6 +324,7 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
                     isFor = true;
                     nestedStack.push(foundKeyword);
                     if (match = /^\s*for\s+(\w+)\s+in/m.exec(line)) {
+                        const matching = match;
                         forVariables.push(match[1]);
                         if (match = /^(\s*for\s+\w+\s+in\s+)(\w+)\s*$/m.exec(line)) {
                             const variable = match[2];
@@ -350,8 +351,8 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
                                 {
                                     uri: textDocument.uri,
                                     range: {
-                                        start: { line: i, character: match[1].length + 1 },
-                                        end: { line: i, character: match[1].length + 2 }
+                                        start: { line: i, character: matching[0].length + 1 },
+                                        end: { line: i, character: matching[0].length + 2 }
                                     }
                                 }, DiagnosticSeverity.Error, "Empty 'in' statement"
                             ))
