@@ -15,7 +15,7 @@
 				},
 				{
 					"name": "keyword.control",
-					"match": "\\b(csv|endcsv|endvar|script|endscript|for|endfor|in|list|endlist|var|if|elseif|else|endif)\\b"
+					"match": "\\b(import|csv|endcsv|endvar|script|endscript|for|endfor|in|list|endlist|var|if|elseif|else|endif)\\b"
 				},
 				{
 					"name": "entity.name.function",
