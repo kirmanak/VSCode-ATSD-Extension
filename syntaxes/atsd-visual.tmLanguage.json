@@ -27,7 +27,7 @@
 				},
 				{
 					"name": "string.quoted",
-					"match": "(['\"]).+?\\1"
+					"match": "([`'\"]).+?\\1"
 				},
 				{
 					"name": "keyword.operator",
