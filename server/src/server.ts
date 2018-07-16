@@ -39,7 +39,6 @@ connection.onInitialized(() => {
 	}
 });
 
-// The example settings
 interface ServerSettings {
 	validateFunctions: boolean;
 }
@@ -54,7 +53,6 @@ let globalSettings: ServerSettings = defaultSettings;
 let documentSettings: Map<string, Thenable<ServerSettings>> = new Map();
 
 connection.onDidChangeConfiguration(change => {
-	console.log(change);
 	if (hasConfigurationCapability) {
 		// Reset all cached document settings
 		documentSettings.clear();
@@ -70,7 +68,6 @@ connection.onDidChangeConfiguration(change => {
 
 
 function getDocumentSettings(resource: string): Thenable<ServerSettings> {
-	console.log("Requested");
 	if (!hasConfigurationCapability) {
 		return Promise.resolve(globalSettings);
 	}
@@ -93,34 +90,24 @@ documents.onDidClose(e => {
 // The content of a text document has changed. This event is emitted
 // when the text document first opened or when its content has changed.
 documents.onDidChangeContent(change => {
-	const textDocument = change.document;
-
-	validateTextDocument(textDocument).then(diagnostics => 
-		// Send the computed diagnostics to VSCode.
-		connection.sendDiagnostics({ uri: textDocument.uri, diagnostics })
-	);
+	validateTextDocument(change.document);
 });
 
-async function validateTextDocument(textDocument: TextDocument): Promise<Diagnostic[]> {
+async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 	const diagnostics: Diagnostic[] = [];
 	const settings = await getDocumentSettings(textDocument.uri);
-
-	validateFunctions.lineByLine(textDocument).forEach(element => {
-		diagnostics.push(element);
-	});
 
 	if (settings.validateFunctions) jsDomCaller.validate(textDocument).forEach(element => {
 		diagnostics.push(element);
 	});
 
-	return Promise.resolve(diagnostics);
+	validateFunctions.lineByLine(textDocument).forEach(element => {
+		diagnostics.push(element);
+	});
+
+	// Send the computed diagnostics to VSCode.
+	connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
 }
-
-
-connection.onDidChangeWatchedFiles((_change) => {
-	// Monitored files have change in VSCode
-	connection.console.log('We received an file change event');
-});
 
 // Make the text document manager listen on the connection
 // for open, change and close text document events
