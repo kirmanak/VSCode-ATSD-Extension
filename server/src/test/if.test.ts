@@ -15,6 +15,7 @@ suite("If elseif else endif validation tests", () => {
             "list servers = 'srv1', 'srv2'\n" +
             "for server in servers\n" +
             "  [series]\n" +
+            "    metric = temp\n" +
             "    entity = @{server}\n" +
             "    if server == 'srv1'\n" +
             "      color = red\n" +
@@ -33,6 +34,7 @@ suite("If elseif else endif validation tests", () => {
             "list servers = 'srv1', 'srv2'\n" +
             "for server in servers\n" +
             "  [series]\n" +
+            "    metric = temp\n" +
             "    entity = @{server}\n" +
             "    if server == 'srv1'\n" +
             "      color = red\n" +
@@ -51,6 +53,7 @@ suite("If elseif else endif validation tests", () => {
             "list servers = 'srv1', 'srv2'\n" +
             "for server in servers\n" +
             "  [series]\n" +
+            "    metric = temp\n" +
             "    entity = @{server}\n" +
             "    elseif server == 'srv1'\n" +
             "      color = yellow\n" +
@@ -60,16 +63,16 @@ suite("If elseif else endif validation tests", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 4, character: 10 },
-                    start: { line: 4, character: 4 }
+                    end: { line: 5, character: 10 },
+                    start: { line: 5, character: 4 }
                 }, uri: document.uri
             },
             DiagnosticSeverity.Error, elseIfError
         ), Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 6, character: 9 },
-                    start: { line: 6, character: 4 }
+                    end: { line: 7, character: 9 },
+                    start: { line: 7, character: 4 }
                 }, uri: document.uri
             },
             DiagnosticSeverity.Error, endIfError
@@ -83,6 +86,7 @@ suite("If elseif else endif validation tests", () => {
             "list servers = 'srv1', 'srv2'\n" +
             "for server in servers\n" +
             "  [series]\n" +
+            "    metric = temp\n" +
             "    entity = @{server}\n" +
             "    else\n" +
             "      color = yellow\n" +
@@ -92,16 +96,16 @@ suite("If elseif else endif validation tests", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 4, character: 8 },
-                    start: { line: 4, character: 4 }
+                    end: { line: 5, character: 8 },
+                    start: { line: 5, character: 4 }
                 }, uri: document.uri
             },
             DiagnosticSeverity.Error, elseError
         ), Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 6, character: 9 },
-                    start: { line: 6, character: 4 }
+                    end: { line: 7, character: 9 },
+                    start: { line: 7, character: 4 }
                 }, uri: document.uri
             },
             DiagnosticSeverity.Error, endIfError
@@ -115,6 +119,7 @@ suite("If elseif else endif validation tests", () => {
             "list servers = 'srv1', 'srv2'\n" +
             "for server in servers\n" +
             "  [series]\n" +
+            "    metric = temp\n" +
             "    entity = @{server}\n" +
             "    /* this is a comment */ else\n" +
             "      color = yellow\n" +
@@ -124,16 +129,16 @@ suite("If elseif else endif validation tests", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 4, character: 32 },
-                    start: { line: 4, character: 28 }
+                    end: { line: 5, character: 32 },
+                    start: { line: 5, character: 28 }
                 }, uri: document.uri
             },
             DiagnosticSeverity.Error, elseError
         ), Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 6, character: 9 },
-                    start: { line: 6, character: 4 }
+                    end: { line: 7, character: 9 },
+                    start: { line: 7, character: 4 }
                 }, uri: document.uri
             },
             DiagnosticSeverity.Error, endIfError
@@ -147,6 +152,7 @@ suite("If elseif else endif validation tests", () => {
             "list servers = 'srv1', 'srv2'\n" +
             "for server in servers\n" +
             "  [series]\n" +
+            "    metric = temp\n" +
             "    entity = @{server}\n" +
             "    if server == 'srv1'\n" +
             "      color = red\n" +
@@ -157,16 +163,16 @@ suite("If elseif else endif validation tests", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 8, character: 6 },
-                    start: { line: 8, character: 0 }
+                    end: { line: 9, character: 6 },
+                    start: { line: 9, character: 0 }
                 }, uri: document.uri
             },
             DiagnosticSeverity.Error, "for has finished before if"
         ), Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 4, character: 6 },
-                    start: { line: 4, character: 4 }
+                    end: { line: 5, character: 6 },
+                    start: { line: 5, character: 4 }
                 }, uri: document.uri
             },
             DiagnosticSeverity.Error, ifError

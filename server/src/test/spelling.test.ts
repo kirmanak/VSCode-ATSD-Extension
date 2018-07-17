@@ -7,7 +7,7 @@ suite("Spelling checks", () => {
 
     test("starttime", () => {
         const text =
-            "[series]\n" +
+            "[configuration]\n" +
             "	start-time = 15 second\n" +
             "	starttime = 20 second\n" +
             "	startime = 30 minute\n";

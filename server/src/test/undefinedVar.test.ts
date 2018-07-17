@@ -14,6 +14,7 @@ suite("Undefined variable in for loop", () => {
             "list servers = 'srv1', 'srv2'\n" +
             `for ${firstVar} in servers\n` +
             `   [series]\n` +
+            "       metric = placeholder\n" +
             `       entity = @{${firstVar}}\n` +
             "endfor";
         const document: TextDocument = Shared.createDoc(text);
@@ -27,6 +28,7 @@ suite("Undefined variable in for loop", () => {
             "list servers = 'srv1', 'srv2'\n" +
             `for ${firstVar} /* this is a comment */ in servers\n` +
             `   [series]\n` +
+            "       metric = placeholder\n" +
             `       entity = @{${firstVar}}\n` +
             "endfor";
         const document: TextDocument = Shared.createDoc(text);
@@ -40,10 +42,12 @@ suite("Undefined variable in for loop", () => {
             "list servers = 'srv1', 'srv2'\n" +
             `for ${firstVar} in servers\n` +
             `   [series]\n` +
+            "       metric = placeholder\n" +
             `       entity = @{${firstVar}}\n` +
             "endfor\n" +
             `for ${firstVar} in servers\n` +
             `   [series]\n` +
+            "       metric = placeholder\n" +
             `       entity = @{${firstVar}}\n` +
             "endfor";
         const document: TextDocument = Shared.createDoc(text);
@@ -57,14 +61,15 @@ suite("Undefined variable in for loop", () => {
             "list servers = 'srv1', 'srv2'\n" +
             `for ${secondVar} in servers\n` +
             `   [series]\n` +
+            "       metric = placeholder\n" +
             `       entity = @{${firstVar}}\n` +
             "endfor";
         const document: TextDocument = Shared.createDoc(text);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 3, character: `       entity = @{`.length + firstVar.length },
-                    start: { line: 3, character: `       entity = @{`.length }
+                    end: { line: 4, character: `       entity = @{`.length + firstVar.length },
+                    start: { line: 4, character: `       entity = @{`.length }
                 }, uri: document.uri
             },
             DiagnosticSeverity.Error, Shared.errorMessage(firstVar, secondVar)
@@ -78,26 +83,28 @@ suite("Undefined variable in for loop", () => {
             "list servers = 'srv1', 'srv2'\n" +
             `for ${secondVar} in servers\n` +
             `   [series]\n` +
+            "       metric = placeholder\n" +
             `       entity = @{${firstVar}}\n` +
             "endfor\n" +
             `for ${firstVar} in servers\n` +
             `   [series]\n` +
+            "       metric = placeholder\n" +
             `       entity = @{${secondVar}}\n` +
             "endfor";
         const document: TextDocument = Shared.createDoc(text);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 3, character: `       entity = @{`.length + firstVar.length },
-                    start: { line: 3, character: `       entity = @{`.length }
+                    end: { line: 4, character: `       entity = @{`.length + firstVar.length },
+                    start: { line: 4, character: `       entity = @{`.length }
                 }, uri: document.uri
             },
             DiagnosticSeverity.Error, Shared.errorMessage(firstVar, secondVar)
         ), Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 7, character: `       entity = @{`.length + secondVar.length },
-                    start: { line: 7, character: `       entity = @{`.length }
+                    end: { line: 9, character: `       entity = @{`.length + secondVar.length },
+                    start: { line: 9, character: `       entity = @{`.length }
                 }, uri: document.uri
             },
             DiagnosticSeverity.Error, Shared.errorMessage(secondVar, "servers")
@@ -111,18 +118,20 @@ suite("Undefined variable in for loop", () => {
             "list servers = 'srv1', 'srv2'\n" +
             `for ${secondVar} in servers\n` +
             "   [series]\n" +
+            "       metric = placeholder\n" +
             `       entity = @{${firstVar}}\n` +
             "endfor\n" +
             `for ${firstVar} in servers\n` +
             "   [series]\n" +
+            "       metric = placeholder\n" +
             `       entity = @{${firstVar}}\n` +
             "endfor";
         const document: TextDocument = Shared.createDoc(text);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 3, character: `       entity = @{`.length + firstVar.length },
-                    start: { line: 3, character: `       entity = @{`.length }
+                    end: { line: 4, character: `       entity = @{`.length + firstVar.length },
+                    start: { line: 4, character: `       entity = @{`.length }
                 }, uri: document.uri
             },
             DiagnosticSeverity.Error, Shared.errorMessage(firstVar, secondVar)
@@ -136,11 +145,14 @@ suite("Undefined variable in for loop", () => {
             "list servers = 'srv1', 'srv2'\n" +
             `for ${secondVar} in servers\n` +
             "   [series]\n" +
+            "       metric = placeholder\n" +
             `       entity = @{${secondVar}}\n` +
             `   for ${firstVar} in servers\n` +
             "       [series]\n" +
+            "           metric = placeholder\n" +
             `           entity = @{${secondVar}}\n` +
             "       [series]\n" +
+            "           metric = placeholder\n" +
             `           entity = @{${firstVar}}\n` +
             "   endfor\n" +
             "endfor";
@@ -155,11 +167,14 @@ suite("Undefined variable in for loop", () => {
             "list servers = 'srv1', 'srv2'\n" +
             `for ${secondVar} in servers\n` +
             "   [series]\n" +
+            "       metric = placeholder\n" +
             `       entity = @{${secondVar}}\n` +
             `   for ${firstVar} in servers\n` +
             "       [series]\n" +
+            "           metric = placeholder\n" +
             `           entity = @{${thirdVar}}\n` +
             "       [series]\n" +
+            "           metric = placeholder\n" +
             `           entity = @{${firstVar}}\n` +
             "   endfor\n" +
             "endfor";
@@ -167,8 +182,8 @@ suite("Undefined variable in for loop", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 6, character: `           entity = @{`.length + thirdVar.length },
-                    start: { line: 6, character: `           entity = @{`.length }
+                    end: { line: 8, character: `           entity = @{`.length + thirdVar.length },
+                    start: { line: 8, character: `           entity = @{`.length }
                 }, uri: document.uri
             },
             DiagnosticSeverity.Error, Shared.errorMessage(thirdVar, firstVar)
@@ -182,6 +197,7 @@ suite("Undefined variable in for loop", () => {
             "list servers = 'srv1', 'srv2'\n" +
             `for ${firstVar} in servers\n` +
             "   [series]\n" +
+            "       metric = placeholder\n" +
             `       entity = @{${firstVar} + ${firstVar}}\n` +
             "endfor";
         const document: TextDocument = Shared.createDoc(text);
@@ -195,14 +211,15 @@ suite("Undefined variable in for loop", () => {
             "list servers = 'srv1', 'srv2'\n" +
             `for ${firstVar} in servers\n` +
             "   [series]\n" +
+            "       metric = placeholder\n" +
             `       entity = @{${secondVar} + ${firstVar}}\n` +
             "endfor";
         const document: TextDocument = Shared.createDoc(text);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 3, character: `       entity = @{`.length + secondVar.length },
-                    start: { line: 3, character: `       entity = @{`.length }
+                    end: { line: 4, character: `       entity = @{`.length + secondVar.length },
+                    start: { line: 4, character: `       entity = @{`.length }
                 }, uri: document.uri
             },
             DiagnosticSeverity.Error, Shared.errorMessage(secondVar, "servers")
@@ -216,6 +233,7 @@ suite("Undefined variable in for loop", () => {
             "list servers = 's1v1', 's1v2'\n" +
             `for ${secondVar} in servers\n` +
             "   [series]\n" +
+            "       metric = placeholder\n" +
             `       entity = @{keepAfterLast(${secondVar}, '1')}\n` +
             "endfor";
         const document: TextDocument = Shared.createDoc(text);
@@ -229,6 +247,7 @@ suite("Undefined variable in for loop", () => {
             "var servers = [ { name: 'srv1' }, { name: 'srv2' } ]\n" +
             `for ${secondVar} in servers\n` +
             "   [series]\n" +
+            "       metric = placeholder\n" +
             `       entity = @{${secondVar}.name}\n` +
             "endfor";
         const document: TextDocument = Shared.createDoc(text);
@@ -242,6 +261,7 @@ suite("Undefined variable in for loop", () => {
             "list servers = 'srv1', 'srv2'\n" +
             `for ${secondVar} in servers\n` +
             "   [series]\n" +
+            "       metric = placeholder\n" +
             `       entity = @{keepAfterLast(${secondVar}, 'v')}\n` +
             "endfor";
         const document: TextDocument = Shared.createDoc(text);
@@ -255,14 +275,15 @@ suite("Undefined variable in for loop", () => {
             "list servers = 'srv1', 'srv2'\n" +
             `for ${secondVar} in servers\n` +
             "   [series]\n" +
+            "       metric = placeholder\n" +
             `       entity = @{keepAfterLast(${secondVar}, 'v')}, @{${firstVar}}\n` +
             "endfor";
         const document: TextDocument = Shared.createDoc(text);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 3, character: `       entity = @{keepAfterLast(${secondVar}, 'v')}, @{`.length + firstVar.length },
-                    start: { line: 3, character: `       entity = @{keepAfterLast(${secondVar}, 'v')}, @{`.length }
+                    end: { line: 4, character: `       entity = @{keepAfterLast(${secondVar}, 'v')}, @{`.length + firstVar.length },
+                    start: { line: 4, character: `       entity = @{keepAfterLast(${secondVar}, 'v')}, @{`.length }
                 }, uri: document.uri
             },
             DiagnosticSeverity.Error, Shared.errorMessage(firstVar, secondVar)

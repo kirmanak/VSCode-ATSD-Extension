@@ -138,15 +138,19 @@ suite("Repetition of variables or settings tests", () => {
     test("Repetition of aliases", () => {
         const text =
             "[series]\n" +
+            "   entity = srv\n" +
+            "   metric = temp\n" +
             "   alias = server\n" +
             "[series]\n" +
+            "   entity = srv\n" +
+            "   metric = temp\n" +
             "   alias = server";
         const document = Shared.createDoc(text);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 3, character: "   alias = ".length + "server".length },
-                    start: { line: 3, character: "   alias = ".length }
+                    end: { line: 7, character: "   alias = ".length + "server".length },
+                    start: { line: 7, character: "   alias = ".length }
                 }, uri: document.uri
             },
             DiagnosticSeverity.Error, "server is already defined"
@@ -159,6 +163,8 @@ suite("Repetition of variables or settings tests", () => {
         const text =
             "list server = 'srv1', 'srv2'\n" +
             "[series]\n" +
+            "   entity = srv\n" +
+            "   metric = temp\n" +
             "   alias = server";
         const document = Shared.createDoc(text);
         const expected: Diagnostic[] = [];
@@ -171,6 +177,8 @@ suite("Repetition of variables or settings tests", () => {
             "list servers = 'srv1', 'srv2'\n" +
             "for server in servers\n" +
             "   [series]\n" +
+            "       entity = srv\n" +
+            "       metric = temp\n" +
             "       color = 'yellow'\n" +
             "       if server = 'srv1'\n" +
             "           color = 'red'\n" +
@@ -182,16 +190,16 @@ suite("Repetition of variables or settings tests", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 5, character: "           ".length +  "color".length },
-                    start: { line: 5, character: "           ".length }
+                    end: { line: 7, character: "           ".length +  "color".length },
+                    start: { line: 7, character: "           ".length }
                 }, uri: document.uri
             },
             DiagnosticSeverity.Warning, "color is already defined"
         ), Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 7, character: "           ".length +  "color".length },
-                    start: { line: 7, character: "           ".length }
+                    end: { line: 9, character: "           ".length +  "color".length },
+                    start: { line: 9, character: "           ".length }
                 }, uri: document.uri
             },
             DiagnosticSeverity.Warning, "color is already defined"
@@ -205,36 +213,12 @@ suite("Repetition of variables or settings tests", () => {
             "list servers = 'srv1', 'srv2'\n" +
             "for server in servers\n" +
             "   [series]\n" +
+            "       entity = srv\n" +
+            "       metric = temp\n" +
             "       if server = 'srv1'\n" +
             "           color = 'yellow'\n" +
             "           color = 'red'\n" +
             "       else\n" +
-            "           color = 'green'\n" +
-            "       endif\n" +
-            "endfor\n";
-        const document = Shared.createDoc(text);
-        const expected: Diagnostic[] = [Shared.createDiagnostic(
-            {
-                range: {
-                    end: { line: 5, character: "           ".length +  "color".length },
-                    start: { line: 5, character: "           ".length }
-                }, uri: document.uri
-            },
-            DiagnosticSeverity.Warning, "color is already defined"
-        )];
-        const result = Functions.lineByLine(document);
-        assert.deepEqual(result, expected);
-    });
-
-    test("Repetition of settings in if else", () => {
-        const text =
-            "list servers = 'srv1', 'srv2'\n" +
-            "for server in servers\n" +
-            "   [series]\n" +
-            "       if server = 'srv1'\n" +
-            "           color = 'yellow'\n" +
-            "       else\n" +
-            "           color = 'red'\n" +
             "           color = 'green'\n" +
             "       endif\n" +
             "endfor\n";
@@ -252,15 +236,15 @@ suite("Repetition of variables or settings tests", () => {
         assert.deepEqual(result, expected);
     });
 
-    test("Repetition of settings in if elseif", () => {
+    test("Repetition of settings in if else", () => {
         const text =
             "list servers = 'srv1', 'srv2'\n" +
             "for server in servers\n" +
             "   [series]\n" +
+            "       entity = srv\n" +
+            "       metric = temp\n" +
             "       if server = 'srv1'\n" +
             "           color = 'yellow'\n" +
-            "       elseif server = 'srv2'\n" +
-            "           color = 'black'\n" +
             "       else\n" +
             "           color = 'red'\n" +
             "           color = 'green'\n" +
@@ -280,11 +264,43 @@ suite("Repetition of variables or settings tests", () => {
         assert.deepEqual(result, expected);
     });
 
+    test("Repetition of settings in if elseif", () => {
+        const text =
+            "list servers = 'srv1', 'srv2'\n" +
+            "for server in servers\n" +
+            "   [series]\n" +
+            "       entity = srv\n" +
+            "       metric = temp\n" +
+            "       if server = 'srv1'\n" +
+            "           color = 'yellow'\n" +
+            "       elseif server = 'srv2'\n" +
+            "           color = 'black'\n" +
+            "       else\n" +
+            "           color = 'red'\n" +
+            "           color = 'green'\n" +
+            "       endif\n" +
+            "endfor\n";
+        const document = Shared.createDoc(text);
+        const expected: Diagnostic[] = [Shared.createDiagnostic(
+            {
+                range: {
+                    end: { line: 11, character: "           ".length +  "color".length },
+                    start: { line: 11, character: "           ".length }
+                }, uri: document.uri
+            },
+            DiagnosticSeverity.Warning, "color is already defined"
+        )];
+        const result = Functions.lineByLine(document);
+        assert.deepEqual(result, expected);
+    });
+
     test("Repetition of settings in if else next section", () => {
         const text =
             "list servers = 'srv1', 'srv2'\n" +
             "for server in servers\n" +
             "   [series]\n" +
+            "       entity = srv\n" +
+            "       metric = temp\n" +
             "       if server = 'srv1'\n" +
             "           color = 'yellow'\n" +
             "       elseif server = 'srv2'\n" +
@@ -293,6 +309,8 @@ suite("Repetition of variables or settings tests", () => {
             "           color = 'green'\n" +
             "       endif\n" +
             "   [series]\n" +
+            "       entity = srv\n" +
+            "       metric = temp\n" +
             "       if server = 'srv1'\n" +
             "           color = 'yellow'\n" +
             "       else\n" +
@@ -310,6 +328,8 @@ suite("Repetition of variables or settings tests", () => {
             "list servers = 'srv1', 'srv2'\n" +
             "for server in servers\n" +
             "   [series]\n" +
+            "       entity = srv\n" +
+            "       metric = temp\n" +
             "       if server = 'srv1'\n" +
             "           color = 'yellow'\n" +
             "       elseif server = 'srv2'\n" +
@@ -318,6 +338,8 @@ suite("Repetition of variables or settings tests", () => {
             "           color = 'green'\n" +
             "       endif\n" +
             "   [series]\n" +
+            "       entity = srv\n" +
+            "       metric = temp\n" +
             "       color = 'yellow'\n" +
             "endfor\n";
         const document = Shared.createDoc(text);
