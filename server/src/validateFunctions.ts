@@ -22,7 +22,7 @@ function spellingCheck(line: string, uri: string, i: number): Diagnostic | null 
 
     /* statements like `[section] variable = value` aren't supported */
     match = /^([ \t]*\[)(\w+)\]/gm.exec(line);
-    if (match === undefined) { match = /^(['" \t]*)([-\w]+)['" \t]*=/gm.exec(line); }
+    if (!match) { match = /^(['" \t]*)([-\w]+)['" \t]*=/gm.exec(line); }
     if (match) {
         const indent = match[1].length;
         const word = match[2].toLowerCase();
@@ -217,7 +217,7 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
                     }
                     match = varRegexp.exec(substr);
                 }
-                match = regex.exec(line);
+                match = atRegexp.exec(line);
             }
         }
 
