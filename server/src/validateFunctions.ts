@@ -112,7 +112,7 @@ function isVarDeclared(variable: string, dictionaries: Map<string, string[]>): b
     return result;
 }
 
-function addToArray(map: Map<string, string[]>, key: string,
+function addToArray(map: Map<string, string[]>, key: string, severity: DiagnosticSeverity,
                     match: RegExpExecArray, uri: string, i: number): Diagnostic | null {
     let diagnostic: Diagnostic = null;
     const variable = match[2];
@@ -124,7 +124,7 @@ function addToArray(map: Map<string, string[]>, key: string,
                     end: { line: i, character: startPosition + variable.length },
                     start: { line: i, character: startPosition },
                 }, uri,
-            }, DiagnosticSeverity.Error, `${variable} is already defined`,
+            }, severity, `${variable} is already defined`,
         );
     } else {
         const array = map.get(key);
@@ -173,7 +173,7 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
             match = /(^\s*alias\s*=\s*)(\w+)\s*$/m.exec(line);
             const deAliasRegex = /(^\s*value\s*=.*value\((['"]))(\w+)\2\).*$/m;
             if (match) {
-                const diagnostic = addToArray(aliases, "aliases", match, textDocument.uri, i);
+                const diagnostic = addToArray(aliases, "aliases", DiagnosticSeverity.Error, match, textDocument.uri, i);
                 if (diagnostic) { result.push(diagnostic); }
             } else if (deAliasRegex.test(line)) {
                 match = deAliasRegex.exec(line);
@@ -192,7 +192,7 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
             // repetition
             match = /(^\s*)([-\w]+)\s*=/.exec(line);
             if (match) {
-                const diagnostic = addToArray(settings, "settings", match, textDocument.uri, i);
+                const diagnostic = addToArray(settings, "settings", DiagnosticSeverity.Warning, match, textDocument.uri, i);
                 if (diagnostic) { result.push(diagnostic); }
             }
         }
@@ -330,7 +330,7 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
                     } else { header = line.substring(/=/.exec(line).index + 1); }
                     match = /(csv[ \t]+)(\w+)[ \t]*=/.exec(line);
                     if (match) {
-                        const diagnostic = addToArray(variables, "csvNames", match, textDocument.uri, i);
+                        const diagnostic = addToArray(variables, "csvNames", DiagnosticSeverity.Error, match, textDocument.uri, i);
                         if (diagnostic) { result.push(diagnostic); }
                     }
                     csvColumns = countCsvColumns(header);
@@ -341,7 +341,7 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
                     if (/=\s*(\[|\{)(|.*,)\s*$/m.test(line)) { nestedStack.push(foundKeyword); }
                     match = /(var\s*)(\w+)\s*=/.exec(line);
                     if (match) {
-                        const diagnostic = addToArray(variables, "varNames", match, textDocument.uri, i);
+                        const diagnostic = addToArray(variables, "varNames", DiagnosticSeverity.Error, match, textDocument.uri, i);
                         if (diagnostic) { result.push(diagnostic); }
                     }
                     break;
@@ -349,7 +349,7 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
                 case "list": {
                     match = /(^\s*list\s+)(\w+)\s+=/.exec(line);
                     if (match) {
-                        const diagnostic = addToArray(variables, "listNames", match, textDocument.uri, i);
+                        const diagnostic = addToArray(variables, "listNames", DiagnosticSeverity.Error, match, textDocument.uri, i);
                         if (diagnostic) { result.push(diagnostic); }
                     }
                     if (/(=|,)[ \t]*$/m.test(line)) {
@@ -395,7 +395,7 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
                                 }, DiagnosticSeverity.Error, "Empty 'in' statement",
                             ));
                         }
-                        const diagnostic = addToArray(variables, "forVariables", matching, textDocument.uri, i);
+                        const diagnostic = addToArray(variables, "forVariables", DiagnosticSeverity.Error, matching, textDocument.uri, i);
                         if (diagnostic) { result.push(diagnostic); }
                     }
                     break;

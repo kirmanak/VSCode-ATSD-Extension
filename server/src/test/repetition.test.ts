@@ -101,8 +101,8 @@ suite("Repetition of variables or settings tests", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 2, character: "    ".length + "entity".length },
-                    start: { line: 2, character: "    ".length },
+                    end: { line: 2, character: "   ".length + "entity".length },
+                    start: { line: 2, character: "   ".length },
                 }, uri: document.uri,
             }, DiagnosticSeverity.Warning, "entity is already defined",
         )];
@@ -120,8 +120,8 @@ suite("Repetition of variables or settings tests", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 3, character:  "    ".length + "offset-right".length },
-                    start: { line: 3, character: "    ".length },
+                    end: { line: 3, character:  "   ".length + "offset-right".length },
+                    start: { line: 3, character: "   ".length },
                 }, uri: document.uri,
             }, DiagnosticSeverity.Warning, "offset-right is already defined",
         )];
