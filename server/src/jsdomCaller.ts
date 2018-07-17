@@ -32,8 +32,10 @@ function parseJsStatements(text: string): Statement[] {
                     start: { line: i, character: match[1].length },
                     end: { line: i, character: matchStart + match[2].length }
                 };
-                let j = i;
-                while (++j < lines.length && !(/\bscript\b/.test(lines[j]) || /\bendscript\b/.test(lines[j])));
+                let j = i + 1;
+                while (j < lines.length && !(/\bscript\b/.test(lines[j]) || /\bendscript\b/.test(lines[j]))) {
+                    j++;
+                }
                 if (!(j === lines.length || /\bscript\b/.test(lines[j]))) {
                     line = lines[++i];
                     while (line && !/\bendscript\b/.test(line)) {
@@ -187,8 +189,7 @@ export function validate(document: TextDocument): Diagnostic[] {
                     { uri: document.uri, range: statement.range },
                     DiagnosticSeverity.Warning, err.message
                 ));
-            }
-            else console.log(err.message);
+            } else { console.log(err.message); }
         }
     });
 

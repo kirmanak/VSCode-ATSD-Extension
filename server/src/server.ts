@@ -1,5 +1,5 @@
 import {
-    createConnection,  Diagnostic, DidChangeConfigurationNotification, InitializeParams,
+    createConnection, Diagnostic, DidChangeConfigurationNotification, InitializeParams,
     ProposedFeatures, TextDocument, TextDocuments
 } from "vscode-languageserver";
 import * as jsDomCaller from "./jsdomCaller";
@@ -94,9 +94,11 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
     const diagnostics: Diagnostic[] = [];
     const settings = await getDocumentSettings(textDocument.uri);
 
-    if (settings.validateFunctions) jsDomCaller.validate(textDocument).forEach((element) => {
-        diagnostics.push(element);
-    });
+    if (settings.validateFunctions) {
+        jsDomCaller.validate(textDocument).forEach((element) => {
+            diagnostics.push(element);
+        });
+    }
 
     validateFunctions.lineByLine(textDocument).forEach((element) => {
         diagnostics.push(element);
