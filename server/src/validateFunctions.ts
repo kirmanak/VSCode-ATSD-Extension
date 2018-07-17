@@ -181,7 +181,7 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
         if (/^[ \t]*$/m.test(line) && isUserDefined) { isUserDefined = false; }
 
         // handle tags
-        match = /(^[\t ]*)\[(\w+)\][\t ]*/m.exec(line);
+        match = /(^[\t ]*\[)(\w+)\][\t ]*/m.exec(line);
         if (match) {
             if (/tags?|keys/.test(match[2])) {
                 isUserDefined = true;

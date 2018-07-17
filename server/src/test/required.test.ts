@@ -24,8 +24,8 @@ suite("Required settings for sections tests", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 0, character: "[series]".length },
-                    start: { line: 0, character: 0 }
+                    end: { line: 0, character: "[".length + "series".length },
+                    start: { line: 0, character: "[".length }
                 },
                 uri: document.uri
             },
@@ -48,4 +48,33 @@ suite("Required settings for sections tests", () => {
         assert.deepEqual(result, expected);
     });
 
+    test("two incorrect series without parent categories", () => {
+        const text =
+            "[series]\n" +
+            "   metric = hello\n" +
+            "[series]\n" +
+            "   entity = hello\n";
+        const document = Shared.createDoc(text);
+        const expected: Diagnostic[] = [Shared.createDiagnostic(
+            {
+                range: {
+                    end: { line: 0, character: "[".length + "series".length },
+                    start: { line: 0, character: "[".length }
+                },
+                uri: document.uri
+            },
+            DiagnosticSeverity.Error, "entity is required"
+        ), Shared.createDiagnostic(
+            {
+                range: {
+                    end: { line: 2, character: "[".length + "series".length },
+                    start: { line: 2, character: "[".length }
+                },
+                uri: document.uri
+            },
+            DiagnosticSeverity.Error, "metric is required"
+        )];
+        const result = Functions.lineByLine(document);
+        assert.deepEqual(result, expected);
+    });
 });
