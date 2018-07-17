@@ -159,6 +159,7 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
 
     for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
+        if (/^[ \t]*$/m.test(line) && isUserDefined) { isUserDefined = false; }
 
         // handle tags
         match = /^[\t ]*\[(tags?|keys)\][\t ]*/m.exec(line);
