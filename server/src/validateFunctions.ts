@@ -145,6 +145,7 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
     let isFor = false;
     let isIf = false;
     let csvColumns = 0; // to validate csv
+    let previousSection: FoundKeyword = null; // to validate required settings
     const variables = new Map<string, string[]>(); // to validate variables
     const settings = new Map<string, string[]>(); // to validate variables
     const aliases = new Map<string, string[]>(); // to validate `value = value('alias')`
@@ -162,12 +163,36 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
         if (/^[ \t]*$/m.test(line) && isUserDefined) { isUserDefined = false; }
 
         // handle tags
-        match = /^[\t ]*\[(tags?|keys)\][\t ]*/m.exec(line);
+        match = /(^[\t ]*)\[(\w+)\][\t ]*/m.exec(line);
         if (match) {
-            isUserDefined = true;
-        } else if (/^[\t ]*\[\w+\][\t ]*/m.test(line)) {
-            isUserDefined = false;
-            settings.set("settings", []);
+            if (/tags?|keys/.test(match[2])) {
+                isUserDefined = true;
+            } else {
+                if (previousSection) {
+                    switch (previousSection.keyword) {
+                        case "series": {
+                            if (!isVarDeclared("entity", settings) || !isVarDeclared("metric", settings)) {
+                                result.push(Shared.createDiagnostic(
+                                    {
+                                        range: previousSection.range,
+                                        uri: textDocument.uri
+                                    },
+                                    DiagnosticSeverity.Error, "entity or metric is not declared"
+                                ));
+                            }
+                        }
+                    }
+                }
+                isUserDefined = false;
+                settings.set("settings", []);
+            }
+            previousSection = {
+                range: {
+                    end: { line: i, character: match[1].length + match[2].length },
+                    start: { line: i, character: match[1].length }
+                },
+                keyword: match[2]
+            };
         }
 
         // validate aliases, spellings, repetition of settings
