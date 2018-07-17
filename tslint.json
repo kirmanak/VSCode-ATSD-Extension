@@ -72,7 +72,7 @@
 		],
 		"quotemark": [
 			true,
-			"single",
+			"double",
 			"avoid-escape"
 		],
 		"radix": false,
@@ -134,7 +134,7 @@
 		"no-unused-variable": true,
 		"ter-no-mixed-spaces-and-tabs": true,
 		"no-constant-condition": true,
-		"new-parens": true,
+		"new-parens": true
 	},
 	"jsRules": {
 		"max-line-length": {
