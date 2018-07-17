@@ -102,15 +102,13 @@ function checkEnd(expectedEnd: string, nestedStack: FoundKeyword[],
 }
 
 function isVarDeclared(variable: string, dictionaries: Map<string, string[]>): boolean {
-    const iterator = dictionaries.values();
-    let dictionary = iterator.next().value;
-    while (dictionary) {
-        for (const value of dictionary) {
-            if (variable === value) { return true; }
-        }
-        dictionary = iterator.next().value;
-    }
-    return false;
+    let result = false;
+    dictionaries.forEach((dictionary) => {
+        dictionary.forEach((value) => {
+            if (variable === value) { result = true; }
+        });
+    });
+    return result;
 }
 
 function addToArray(map: Map<string, string[]>, key: string, word: string): Map<string, string[]> {
@@ -200,7 +198,10 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
                 const varRegexp = /[a-zA-Z_]\w*(?!\w*["\('])/g;
                 match = varRegexp.exec(substr);
                 while (match) {
-                    if (substr.charAt(match.index - 1) === ".") { continue; }
+                    if (substr.charAt(match.index - 1) === ".") {
+                        match = varRegexp.exec(substr);
+                        continue;
+                    }
                     const variable = match[0];
                     if (!isVarDeclared(variable, variables)) {
                         const position = startPosition + match.index;

@@ -31,12 +31,11 @@ suite("Repetition of variables or settings tests", () => {
         const document = Shared.createDoc(text);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
-                uri: document.uri,
                 range: {
+                    end: { line: 1, character: "servers".length },
                     start: { line: 1, character: "for ".length },
-                    end: { line: 1, character: "servers".length }
-                }
-            }, DiagnosticSeverity.Error, "servers is already defined"
+                }, uri: document.uri,
+            }, DiagnosticSeverity.Error, "servers is already defined",
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -51,12 +50,11 @@ suite("Repetition of variables or settings tests", () => {
         const document = Shared.createDoc(text);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
-                uri: document.uri,
                 range: {
+                    end: { line: 1, character: "servers".length },
                     start: { line: 1, character: "csv ".length },
-                    end: { line: 1, character: "servers".length }
-                }
-            }, DiagnosticSeverity.Error, "servers is already defined"
+                }, uri: document.uri,
+            }, DiagnosticSeverity.Error, "servers is already defined",
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -71,12 +69,11 @@ suite("Repetition of variables or settings tests", () => {
         const document = Shared.createDoc(text);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
-                uri: document.uri,
                 range: {
+                    end: { line: 3, character: "servers".length },
                     start: { line: 3, character: "list ".length },
-                    end: { line: 3, character: "servers".length }
-                }
-            }, DiagnosticSeverity.Error, "servers is already defined"
+                }, uri: document.uri,
+            }, DiagnosticSeverity.Error, "servers is already defined",
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -99,18 +96,16 @@ suite("Repetition of variables or settings tests", () => {
             "[series]\n" +
             "   entity = srv\n" +
             "   entity = srv2\n" +
-            "   metric = status"
-
+            "   metric = status";
         const document = Shared.createDoc(text);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
-                uri: document.uri,
                 range: {
+                    end: { line: 2, character: "entity".length },
                     start: { line: 2, character: "    ".length },
-                    end: { line: 2, character: "entity".length }
-                }
+                }, uri: document.uri,
             },
-            DiagnosticSeverity.Warning, "entity is already defined"
+            DiagnosticSeverity.Warning, "entity is already defined",
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -128,8 +123,7 @@ suite("Repetition of variables or settings tests", () => {
                 range: {
                     end: { line: 3, character: "offset-right".length },
                     start: { line: 3, character: "    ".length },
-                },
-                uri: document.uri,
+                }, uri: document.uri,
             },
             DiagnosticSeverity.Warning, "offset-right is already defined",
         )];
