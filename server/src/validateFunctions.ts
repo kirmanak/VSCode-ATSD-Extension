@@ -81,7 +81,7 @@ function countCsvColumns(line: string): number {
 }
 
 function checkEnd(expectedEnd: string, nestedStack: FoundKeyword[],
-                  foundKeyword: FoundKeyword, uri: string): Diagnostic | null {
+    foundKeyword: FoundKeyword, uri: string): Diagnostic | null {
     const stackHead = nestedStack.pop();
     if (stackHead !== undefined && stackHead.keyword === expectedEnd) { return null; }
     if (stackHead !== undefined) { nestedStack.push(stackHead); } // push found keyword back
@@ -113,7 +113,7 @@ function isVarDeclared(variable: string, dictionaries: Map<string, string[]>): b
 }
 
 function addToArray(map: Map<string, string[]>, key: string,
-                    match: RegExpExecArray, uri: string, i: number): Diagnostic | null {
+    match: RegExpExecArray, uri: string, i: number): Diagnostic | null {
     let diagnostic: Diagnostic = null;
     const variable = match[2];
     const startPosition = match.index + match[1].length;
@@ -143,16 +143,16 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
     let isCsv = false; // to perform validation
     let isFor = false;
     let csvColumns = 0; // to validate csv
-    const variables = new Map<string, string[]>();
+    const variables = new Map<string, string[]>(); // to validate variables
+    const settings = new Map<string, string[]>(); // to validate variables
+    const aliases = new Map<string, string[]>(); // to validate `value = value('alias')`
+    aliases.set("aliases", []);
+    settings.set("settings", []);
     variables.set("listNames", []);
     variables.set("varNames", []);
     variables.set("csvNames", []);
     variables.set("forVariables", []);
-    const aliases = new Map<string, string[]>(); // to validate `value = value('alias')`
     const deAliases: FoundKeyword[] = [];
-    aliases.set("aliases", []);
-    const deAliasRegex = /(^\s*value\s*=.*value\((['"]))(\w+)\2\).*$/m;
-    const aliasRegex = /(^\s*alias\s*=\s*)(\w+)\s*$/m;
     let match: RegExpExecArray;
 
     for (let i = 0; i < lines.length; i++) {
@@ -162,9 +162,9 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
         match = /^[\t ]*\[(tags?|keys)\][\t ]*/m.exec(line);
         if (match) {
             isUserDefined = true;
-        } else if (isUserDefined) {
-            match = /^[\t ]*\[\w+\][\t ]*/m.exec(line);
-            if (match) { isUserDefined = false; }
+        } else if (isUserDefined && /^[\t ]*\[\w+\][\t ]*/m.test(line)) {
+            isUserDefined = false;
+            settings.set("settings", []);
         }
 
         // prepare regex to let 'g' key do its work
@@ -172,7 +172,8 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
         let foundKeyword = FoundKeyword.parseControlSequence(regex, line, i);
 
         if (!isUserDefined && !isScript) {
-            match = aliasRegex.exec(line);
+            match = /(^\s*alias\s*=\s*)(\w+)\s*$/m.exec(line);
+            const deAliasRegex = /(^\s*value\s*=.*value\((['"]))(\w+)\2\).*$/m;
             if (match) {
                 const diagnostic = addToArray(aliases, "aliases", match, textDocument.uri, i);
                 if (diagnostic) { result.push(diagnostic); }
@@ -187,6 +188,11 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
             }
             const misspelling = spellingCheck(line, textDocument.uri, i);
             if (misspelling) { result.push(misspelling); }
+            match = /(^\s*)([-\w]+)\s*=/.exec(line);
+            if (match) {
+                const diagnostic = addToArray(settings, "settings", match, textDocument.uri, i);
+                if (diagnostic) { result.push(diagnostic); }
+            }
         }
 
         // validate CSV
