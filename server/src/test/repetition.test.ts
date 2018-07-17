@@ -280,4 +280,50 @@ suite("Repetition of variables or settings tests", () => {
         assert.deepEqual(result, expected);
     });
 
+    test("Repetition of settings in if else next section", () => {
+        const text =
+            "list servers = 'srv1', 'srv2'\n" +
+            "for server in servers\n" +
+            "   [series]\n" +
+            "       if server = 'srv1'\n" +
+            "           color = 'yellow'\n" +
+            "       elseif server = 'srv2'\n" +
+            "           color = 'black'\n" +
+            "       else\n" +
+            "           color = 'green'\n" +
+            "       endif\n" +
+            "   [series]\n" +
+            "       if server = 'srv1'\n" +
+            "           color = 'yellow'\n" +
+            "       else\n" +
+            "           color = 'green'\n" +
+            "       endif\n" +
+            "endfor\n";
+        const document = Shared.createDoc(text);
+        const expected: Diagnostic[] = [];
+        const result = Functions.lineByLine(document);
+        assert.deepEqual(result, expected);
+    });
+
+    test("Repetition of settings in if else next section without if", () => {
+        const text =
+            "list servers = 'srv1', 'srv2'\n" +
+            "for server in servers\n" +
+            "   [series]\n" +
+            "       if server = 'srv1'\n" +
+            "           color = 'yellow'\n" +
+            "       elseif server = 'srv2'\n" +
+            "           color = 'black'\n" +
+            "       else\n" +
+            "           color = 'green'\n" +
+            "       endif\n" +
+            "   [series]\n" +
+            "       color = 'yellow'\n" +
+            "endfor\n";
+        const document = Shared.createDoc(text);
+        const expected: Diagnostic[] = [];
+        const result = Functions.lineByLine(document);
+        assert.deepEqual(result, expected);
+    });
+
 });

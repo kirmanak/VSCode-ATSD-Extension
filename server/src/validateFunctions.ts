@@ -279,8 +279,9 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
                     break;
                 }
                 case "endif": {
+                    settings.set("if", []);
                     const diagnostic = checkEnd("if", nestedStack, foundKeyword, textDocument.uri);
-                    isIf = true;
+                    isIf = false;
                     if (diagnostic !== null) { result.push(diagnostic); }
                     break;
                 }
