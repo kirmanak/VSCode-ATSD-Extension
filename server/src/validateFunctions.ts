@@ -199,6 +199,23 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
                 const diagnostic = addToArray(settings, target, DiagnosticSeverity.Warning, match, textDocument.uri, i);
                 if (diagnostic) { result.push(diagnostic); }
             }
+        } else if (!isScript && /(^[ \t]*)(\w+)[ \t]*=/.test(line)) {
+            match = /(^[ \t]*)(\w+)[ \t]*=/.exec(line);
+            const setting = match[2];
+            const map = new Map<string, string[]>();
+            map.set("possibleOptions", possibleOptions);
+            if (isVarDeclared(setting, map)) {
+                result.push(Shared.createDiagnostic(
+                    {
+                        range: {
+                            end: { line: i, character: match[1].length + match[2].length },
+                            start: { line: i, character: match[1].length }
+                        },
+                        uri: textDocument.uri
+                    },
+                    DiagnosticSeverity.Information, `${setting} is interpreted as a tag`
+                ));
+            }
         }
 
         // validate for variables
