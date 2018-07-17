@@ -135,6 +135,24 @@ function addToArray(map: Map<string, string[]>, key: string, severity: Diagnosti
     return diagnostic;
 }
 
+function checkPreviousSection(previousSection: FoundKeyword, settings: Map<string, string[]>, uri: string): Diagnostic[] {
+    const result: Diagnostic[] = [];
+    const requiredSettings = requiredSectionSettingsMap.get(previousSection.keyword);
+    if (requiredSettings) {
+        requiredSettings.forEach((options) => {
+            const foundOption = options.find((option) => isVarDeclared(option, settings));
+            if (!foundOption) {
+                result.push(Shared.createDiagnostic(
+                    { range: previousSection.range, uri },
+                    DiagnosticSeverity.Error, `${options[0]} is required`
+                ));
+            }
+        });
+    }
+
+    return result;
+}
+
 export function lineByLine(textDocument: TextDocument): Diagnostic[] {
     const result: Diagnostic[] = [];
     const lines: string[] = Shared.deleteComments(textDocument.getText()).split("\n");
@@ -169,19 +187,9 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
                 isUserDefined = true;
             } else {
                 if (previousSection) {
-                    switch (previousSection.keyword) {
-                        case "series": {
-                            if (!isVarDeclared("entity", settings) || !isVarDeclared("metric", settings)) {
-                                result.push(Shared.createDiagnostic(
-                                    {
-                                        range: previousSection.range,
-                                        uri: textDocument.uri
-                                    },
-                                    DiagnosticSeverity.Error, "entity or metric is not declared"
-                                ));
-                            }
-                        }
-                    }
+                    checkPreviousSection(previousSection, settings, textDocument.uri).forEach((diagnostic) => {
+                        result.push(diagnostic);
+                    });
                 }
                 isUserDefined = false;
                 settings.set("settings", []);
@@ -493,6 +501,12 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
         result.push(diagnostic);
     });
 
+    if (previousSection) {
+        checkPreviousSection(previousSection, settings, textDocument.uri).forEach((diagnostic) => {
+            result.push(diagnostic);
+        });
+    }
+
     return result;
 }
 
@@ -549,6 +563,10 @@ function diagnosticForLeftKeywords(nestedStack: FoundKeyword[], uri: string): Di
 
     return result;
 }
+
+const requiredSectionSettingsMap = new Map<string, string[][]>();
+requiredSectionSettingsMap.set("series", [["entity"], ["metric", "table", "attribute"]]);
+requiredSectionSettingsMap.set("widget", [["type"]]);
 
 const possibleOptions = [
     "actionenable", "add", "addmeta", "aheadtimespan", "alert",
