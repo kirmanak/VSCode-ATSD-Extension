@@ -1,7 +1,7 @@
+import * as assert from "assert";
 import { Diagnostic, DiagnosticSeverity } from "vscode-languageserver/lib/main";
-import * as assert from 'assert';
-import * as Functions from '../validateFunctions';
-import * as Shared from '../sharedFunctions';
+import * as Shared from "../sharedFunctions";
+import * as Functions from "../validateFunctions";
 
 suite("CSV tests", () => {
 
@@ -47,7 +47,11 @@ suite("CSV tests", () => {
             },
             DiagnosticSeverity.Error, "Expected 3 columns, but found 1"
         ), Shared.createDiagnostic(
-            { uri: document.uri, range: { start: { line: 0, character: 0 }, end: { line: 0, character: 3 } } },
+            {
+                uri: document.uri, range: {
+                    start: { line: 0, character: 0 }, end: { line: 0, character: 3 }
+                }
+            },
             DiagnosticSeverity.Error, "csv has no matching endcsv"
         )];
         const result = Functions.lineByLine(document);

@@ -1,7 +1,7 @@
+import * as assert from "assert";
 import { Diagnostic, DiagnosticSeverity } from "vscode-languageserver/lib/main";
-import * as assert from 'assert';
-import * as Functions from '../validateFunctions';
-import * as Shared from '../sharedFunctions';
+import * as Shared from "../sharedFunctions";
+import * as Functions from "../validateFunctions";
 
 suite("for in ... tests", () => {
 

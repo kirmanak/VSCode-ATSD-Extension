@@ -42,9 +42,10 @@ suite("Unmatched endfor tests", () => {
             {
                 range: {
                     end: { line: 1, character: 3 },
-                    start: { line: 1, character: 0 },
-                }, uri: document.uri,
-            }, DiagnosticSeverity.Error, "for has no matching endfor",
+                    start: { line: 1, character: 0 }
+                }, uri: document.uri
+            },
+            DiagnosticSeverity.Error, "for has no matching endfor"
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -62,16 +63,18 @@ suite("Unmatched endfor tests", () => {
             {
                  range: {
                     end: { line: 1, character: 3 },
-                    start: { line: 1, character: 0 },
-                }, uri: document.uri,
-            }, DiagnosticSeverity.Error, "for has no matching endfor",
+                    start: { line: 1, character: 0 }
+                }, uri: document.uri
+            },
+            DiagnosticSeverity.Error, "for has no matching endfor"
         ), Shared.createDiagnostic(
             {
                 range: {
                     end: { line: 3, character: 3 },
-                    start: { line: 3, character: 0 },
-                }, uri: document.uri,
-            }, DiagnosticSeverity.Error, "for has no matching endfor",
+                    start: { line: 3, character: 0 }
+                }, uri: document.uri
+            },
+            DiagnosticSeverity.Error, "for has no matching endfor"
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -90,9 +93,10 @@ suite("Unmatched endfor tests", () => {
             {
                 range: {
                     end: { line: 1, character: 3 },
-                    start: { line: 1, character: 0 },
-                }, uri: document.uri,
-            }, DiagnosticSeverity.Error, "for has no matching endfor",
+                    start: { line: 1, character: 0 }
+                }, uri: document.uri
+            },
+            DiagnosticSeverity.Error, "for has no matching endfor"
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);

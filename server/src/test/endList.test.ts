@@ -37,9 +37,10 @@ suite("Unfinished list", () => {
             {
                 range: {
                     end: { line: 0, character: 4 },
-                    start: { line: 0, character: 0 },
-                }, uri: document.uri,
-            }, DiagnosticSeverity.Error, errorMessage,
+                    start: { line: 0, character: 0 }
+                }, uri: document.uri
+            },
+            DiagnosticSeverity.Error, errorMessage
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -59,9 +60,10 @@ suite("Unfinished list", () => {
             {
                 range: {
                     end: { line: 4, character: 4 },
-                    start: { line: 4, character: 0 },
-                }, uri: document.uri,
-            }, DiagnosticSeverity.Error, errorMessage,
+                    start: { line: 4, character: 0 }
+                }, uri: document.uri
+            },
+            DiagnosticSeverity.Error, errorMessage
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -77,9 +79,10 @@ suite("Unfinished list", () => {
             {
                 range: {
                     end: { line: 0, character: 15 },
-                    start: { line: 0, character: 11 },
-                }, uri: document.uri,
-            }, DiagnosticSeverity.Error, errorMessage,
+                    start: { line: 0, character: 11 }
+                }, uri: document.uri
+            },
+            DiagnosticSeverity.Error, errorMessage
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -99,9 +102,10 @@ suite("Unfinished list", () => {
             {
                 range: {
                     end: { line: 4, character: 15 },
-                    start: { line: 4, character: 11 },
-                }, uri: document.uri,
-            }, DiagnosticSeverity.Error, errorMessage,
+                    start: { line: 4, character: 11 }
+                }, uri: document.uri
+            },
+            DiagnosticSeverity.Error, errorMessage
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -123,9 +127,10 @@ suite("Unfinished list", () => {
             {
                 range: {
                     end: { line: 3, character: 4 },
-                    start: { line: 3, character: 0 },
-                }, uri: document.uri,
-            }, DiagnosticSeverity.Error, errorMessage,
+                    start: { line: 3, character: 0 }
+                }, uri: document.uri
+            },
+            DiagnosticSeverity.Error, errorMessage
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -153,9 +158,10 @@ suite("Unfinished list", () => {
             {
                 range: {
                     end: { line: 0, character: 4 },
-                    start: { line: 0, character: 0 },
-                }, uri: document.uri,
-            }, DiagnosticSeverity.Error, errorMessage,
+                    start: { line: 0, character: 0 }
+                }, uri: document.uri
+            },
+            DiagnosticSeverity.Error, errorMessage
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
