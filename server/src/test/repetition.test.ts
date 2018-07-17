@@ -1,7 +1,7 @@
+import * as assert from "assert";
 import { Diagnostic, DiagnosticSeverity } from "vscode-languageserver/lib/main";
-import * as assert from 'assert';
-import * as Functions from '../validateFunctions';
-import * as Shared from '../sharedFunctions';
+import * as Shared from "../sharedFunctions";
+import * as Functions from "../validateFunctions";
 
 suite("Repetition of variables or settings tests", () => {
 
@@ -12,12 +12,12 @@ suite("Repetition of variables or settings tests", () => {
         const document = Shared.createDoc(text);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
-                uri: document.uri,
                 range: {
+                    end: { line: 1, character: "servers".length },
                     start: { line: 1, character: "var ".length },
-                    end: { line: 1, character: "servers".length }
-                }
-            }, DiagnosticSeverity.Error, "servers is already defined"
+                },
+                uri: document.uri,
+            }, DiagnosticSeverity.Error, "servers is already defined",
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -121,18 +121,17 @@ suite("Repetition of variables or settings tests", () => {
             "[configuration]\n" +
             "   offset-right = 3\n" +
             "   offset-left = 4\n" +
-            "   offset-right = 5"
-
+            "   offset-right = 5";
         const document = Shared.createDoc(text);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
-                uri: document.uri,
                 range: {
+                    end: { line: 3, character: "offset-right".length },
                     start: { line: 3, character: "    ".length },
-                    end: { line: 3, character: "offset-right".length }
-                }
+                },
+                uri: document.uri,
             },
-            DiagnosticSeverity.Warning, "offset-right is already defined"
+            DiagnosticSeverity.Warning, "offset-right is already defined",
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
