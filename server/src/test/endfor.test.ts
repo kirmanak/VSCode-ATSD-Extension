@@ -1,7 +1,7 @@
-import { TextDocument, Diagnostic, DiagnosticSeverity } from "vscode-languageserver/lib/main";
-import * as assert from 'assert';
-import * as Functions from '../validateFunctions';
-import * as Shared from '../sharedFunctions';
+import * as assert from "assert";
+import { Diagnostic, DiagnosticSeverity, TextDocument } from "vscode-languageserver/lib/main";
+import * as Shared from "../sharedFunctions";
+import * as Functions from "../validateFunctions";
 
 suite("Unmatched endfor tests", () => {
 
@@ -40,12 +40,11 @@ suite("Unmatched endfor tests", () => {
         const document: TextDocument = Shared.createDoc(text);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
-                uri: document.uri, range: {
+                range: {
+                    end: { line: 1, character: 3 },
                     start: { line: 1, character: 0 },
-                    end: { line: 1, character: 3 }
-                }
-            },
-            DiagnosticSeverity.Error, "for has no matching endfor"
+                }, uri: document.uri,
+            }, DiagnosticSeverity.Error, "for has no matching endfor",
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -56,25 +55,23 @@ suite("Unmatched endfor tests", () => {
             "list servers = 'srv1', 'srv2'\n" +
             "for server in servers\n" +
             "   do something\n" +
-            "for server in servers\n" +
+            "for srv in servers\n" +
             "   do something\n";
         const document: TextDocument = Shared.createDoc(text);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
-                uri: document.uri, range: {
+                 range: {
+                    end: { line: 1, character: 3 },
                     start: { line: 1, character: 0 },
-                    end: { line: 1, character: 3 }
-                }
-            },
-            DiagnosticSeverity.Error, "for has no matching endfor"
+                }, uri: document.uri,
+            }, DiagnosticSeverity.Error, "for has no matching endfor",
         ), Shared.createDiagnostic(
             {
-                uri: document.uri, range: {
+                range: {
+                    end: { line: 3, character: 3 },
                     start: { line: 3, character: 0 },
-                    end: { line: 3, character: 3 }
-                }
-            },
-            DiagnosticSeverity.Error, "for has no matching endfor"
+                }, uri: document.uri,
+            }, DiagnosticSeverity.Error, "for has no matching endfor",
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -85,18 +82,17 @@ suite("Unmatched endfor tests", () => {
             "list servers = 'srv1', 'srv2'\n" +
             "for server in servers\n" +
             "   do something\n" +
-            "for server in servers\n" +
+            "for srv in servers\n" +
             "   do something\n" +
             "endfor";
         const document: TextDocument = Shared.createDoc(text);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
-                uri: document.uri, range: {
+                range: {
+                    end: { line: 1, character: 3 },
                     start: { line: 1, character: 0 },
-                    end: { line: 1, character: 3 }
-                }
-            },
-            DiagnosticSeverity.Error, "for has no matching endfor"
+                }, uri: document.uri,
+            }, DiagnosticSeverity.Error, "for has no matching endfor",
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);

@@ -130,4 +130,36 @@ suite("Repetition of variables or settings tests", () => {
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
     });
+
+    test("Repetition of aliases", () => {
+        const text =
+            "[series]\n" +
+            "   alias = server\n" +
+            "[series]\n" +
+            "   alias = server";
+        const document = Shared.createDoc(text);
+        const expected: Diagnostic[] = [Shared.createDiagnostic(
+            {
+                range: {
+                    end: { line: 3, character: "server".length },
+                    start: { line: 3, character: "    alias = ".length },
+                }, uri: document.uri,
+            },
+            DiagnosticSeverity.Warning, "server is already defined",
+        )];
+        const result = Functions.lineByLine(document);
+        assert.deepEqual(result, expected);
+    });
+
+    test("Same name for alias and list", () => {
+        const text =
+            "list server = 'srv1', 'srv2'\n" +
+            "[series]\n" +
+            "   alias = server";
+        const document = Shared.createDoc(text);
+        const expected: Diagnostic[] = [];
+        const result = Functions.lineByLine(document);
+        assert.deepEqual(result, expected);
+    });
+
 });
