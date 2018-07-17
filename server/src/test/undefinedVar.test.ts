@@ -93,7 +93,7 @@ suite("Undefined variable in for loop", () => {
 					end: { line: 5, character: 14 + secondVar.length }
 				}
 			},
-			DiagnosticSeverity.Error, Shared.errorMessage(secondVar, firstVar)
+			DiagnosticSeverity.Error, Shared.errorMessage(secondVar, "servers")
 		)];
 		const result = Functions.lineByLine(document);
 		assert.deepEqual(result, expected);
@@ -187,7 +187,7 @@ suite("Undefined variable in for loop", () => {
 					end: { line: 2, character: 14 + secondVar.length }
 				}
 			},
-			DiagnosticSeverity.Error, Shared.errorMessage(secondVar, firstVar)
+			DiagnosticSeverity.Error, Shared.errorMessage(secondVar, "servers")
 		)];
 		const result = Functions.lineByLine(document);
 		assert.deepEqual(result, expected);

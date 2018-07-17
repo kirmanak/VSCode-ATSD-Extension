@@ -3,7 +3,7 @@ import * as assert from 'assert';
 import * as Functions from '../validateFunctions';
 import * as Shared from '../sharedFunctions';
 
-suite("Undeclared list or var", () => {
+suite("for in ... tests", () => {
 
     test("Correct one-line list, correct for", () => {
         const text =
