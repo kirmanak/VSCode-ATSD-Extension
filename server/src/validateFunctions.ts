@@ -81,7 +81,7 @@ function countCsvColumns(line: string): number {
 }
 
 function checkEnd(expectedEnd: string, nestedStack: FoundKeyword[],
-    foundKeyword: FoundKeyword, uri: string): Diagnostic | null {
+                  foundKeyword: FoundKeyword, uri: string): Diagnostic | null {
     const stackHead = nestedStack.pop();
     if (stackHead !== undefined && stackHead.keyword === expectedEnd) { return null; }
     if (stackHead !== undefined) { nestedStack.push(stackHead); } // push found keyword back
@@ -113,11 +113,11 @@ function isVarDeclared(variable: string, dictionaries: Map<string, string[]>): b
 }
 
 function addToArray(map: Map<string, string[]>, key: string,
-    match: RegExpExecArray, uri: string, i: number): Diagnostic | null {
+                    match: RegExpExecArray, uri: string, i: number): Diagnostic | null {
     let diagnostic: Diagnostic = null;
     const variable = match[2];
-    const startPosition = match.index + match[1].length;
     if (isVarDeclared(variable, map)) {
+        const startPosition = match.index + match[1].length;
         diagnostic = Shared.createDiagnostic(
             {
                 range: {
@@ -162,16 +162,14 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
         match = /^[\t ]*\[(tags?|keys)\][\t ]*/m.exec(line);
         if (match) {
             isUserDefined = true;
-        } else if (isUserDefined && /^[\t ]*\[\w+\][\t ]*/m.test(line)) {
+        } else if (/^[\t ]*\[\w+\][\t ]*/m.test(line)) {
             isUserDefined = false;
             settings.set("settings", []);
         }
 
-        // prepare regex to let 'g' key do its work
-        const regex = FoundKeyword.createRegex();
-        let foundKeyword = FoundKeyword.parseControlSequence(regex, line, i);
-
+        // validate aliases, spellings, repetition of settings
         if (!isUserDefined && !isScript) {
+            // aliases
             match = /(^\s*alias\s*=\s*)(\w+)\s*$/m.exec(line);
             const deAliasRegex = /(^\s*value\s*=.*value\((['"]))(\w+)\2\).*$/m;
             if (match) {
@@ -186,29 +184,17 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
                     },
                 });
             }
+
+            // spelling
             const misspelling = spellingCheck(line, textDocument.uri, i);
             if (misspelling) { result.push(misspelling); }
+
+            // repetition
             match = /(^\s*)([-\w]+)\s*=/.exec(line);
             if (match) {
                 const diagnostic = addToArray(settings, "settings", match, textDocument.uri, i);
                 if (diagnostic) { result.push(diagnostic); }
             }
-        }
-
-        // validate CSV
-        if (isCsv && (foundKeyword === null || foundKeyword.keyword !== "endcsv")) {
-            const columns = countCsvColumns(line);
-            if (columns !== csvColumns && !/^[ \t]*$/m.test(line)) {
-                result.push(Shared.createDiagnostic(
-                    {
-                        range: {
-                            end: { line: i, character: line.length },
-                            start: { line: i, character: 0 },
-                        }, uri: textDocument.uri,
-                    }, DiagnosticSeverity.Error, `Expected ${csvColumns} columns, but found ${columns}`,
-                ));
-            }
-            continue;
         }
 
         // validate for variables
@@ -242,6 +228,25 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
                 }
                 match = atRegexp.exec(line);
             }
+        }
+        // prepare regex to let 'g' key do its work
+        const regex = FoundKeyword.createRegex();
+        let foundKeyword = FoundKeyword.parseControlSequence(regex, line, i);
+
+        // validate CSV
+        if (isCsv && (foundKeyword === null || foundKeyword.keyword !== "endcsv")) {
+            const columns = countCsvColumns(line);
+            if (columns !== csvColumns && !/^[ \t]*$/m.test(line)) {
+                result.push(Shared.createDiagnostic(
+                    {
+                        range: {
+                            end: { line: i, character: line.length },
+                            start: { line: i, character: 0 },
+                        }, uri: textDocument.uri,
+                    }, DiagnosticSeverity.Error, `Expected ${csvColumns} columns, but found ${columns}`,
+                ));
+            }
+            continue;
         }
 
         while (foundKeyword !== null) { // `while` can handle several keywords per line
