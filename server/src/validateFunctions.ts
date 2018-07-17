@@ -1,5 +1,6 @@
 import * as Levenshtein from "levenshtein";
 import { Diagnostic, DiagnosticSeverity, Location, Range, TextDocument } from "vscode-languageserver";
+import * as resources from "./resources";
 import * as Shared from "./sharedFunctions";
 
 function suggestionMessage(word: string, dictionaries: Map<string, string[]>): string {
@@ -30,10 +31,10 @@ function spellingCheck(line: string, uri: string, i: number): Diagnostic | null 
         const withoutDashes = word.replace(/-/g, "");
         const map = new Map<string, string[]>();
         if (match[0].endsWith("]")) {
-            map.set("dictionary", possibleSections);
+            map.set("dictionary", resources.possibleSections);
         } else {
             if (withoutDashes.startsWith("column")) { return null; }
-            map.set("dictionary", possibleOptions);
+            map.set("dictionary", resources.possibleOptions);
         }
         if (!isVarDeclared(withoutDashes, map)) {
             const message = suggestionMessage(word, map);
@@ -137,7 +138,7 @@ function addToArray(map: Map<string, string[]>, key: string, severity: Diagnosti
 
 function checkPreviousSection(previousSection: FoundKeyword, settings: Map<string, string[]>, uri: string): Diagnostic[] {
     const result: Diagnostic[] = [];
-    const requiredSettings = requiredSectionSettingsMap.get(previousSection.keyword);
+    const requiredSettings = resources.requiredSectionSettingsMap.get(previousSection.keyword);
     if (requiredSettings) {
         requiredSettings.forEach((options) => {
             const foundOption = options.find((option) => isVarDeclared(option, settings));
@@ -237,7 +238,7 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
             const setting = match[2].toLowerCase().replace(/-/g, "");
             console.log(setting);
             const map = new Map<string, string[]>();
-            map.set("possibleOptions", possibleOptions);
+            map.set("possibleOptions", resources.possibleOptions);
             if (isVarDeclared(setting, map)) {
                 result.push(Shared.createDiagnostic(
                     {
@@ -563,94 +564,3 @@ function diagnosticForLeftKeywords(nestedStack: FoundKeyword[], uri: string): Di
 
     return result;
 }
-
-const requiredSectionSettingsMap = new Map<string, string[][]>();
-requiredSectionSettingsMap.set("series", [["entity"], ["metric", "table", "attribute"]]);
-requiredSectionSettingsMap.set("widget", [["type"]]);
-
-const possibleOptions = [
-    "actionenable", "add", "addmeta", "aheadtimespan", "alert",
-    "alertexpression", "alertrowstyle", "alertstyle", "alias", "align", "arcs",
-    "arrowlength", "arrows", "attribute", "audio", "audioalert",
-    "audioonload", "autoheight", "autopadding", "autoperiod", "autoscale",
-    "axis", "axislabel", "axistitle", "axistitleright", "bar", "barcount",
-    "batchsize", "batchupdate", "borderwidth", "bottomaxis", "bundle",
-    "bundled", "buttons", "cache", "capitalize", "caption", "captionstyle",
-    "case", "centralizecolumns", "centralizeticks", "changefield", "chartmode",
-    "circle", "class", "collapsible", "color", "colorrange", "colors",
-    "columnlabelformat", "columns", "connect", "connectvalues", "context",
-    "contextheight", "contextpath", "counter", "counterposition", "current",
-    "currentperiodstyle", "data", "datatype", "dayformat", "default",
-    "defaultcolor", "defaultsize", "depth", "dialogmaximize", "disablealert",
-    "disconnect", "disconnectcount", "disconnectednodedisplay",
-    "disconnectinterval", "disconnectvalue", "display", "displaydate",
-    "displayinlegend", "displaylabels", "displayother", "displaypanels",
-    "displaytags", "displayticks", "displaytip", "displaytotal",
-    "displayvalues", "dummy", "duration", "effects", "empty",
-    "emptyrefreshinterval", "emptythreshold", "enabled", "end", "endtime",
-    "endworkingminutes", "entities", "entitiesbatchupdate", "entity",
-    "entityexpression", "entitygroup", "entitylabel", "error",
-    "errorrefreshinterval", "exact", "exactmatch", "expand", "expandpanels",
-    "expandtags", "expiretimespan", "fasten", "fillvalue", "filter",
-    "filterrange", "fitsvg", "fontscale", "fontsize", "forecast",
-    "forecastname", "forecaststyle", "format", "formataxis", "formatcounter",
-    "formatheaders", "formatnumbers", "formatsize", "formattip", "frequency",
-    "gradientcount", "gradientintensity", "group", "groupfirst",
-    "groupinterpolate", "groupinterpolateextend", "groupkeys", "grouplabel",
-    "groupperiod", "groups", "groupstatistic", "header", "headerstyle",
-    "heightunits", "hidden", "hide", "hidecolumn", "hideemptycolumns",
-    "hideemptyseries", "hideifempty", "horizontal", "horizontalgrid",
-    "hourformat", "icon", "iconalertexpression", "iconalertstyle", "iconcolor",
-    "iconposition", "iconsize", "id", "init", "interpolate",
-    "interpolateboundary", "interpolateextend", "interpolatefill",
-    "interpolatefunction", "interpolateperiod", "intervalformat", "is", "join",
-    "key", "keys", "keytagexpression", "label", "labelformat", "last",
-    "lastmarker", "lastvaluelabel", "layout", "leftaxis", "leftunits",
-    "legendlastvalue", "legendposition", "legendticks", "legendvalue", "limit",
-    "linearzoom", "link", "linkalertexpression", "linkalertsstyle",
-    "linkalertstyle", "linkanimate", "linkcolorrange", "linkcolors",
-    "linkdata", "linklabels", "linklabelzoomthreshold", "links",
-    "linkthresholds", "linkvalue", "linkwidthorder", "linkwidths", "load",
-    "loadfuturedata", "marker", "markerformat", "markers", "max",
-    "maxfontsize", "maximum", "maxrange", "maxrangeforce", "maxrangeright",
-    "maxrangerightforce", "maxringwidth", "maxthreshold", "menu",
-    "mergecolumns", "mergecolumnsbatchupdate", "mergefields", "methodpath",
-    "metric", "metriclabel", "min", "mincaptionsize", "minfontsize", "minimum",
-    "minorticks", "minrange", "minrangeforce", "minrangeright",
-    "minrangerightforce", "minringwidth", "minseverity", "minthreshold",
-    "mode", "moving", "movingaverage", "multiple", "multiplecolumn",
-    "multipleseries", "negative", "negativestyle", "node",
-    "nodealertexpression", "nodealertstyle", "nodecollapse", "nodecolors",
-    "nodeconnect", "nodedata", "nodelabels", "nodelabelzoomthreshold",
-    "noderadius", "noderadiuses", "nodes", "nodethresholds", "nodevalue",
-    "offset", "offsetbottom", "offsetleft", "offsetright", "offsettop",
-    "onchange", "onclick", "onseriesclick", "onseriesdoubleclick", "options",
-    "origin", "original", "padding", "palette", "paletteticks", "parent",
-    "path", "percentile", "percentilemarkers", "percentiles", "period",
-    "periods", "pinradius", "placeholders", "pointerposition", "portal",
-    "position", "primarykey", "properties", "range", "rangemerge",
-    "rangeoffset", "rangeselectend", "rangeselectstart", "rate",
-    "ratecounter", "ratio", "refresh", "refreshinterval", "reload",
-    "render", "replace", "replaceunderscore", "replacevalue", "responsive",
-    "retaintimespan", "retryrefreshinterval", "rightaxis", "ringwidth",
-    "rotatelegendticks", "rotatepaletteticks", "rotateticks", "rowalertstyle",
-    "rowstyle", "rule", "scale", "scalex", "scaley", "script", "selectormode",
-    "series", "serieslabels", "serieslimit", "seriestype", "seriesvalue",
-    "server", "serveraggregate", "severity", "severitystyle", "showtagnames",
-    "size", "sizename", "sort", "source", "stack", "start", "starttime",
-    "startworkingminutes", "statistic", "statistics", "stepline", "style",
-    "summarize", "summarizeperiod", "summarizestatistic", "svg", "table",
-    "tableheaderstyle", "tag", "tagexpression", "tagoffset", "tags",
-    "tagsdropdowns", "tagsdropdownsstyle", "tension", "threshold", "thresholds",
-    "ticks", "ticksright", "tickstime", "timeoffset", "timespan", "timezone",
-    "title", "tooltip", "topaxis", "topunits", "totalsize", "totalvalue",
-    "transpose", "type", "unscale", "update", "updateinterval",
-    "updatetimespan", "url", "urllegendticks", "urlparameters", "value",
-    "verticalgrid", "widgets", "widgetsperrow", "width", "widthunits", "zoomsvg"
-];
-
-const possibleSections: string[] = [
-    "column", "configuration", "dropdown", "group", "keys", "link", "node",
-    "option", "other", "properties", "property", "series", "tag", "tags",
-    "threshold", "widget"
-];
