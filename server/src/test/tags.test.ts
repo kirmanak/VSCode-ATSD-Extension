@@ -34,4 +34,24 @@ suite("Warn about setting interpreted as a tag", () => {
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
     });
+
+    test("Is upper-case with dash", () => {
+        const text =
+            "[tags]\n" +
+            "	stArt-time = 20 second\n" +
+            "	startime = 30 minute\n";
+        const document: TextDocument = Shared.createDoc(text);
+        const expected: Diagnostic[] = [Shared.createDiagnostic(
+            {
+                uri: document.uri, range: {
+                    end: { line: 1, character: "	".length + "stArt-time".length},
+                    start: { line: 1, character: "	".length }
+                }
+            },
+            DiagnosticSeverity.Information, "starttime is interpreted as a tag"
+        )];
+        const result = Functions.lineByLine(document);
+        assert.deepEqual(result, expected);
+    });
+
 });
