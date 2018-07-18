@@ -107,7 +107,6 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 }
 
 connection.onDocumentFormatting((params: DocumentFormattingParams): TextEdit[] => {
-<<<<<<< HEAD
     const edits: TextEdit[] = [];
     const document = documents.get(params.textDocument.uri);
     formatFunctions.extraTextSectionLine(document).forEach((edit) => {
@@ -121,15 +120,6 @@ connection.onDocumentFormatting((params: DocumentFormattingParams): TextEdit[] =
     });
 
     return edits;
-=======
-	const edits: TextEdit[] = [];
-	const document = documents.get(params.textDocument.uri);
-	formatFunctions.megaFunction(document).forEach((edit) => {
-		edits.push(edit);
-	});
-
-	return edits;
->>>>>>> change mega formatting function
 });
 
 // Make the text document manager listen on the connection

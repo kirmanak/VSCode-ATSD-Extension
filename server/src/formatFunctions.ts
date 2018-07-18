@@ -61,47 +61,48 @@ export function severalStatementsPerLine(document: TextDocument): TextEdit[] {
 }
 
 function isNested(current: string, previous: string): boolean {
-	return current === "widget" && previous === "group" || 
-		current === "widget" && previous === "configuration" || 
-		current === "node" && previous === "widget" ||
-		current === "link" && previous === "widget" ||
-		current === "series" && previous === "link" ||
-		current === "tags" && previous === "series";
+    return current === "widget" && previous === "group" ||
+        current === "widget" && previous === "configuration" ||
+        current === "node" && previous === "widget" ||
+        current === "link" && previous === "widget" ||
+        current === "series" && previous === "link" ||
+        current === "tags" && previous === "series";
 }
 
 function isSameLevel(current: string, previous: string): boolean {
-	return current === previous || 
-		current === "group" && previous === "configuration" || 
-		current === "link" && previous === "node" || 
-		current === "node" && previous === "link";
+    return current === previous ||
+        current === "group" && previous === "configuration" ||
+        current === "link" && previous === "node" ||
+        current === "node" && previous === "link";
 }
 
 export function megaFunction(document: TextDocument): TextEdit[] {
-	const edits: TextEdit[] = [];
-	const text = Shared.deleteComments(document.getText());
-	const sectionDeclaration = /([ \t]*)\[(\w+)\]([\s\S]+?)(?=\s*\[|$)/g;
-	let indentCounter: number = INDENT_SIZE;
-	let previousSection: string[] = [];
-	let section: RegExpExecArray; 
+    const edits: TextEdit[] = [];
+    const text = Shared.deleteComments(document.getText());
+    const sectionDeclaration = /([ \t]*)\[(\w+)\]([\s\S]+?)(?=\s*\[|$)/g;
+    let indentCounter: number = INDENT_SIZE;
+    const previousSection: string[] = [];
+    let section: RegExpExecArray = sectionDeclaration.exec(text);
 
-	while (section = sectionDeclaration.exec(text)) {
-		const indent = section[1];
-		const sectionName = section[2];
-		// const content = section[3];
-		if (isNested(sectionName, previousSection[previousSection.length - 1])) {
-			indentCounter += INDENT_SIZE;
-		} else if (!isSameLevel(sectionName, previousSection[previousSection.length - 1])) { 
-			indentCounter -= INDENT_SIZE;
-			previousSection.pop();
-		} else {
-			previousSection.pop();
-		}
-		if (indent.length != indentCounter) {
-			console.log(`section is "${sectionName}", previous is "${previousSection[previousSection.length - 1]}",\n` + 
-				`indent length is ${indent.length}, expected ${indentCounter}`);
-		}
-		previousSection.push(sectionName);
-	}
+    while (section) {
+        const indent = section[1];
+        const sectionName = section[2];
+        // const content = section[3];
+        if (isNested(sectionName, previousSection[previousSection.length - 1])) {
+            indentCounter += INDENT_SIZE;
+        } else if (!isSameLevel(sectionName, previousSection[previousSection.length - 1])) {
+            indentCounter -= INDENT_SIZE;
+            previousSection.pop();
+        } else {
+            previousSection.pop();
+        }
+        if (indent.length !== indentCounter) {
+            console.log(`section is "${sectionName}", previous is "${previousSection[previousSection.length - 1]}",\n` +
+                `indent length is ${indent.length}, expected ${indentCounter}`);
+        }
+        previousSection.push(sectionName);
+        section = sectionDeclaration.exec(text);
+    }
 
-	return edits;
+    return edits;
 }
