@@ -137,15 +137,18 @@ function addToArray(map: Map<string, string[]>, key: string, severity: Diagnosti
     return diagnostic;
 }
 
-function checkPreviousSection(previousSection: FoundKeyword, settings: Map<string, string[]>, uri: string, parentSettings: Map<string, string[]>): Diagnostic[] {
+function checkPreviousSection(previousSection: FoundKeyword, settings: Map<string, string[]>,
+                              uri: string, parentSettings: Map<string, string[]>): Diagnostic[] {
     const result: Diagnostic[] = [];
     const requiredSettings = resources.requiredSectionSettingsMap.get(previousSection.keyword);
     if (requiredSettings) {
         requiredSettings.forEach((options) => {
             let foundOption = options.find((option) => isVarDeclared(option, settings));
             if (!foundOption) {
-                const parents = resources.parentSections.get(previousSection.keyword);
-                if (parents) {
+                // we have not found the setting in the section itself
+                // trying to use in parent sections
+                const parents = resources.getParents(previousSection.keyword);
+                if (parents.length !== 0) {
                     const foundInParents = parents.find((parent) => {
                         const parentDeclared = parentSettings.get(parent);
                         if (parentDeclared) {
@@ -216,6 +219,12 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
                 },
                 keyword: match[2]
             };
+            if (isVarDeclared(previousSection.keyword, resources.parentSections)) {
+                const array = parentSettings.get(previousSection.keyword);
+                if (array && array.length !== 0) {
+                    parentSettings.set(previousSection.keyword, []);
+                }
+            }
         }
 
         // validate aliases, spellings, repetition of settings

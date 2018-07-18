@@ -6,6 +6,18 @@ export const parentSections = new Map<string, string[]>();
 parentSections.set("widget", ["group", "configuration"]);
 parentSections.set("series", ["widget"]);
 
+export function getParents(section: string): string[] {
+    const parents: string[] = [];
+    const found = parentSections.get(section);
+    if (found) {
+        found.forEach((father) => {
+            parents.push(father);
+            getParents(father).forEach((grand) => parents.push(grand));
+        });
+    }
+    return parents;
+}
+
 export const possibleOptions = [
     "actionenable", "add", "addmeta", "aheadtimespan", "alert",
     "alertexpression", "alertrowstyle", "alertstyle", "alias", "align", "arcs",

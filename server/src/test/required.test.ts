@@ -50,20 +50,22 @@ suite("Required settings for sections tests", () => {
 
     test("incorrect series with closed parent section", () => {
         const text =
-            "[widget]\n" +
-            "   entity = hello\n" +
-            "   [series]\n" +
-            "       metric = hello\n" +
+            "[group]\n" +
+            "   type = chart\n" +
+            "   [widget]\n" +
+            "       entity = hello\n" +
+            "       [series]\n" +
+            "           metric = hello\n" +
             "\n" +
-            "[widget]\n" +
-            "   [series]\n" +
-            "       metric = hello\n";
+            "   [widget]\n" +
+            "       [series]\n" +
+            "           metric = hello\n";
         const document = Shared.createDoc(text);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 6, character: "   [".length + "series".length },
-                    start: { line: 6, character: "   [".length }
+                    end: { line: 8, character: "       [".length + "series".length },
+                    start: { line: 8, character: "       [".length }
                 },
                 uri: document.uri
             },
