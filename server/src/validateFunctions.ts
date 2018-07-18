@@ -129,24 +129,37 @@ function addToArray(map: Map<string, string[]>, key: string, severity: Diagnosti
             severity, `${variable} is already defined`
         );
     } else {
-        const array = map.get(key);
+        let array = map.get(key);
+        if (!array) { array = []; }
         array.push(variable);
         map.set(key, array);
     }
     return diagnostic;
 }
 
-function checkPreviousSection(previousSection: FoundKeyword, settings: Map<string, string[]>, uri: string): Diagnostic[] {
+function checkPreviousSection(previousSection: FoundKeyword, settings: Map<string, string[]>, uri: string, parentSettings: Map<string, string[]>): Diagnostic[] {
     const result: Diagnostic[] = [];
     const requiredSettings = resources.requiredSectionSettingsMap.get(previousSection.keyword);
     if (requiredSettings) {
         requiredSettings.forEach((options) => {
-            const foundOption = options.find((option) => isVarDeclared(option, settings));
+            let foundOption = options.find((option) => isVarDeclared(option, settings));
             if (!foundOption) {
-                result.push(Shared.createDiagnostic(
-                    { range: previousSection.range, uri },
-                    DiagnosticSeverity.Error, `${options[0]} is required`
-                ));
+                const parents = resources.parentSections.get(previousSection.keyword);
+                if (parents) {
+                    const foundInParents = parents.find((parent) => {
+                        const parentDeclared = parentSettings.get(parent);
+                        if (parentDeclared) {
+                            foundOption = options.find((option) => parentDeclared.find((declared) => option === declared) !== undefined);
+                            return foundOption !== undefined;
+                        } else { return false; }
+                    });
+                    if (!foundInParents) {
+                        result.push(Shared.createDiagnostic(
+                            { range: previousSection.range, uri },
+                            DiagnosticSeverity.Error, `${options[0]} is required`
+                        ));
+                    }
+                }
             }
         });
     }
@@ -167,6 +180,7 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
     let previousSection: FoundKeyword = null; // to validate required settings
     const variables = new Map<string, string[]>(); // to validate variables
     const settings = new Map<string, string[]>(); // to validate variables
+    const parentSettings = new Map<string, string[]>(); // to validate variables
     const aliases = new Map<string, string[]>(); // to validate `value = value('alias')`
     aliases.set("aliases", []);
     settings.set("settings", []);
@@ -188,7 +202,7 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
                 isUserDefined = true;
             } else {
                 if (previousSection) {
-                    checkPreviousSection(previousSection, settings, textDocument.uri).forEach((diagnostic) => {
+                    checkPreviousSection(previousSection, settings, textDocument.uri, parentSettings).forEach((diagnostic) => {
                         result.push(diagnostic);
                     });
                 }
@@ -232,6 +246,9 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
                 const target: string = (isIf) ? "if" : "settings";
                 const diagnostic = addToArray(settings, target, DiagnosticSeverity.Warning, match, textDocument.uri, i);
                 if (diagnostic) { result.push(diagnostic); }
+                if (previousSection && isVarDeclared(previousSection.keyword, resources.parentSections)) {
+                    addToArray(parentSettings, previousSection.keyword, DiagnosticSeverity.Hint, match, textDocument.uri, i);
+                }
             }
         } else if (!isScript && /(^[ \t]*)([-\w]+)[ \t]*=/.test(line)) {
             match = /(^[ \t]*)([-\w]+)[ \t]*=/.exec(line);
@@ -503,7 +520,7 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
     });
 
     if (previousSection) {
-        checkPreviousSection(previousSection, settings, textDocument.uri).forEach((diagnostic) => {
+        checkPreviousSection(previousSection, settings, textDocument.uri, parentSettings).forEach((diagnostic) => {
             result.push(diagnostic);
         });
     }

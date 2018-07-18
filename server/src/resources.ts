@@ -2,6 +2,10 @@ export const requiredSectionSettingsMap = new Map<string, string[][]>();
 requiredSectionSettingsMap.set("series", [["entity"], ["metric", "table", "attribute"]]);
 requiredSectionSettingsMap.set("widget", [["type"]]);
 
+export const parentSections = new Map<string, string[]>();
+parentSections.set("widget", ["group", "configuration"]);
+parentSections.set("series", ["widget"]);
+
 export const possibleOptions = [
     "actionenable", "add", "addmeta", "aheadtimespan", "alert",
     "alertexpression", "alertrowstyle", "alertstyle", "alias", "align", "arcs",

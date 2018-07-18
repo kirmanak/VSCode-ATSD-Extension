@@ -48,6 +48,31 @@ suite("Required settings for sections tests", () => {
         assert.deepEqual(result, expected);
     });
 
+    test("incorrect series with closed parent section", () => {
+        const text =
+            "[widget]\n" +
+            "   entity = hello\n" +
+            "   [series]\n" +
+            "       metric = hello\n" +
+            "\n" +
+            "[widget]\n" +
+            "   [series]\n" +
+            "       metric = hello\n";
+        const document = Shared.createDoc(text);
+        const expected: Diagnostic[] = [Shared.createDiagnostic(
+            {
+                range: {
+                    end: { line: 6, character: "   [".length + "series".length },
+                    start: { line: 6, character: "   [".length }
+                },
+                uri: document.uri
+            },
+            DiagnosticSeverity.Error, "entity is required"
+        )];
+        const result = Functions.lineByLine(document);
+        assert.deepEqual(result, expected);
+    });
+
     test("two incorrect series without parent categories", () => {
         const text =
             "[series]\n" +
