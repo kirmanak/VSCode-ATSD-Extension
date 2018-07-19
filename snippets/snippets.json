@@ -18,7 +18,7 @@
         "description": "If condition"
     },
     "Widget": {
-        "prefix": "[widget]",
+        "prefix": "widget",
         "body": [
             "[widget]",
             "\ttype = ${1}",

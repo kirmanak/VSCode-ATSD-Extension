@@ -27,3 +27,9 @@ npm install && npm run compile
 
 * Plugin is ready to handle `.ac` extension files.
   * See examples in ``~/.vscode/extensions/axibase-charts/examples/``.
+
+## Features
+
+### Snippets
+
+* `widget`: creates a new `[widget]` section with child `[series]`
