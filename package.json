@@ -35,7 +35,7 @@
                     "axibase-charts"
                 ],
                 "extensions": [
-                    ".av"
+                    ".ac"
                 ],
                 "configuration": "./language-configuration.json"
             }
@@ -43,8 +43,8 @@
         "grammars": [
             {
                 "language": "axibase-charts",
-                "scopeName": "source.av",
-                "path": "./syntaxes/atsd-visual.tmLanguage.json"
+                "scopeName": "source.ac",
+                "path": "./syntaxes/axibase-charts.tmLanguage.json"
             }
         ]
     },
