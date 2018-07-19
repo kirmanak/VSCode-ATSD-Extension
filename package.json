@@ -46,6 +46,12 @@
                 "scopeName": "source.ac",
                 "path": "./syntaxes/axibase-charts.tmLanguage.json"
             }
+        ],
+        "snippets": [
+            {
+                "language": "axibase-charts",
+                "path": "./snippets/snippets.json"
+            }
         ]
     },
     "main": "./client/out/extension",
