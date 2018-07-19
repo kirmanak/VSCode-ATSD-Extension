@@ -16,5 +16,15 @@
             "endif"
         ],
         "description": "If condition"
+    },
+    "Widget": {
+        "prefix": "[widget]",
+        "body": [
+            "[widget]",
+            "\ttype = ${1}",
+            "\t[series]",
+            "\t\t${0}"
+        ],
+        "description": "Widget section"
     }
 }
