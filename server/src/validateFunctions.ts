@@ -53,7 +53,7 @@ function spellingCheck(line: string, uri: string, i: number): Diagnostic | null 
 
 class FoundKeyword {
     public static createRegex(): RegExp {
-        return /^([ \t]*)(endvar|endcsv|endfor|elseif|endif|endscript|endlist|script|else|if|list|for|csv|var)\b/gm;
+        return /^([ \t]*)(endvar|endcsv|endfor|elseif|endif|endscript|endlist|script|else|if|list|for|csv|var)\b/gim;
     }
 
     public static parseControlSequence(regex: RegExp, line: string, i: number): FoundKeyword | null {
@@ -61,7 +61,7 @@ class FoundKeyword {
         if (match === null) { return null; }
         const keywordStart = match[1].length;
         return {
-            keyword: match[2],
+            keyword: match[2].toLowerCase(),
             range: {
                 end: { line: i, character: keywordStart + match[2].length },
                 start: { line: i, character: keywordStart },
@@ -353,18 +353,20 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
                 if (foundKeyword === null) { break; }
             } else if (isScript) { break; }
 
+            if (foundKeyword.keyword.substring(0, 3) === "end") {
+                    const expectedEnd = foundKeyword.keyword.substring(3);
+                    const diagnostic = checkEnd(expectedEnd, nestedStack, foundKeyword, textDocument.uri);
+                    if (diagnostic !== null) { result.push(diagnostic); }
+            } else if (/\b(if|for|csv)\b/.test(foundKeyword.keyword)) { nestedStack.push(foundKeyword); }
+
             switch (foundKeyword.keyword) {
                 case "endcsv": {
                     isCsv = false;
-                    const diagnostic = checkEnd("csv", nestedStack, foundKeyword, textDocument.uri);
-                    if (diagnostic !== null) { result.push(diagnostic); }
                     break;
                 }
                 case "endif": {
                     settings.set("if", []);
-                    const diagnostic = checkEnd("if", nestedStack, foundKeyword, textDocument.uri);
                     isIf = false;
-                    if (diagnostic !== null) { result.push(diagnostic); }
                     break;
                 }
                 case "endfor": {
@@ -372,18 +374,6 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
                     const forVariables = variables.get("forVariables");
                     forVariables.pop();
                     variables.set("forVariables", forVariables);
-                    const diagnostic = checkEnd("for", nestedStack, foundKeyword, textDocument.uri);
-                    if (diagnostic !== null) { result.push(diagnostic); }
-                    break;
-                }
-                case "endlist": {
-                    const diagnostic = checkEnd("list", nestedStack, foundKeyword, textDocument.uri);
-                    if (diagnostic !== null) { result.push(diagnostic); }
-                    break;
-                }
-                case "endvar": {
-                    const diagnostic = checkEnd("var", nestedStack, foundKeyword, textDocument.uri);
-                    if (diagnostic !== null) { result.push(diagnostic); }
                     break;
                 }
                 case "else":
@@ -425,7 +415,6 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
                         if (diagnostic) { result.push(diagnostic); }
                     }
                     csvColumns = countCsvColumns(header);
-                    nestedStack.push(foundKeyword);
                     break;
                 }
                 case "var": {
@@ -460,7 +449,6 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
                 }
                 case "for": {
                     isFor = true;
-                    nestedStack.push(foundKeyword);
                     match = /(^\s*for\s+)(\w+)\s+in/m.exec(line);
                     if (match) {
                         const matching = match;
@@ -497,7 +485,6 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
                     break;
                 }
                 case "if": {
-                    nestedStack.push(foundKeyword);
                     isIf = true;
                     settings.set("if", []);
                     break;
@@ -510,11 +497,10 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
                         }
                         if (j === lines.length || /\bscript\b/.test(lines[j])) { break; }
                     }
-                    nestedStack.push(foundKeyword);
                     isScript = true;
+                    nestedStack.push(foundKeyword);
                     break;
                 }
-                default: throw new Error("Update switch-case statement!");
             }
 
             foundKeyword = FoundKeyword.parseControlSequence(regex, line, i);
@@ -549,50 +535,10 @@ function diagnosticForLeftKeywords(nestedStack: FoundKeyword[], uri: string): Di
     for (let i = 0, length = nestedStack.length; i < length; i++) {
         const nestedConstruction = nestedStack[i];
         if (nestedConstruction === null || nestedConstruction === undefined) { continue; }
-        switch (nestedConstruction.keyword) {
-            case "for": {
-                result.push(Shared.createDiagnostic(
-                    { uri, range: nestedConstruction.range }, DiagnosticSeverity.Error,
-                    `${nestedConstruction.keyword} has no matching endfor`,
-                ));
-                break;
-            }
-            case "if": {
-                result.push(Shared.createDiagnostic(
-                    { uri, range: nestedConstruction.range }, DiagnosticSeverity.Error,
-                    `${nestedConstruction.keyword} has no matching endif`,
-                ));
-                break;
-            }
-            case "script": {
-                result.push(Shared.createDiagnostic(
-                    { uri, range: nestedConstruction.range }, DiagnosticSeverity.Error,
-                    `${nestedConstruction.keyword} has no matching endscript`,
-                ));
-                break;
-            }
-            case "list": {
-                result.push(Shared.createDiagnostic(
-                    { uri, range: nestedConstruction.range }, DiagnosticSeverity.Error,
-                    `${nestedConstruction.keyword} has no matching endlist`,
-                ));
-                break;
-            }
-            case "csv": {
-                result.push(Shared.createDiagnostic(
-                    { uri, range: nestedConstruction.range }, DiagnosticSeverity.Error,
-                    `${nestedConstruction.keyword} has no matching endcsv`,
-                ));
-                break;
-            }
-            case "var": {
-                result.push(Shared.createDiagnostic(
-                    { uri, range: nestedConstruction.range }, DiagnosticSeverity.Error,
-                    `${nestedConstruction.keyword} has no matching endvar`,
-                ));
-                break;
-            }
-        }
+        result.push(Shared.createDiagnostic(
+            { uri, range: nestedConstruction.range }, DiagnosticSeverity.Error,
+            `${nestedConstruction.keyword} has no matching end${nestedConstruction.keyword}`,
+        ));
     }
 
     return result;
