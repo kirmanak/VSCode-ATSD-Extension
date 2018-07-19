@@ -32,4 +32,5 @@ npm install && npm run compile
 
 ### Snippets
 
-* `wgt`: creates a new `[widget]` section with child `[series]`
+* `wgt`: creates a new `[widget]` section with child `[series]` section
+* `cfg`: creates a new `[configuration]` section with child `[group]` section and several initial settings
