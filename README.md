@@ -30,7 +30,166 @@ npm install && npm run compile
 
 ## Features
 
+### Syntax highlighting
+
+![Screenshot of highlighted syntax](./images/syntax.png)
+
 ### Snippets
 
 * `wgt`: creates a new `[widget]` section with child `[series]` section
 * `cfg`: creates a new `[configuration]` section with child `[group]` section and several initial settings
+* `for`: creates a new `for` loop with corresponding `endfor`.
+* `if`: creates a new `if` statement with corresponding `endif`.
+
+### Validation
+
+The following errors are validated by the plugin:
+
+* Dereference unknown `alias`:
+
+  ```txt
+    [series]
+      alias = s1
+
+    [series]
+      value = value('s1')
+  ```
+
+* Unfinished `for`, `csv`, `var`, `list`, `script`, `if` blocks:
+
+  ```txt
+    list values = value1, value2,
+      value3, value4
+    # no matching endlist
+  ```
+
+* Incorrect `csv`:
+
+  ```txt
+    csv servers =
+      name, price
+      vps, 5
+      vds, 5, 4 /* wrong number of columns */
+    endcsv
+  ```
+
+* Unmatched `endcsv`, `endif`, `endfor`, `endvar`, `endscript`, `endlist`:
+
+  ```txt
+    var array = [
+      "value1", "value2"
+    ]
+    endlist
+    # endlist can not finish var statement
+  ```
+
+* Dereference of an undefined variable in `for` block:
+
+  ```txt
+    for server in servers
+      [series]
+        entity = @{srv} /* for variable is server, but srv is used */
+    endfor
+  ```
+
+* Usage of an undefined collection in `for` block:
+
+  ```txt
+    list servers = vps, vds
+    for server in serverc /* misspelling */
+      [series]
+        entity = @{server}
+    endfor
+  ```
+
+* `else` or `elseif` statement without corresponding `if`:
+
+  ```txt
+    for item in collection
+      [series]
+      # no 'if' keyword
+      elseif item == 'vps'
+        metric = vps
+      else
+        metric = vds
+      endif
+    endfor
+  ```
+
+* Repetition of variable:
+
+  ```txt
+    list collection = value1, value2
+    var collection = [ "value1", "value2" ]
+    # duplicate variable name
+  ```
+
+  ```txt
+    for server in servers
+      for server in servers
+        # duplicate variable name
+      endfor
+    endfor
+  ```
+
+* Repetition of a setting:
+
+  ```txt
+    [series]
+      entity = server
+      entity = srv /* duplicate setting */
+      metric = cpu_busy
+  ```
+
+* Omitting of a required setting:
+
+  ```txt
+    [widget]
+      # type is required
+      [series]
+      ...
+  ```
+
+  ```txt
+    [series]
+      entity = server
+      # metric is required
+    [widget]
+  ```
+
+* Misspelling in a setting name:
+
+  ```txt
+    [wigdet]
+      # "wigdet" instead of "widget"
+      type = chart
+  ```
+
+  ```txt
+    [series]
+      startime = now
+      # "startime" instead of "starttime"
+  ```
+
+* `for` has finished before `if`:
+
+  ```txt
+    for server in servers
+      [series]
+        if server == 'vps'
+          entity = 'vds'
+        else
+          entity = 'vps'
+    endfor
+    # if must be finished inside the for
+    endif
+  ```
+
+* Setting is interpreted as a tag:
+
+  ```txt
+    [tags]
+      server_name = 'vds'
+    time-span = 1 hour
+    # time-span will be interpreted as a tag
+  ```
