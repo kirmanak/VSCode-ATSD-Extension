@@ -1,6 +1,6 @@
 {
     "name": "axibase-charts-syntax",
-    "displayName": "Axibase Charts syntax",
+    "displayName": "Axibase Charts",
     "description": "Axibase Charts syntax validation and highligting extension",
     "version": "0.0.1",
     "repository": {
@@ -31,7 +31,7 @@
             {
                 "id": "axibase-charts",
                 "aliases": [
-                    "Axibase Charts syntax",
+                    "Axibase Charts",
                     "axibase-charts"
                 ],
                 "extensions": [
