@@ -22,6 +22,7 @@
         "body": [
             "[widget]",
             "\ttype = ${1:chart}",
+            "\ttitle = ${2:title}",
             "\t[series]",
             "\t\t${0}"
         ],
