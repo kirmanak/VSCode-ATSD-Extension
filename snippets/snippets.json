@@ -2,7 +2,7 @@
     "For_Loop": {
         "prefix": "for",
         "body": [
-            "for ${1:variable} in ${2:array}",
+            "for ${1:item} in ${2:collection}",
             "\t${0}",
             "endfor"
         ],
@@ -18,7 +18,7 @@
         "description": "If condition"
     },
     "Widget": {
-        "prefix": "widget",
+        "prefix": "wgt",
         "body": [
             "[widget]",
             "\ttype = ${1:chart}",

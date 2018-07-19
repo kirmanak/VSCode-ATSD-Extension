@@ -32,4 +32,4 @@ npm install && npm run compile
 
 ### Snippets
 
-* `widget`: creates a new `[widget]` section with child `[series]`
+* `wgt`: creates a new `[widget]` section with child `[series]`
