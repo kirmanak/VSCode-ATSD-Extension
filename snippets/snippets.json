@@ -1,3 +1,11 @@
 {
-    
+    "For_Loop": {
+        "prefix": "for",
+        "body": [
+            "for ${2} in ${1}",
+            "\t${0}",
+            "endfor"
+        ],
+        "description": "For loop"
+    }
 }
