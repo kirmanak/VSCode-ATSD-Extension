@@ -214,6 +214,9 @@ export function lineByLine(textDocument: TextDocument): Diagnostic[] {
                 }
                 isUserDefined = false;
                 settings.set("settings", []);
+                if (/widget/i.test(match[2])) {
+                    aliases.set("aliases", []);
+                }
             }
             previousSection = {
                 keyword: match[2],
