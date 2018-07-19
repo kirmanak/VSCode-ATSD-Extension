@@ -28,12 +28,13 @@
         "description": "Widget section"
     },
     "Configuration": {
-        "prefix": "configuration",
+        "prefix": "cfg",
         "body": [
             "[configuration]",
             "\toffset-right = 50",
             "\theight-units = 2",
             "\twidth-units = 2",
+            "",
             "\t[group]"
         ],
         "description": "Initial configuration"
