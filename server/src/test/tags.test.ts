@@ -13,12 +13,12 @@ suite("Warn about setting interpreted as a tag", () => {
         const document: TextDocument = Shared.createDoc(text);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
-                uri: document.uri, range: {
+                range: {
                     end: { line: 1, character: "	".length + "starttime".length},
-                    start: { line: 1, character: "	".length }
-                }
+                    start: { line: 1, character: "	".length },
+                }, uri: document.uri,
             },
-            DiagnosticSeverity.Information, "starttime is interpreted as a tag"
+            DiagnosticSeverity.Information, "starttime is interpreted as a tag",
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -43,12 +43,12 @@ suite("Warn about setting interpreted as a tag", () => {
         const document: TextDocument = Shared.createDoc(text);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
-                uri: document.uri, range: {
+                range: {
                     end: { line: 1, character: "	".length + "stArt-time".length},
-                    start: { line: 1, character: "	".length }
-                }
+                    start: { line: 1, character: "	".length },
+                }, uri: document.uri,
             },
-            DiagnosticSeverity.Information, "starttime is interpreted as a tag"
+            DiagnosticSeverity.Information, "starttime is interpreted as a tag",
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);

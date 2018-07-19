@@ -64,18 +64,18 @@ suite("If elseif else endif validation tests", () => {
             {
                 range: {
                     end: { line: 5, character: 10 },
-                    start: { line: 5, character: 4 }
-                }, uri: document.uri
+                    start: { line: 5, character: 4 },
+                }, uri: document.uri,
             },
-            DiagnosticSeverity.Error, elseIfError
+            DiagnosticSeverity.Error, elseIfError,
         ), Shared.createDiagnostic(
             {
                 range: {
                     end: { line: 7, character: 9 },
-                    start: { line: 7, character: 4 }
-                }, uri: document.uri
+                    start: { line: 7, character: 4 },
+                }, uri: document.uri,
             },
-            DiagnosticSeverity.Error, endIfError
+            DiagnosticSeverity.Error, endIfError,
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -97,18 +97,18 @@ suite("If elseif else endif validation tests", () => {
             {
                 range: {
                     end: { line: 5, character: 8 },
-                    start: { line: 5, character: 4 }
-                }, uri: document.uri
+                    start: { line: 5, character: 4 },
+                }, uri: document.uri,
             },
-            DiagnosticSeverity.Error, elseError
+            DiagnosticSeverity.Error, elseError,
         ), Shared.createDiagnostic(
             {
                 range: {
                     end: { line: 7, character: 9 },
-                    start: { line: 7, character: 4 }
-                }, uri: document.uri
+                    start: { line: 7, character: 4 },
+                }, uri: document.uri,
             },
-            DiagnosticSeverity.Error, endIfError
+            DiagnosticSeverity.Error, endIfError,
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -130,18 +130,18 @@ suite("If elseif else endif validation tests", () => {
             {
                 range: {
                     end: { line: 5, character: 32 },
-                    start: { line: 5, character: 28 }
-                }, uri: document.uri
+                    start: { line: 5, character: 28 },
+                }, uri: document.uri,
             },
-            DiagnosticSeverity.Error, elseError
+            DiagnosticSeverity.Error, elseError,
         ), Shared.createDiagnostic(
             {
                 range: {
                     end: { line: 7, character: 9 },
-                    start: { line: 7, character: 4 }
-                }, uri: document.uri
+                    start: { line: 7, character: 4 },
+                }, uri: document.uri,
             },
-            DiagnosticSeverity.Error, endIfError
+            DiagnosticSeverity.Error, endIfError,
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -164,18 +164,18 @@ suite("If elseif else endif validation tests", () => {
             {
                 range: {
                     end: { line: 9, character: 6 },
-                    start: { line: 9, character: 0 }
-                }, uri: document.uri
+                    start: { line: 9, character: 0 },
+                }, uri: document.uri,
             },
-            DiagnosticSeverity.Error, "for has finished before if"
+            DiagnosticSeverity.Error, "for has finished before if",
         ), Shared.createDiagnostic(
             {
                 range: {
                     end: { line: 5, character: 6 },
-                    start: { line: 5, character: 4 }
-                }, uri: document.uri
+                    start: { line: 5, character: 4 },
+                }, uri: document.uri,
             },
-            DiagnosticSeverity.Error, ifError
+            DiagnosticSeverity.Error, ifError,
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);

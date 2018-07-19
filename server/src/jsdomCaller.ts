@@ -29,8 +29,8 @@ function parseJsStatements(text: string): Statement[] {
                 content = match[2];
                 const matchStart = match[1].length;
                 range = {
+                    end: { line: i, character: matchStart + match[2].length },
                     start: { line: i, character: match[1].length },
-                    end: { line: i, character: matchStart + match[2].length }
                 };
                 let j = i + 1;
                 while (j < lines.length && !(/\bscript\b/.test(lines[j]) || /\bendscript\b/.test(lines[j]))) {
@@ -46,8 +46,8 @@ function parseJsStatements(text: string): Statement[] {
                 }
             } else {
                 range = {
+                    end: { line: i + 1, character: lines[i + 1].length },
                     start: { line: i + 1, character: 0 },
-                    end: { line: i + 1, character: lines[i + 1].length }
                 };
                 content = "";
                 line = lines[++i];
@@ -59,11 +59,12 @@ function parseJsStatements(text: string): Statement[] {
             }
             content = JSON.stringify(content);
             const statement = {
-                range, imports, declaration:
+                declaration:
                     `const proxy = new Proxy({}, {});` +
                     `const proxyFunction = new Proxy(new Function(), {});` +
                     `(new Function("widget","config","dialog", ${content}))` +
-                    `.call(window, proxyFunction, proxy, proxy)`
+                    `.call(window, proxyFunction, proxy, proxy)`,
+                imports, range,
             };
             result.push(statement);
         } else if (/^[ \t]*import[ \t]+(\S+)[ \t]*=.+/.test(line)) {
@@ -75,14 +76,14 @@ function parseJsStatements(text: string): Statement[] {
             const content = stringifyStatement(match[2]);
             const matchStart = match.index + match[1].length;
             const statement = {
-                range: {
-                    start: { line: i, character: matchStart },
-                    end: { line: i, character: matchStart + match[2].length }
-                },
-                imports,
                 declaration:
                     `(new Function("value","time","previousValue","previousTime", ${content}))\n` +
-                    `.call(window, 5, 5, 5, 5)`
+                    `.call(window, 5, 5, 5, 5)`,
+                imports,
+                range: {
+                    end: { line: i, character: matchStart + match[2].length },
+                    start: { line: i, character: matchStart },
+                },
             };
             result.push(statement);
         } else if (/(^[ \t]*value[ \t]*=[ \t]*)(\S+[ \t\S]*)$/.test(line)) {
@@ -93,11 +94,6 @@ function parseJsStatements(text: string): Statement[] {
             let importList = "";
             imports.forEach((imported) => importList += `"${imported}", `);
             const statement = {
-                range: {
-                    start: { line: i, character: matchStart },
-                    end: { line: i, character: matchStart + match[2].length }
-                },
-                imports,
                 declaration:
                     `const proxy = new Proxy({}, {});` +
                     `const proxyFunction = new Proxy(new Function(), {});` +
@@ -115,7 +111,13 @@ function parseJsStatements(text: string): Statement[] {
                     `proxyFunction, proxyFunction, proxyFunction, proxyFunction, proxyFunction, proxyFunction,` +
                     `proxyFunction, proxyFunction, proxyFunction, proxyFunction, proxyFunction, proxyFunction,` +
                     `proxyFunction, proxyFunction, proxyFunction, proxyFunction, proxyFunction, proxyFunction,` +
-                    `proxyArray, proxyFunction, proxyFunction, proxyFunction${call})`
+                    `proxyArray, proxyFunction, proxyFunction, proxyFunction${call})`,
+                imports,
+                range: {
+                    end: { line: i, character: matchStart + match[2].length },
+                    start: { line: i, character: matchStart },
+                },
+
             };
             result.push(statement);
         } else if (/(^[ \t]*options[ \t]*=[ \t]*javascript:[ \t]*)(\S+[ \t\S]*)$/.test(line)) {
@@ -123,18 +125,19 @@ function parseJsStatements(text: string): Statement[] {
             const content = stringifyStatement(match[2]);
             const matchStart = match[1].length;
             const statement = {
-                range: {
-                    start: { line: i, character: matchStart },
-                    end: { line: i, character: matchStart + match[2].length }
-                },
-                imports,
                 declaration:
                     `const proxyFunction = new Proxy(new Function(), {});` +
                     `(new Function("requestMetricsSeriesValues","requestEntitiesMetricsValues",` +
                     `"requestPropertiesValues","requestMetricsSeriesOptions","requestEntitiesMetricsOptions",` +
                     `"requestPropertiesOptions", ${content}` +
                     `)).call(window, proxyFunction, proxyFunction, proxyFunction, proxyFunction,` +
-                    ` proxyFunction, proxyFunction)`
+                    ` proxyFunction, proxyFunction)`,
+                imports,
+                range: {
+                    end: { line: i, character: matchStart + match[2].length },
+                    start: { line: i, character: matchStart },
+                },
+
             };
             result.push(statement);
         }
@@ -181,15 +184,14 @@ export function validate(document: TextDocument): Diagnostic[] {
             statement.imports.forEach((imported) => {
                 if (imported.length !== 0 && new RegExp(imported, "i").test(err.message)) {
                     isImported = true;
-                    console.log(`"${err.message}" contains "${imported}"`);
                 }
             });
             if (!isImported) {
                 result.push(Shared.createDiagnostic(
                     { uri: document.uri, range: statement.range },
-                    DiagnosticSeverity.Warning, err.message
+                    DiagnosticSeverity.Warning, err.message,
                 ));
-            } else { console.log(err.message); }
+            }
         }
     });
 

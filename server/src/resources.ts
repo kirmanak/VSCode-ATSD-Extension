@@ -96,11 +96,11 @@ export const possibleOptions = [
     "title", "tooltip", "topaxis", "topunits", "totalsize", "totalvalue",
     "transpose", "type", "unscale", "update", "updateinterval",
     "updatetimespan", "url", "urllegendticks", "urlparameters", "value",
-    "verticalgrid", "widgets", "widgetsperrow", "width", "widthunits", "zoomsvg"
+    "verticalgrid", "widgets", "widgetsperrow", "width", "widthunits", "zoomsvg",
 ];
 
 export const possibleSections: string[] = [
     "column", "configuration", "dropdown", "group", "keys", "link", "node",
     "option", "other", "properties", "property", "series", "tag", "tags",
-    "threshold", "widget"
+    "threshold", "widget",
 ];

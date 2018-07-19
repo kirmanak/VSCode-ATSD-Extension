@@ -5,7 +5,7 @@ const diagnosticSource = "Axibase Charts";
 export function createDiagnostic(location: Location, severity: DiagnosticSeverity, message: string): Diagnostic {
     const diagnostic: Diagnostic = {
         message, range: location.range,
-        severity, source: diagnosticSource
+        severity, source: diagnosticSource,
     };
     return diagnostic;
 }

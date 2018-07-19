@@ -26,12 +26,12 @@ suite("for in ... tests", () => {
         const document = Shared.createDoc(text);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
-                uri: document.uri, range: {
+                range: {
+                    end: { line: 1, character: 17 },
                     start: { line: 1, character: 11 },
-                    end: { line: 1, character: 17 }
-                }
+                }, uri: document.uri,
             },
-            DiagnosticSeverity.Error, Shared.errorMessage("server", "servers")
+            DiagnosticSeverity.Error, Shared.errorMessage("server", "servers"),
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -46,12 +46,12 @@ suite("for in ... tests", () => {
         const document = Shared.createDoc(text);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
-                uri: document.uri, range: {
+                range: {
+                    end: { line: 1, character: 17 },
                     start: { line: 1, character: 11 },
-                    end: { line: 1, character: 17 }
-                }
+                }, uri: document.uri,
             },
-            DiagnosticSeverity.Error, Shared.errorMessage("server", "servers")
+            DiagnosticSeverity.Error, Shared.errorMessage("server", "servers"),
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -78,12 +78,12 @@ suite("for in ... tests", () => {
         const document = Shared.createDoc(text);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
-                uri: document.uri, range: {
+                range: {
+                    end: { line: 1, character: 17 },
                     start: { line: 1, character: 11 },
-                    end: { line: 1, character: 17 }
-                }
+                }, uri: document.uri,
             },
-            DiagnosticSeverity.Error, Shared.errorMessage("server", "servers")
+            DiagnosticSeverity.Error, Shared.errorMessage("server", "servers"),
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -126,12 +126,12 @@ suite("for in ... tests", () => {
         const document = Shared.createDoc(text);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
-                uri: document.uri, range: {
+                range: {
+                    end: { line: 3, character: 17 },
                     start: { line: 3, character: 11 },
-                    end: { line: 3, character: 17 }
-                }
+                }, uri: document.uri,
             },
-            DiagnosticSeverity.Error, Shared.errorMessage("server", "servers")
+            DiagnosticSeverity.Error, Shared.errorMessage("server", "servers"),
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -149,12 +149,12 @@ suite("for in ... tests", () => {
         const document = Shared.createDoc(text);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
-                uri: document.uri, range: {
+                range: {
+                    end: { line: 4, character: 17 },
                     start: { line: 4, character: 11 },
-                    end: { line: 4, character: 17 }
-                }
+                }, uri: document.uri,
             },
-            DiagnosticSeverity.Error, Shared.errorMessage("server", "servers")
+            DiagnosticSeverity.Error, Shared.errorMessage("server", "servers"),
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -187,12 +187,12 @@ suite("for in ... tests", () => {
         const document = Shared.createDoc(text);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
-                uri: document.uri, range: {
+                range: {
+                    end: { line: 4, character: 17 },
                     start: { line: 4, character: 11 },
-                    end: { line: 4, character: 17 }
-                }
+                }, uri: document.uri,
             },
-            DiagnosticSeverity.Error, Shared.errorMessage("server", "servers")
+            DiagnosticSeverity.Error, Shared.errorMessage("server", "servers"),
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -225,12 +225,12 @@ suite("for in ... tests", () => {
         const document = Shared.createDoc(text);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
-                uri: document.uri, range: {
+                range: {
+                    end: { line: 0, character: 18 },
                     start: { line: 0, character: 11 },
-                    end: { line: 0, character: 18 }
-                }
+                }, uri: document.uri,
             },
-            DiagnosticSeverity.Error, Shared.errorMessage("servers", null)
+            DiagnosticSeverity.Error, Shared.errorMessage("servers", null),
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -248,12 +248,12 @@ suite("for in ... tests", () => {
         const document = Shared.createDoc(text);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
-                uri: document.uri, range: {
+                range: {
+                    end: { line: 0, character: 18 },
                     start: { line: 0, character: 11 },
-                    end: { line: 0, character: 18 }
-                }
+                }, uri: document.uri,
             },
-            DiagnosticSeverity.Error, Shared.errorMessage("servers", null)
+            DiagnosticSeverity.Error, Shared.errorMessage("servers", null),
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -267,12 +267,12 @@ suite("for in ... tests", () => {
         const document = Shared.createDoc(text);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
-                uri: document.uri, range: {
+                range: {
+                    end: { line: 0, character: 12 },
                     start: { line: 0, character: 11 },
-                    end: { line: 0, character: 12 }
-                }
+                }, uri: document.uri,
             },
-            DiagnosticSeverity.Error, "Empty 'in' statement"
+            DiagnosticSeverity.Error, "Empty 'in' statement",
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);

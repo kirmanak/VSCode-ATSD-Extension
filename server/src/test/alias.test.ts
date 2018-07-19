@@ -36,10 +36,10 @@ suite("Incorrect dealias tests", () => {
             {
                 range: {
                     end: { line: 7, character: "   value = value('".length + "s2".length },
-                    start: { line: 7, character: "   value = value('".length }
-                }, uri: document.uri
+                    start: { line: 7, character: "   value = value('".length },
+                }, uri: document.uri,
             },
-            DiagnosticSeverity.Error, Shared.errorMessage("s2", "s1")
+            DiagnosticSeverity.Error, Shared.errorMessage("s2", "s1"),
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -80,18 +80,18 @@ suite("Incorrect dealias tests", () => {
             {
                 range: {
                     end: { line: 7, character: "   value = value('".length + "s2".length },
-                    start: { line: 7, character: "   value = value('".length }
-                }, uri: document.uri
+                    start: { line: 7, character: "   value = value('".length },
+                }, uri: document.uri,
             },
-            DiagnosticSeverity.Error, Shared.errorMessage("s2", "s1")
+            DiagnosticSeverity.Error, Shared.errorMessage("s2", "s1"),
         ), Shared.createDiagnostic(
             {
                 range: {
                     end: { line: 11, character: "   value = value('".length + "s3".length },
-                    start: { line: 11, character:  "   value = value('".length }
-                }, uri: document.uri
+                    start: { line: 11, character:  "   value = value('".length },
+                }, uri: document.uri,
             },
-            DiagnosticSeverity.Error, Shared.errorMessage("s3", "s1")
+            DiagnosticSeverity.Error, Shared.errorMessage("s3", "s1"),
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -144,10 +144,10 @@ suite("Incorrect dealias tests", () => {
             {
                 range: {
                     end: { line: 11, character: "   value = value('".length + "s3".length },
-                    start: { line: 11, character:  "   value = value('".length }
-                }, uri: document.uri
+                    start: { line: 11, character:  "   value = value('".length },
+                }, uri: document.uri,
             },
-            DiagnosticSeverity.Error, Shared.errorMessage("s3", "s1")
+            DiagnosticSeverity.Error, Shared.errorMessage("s3", "s1"),
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);

@@ -14,11 +14,11 @@ suite("Repetition of variables or settings tests", () => {
             {
                 range: {
                     end: { line: 1, character: "var ".length + "servers".length },
-                    start: { line: 1, character: "var ".length }
+                    start: { line: 1, character: "var ".length },
                 },
-                uri: document.uri
+                uri: document.uri,
             },
-            DiagnosticSeverity.Error, "servers is already defined"
+            DiagnosticSeverity.Error, "servers is already defined",
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -34,10 +34,10 @@ suite("Repetition of variables or settings tests", () => {
             {
                 range: {
                     end: { line: 1, character: "for ".length + "servers".length },
-                    start: { line: 1, character: "for ".length }
-                }, uri: document.uri
+                    start: { line: 1, character: "for ".length },
+                }, uri: document.uri,
             },
-            DiagnosticSeverity.Error, "servers is already defined"
+            DiagnosticSeverity.Error, "servers is already defined",
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -54,10 +54,10 @@ suite("Repetition of variables or settings tests", () => {
             {
                 range: {
                     end: { line: 1, character: "csv ".length + "servers".length },
-                    start: { line: 1, character: "csv ".length }
-                }, uri: document.uri
+                    start: { line: 1, character: "csv ".length },
+                }, uri: document.uri,
             },
-            DiagnosticSeverity.Error, "servers is already defined"
+            DiagnosticSeverity.Error, "servers is already defined",
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -74,10 +74,10 @@ suite("Repetition of variables or settings tests", () => {
             {
                 range: {
                     end: { line: 3, character: "list ".length + "servers".length },
-                    start: { line: 3, character: "list ".length }
-                }, uri: document.uri
+                    start: { line: 3, character: "list ".length },
+                }, uri: document.uri,
             },
-            DiagnosticSeverity.Error, "servers is already defined"
+            DiagnosticSeverity.Error, "servers is already defined",
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -106,10 +106,10 @@ suite("Repetition of variables or settings tests", () => {
             {
                 range: {
                     end: { line: 2, character: "   ".length + "entity".length },
-                    start: { line: 2, character: "   ".length }
-                }, uri: document.uri
+                    start: { line: 2, character: "   ".length },
+                }, uri: document.uri,
             },
-            DiagnosticSeverity.Warning, "entity is already defined"
+            DiagnosticSeverity.Warning, "entity is already defined",
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -126,10 +126,10 @@ suite("Repetition of variables or settings tests", () => {
             {
                 range: {
                     end: { line: 3, character:  "   ".length + "offset-right".length },
-                    start: { line: 3, character: "   ".length }
-                }, uri: document.uri
+                    start: { line: 3, character: "   ".length },
+                }, uri: document.uri,
             },
-            DiagnosticSeverity.Warning, "offset-right is already defined"
+            DiagnosticSeverity.Warning, "offset-right is already defined",
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -150,10 +150,10 @@ suite("Repetition of variables or settings tests", () => {
             {
                 range: {
                     end: { line: 7, character: "   alias = ".length + "server".length },
-                    start: { line: 7, character: "   alias = ".length }
-                }, uri: document.uri
+                    start: { line: 7, character: "   alias = ".length },
+                }, uri: document.uri,
             },
-            DiagnosticSeverity.Error, "server is already defined"
+            DiagnosticSeverity.Error, "server is already defined",
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -191,18 +191,18 @@ suite("Repetition of variables or settings tests", () => {
             {
                 range: {
                     end: { line: 7, character: "           ".length +  "color".length },
-                    start: { line: 7, character: "           ".length }
-                }, uri: document.uri
+                    start: { line: 7, character: "           ".length },
+                }, uri: document.uri,
             },
-            DiagnosticSeverity.Warning, "color is already defined"
+            DiagnosticSeverity.Warning, "color is already defined",
         ), Shared.createDiagnostic(
             {
                 range: {
                     end: { line: 9, character: "           ".length +  "color".length },
-                    start: { line: 9, character: "           ".length }
-                }, uri: document.uri
+                    start: { line: 9, character: "           ".length },
+                }, uri: document.uri,
             },
-            DiagnosticSeverity.Warning, "color is already defined"
+            DiagnosticSeverity.Warning, "color is already defined",
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -227,10 +227,10 @@ suite("Repetition of variables or settings tests", () => {
             {
                 range: {
                     end: { line: 7, character: "           ".length +  "color".length },
-                    start: { line: 7, character: "           ".length }
-                }, uri: document.uri
+                    start: { line: 7, character: "           ".length },
+                }, uri: document.uri,
             },
-            DiagnosticSeverity.Warning, "color is already defined"
+            DiagnosticSeverity.Warning, "color is already defined",
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -255,10 +255,10 @@ suite("Repetition of variables or settings tests", () => {
             {
                 range: {
                     end: { line: 9, character: "           ".length +  "color".length },
-                    start: { line: 9, character: "           ".length }
-                }, uri: document.uri
+                    start: { line: 9, character: "           ".length },
+                }, uri: document.uri,
             },
-            DiagnosticSeverity.Warning, "color is already defined"
+            DiagnosticSeverity.Warning, "color is already defined",
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -285,10 +285,10 @@ suite("Repetition of variables or settings tests", () => {
             {
                 range: {
                     end: { line: 11, character: "           ".length +  "color".length },
-                    start: { line: 11, character: "           ".length }
-                }, uri: document.uri
+                    start: { line: 11, character: "           ".length },
+                }, uri: document.uri,
             },
-            DiagnosticSeverity.Warning, "color is already defined"
+            DiagnosticSeverity.Warning, "color is already defined",
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);

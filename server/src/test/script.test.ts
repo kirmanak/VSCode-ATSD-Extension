@@ -24,12 +24,12 @@ suite("Script endscript tests", () => {
         const document = Shared.createDoc(text);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
-                uri: document.uri, range: {
+                range: {
+                    end: { line: 0, character: 6 },
                     start: { line: 0, character: 0 },
-                    end: { line: 0, character: 6 }
-                }
+                }, uri: document.uri,
             },
-            DiagnosticSeverity.Error, errorMessage
+            DiagnosticSeverity.Error, errorMessage,
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -69,12 +69,12 @@ suite("Script endscript tests", () => {
         const document = Shared.createDoc(text);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
-                uri: document.uri, range: {
+                range: {
+                    end: { line: 0, character: 6 },
                     start: { line: 0, character: 0 },
-                    end: { line: 0, character: 6 }
-                }
+                }, uri: document.uri,
             },
-            DiagnosticSeverity.Error, errorMessage
+            DiagnosticSeverity.Error, errorMessage,
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -108,12 +108,12 @@ suite("Script endscript tests", () => {
         const document = Shared.createDoc(text);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
-                uri: document.uri, range: {
+                range: {
+                    end: { line: 0, character: 6 },
                     start: { line: 0, character: 0 },
-                    end: { line: 0, character: 6 }
-                }
+                }, uri: document.uri,
             },
-            DiagnosticSeverity.Error, errorMessage
+            DiagnosticSeverity.Error, errorMessage,
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);

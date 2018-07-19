@@ -39,20 +39,20 @@ suite("CSV tests", () => {
         const document = Shared.createDoc(text);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
-                uri: document.uri,
                 range: {
+                    end: { line: 3, character: 5 },
                     start: { line: 3, character: 0 },
-                    end: { line: 3, character: 5 }
-                }
+                },
+                uri: document.uri,
             },
-            DiagnosticSeverity.Error, "Expected 3 columns, but found 1"
+            DiagnosticSeverity.Error, "Expected 3 columns, but found 1",
         ), Shared.createDiagnostic(
             {
-                uri: document.uri, range: {
-                    start: { line: 0, character: 0 }, end: { line: 0, character: 3 }
-                }
+                range: {
+                    end: { line: 0, character: 3 }, start: { line: 0, character: 0 },
+                }, uri: document.uri,
             },
-            DiagnosticSeverity.Error, "csv has no matching endcsv"
+            DiagnosticSeverity.Error, "csv has no matching endcsv",
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -68,23 +68,22 @@ suite("CSV tests", () => {
         const document = Shared.createDoc(text);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
-                uri: document.uri,
                 range: {
-                    start: {
-                        line: 4, character: 0
-                    }, end: { line: 4, character: 5 }
-                }
+                    end: { line: 4, character: 5 },
+                    start: { line: 4, character: 0 },
+                },
+                uri: document.uri,
             },
-            DiagnosticSeverity.Error, "Expected 3 columns, but found 1"
+            DiagnosticSeverity.Error, "Expected 3 columns, but found 1",
         ), Shared.createDiagnostic(
             {
-                uri: document.uri,
                 range: {
+                    end: { line: 0, character: 3 },
                     start: { line: 0, character: 0 },
-                    end: { line: 0, character: 3 }
-                }
+                },
+                uri: document.uri,
             },
-            DiagnosticSeverity.Error, "csv has no matching endcsv"
+            DiagnosticSeverity.Error, "csv has no matching endcsv",
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -99,13 +98,13 @@ suite("CSV tests", () => {
         const document = Shared.createDoc(text);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
-                uri: document.uri,
                 range: {
+                    end: { line: 2, character: 18 },
                     start: { line: 2, character: 0 },
-                    end: { line: 2, character: 18 }
-                }
+                },
+                uri: document.uri,
             },
-            DiagnosticSeverity.Error, "Expected 3 columns, but found 4"
+            DiagnosticSeverity.Error, "Expected 3 columns, but found 4",
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);

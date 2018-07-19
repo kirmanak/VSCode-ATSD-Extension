@@ -69,10 +69,10 @@ suite("Undefined variable in for loop", () => {
             {
                 range: {
                     end: { line: 4, character: `       entity = @{`.length + firstVar.length },
-                    start: { line: 4, character: `       entity = @{`.length }
-                }, uri: document.uri
+                    start: { line: 4, character: `       entity = @{`.length },
+                }, uri: document.uri,
             },
-            DiagnosticSeverity.Error, Shared.errorMessage(firstVar, secondVar)
+            DiagnosticSeverity.Error, Shared.errorMessage(firstVar, secondVar),
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -96,18 +96,18 @@ suite("Undefined variable in for loop", () => {
             {
                 range: {
                     end: { line: 4, character: `       entity = @{`.length + firstVar.length },
-                    start: { line: 4, character: `       entity = @{`.length }
-                }, uri: document.uri
+                    start: { line: 4, character: `       entity = @{`.length },
+                }, uri: document.uri,
             },
-            DiagnosticSeverity.Error, Shared.errorMessage(firstVar, secondVar)
+            DiagnosticSeverity.Error, Shared.errorMessage(firstVar, secondVar),
         ), Shared.createDiagnostic(
             {
                 range: {
                     end: { line: 9, character: `       entity = @{`.length + secondVar.length },
-                    start: { line: 9, character: `       entity = @{`.length }
-                }, uri: document.uri
+                    start: { line: 9, character: `       entity = @{`.length },
+                }, uri: document.uri,
             },
-            DiagnosticSeverity.Error, Shared.errorMessage(secondVar, "servers")
+            DiagnosticSeverity.Error, Shared.errorMessage(secondVar, "servers"),
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -131,10 +131,10 @@ suite("Undefined variable in for loop", () => {
             {
                 range: {
                     end: { line: 4, character: `       entity = @{`.length + firstVar.length },
-                    start: { line: 4, character: `       entity = @{`.length }
-                }, uri: document.uri
+                    start: { line: 4, character: `       entity = @{`.length },
+                }, uri: document.uri,
             },
-            DiagnosticSeverity.Error, Shared.errorMessage(firstVar, secondVar)
+            DiagnosticSeverity.Error, Shared.errorMessage(firstVar, secondVar),
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -183,10 +183,10 @@ suite("Undefined variable in for loop", () => {
             {
                 range: {
                     end: { line: 8, character: `           entity = @{`.length + thirdVar.length },
-                    start: { line: 8, character: `           entity = @{`.length }
-                }, uri: document.uri
+                    start: { line: 8, character: `           entity = @{`.length },
+                }, uri: document.uri,
             },
-            DiagnosticSeverity.Error, Shared.errorMessage(thirdVar, firstVar)
+            DiagnosticSeverity.Error, Shared.errorMessage(thirdVar, firstVar),
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -219,10 +219,10 @@ suite("Undefined variable in for loop", () => {
             {
                 range: {
                     end: { line: 4, character: `       entity = @{`.length + secondVar.length },
-                    start: { line: 4, character: `       entity = @{`.length }
-                }, uri: document.uri
+                    start: { line: 4, character: `       entity = @{`.length },
+                }, uri: document.uri,
             },
-            DiagnosticSeverity.Error, Shared.errorMessage(secondVar, "servers")
+            DiagnosticSeverity.Error, Shared.errorMessage(secondVar, "servers"),
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -282,11 +282,14 @@ suite("Undefined variable in for loop", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 4, character: `       entity = @{keepAfterLast(${secondVar}, 'v')}, @{`.length + firstVar.length },
-                    start: { line: 4, character: `       entity = @{keepAfterLast(${secondVar}, 'v')}, @{`.length }
-                }, uri: document.uri
+                    end: {
+                        character: `       entity = @{keepAfterLast(${secondVar}, 'v')}, @{`.length + firstVar.length,
+                        line: 4,
+                    },
+                    start: { line: 4, character: `       entity = @{keepAfterLast(${secondVar}, 'v')}, @{`.length },
+                }, uri: document.uri,
             },
-            DiagnosticSeverity.Error, Shared.errorMessage(firstVar, secondVar)
+            DiagnosticSeverity.Error, Shared.errorMessage(firstVar, secondVar),
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);

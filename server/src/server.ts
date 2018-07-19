@@ -1,6 +1,6 @@
 import {
     createConnection, Diagnostic, DidChangeConfigurationNotification, InitializeParams,
-    ProposedFeatures, TextDocument, TextDocuments
+    ProposedFeatures, TextDocument, TextDocuments,
 } from "vscode-languageserver";
 import * as jsDomCaller from "./jsdomCaller";
 
@@ -25,8 +25,8 @@ connection.onInitialize((params: InitializeParams) => {
 
     return {
         capabilities: {
-            textDocumentSync: documents.syncKind
-        }
+            textDocumentSync: documents.syncKind,
+        },
     };
 });
 
@@ -37,18 +37,18 @@ connection.onInitialized(() => {
     }
 });
 
-interface ServerSettings {
+interface IServerSettings {
     validateFunctions: boolean;
 }
 
 // The global settings, used when the `workspace/configuration` request is not supported by the client.
 // Please note that this is not the case when using this server with the client provided in this example
 // but could happen with other clients.
-const defaultSettings: ServerSettings = { validateFunctions: false };
-let globalSettings: ServerSettings = defaultSettings;
+const defaultSettings: IServerSettings = { validateFunctions: false };
+let globalSettings: IServerSettings = defaultSettings;
 
 // Cache the settings of all open documents
-const documentSettings: Map<string, Thenable<ServerSettings>> = new Map();
+const documentSettings: Map<string, Thenable<IServerSettings>> = new Map();
 
 connection.onDidChangeConfiguration((change) => {
     if (hasConfigurationCapability) {
@@ -57,14 +57,14 @@ connection.onDidChangeConfiguration((change) => {
     } else {
         globalSettings = (
             (change.settings.axibaseCharts || defaultSettings)
-        ) as ServerSettings;
+        ) as IServerSettings;
     }
 
     // Revalidate all open text documents
     documents.all().forEach(validateTextDocument);
 });
 
-function getDocumentSettings(resource: string): Thenable<ServerSettings> {
+function getDocumentSettings(resource: string): Thenable<IServerSettings> {
     if (!hasConfigurationCapability) {
         return Promise.resolve(globalSettings);
     }
@@ -72,7 +72,7 @@ function getDocumentSettings(resource: string): Thenable<ServerSettings> {
     if (!result) {
         result = connection.workspace.getConfiguration({
             scopeUri: resource,
-            section: "axibaseCharts"
+            section: "axibaseCharts",
         });
         documentSettings.set(resource, result);
     }

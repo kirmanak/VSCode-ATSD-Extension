@@ -3,7 +3,7 @@ import * as path from "path";
 import { ExtensionContext,  workspace } from "vscode";
 
 import {
-    LanguageClient, LanguageClientOptions, ServerOptions, TransportKind
+    LanguageClient, LanguageClientOptions, ServerOptions, TransportKind,
 } from "vscode-languageclient";
 
 let client: LanguageClient;
@@ -18,8 +18,8 @@ export function activate(context: ExtensionContext) {
     // If the extension is launched in debug mode then the debug server options are used
     // Otherwise the run options are used
     const serverOptions: ServerOptions = {
+        debug: { module: serverModule, transport: TransportKind.ipc, options: debugOptions },
         run: { module: serverModule, transport: TransportKind.ipc },
-        debug: { module: serverModule, transport: TransportKind.ipc, options: debugOptions }
     };
 
     // Options to control the language client
@@ -28,8 +28,8 @@ export function activate(context: ExtensionContext) {
         documentSelector: [{ scheme: "file", language: "axibase-charts" }],
         synchronize: {
             // Notify the server about file changes to ".clientrc files contain in the workspace
-            fileEvents: workspace.createFileSystemWatcher("**/.clientrc")
-        }
+            fileEvents: workspace.createFileSystemWatcher("**/.clientrc"),
+        },
     };
 
     // Create the language client and start the client.

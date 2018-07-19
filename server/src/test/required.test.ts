@@ -25,11 +25,11 @@ suite("Required settings for sections tests", () => {
             {
                 range: {
                     end: { line: 0, character: "[".length + "series".length },
-                    start: { line: 0, character: "[".length }
+                    start: { line: 0, character: "[".length },
                 },
-                uri: document.uri
+                uri: document.uri,
             },
-            DiagnosticSeverity.Error, "entity is required"
+            DiagnosticSeverity.Error, "entity is required",
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -79,11 +79,11 @@ suite("Required settings for sections tests", () => {
             {
                 range: {
                     end: { line: 8, character: "       [".length + "series".length },
-                    start: { line: 8, character: "       [".length }
+                    start: { line: 8, character: "       [".length },
                 },
-                uri: document.uri
+                uri: document.uri,
             },
-            DiagnosticSeverity.Error, "entity is required"
+            DiagnosticSeverity.Error, "entity is required",
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -100,20 +100,20 @@ suite("Required settings for sections tests", () => {
             {
                 range: {
                     end: { line: 0, character: "[".length + "series".length },
-                    start: { line: 0, character: "[".length }
+                    start: { line: 0, character: "[".length },
                 },
-                uri: document.uri
+                uri: document.uri,
             },
-            DiagnosticSeverity.Error, "entity is required"
+            DiagnosticSeverity.Error, "entity is required",
         ), Shared.createDiagnostic(
             {
                 range: {
                     end: { line: 2, character: "[".length + "series".length },
-                    start: { line: 2, character: "[".length }
+                    start: { line: 2, character: "[".length },
                 },
-                uri: document.uri
+                uri: document.uri,
             },
-            DiagnosticSeverity.Error, "metric is required"
+            DiagnosticSeverity.Error, "metric is required",
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);

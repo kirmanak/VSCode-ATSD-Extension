@@ -14,12 +14,12 @@ suite("Spelling checks", () => {
         const document: TextDocument = Shared.createDoc(text);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
-                uri: document.uri, range: {
+                range: {
+                    end: { line: 3, character: 9 },
                     start: { line: 3, character: 1 },
-                    end: { line: 3, character: 9 }
-                }
+                }, uri: document.uri,
             },
-            DiagnosticSeverity.Error, Shared.errorMessage("startime", "starttime")
+            DiagnosticSeverity.Error, Shared.errorMessage("startime", "starttime"),
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -32,12 +32,12 @@ suite("Spelling checks", () => {
         const document: TextDocument = Shared.createDoc(text);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
-                uri: document.uri, range: {
+                range: {
+                    end: { line: 0, character: 6 },
                     start: { line: 0, character: 1 },
-                    end: { line: 0, character: 6 }
-                }
+                }, uri: document.uri,
             },
-            DiagnosticSeverity.Error, Shared.errorMessage("eries", "series")
+            DiagnosticSeverity.Error, Shared.errorMessage("eries", "series"),
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -50,12 +50,12 @@ suite("Spelling checks", () => {
         const document: TextDocument = Shared.createDoc(text);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
-                uri: document.uri, range: {
+                range: {
+                    end: { line: 0, character: 10 },
                     start: { line: 0, character: 1 },
-                    end: { line: 0, character: 10 }
-                }
+                }, uri: document.uri,
             },
-            DiagnosticSeverity.Error, Shared.errorMessage("starttime", "series")
+            DiagnosticSeverity.Error, Shared.errorMessage("starttime", "series"),
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -80,20 +80,20 @@ suite("Spelling checks", () => {
         const document: TextDocument = Shared.createDoc(text);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
-                uri: document.uri, range: {
+                range: {
                     end: { line: 2, character: "[".length + "starttime".length },
-                    start: { line: 2, character: "[".length }
-                }
+                    start: { line: 2, character: "[".length },
+                }, uri: document.uri,
             },
-            DiagnosticSeverity.Error, Shared.errorMessage("starttime", "series")
+            DiagnosticSeverity.Error, Shared.errorMessage("starttime", "series"),
         ), Shared.createDiagnostic(
             {
-                uri: document.uri, range: {
+                range: {
                     end: { line: 3, character: "	".length + "startime".length },
-                    start: { line: 3, character: "	".length }
-                }
+                    start: { line: 3, character: "	".length },
+                }, uri: document.uri,
             },
-            DiagnosticSeverity.Error, Shared.errorMessage("startime", "starttime")
+            DiagnosticSeverity.Error, Shared.errorMessage("startime", "starttime"),
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
@@ -108,12 +108,12 @@ suite("Spelling checks", () => {
         const document: TextDocument = Shared.createDoc(text);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
-                uri: document.uri, range: {
+                range: {
                     end: { line: 3, character: "startime".length },
-                    start: { line: 3, character: 0 }
-                }
+                    start: { line: 3, character: 0 },
+                }, uri: document.uri,
             },
-            DiagnosticSeverity.Error, Shared.errorMessage("startime", "starttime")
+            DiagnosticSeverity.Error, Shared.errorMessage("startime", "starttime"),
         )];
         const result = Functions.lineByLine(document);
         assert.deepEqual(result, expected);
