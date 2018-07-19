@@ -2,7 +2,7 @@
     "For_Loop": {
         "prefix": "for",
         "body": [
-            "for ${2} in ${1}",
+            "for ${1:variable} in ${2:array}",
             "\t${0}",
             "endfor"
         ],
@@ -21,10 +21,21 @@
         "prefix": "widget",
         "body": [
             "[widget]",
-            "\ttype = ${1}",
+            "\ttype = ${1:chart}",
             "\t[series]",
             "\t\t${0}"
         ],
         "description": "Widget section"
+    },
+    "Configuration": {
+        "prefix": "configuration",
+        "body": [
+            "[configuration]",
+            "\toffset-right = 50",
+            "\theight-units = 2",
+            "\twidth-units = 2",
+            "\t[group]"
+        ],
+        "description": "Initial configuration"
     }
 }
