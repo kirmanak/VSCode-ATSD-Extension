@@ -28,6 +28,13 @@ npm install && npm run compile
 * Plugin is ready to handle `.ac` extension files.
   * See examples in ``~/.vscode/extensions/axibase-charts/examples/``.
 
+## Configuration
+
+* `axibaseCharts.validateFunctions`
+  * Default is `false`
+  * If `true`, enables inline JS validation
+  * The plugin executes JS which is written in `script = ... endscript`, `script =`, `value =`, `replace-value =` statements.
+
 ## Features
 
 ### Syntax highlighting
@@ -44,6 +51,20 @@ npm install && npm run compile
 ### Validation
 
 The following errors are validated by the plugin:
+
+* JS errors (syntax, undefined variables, etc.) when `axibaseCharts.validateFunctions` is `true`:
+
+  ```txt
+    script
+      widget = hello() // widget is allowed variable, since it comes from Charts
+      // hello() is unknown function, the plugin warns about it
+    endscript
+  ```
+
+  ```txt
+    [series]
+      value = 5 + ; // forgotten operand
+  ```
 
 * Dereference unknown `alias`:
 
