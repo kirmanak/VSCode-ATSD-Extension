@@ -1,4 +1,4 @@
-import { Diagnostic, DiagnosticSeverity, Location, TextDocument   } from "vscode-languageserver";
+import { Diagnostic, DiagnosticSeverity, Location, TextDocument   } from "vscode-languageserver/lib/main";
 
 const diagnosticSource = "Axibase Charts";
 

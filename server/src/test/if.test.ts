@@ -1,7 +1,7 @@
 import * as assert from "assert";
 import { Diagnostic, DiagnosticSeverity, TextDocument } from "vscode-languageserver";
 import * as Shared from "../sharedFunctions";
-import * as Functions from "../validateFunctions";
+import Validator from "../Validator";
 
 const elseIfError = "elseif has no matching if";
 const elseError = "else has no matching if";
@@ -24,8 +24,9 @@ suite("If elseif else endif validation tests", () => {
             "    endif\n" +
             "endfor\n";
         const document: TextDocument = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -43,8 +44,9 @@ suite("If elseif else endif validation tests", () => {
             "    endif\n" +
             "endfor\n";
         const document: TextDocument = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -60,6 +62,7 @@ suite("If elseif else endif validation tests", () => {
             "    endif\n" +
             "endfor\n";
         const document: TextDocument = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
@@ -77,7 +80,7 @@ suite("If elseif else endif validation tests", () => {
             },
             DiagnosticSeverity.Error, endIfError,
         )];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -93,6 +96,7 @@ suite("If elseif else endif validation tests", () => {
             "    endif\n" +
             "endfor\n";
         const document: TextDocument = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
@@ -110,7 +114,7 @@ suite("If elseif else endif validation tests", () => {
             },
             DiagnosticSeverity.Error, endIfError,
         )];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -126,6 +130,7 @@ suite("If elseif else endif validation tests", () => {
             "    endif /* a comment */ # too\n" +
             "endfor\n";
         const document: TextDocument = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
@@ -143,7 +148,7 @@ suite("If elseif else endif validation tests", () => {
             },
             DiagnosticSeverity.Error, endIfError,
         )];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -160,6 +165,7 @@ suite("If elseif else endif validation tests", () => {
             "      color = yellow\n" +
             "endfor\n";
         const document: TextDocument = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
@@ -177,7 +183,7 @@ suite("If elseif else endif validation tests", () => {
             },
             DiagnosticSeverity.Error, ifError,
         )];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 

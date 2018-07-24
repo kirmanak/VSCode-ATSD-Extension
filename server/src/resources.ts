@@ -6,6 +6,7 @@ export const parentSections = new Map<string, string[]>();
 parentSections.set("widget", ["group", "configuration"]);
 parentSections.set("series", ["widget"]);
 
+// returns array of parent sections for the section
 export function getParents(section: string): string[] {
     const parents: string[] = [];
     const found = parentSections.get(section);

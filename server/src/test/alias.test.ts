@@ -1,7 +1,7 @@
 import * as assert from "assert";
 import { Diagnostic, DiagnosticSeverity } from "vscode-languageserver/lib/main";
 import * as Shared from "../sharedFunctions";
-import * as Functions from "../validateFunctions";
+import Validator from "../Validator";
 
 suite("Incorrect dealias tests", () => {
 
@@ -16,8 +16,9 @@ suite("Incorrect dealias tests", () => {
             "   entity = srv\n" +
             "   value = value('s1') * 2";
         const document = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -32,6 +33,7 @@ suite("Incorrect dealias tests", () => {
             "   entity = srv\n" +
             "   value = value('s2') * 2";
         const document = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
@@ -41,7 +43,7 @@ suite("Incorrect dealias tests", () => {
             },
             DiagnosticSeverity.Error, Shared.errorMessage("s2", "s1"),
         )];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -56,8 +58,9 @@ suite("Incorrect dealias tests", () => {
             "   entity = srv\n" +
             "   alias = s1";
         const document = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -76,6 +79,7 @@ suite("Incorrect dealias tests", () => {
             "   entity = srv\n" +
             "   value = value('s3') * 2";
         const document = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
@@ -93,7 +97,7 @@ suite("Incorrect dealias tests", () => {
             },
             DiagnosticSeverity.Error, Shared.errorMessage("s3", "s1"),
         )];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -116,8 +120,9 @@ suite("Incorrect dealias tests", () => {
             "   entity = srv\n" +
             "   value = value('s2') * 2";
         const document = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -140,6 +145,7 @@ suite("Incorrect dealias tests", () => {
             "   entity = srv\n" +
             "   value = value('s2') * 2";
         const document = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
@@ -149,7 +155,7 @@ suite("Incorrect dealias tests", () => {
             },
             DiagnosticSeverity.Error, Shared.errorMessage("s3", "s1"),
         )];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -164,8 +170,9 @@ suite("Incorrect dealias tests", () => {
             "   entity = srv\n" +
             "	value = value('src');\n";
         const document = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 

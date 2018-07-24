@@ -1,7 +1,7 @@
 import * as assert from "assert";
 import { Diagnostic, DiagnosticSeverity, TextDocument } from "vscode-languageserver/lib/main";
 import * as Shared from "../sharedFunctions";
-import * as Functions from "../validateFunctions";
+import Validator from "../Validator";
 
 suite("Warn about setting interpreted as a tag", () => {
 
@@ -11,6 +11,7 @@ suite("Warn about setting interpreted as a tag", () => {
             "	starttime = 20 second\n" +
             "	startime = 30 minute\n";
         const document: TextDocument = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
@@ -20,7 +21,7 @@ suite("Warn about setting interpreted as a tag", () => {
             },
             DiagnosticSeverity.Information, "starttime is interpreted as a tag",
         )];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -30,8 +31,9 @@ suite("Warn about setting interpreted as a tag", () => {
             '	"starttime" = 20 second\n' +
             "	startime = 30 minute\n";
         const document: TextDocument = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -41,6 +43,7 @@ suite("Warn about setting interpreted as a tag", () => {
             "	stArt-time = 20 second\n" +
             "	startime = 30 minute\n";
         const document: TextDocument = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
@@ -50,7 +53,7 @@ suite("Warn about setting interpreted as a tag", () => {
             },
             DiagnosticSeverity.Information, "starttime is interpreted as a tag",
         )];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 

@@ -1,7 +1,7 @@
 import * as assert from "assert";
 import { Diagnostic, DiagnosticSeverity, TextDocument } from "vscode-languageserver/lib/main";
 import * as Shared from "../sharedFunctions";
-import * as Functions from "../validateFunctions";
+import Validator from "../Validator";
 
 suite("Spelling checks", () => {
 
@@ -12,6 +12,7 @@ suite("Spelling checks", () => {
             "	starttime = 20 second\n" +
             "	startime = 30 minute\n";
         const document: TextDocument = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
@@ -21,7 +22,7 @@ suite("Spelling checks", () => {
             },
             DiagnosticSeverity.Error, Shared.errorMessage("startime", "starttime"),
         )];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -30,6 +31,7 @@ suite("Spelling checks", () => {
             "[eries]\n" +
             "	starttime = 20 second\n";
         const document: TextDocument = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
@@ -39,7 +41,7 @@ suite("Spelling checks", () => {
             },
             DiagnosticSeverity.Error, Shared.errorMessage("eries", "series"),
         )];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -48,6 +50,7 @@ suite("Spelling checks", () => {
             "[starttime]\n" +
             "	starttime = 20 second\n";
         const document: TextDocument = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
@@ -57,7 +60,7 @@ suite("Spelling checks", () => {
             },
             DiagnosticSeverity.Error, Shared.errorMessage("starttime", "series"),
         )];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -66,8 +69,9 @@ suite("Spelling checks", () => {
             "[tags]\n" +
             "	startime = 20 second\n";
         const document: TextDocument = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -78,6 +82,7 @@ suite("Spelling checks", () => {
             "[starttime]\n" +
             "	startime = 20 second\n";
         const document: TextDocument = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
@@ -95,7 +100,7 @@ suite("Spelling checks", () => {
             },
             DiagnosticSeverity.Error, Shared.errorMessage("startime", "starttime"),
         )];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -106,6 +111,7 @@ suite("Spelling checks", () => {
             "\n" +
             "startime = 20 second\n";
         const document: TextDocument = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
@@ -115,7 +121,7 @@ suite("Spelling checks", () => {
             },
             DiagnosticSeverity.Error, Shared.errorMessage("startime", "starttime"),
         )];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 

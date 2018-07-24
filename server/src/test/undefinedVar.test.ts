@@ -1,7 +1,7 @@
 import * as assert from "assert";
 import { Diagnostic, DiagnosticSeverity, TextDocument } from "vscode-languageserver/lib/main";
 import * as Shared from "../sharedFunctions";
-import * as Functions from "../validateFunctions";
+import Validator from "../Validator";
 
 const firstVar = "serv";
 const secondVar = "server";
@@ -18,8 +18,9 @@ suite("Undefined variable in for loop", () => {
             `       entity = @{${firstVar}}\n` +
             "endfor";
         const document: TextDocument = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -32,8 +33,9 @@ suite("Undefined variable in for loop", () => {
             `       entity = @{${firstVar}}\n` +
             "endfor";
         const document: TextDocument = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -51,8 +53,9 @@ suite("Undefined variable in for loop", () => {
             `       entity = @{${firstVar}}\n` +
             "endfor";
         const document: TextDocument = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -65,6 +68,7 @@ suite("Undefined variable in for loop", () => {
             `       entity = @{${firstVar}}\n` +
             "endfor";
         const document: TextDocument = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
@@ -74,7 +78,7 @@ suite("Undefined variable in for loop", () => {
             },
             DiagnosticSeverity.Error, Shared.errorMessage(firstVar, secondVar),
         )];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -92,6 +96,7 @@ suite("Undefined variable in for loop", () => {
             `       entity = @{${secondVar}}\n` +
             "endfor";
         const document: TextDocument = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
@@ -109,7 +114,7 @@ suite("Undefined variable in for loop", () => {
             },
             DiagnosticSeverity.Error, Shared.errorMessage(secondVar, "servers"),
         )];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -127,6 +132,7 @@ suite("Undefined variable in for loop", () => {
             `       entity = @{${firstVar}}\n` +
             "endfor";
         const document: TextDocument = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
@@ -136,7 +142,7 @@ suite("Undefined variable in for loop", () => {
             },
             DiagnosticSeverity.Error, Shared.errorMessage(firstVar, secondVar),
         )];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -157,8 +163,9 @@ suite("Undefined variable in for loop", () => {
             "   endfor\n" +
             "endfor";
         const document: TextDocument = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -179,6 +186,7 @@ suite("Undefined variable in for loop", () => {
             "   endfor\n" +
             "endfor";
         const document: TextDocument = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
@@ -188,7 +196,7 @@ suite("Undefined variable in for loop", () => {
             },
             DiagnosticSeverity.Error, Shared.errorMessage(thirdVar, firstVar),
         )];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -201,8 +209,9 @@ suite("Undefined variable in for loop", () => {
             `       entity = @{${firstVar} + ${firstVar}}\n` +
             "endfor";
         const document: TextDocument = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -215,6 +224,7 @@ suite("Undefined variable in for loop", () => {
             `       entity = @{${secondVar} + ${firstVar}}\n` +
             "endfor";
         const document: TextDocument = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
@@ -224,7 +234,7 @@ suite("Undefined variable in for loop", () => {
             },
             DiagnosticSeverity.Error, Shared.errorMessage(secondVar, "servers"),
         )];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -237,8 +247,9 @@ suite("Undefined variable in for loop", () => {
             `       entity = @{keepAfterLast(${secondVar}, '1')}\n` +
             "endfor";
         const document: TextDocument = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -251,8 +262,9 @@ suite("Undefined variable in for loop", () => {
             `       entity = @{${secondVar}.name}\n` +
             "endfor";
         const document: TextDocument = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -265,8 +277,9 @@ suite("Undefined variable in for loop", () => {
             `       entity = @{keepAfterLast(${secondVar}, 'v')}\n` +
             "endfor";
         const document: TextDocument = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -279,6 +292,7 @@ suite("Undefined variable in for loop", () => {
             `       entity = @{keepAfterLast(${secondVar}, 'v')}, @{${firstVar}}\n` +
             "endfor";
         const document: TextDocument = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
@@ -291,7 +305,7 @@ suite("Undefined variable in for loop", () => {
             },
             DiagnosticSeverity.Error, Shared.errorMessage(firstVar, secondVar),
         )];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 

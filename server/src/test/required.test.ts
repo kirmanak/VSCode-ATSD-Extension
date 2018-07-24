@@ -1,7 +1,7 @@
 import * as assert from "assert";
 import { Diagnostic, DiagnosticSeverity } from "vscode-languageserver/lib/main";
 import * as Shared from "../sharedFunctions";
-import * as Functions from "../validateFunctions";
+import Validator from "../Validator";
 
 suite("Required settings for sections tests", () => {
 
@@ -11,8 +11,9 @@ suite("Required settings for sections tests", () => {
             "   entity = hello\n" +
             "   metric = hello\n";
         const document = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -21,6 +22,7 @@ suite("Required settings for sections tests", () => {
             "[series]\n" +
             "   metric = hello\n";
         const document = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
@@ -31,7 +33,7 @@ suite("Required settings for sections tests", () => {
             },
             DiagnosticSeverity.Error, "entity is required",
         )];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -43,8 +45,9 @@ suite("Required settings for sections tests", () => {
             "   [series]\n" +
             "       metric = hello\n";
         const document = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -57,8 +60,9 @@ suite("Required settings for sections tests", () => {
             "   [series]\n" +
             "       metric = hello\n";
         const document = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -75,6 +79,7 @@ suite("Required settings for sections tests", () => {
             "       [series]\n" +
             "           metric = hello\n";
         const document = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
@@ -85,7 +90,7 @@ suite("Required settings for sections tests", () => {
             },
             DiagnosticSeverity.Error, "entity is required",
         )];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -96,6 +101,7 @@ suite("Required settings for sections tests", () => {
             "[series]\n" +
             "   entity = hello\n";
         const document = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
@@ -115,7 +121,55 @@ suite("Required settings for sections tests", () => {
             },
             DiagnosticSeverity.Error, "metric is required",
         )];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
+
+    test("A setting is specified in if statement", () => {
+        const text =
+            "list servers = vps, vds\n" +
+            "for server in servers\n" +
+            "   [series]\n" +
+            "       metric = cpu_busy\n" +
+            "       if server == 'vps'\n" +
+            "           entity = vds\n" +
+            "       else\n" +
+            "           entity = vps\n" +
+            "       endif\n" +
+            "endfor\n";
+        const document = Shared.createDoc(text);
+        const validator = new Validator(document);
+        const expected: Diagnostic[] = [];
+        const result = validator.lineByLine();
+        assert.deepEqual(result, expected);
+    });
+
+    test("A setting is specified only in if-elseif statements", () => {
+        const text =
+            "list servers = vps, vds\n" +
+            "for server in servers\n" +
+            "   [series]\n" +
+            "       metric = cpu_busy\n" +
+            "       if server == 'vps'\n" +
+            "           entity = vds\n" +
+            "       elseif server = 'vds'\n" +
+            "           entity = vps\n" +
+            "       endif\n" +
+            "endfor\n";
+        const document = Shared.createDoc(text);
+        const validator = new Validator(document);
+        const expected: Diagnostic[] = [Shared.createDiagnostic(
+            {
+                range: {
+                    end: { line: 2, character: "   [".length + "series".length },
+                    start: { line: 2, character: "   [".length },
+                },
+                uri: document.uri,
+            },
+            DiagnosticSeverity.Error, "entity is required",
+        )];
+        const result = validator.lineByLine();
+        assert.deepEqual(result, expected);
+    });
+
 });

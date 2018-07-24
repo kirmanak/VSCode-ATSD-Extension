@@ -1,7 +1,7 @@
 import * as assert from "assert";
 import { Diagnostic, DiagnosticSeverity } from "vscode-languageserver/lib/main";
 import * as Shared from "../sharedFunctions";
-import * as Functions from "../validateFunctions";
+import Validator from "../Validator";
 
 suite("Var endvar tests", () => {
 
@@ -9,8 +9,9 @@ suite("Var endvar tests", () => {
         const text =
             "var v = [[9,3], [9,4]]";
         const document = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -18,8 +19,9 @@ suite("Var endvar tests", () => {
         const text =
             `var v = { "hello": "value", "array": ["val", "value"]}`;
         const document = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -31,8 +33,9 @@ suite("Var endvar tests", () => {
             `}\n` +
             `endvar`;
         const document = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -43,8 +46,9 @@ suite("Var endvar tests", () => {
             "]\n" +
             "endvar";
         const document = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -55,6 +59,7 @@ suite("Var endvar tests", () => {
             "]\n" +
             "edvar";
         const document = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
@@ -64,7 +69,7 @@ suite("Var endvar tests", () => {
             },
             DiagnosticSeverity.Error, "var has no matching endvar",
         )];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -76,6 +81,7 @@ suite("Var endvar tests", () => {
             `}\n` +
             `edvar`;
         const document = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
@@ -85,7 +91,7 @@ suite("Var endvar tests", () => {
             },
             DiagnosticSeverity.Error, "var has no matching endvar",
         )];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -97,6 +103,7 @@ suite("Var endvar tests", () => {
             `]\n` +
             `edvar`;
         const document = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
@@ -106,7 +113,7 @@ suite("Var endvar tests", () => {
             },
             DiagnosticSeverity.Error, "var has no matching endvar",
         )];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -114,8 +121,9 @@ suite("Var endvar tests", () => {
         const text =
             `var v = getEntities("hello")`;
         const document = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 

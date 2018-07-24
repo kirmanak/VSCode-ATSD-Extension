@@ -1,7 +1,7 @@
 import * as assert from "assert";
 import { Diagnostic, DiagnosticSeverity, TextDocument } from "vscode-languageserver/lib/main";
 import * as Shared from "../sharedFunctions";
-import * as Functions from "../validateFunctions";
+import Validator from "../Validator";
 
 suite("Unmatched endfor tests", () => {
 
@@ -12,8 +12,9 @@ suite("Unmatched endfor tests", () => {
             "   do something\n" +
             "endfor";
         const document: TextDocument = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -27,8 +28,9 @@ suite("Unmatched endfor tests", () => {
             "   do something\n" +
             "endfor";
         const document: TextDocument = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -38,6 +40,7 @@ suite("Unmatched endfor tests", () => {
             "for server in servers\n" +
             "   do something\n";
         const document: TextDocument = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
@@ -47,7 +50,7 @@ suite("Unmatched endfor tests", () => {
             },
             DiagnosticSeverity.Error, "for has no matching endfor",
         )];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -59,6 +62,7 @@ suite("Unmatched endfor tests", () => {
             "for srv in servers\n" +
             "   do something\n";
         const document: TextDocument = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                  range: {
@@ -76,7 +80,7 @@ suite("Unmatched endfor tests", () => {
             },
             DiagnosticSeverity.Error, "for has no matching endfor",
         )];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -89,6 +93,7 @@ suite("Unmatched endfor tests", () => {
             "   do something\n" +
             "endfor";
         const document: TextDocument = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
@@ -98,7 +103,7 @@ suite("Unmatched endfor tests", () => {
             },
             DiagnosticSeverity.Error, "for has no matching endfor",
         )];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 

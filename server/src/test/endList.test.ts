@@ -1,7 +1,7 @@
 import * as assert from "assert";
 import { Diagnostic, DiagnosticSeverity, TextDocument } from "vscode-languageserver/lib/main";
 import * as Shared from "../sharedFunctions";
-import * as Functions from "../validateFunctions";
+import Validator from "../Validator";
 
 const errorMessage = "list has no matching endlist";
 
@@ -11,8 +11,9 @@ suite("Unfinished list", () => {
         const text =
             "list servers = vps, vds\n";
         const document: TextDocument = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -22,8 +23,9 @@ suite("Unfinished list", () => {
             "	vds\n" +
             "endlist";
         const document: TextDocument = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -33,6 +35,7 @@ suite("Unfinished list", () => {
             "	vds\n" +
             "edlist";
         const document: TextDocument = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
@@ -42,7 +45,7 @@ suite("Unfinished list", () => {
             },
             DiagnosticSeverity.Error, errorMessage,
         )];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -56,6 +59,7 @@ suite("Unfinished list", () => {
             "	vds\n" +
             "edlist";
         const document: TextDocument = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
@@ -65,7 +69,7 @@ suite("Unfinished list", () => {
             },
             DiagnosticSeverity.Error, errorMessage,
         )];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -75,6 +79,7 @@ suite("Unfinished list", () => {
             "	vds\n" +
             "edlist";
         const document: TextDocument = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
@@ -84,7 +89,7 @@ suite("Unfinished list", () => {
             },
             DiagnosticSeverity.Error, errorMessage,
         )];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -98,6 +103,7 @@ suite("Unfinished list", () => {
             "	vds\n" +
             "edlist";
         const document: TextDocument = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
@@ -107,7 +113,7 @@ suite("Unfinished list", () => {
             },
             DiagnosticSeverity.Error, errorMessage,
         )];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -123,6 +129,7 @@ suite("Unfinished list", () => {
             "	vds\n" +
             "endlist\n";
         const document: TextDocument = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
@@ -132,7 +139,7 @@ suite("Unfinished list", () => {
             },
             DiagnosticSeverity.Error, errorMessage,
         )];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
 
     });
@@ -143,8 +150,9 @@ suite("Unfinished list", () => {
             "	,vds\n" +
             "endlist";
         const document = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -154,6 +162,7 @@ suite("Unfinished list", () => {
             "	,vds\n" +
             "edlist";
         const document = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
@@ -163,7 +172,7 @@ suite("Unfinished list", () => {
             },
             DiagnosticSeverity.Error, errorMessage,
         )];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 

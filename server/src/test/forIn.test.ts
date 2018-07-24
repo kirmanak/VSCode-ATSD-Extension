@@ -1,7 +1,7 @@
 import * as assert from "assert";
 import { Diagnostic, DiagnosticSeverity } from "vscode-languageserver/lib/main";
 import * as Shared from "../sharedFunctions";
-import * as Functions from "../validateFunctions";
+import Validator from "../Validator";
 
 suite("for in ... tests", () => {
 
@@ -12,8 +12,9 @@ suite("for in ... tests", () => {
             "   #do something\n" +
             "endfor\n";
         const document = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -24,6 +25,7 @@ suite("for in ... tests", () => {
             "   #do something\n" +
             "endfor\n";
         const document = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
@@ -33,7 +35,7 @@ suite("for in ... tests", () => {
             },
             DiagnosticSeverity.Error, Shared.errorMessage("server", "servers"),
         )];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -44,6 +46,7 @@ suite("for in ... tests", () => {
             "   #do something\n" +
             "endfor\n";
         const document = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
@@ -53,7 +56,7 @@ suite("for in ... tests", () => {
             },
             DiagnosticSeverity.Error, Shared.errorMessage("server", "servers"),
         )];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -64,8 +67,9 @@ suite("for in ... tests", () => {
             "   #do something\n" +
             "endfor\n";
         const document = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -76,6 +80,7 @@ suite("for in ... tests", () => {
             "   #do something\n" +
             "endfor\n";
         const document = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
@@ -85,7 +90,7 @@ suite("for in ... tests", () => {
             },
             DiagnosticSeverity.Error, Shared.errorMessage("server", "servers"),
         )];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -96,8 +101,9 @@ suite("for in ... tests", () => {
             "   #do something\n" +
             "endfor\n";
         const document = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -110,8 +116,9 @@ suite("for in ... tests", () => {
             "   #do something\n" +
             "endfor\n";
         const document = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -124,6 +131,7 @@ suite("for in ... tests", () => {
             "   #do something\n" +
             "endfor\n";
         const document = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
@@ -133,7 +141,7 @@ suite("for in ... tests", () => {
             },
             DiagnosticSeverity.Error, Shared.errorMessage("server", "servers"),
         )];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -147,6 +155,7 @@ suite("for in ... tests", () => {
             "   #do something\n" +
             "endfor\n";
         const document = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
@@ -156,7 +165,7 @@ suite("for in ... tests", () => {
             },
             DiagnosticSeverity.Error, Shared.errorMessage("server", "servers"),
         )];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -170,8 +179,9 @@ suite("for in ... tests", () => {
             "   #do something\n" +
             "endfor\n";
         const document = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -185,6 +195,7 @@ suite("for in ... tests", () => {
             "   #do something\n" +
             "endfor\n";
         const document = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
@@ -194,7 +205,7 @@ suite("for in ... tests", () => {
             },
             DiagnosticSeverity.Error, Shared.errorMessage("server", "servers"),
         )];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -208,8 +219,9 @@ suite("for in ... tests", () => {
             "   #do something\n" +
             "endfor\n";
         const document = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -223,6 +235,7 @@ suite("for in ... tests", () => {
             "}\n" +
             "endvar\n";
         const document = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
@@ -232,7 +245,7 @@ suite("for in ... tests", () => {
             },
             DiagnosticSeverity.Error, Shared.errorMessage("servers", null),
         )];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -246,6 +259,7 @@ suite("for in ... tests", () => {
             "}\n" +
             "endvar\n";
         const document = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
@@ -255,7 +269,7 @@ suite("for in ... tests", () => {
             },
             DiagnosticSeverity.Error, Shared.errorMessage("servers", null),
         )];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -265,6 +279,7 @@ suite("for in ... tests", () => {
             "   #do something\n" +
             "endfor\n";
         const document = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
@@ -274,7 +289,7 @@ suite("for in ... tests", () => {
             },
             DiagnosticSeverity.Error, "Empty 'in' statement",
         )];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 

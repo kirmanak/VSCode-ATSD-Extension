@@ -1,7 +1,7 @@
 import * as assert from "assert";
 import { Diagnostic, DiagnosticSeverity } from "vscode-languageserver/lib/main";
 import * as Shared from "../sharedFunctions";
-import * as Functions from "../validateFunctions";
+import Validator from "../Validator";
 
 suite("CSV tests", () => {
 
@@ -13,8 +13,9 @@ suite("CSV tests", () => {
             "   USA, 63, 63\n" +
             "endcsv";
         const document = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -25,8 +26,9 @@ suite("CSV tests", () => {
             "   USA, 63, 63\n" +
             "endcsv";
         const document = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -37,6 +39,7 @@ suite("CSV tests", () => {
             "   USA, 63, 63\n" +
             "encsv";
         const document = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
@@ -54,7 +57,7 @@ suite("CSV tests", () => {
             },
             DiagnosticSeverity.Error, "csv has no matching endcsv",
         )];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -66,6 +69,7 @@ suite("CSV tests", () => {
             "   USA, 63, 63\n" +
             "encsv";
         const document = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
@@ -85,7 +89,7 @@ suite("CSV tests", () => {
             },
             DiagnosticSeverity.Error, "csv has no matching endcsv",
         )];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -96,6 +100,7 @@ suite("CSV tests", () => {
             "   USA, 63, 63, 63\n" +
             "endcsv";
         const document = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
@@ -106,7 +111,7 @@ suite("CSV tests", () => {
             },
             DiagnosticSeverity.Error, "Expected 3 columns, but found 4",
         )];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -117,8 +122,9 @@ suite("CSV tests", () => {
             '   USA, 63, "6 3"\n' +
             "endcsv";
         const document = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 

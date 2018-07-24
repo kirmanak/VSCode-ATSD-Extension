@@ -1,7 +1,7 @@
 import * as assert from "assert";
 import { Diagnostic, DiagnosticSeverity } from "vscode-languageserver/lib/main";
 import * as Shared from "../sharedFunctions";
-import * as Functions from "../validateFunctions";
+import Validator from "../Validator";
 
 const errorMessage = "script has no matching endscript";
 
@@ -12,8 +12,9 @@ suite("Script endscript tests", () => {
             `script\n` +
             `endscript`;
         const document = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -22,6 +23,7 @@ suite("Script endscript tests", () => {
             `script\n` +
             `endscrpt`;
         const document = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
@@ -31,7 +33,7 @@ suite("Script endscript tests", () => {
             },
             DiagnosticSeverity.Error, errorMessage,
         )];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -41,8 +43,9 @@ suite("Script endscript tests", () => {
             `	for (let i = 0; i < 5; i++) {}\n` +
             `endscript`;
         const document = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -55,8 +58,9 @@ suite("Script endscript tests", () => {
             `	for (let i = 0; i < 5; i++) {}\n` +
             `endscript`;
         const document = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -67,6 +71,7 @@ suite("Script endscript tests", () => {
             `script\n` +
             `endscrpt`;
         const document = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
@@ -76,7 +81,7 @@ suite("Script endscript tests", () => {
             },
             DiagnosticSeverity.Error, errorMessage,
         )];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -84,8 +89,9 @@ suite("Script endscript tests", () => {
         const text =
             `script = if (!config.isDialog) c = widget`;
         const document = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -97,8 +103,9 @@ suite("Script endscript tests", () => {
             `			c = widget\n` +
             `endscript`;
         const document = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -106,6 +113,7 @@ suite("Script endscript tests", () => {
         const text =
             `script = `;
         const document = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
@@ -115,7 +123,7 @@ suite("Script endscript tests", () => {
             },
             DiagnosticSeverity.Error, errorMessage,
         )];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -124,8 +132,9 @@ suite("Script endscript tests", () => {
             `script = \n` +
             `endscript`;
         const document = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 
@@ -137,8 +146,9 @@ suite("Script endscript tests", () => {
             `			c = widget\n` +
             `endscript`;
         const document = Shared.createDoc(text);
+        const validator = new Validator(document);
         const expected: Diagnostic[] = [];
-        const result = Functions.lineByLine(document);
+        const result = validator.lineByLine();
         assert.deepEqual(result, expected);
     });
 

@@ -1,10 +1,9 @@
 import {
     createConnection, Diagnostic, DidChangeConfigurationNotification, InitializeParams,
     ProposedFeatures, TextDocument, TextDocuments,
-} from "vscode-languageserver";
+} from "vscode-languageserver/lib/main";
 import * as jsDomCaller from "./jsdomCaller";
-
-import * as validateFunctions from "./validateFunctions";
+import Validator from "./Validator";
 
 // Create a connection for the server. The connection uses Node"s IPC as a transport.
 // Also include all preview / proposed LSP features.
@@ -93,6 +92,7 @@ documents.onDidChangeContent((change) => {
 async function validateTextDocument(textDocument: TextDocument): Promise<void> {
     const diagnostics: Diagnostic[] = [];
     const settings = await getDocumentSettings(textDocument.uri);
+    const validator = new Validator(textDocument);
 
     if (settings.validateFunctions) {
         jsDomCaller.validate(textDocument).forEach((element) => {
@@ -100,8 +100,8 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
         });
     }
 
-    validateFunctions.lineByLine(textDocument).forEach((element) => {
-        diagnostics.push(element);
+    validator.lineByLine().forEach((diagnostic) => {
+        diagnostics.push(diagnostic);
     });
 
     // Send the computed diagnostics to VSCode.
