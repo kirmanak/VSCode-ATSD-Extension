@@ -1,5 +1,19 @@
 {
-    "For_Loop": {
+    "Configuration": {
+        "prefix": "cfg",
+        "body": [
+            "[configuration]",
+            "\toffset-right = ${1:50}",
+            "\theight-units = ${2:2}",
+            "\twidth-units = ${3:2}",
+            "",
+            "\t[group]",
+            "",
+            "\t\t${0}"
+        ],
+        "description": "Initial configuration"
+    },
+    "For loop": {
         "prefix": "for",
         "body": [
             "for ${1:item} in ${2:collection}",
@@ -17,27 +31,540 @@
         ],
         "description": "If condition"
     },
-    "Widget": {
-        "prefix": "wgt",
+    "chart-basic": {
+        "prefix": "wchart-basic",
         "body": [
             "[widget]",
-            "\ttype = ${1:chart}",
-            "\ttitle = ${2:title}",
+            "\ttype = chart",
+            "\ttitle = ${1:basic chart}",
+            "\ttimespan = ${2:1 hour}",
+            "\tmax-range = ${3:100}",
+            "",
             "\t[series]",
             "\t\t${0}"
         ],
-        "description": "Widget section"
+        "description": "Basic chart"
     },
-    "Configuration": {
-        "prefix": "cfg",
+    "bar": {
+        "prefix": "wbar",
         "body": [
-            "[configuration]",
-            "\toffset-right = 50",
-            "\theight-units = 2",
-            "\twidth-units = 2",
+            "[widget]",
+            "\ttype = bar",
+            "\ttitle = ${1:bar}",
+            "\ttimespan = ${2:5 minute}",
             "",
-            "\t[group]"
+            "\t[column]",
+            "",
+            "\t\t[series]",
+            "\t\t\tentity = ${3:nurswgvml007}",
+            "\t\t\tmetric = ${4:cpu_user}",
+            "\t\t\t${0}"
         ],
-        "description": "Initial configuration"
+        "description": "Bar"
+    },
+    "bar-horizontal": {
+        "prefix": "wbar-horizontal",
+        "body": [
+            "[widget]",
+            "\ttype = bar",
+            "\ttitle = ${1:Horizontal bar}",
+            "\thorizontal = true",
+            "\ttimespan = ${2:5 minute}",
+            "",
+            "\t[column]",
+            "",
+            "\t\t[series]",
+            "\t\t\tentity = ${3:nurswgvml007}",
+            "\t\t\tmetric = ${4:cpu_user}",
+            "\t\t\t${0}"
+        ],
+        "description": "Horizontal bar"
+    },
+    "box": {
+        "prefix": "wbox",
+        "body": [
+            "[widget]",
+            "\ttype = box",
+            "\ttitle = ${1:Box}",
+            "\ttimespan = ${2:1 hour}",
+            "\tautoscale = ${3:false}",
+            "",
+            "\t[series]",
+            "\t\tentity = ${4:nurswgvml006}",
+            "\t\tmetric = ${5:memfree}",
+            "\t\tformat = ${6:kilobytes}",
+            "\t\taxis = ${7:right}",
+            "\t\t${0}"
+        ],
+        "description": "Box"
+    },
+    "calendar": {
+        "prefix": "wcalendar",
+        "body": [
+            "[widget]",
+            "\ttype = calendar",
+            "\ttitle = ${1:Calendar}",
+            "\ttimespan = ${2:3 hour}",
+            "\tsummarize-period = ${3:10 minute}",
+            "\tcolor-range = ${4:blue}",
+            "",
+            "\t[series]",
+            "\t\tentity = ${5:nurswgvml010}",
+            "\t\tmetric = ${6:cpu_busy}",
+            "\t\t${0}"
+        ],
+        "description": "Calendar"
+    },
+    "calendar-thresholds": {
+        "prefix": "wcalendar-thresholds",
+        "body": [
+            "[widget]",
+            "\ttype = calendar",
+            "\ttitle = ${1:Calendar}",
+            "\ttimespan = ${2:3 hour}",
+            "\tsummarize-period = ${3:5 minute}",
+            "",
+            "\tcolor-range = ${4:red}",
+            "\tthresholds = ${5:10, 20, 30, 40, 50, 60, 70, 80, 90, 100}",
+            "",
+            "\t[series]",
+            "\t\tentity = ${6:nurswgvml010}",
+            "\t\tmetric = ${7:cpu_busy}",
+            "\t\tstatistic = ${8:percentile_95}",
+            "\t\tperiod = ${9:5 minute}",
+            "\t\t${0}"
+        ],
+        "description": "Calendar with thresholds"
+    },
+    "chart": {
+        "prefix": "wchart",
+        "body": [
+            "[widget]",
+            "\ttype = chart",
+            "\ttitle = ${1:Chart}",
+            "\ttimespan = ${2:1 hour}",
+            "\tstep-line = ${3:false}",
+            "\tmin-range = ${4:0}",
+            "\tmax-range = ${5:100}",
+            "",
+            "\t[series]",
+            "\t\tentity = ${6:nurswgvml010}",
+            "\t\tmetric = ${7:cpu_busy}",
+            "\t\tstatistic = ${8:avg}",
+            "\t\tperiod = ${9:5 minute}",
+            "\t\t${0}"
+        ],
+        "description": "Chart"
+    },
+    "chart-alert": {
+        "prefix": "wchart-alert",
+        "body": [
+            "[widget]",
+            "\ttype = chart",
+            "\ttitle = ${1:Alert chart}",
+            "\ttimespan = ${2:1 hour}",
+            "\tmax-range = ${3:100}",
+            "",
+            "\t[series]",
+            "\t\tentity = ${4:nurswgvml006}",
+            "\t\tmetric = ${5:cpu_busy}",
+            "\t\talert-expression = ${6:value > 5}",
+            "\t\talert-style = ${7:stroke: red}",
+            "\t\t${0}"
+        ],
+        "description": "Alert chart "
+    },
+    "chart-column": {
+        "prefix": "wchart-column",
+        "body": [
+            "[widget]",
+            "\ttype = chart",
+            "\ttitle = ${1:Column chart}",
+            "\ttimespan = ${2:24 hour}",
+            "\tmax-range = ${3:100}",
+            "",
+            "\t[series]",
+            "\t\tentity = ${4:nurswgvml006}",
+            "\t\tmetric = ${5:cpu_busy}",
+            "\t\tstatistic = ${6:percentile_75}",
+            "\t\tperiod = ${7:1 hour}",
+            "\t\tmode = column",
+            "\t\t${0}"
+        ],
+        "description": "Column chart"
+    },
+    "chart-combo": {
+        "prefix": "wchart-combo",
+        "body": [
+            "[widget]",
+            "\ttype = chart",
+            "\ttitle = ${1:Combo chart}",
+            "\ttimespan = ${2:4 hour}",
+            "\tmax-range = ${3:100}",
+            "",
+            "\t[series]",
+            "\t\tentity = ${4:nurswgvml007}",
+            "\t\tmetric = ${5:cpu_busy}",
+            "\t\tmode = ${6:column}",
+            "\t\tstatistic = ${7:percentile_75}",
+            "\t\tperiod = ${8:15 minute}",
+            "\t\tcolor = ${9:green}",
+            "\t\t${0}"
+        ],
+        "description": "Combo chart"
+    },
+    "chart-computed": {
+        "prefix": "wchart-computed",
+        "body": [
+            "[widget]",
+            "\ttype = chart",
+            "\ttitle = ${1:Computed chart}",
+            "\ttimespan = ${2:1 hour}",
+            "\tmax-range = ${3:100}",
+            "",
+            "\t[series]",
+            "\t\tentity = ${4:nurswgvml006}",
+            "\t\tmetric = ${5:memfree}",
+            "\t\tdisplay = false",
+            "\t\talias = ${6:free}",
+            "",
+            "\t[series]",
+            "\t\tentity = ${4:nurswgvml006}",
+            "\t\tmetric = ${7:memtotal}",
+            "\t\tdisplay = false",
+            "\t\talias = ${8:total}",
+            "",
+            "\t[series]",
+            "\t\tlabel = ${9:Memory Used, %}",
+            "\t\tvalue = ${10:(1 - value('${6:free}') / value('${8:total}')) * 100}",
+            "\t\tmarkers = ${11:false}",
+            "\t\t${0}"
+        ],
+        "description": "Computed chart"
+    },
+    "chart-dual-axis": {
+        "prefix": "wchart-dual-axis",
+        "body": [
+            "[widget]",
+            "\ttype = chart",
+            "\ttitle = ${1:Dual axis chart}",
+            "\ttimespan = ${2:1 hour}",
+            "\tstep-line = ${3:false}",
+            "\tmin-range = ${4:0}",
+            "\tmax-range = ${5:100}",
+            "",
+            "\t[series]",
+            "\t\tentity = ${6:nurswgvml007}",
+            "\t\tmetric = ${7:cpu_busy}",
+            "\t\tstatistic = ${8:avg}",
+            "\t\tperiod = ${9:5 minute}",
+            "",
+            "\t[series]",
+            "\t\tentity = ${6:nurswgvml007}",
+            "\t\tmetric = ${10:memfree}",
+            "\t\taxis = right",
+            "\t\tformat = ${11:kilobytes}",
+            "\t\tmarkers = false",
+            "\t\t${0}"
+        ],
+        "description": "Dual axis chart"
+    },
+    "chart-range": {
+        "prefix": "wchart-range",
+        "body": [
+            "[widget]",
+            "\ttype = chart",
+            "\ttitle = ${1:Range chart}",
+            "\tmode = range",
+            "\ttimespan = ${2:1 day}",
+            "\tstep-line = ${3:false}",
+            "",
+            "\t[series]",
+            "\t\tentity = ${4:nurswgvml006}",
+            "\t\tmetric = ${5:cpu_busy}",
+            "\t\tstatistic = ${6:percentile_75}",
+            "\t\tperiod = ${7:1 hour}",
+            "",
+            "\t[series]",
+            "\t\tentity = ${4:nurswgvml006}",
+            "\t\tmetric = ${5:cpu_busy}",
+            "\t\tstatistic = ${8:percentile_25}",
+            "\t\tperiod = ${7:1 hour}",
+            "\t\t${0}"
+        ],
+        "description": "Range chart"
+    },
+    "chart-stack": {
+        "prefix": "wchart-stack",
+        "body": [
+            "[widget]",
+            "\ttype = chart",
+            "\ttitle = ${1:Stack chart}",
+            "\tmode = stack",
+            "\tstepline = ${2:true}",
+            "\ttimespan = ${3:1 hour}",
+            "\tmax-range = ${4:100}",
+            "",
+            "\t[series]",
+            "\t\tentity = ${5:nurswgvml007}",
+            "\t\tmetric = ${6:cpu_user}",
+            "\t\tstatistic = ${7:avg}",
+            "\t\t${0}"
+        ],
+        "description": "Stack chart"
+    },
+    "alert-console": {
+        "prefix": "walert-console",
+        "body": [
+            "[widget]",
+            "\ttype = console",
+            "\ttitle = ${1:Alert console}",
+            "",
+            "\tseverity-style = ${2:row}",
+            "",
+            "\t[column]",
+            "\t\tkey = ${3:time}",
+            "\t\t${0}"
+        ],
+        "description": "Alert console"
+    },
+    "message-console": {
+        "prefix": "wmessage-console",
+        "body": [
+            "[widget]",
+            "\ttype = console",
+            "\ttitle = ${1:Message console}",
+            "\tsource = message",
+            "\tentity = ${2:nurswgvml007}",
+            "\t\t${0}"
+        ],
+        "description": "Message console"
+    },
+    "gauge": {
+        "prefix": "wgauge",
+        "body": [
+            "[widget]",
+            "\ttype = gauge",
+            "\ttitle = ${1:Gauge}",
+            "\tthresholds = ${2:0, 60, 80, 100}",
+            "\twidth-units = ${3:0.3}",
+            "\theight-units = ${4:0.3}",
+            "",
+            "\t[series]",
+            "\t\tentity = ${5:nurswgvml010}",
+            "\t\tmetric = ${6:cpu_busy}",
+            "\t\t${0}"
+        ],
+        "description": "Gauge"
+    },
+    "graph": {
+        "prefix": "wgraph",
+        "body": [
+            "[widget]",
+            "\ttype = graph",
+            "\ttitle = ${1:Graph}",
+            "\tnode-connect = ${2:false}",
+            "\tnode-labels = ${3:true}",
+            "\tlink-data = ${4:true}",
+            "\ttimespan = ${5:1 year}",
+            "\tendtime = ${6:date('2015-03-14')}",
+            "",
+            "\tnode-radius = ${7:20}",
+            "",
+            "\tnode-thresholds = ${8:-10, -5, 0, 5, 10}",
+            "\tnode-colors = ${9:red, orange, whitesmoke, limegreen, green}",
+            "",
+            "\tlink-thresholds = ${10:20000, 40000, 70000, 80000}",
+            "\tlink-widths = ${11:1, 2, 3, 8, 10}",
+            "",
+            "\t[node]",
+            "\t\tid = ${12:HEATHROW}",
+            "\t[node]",
+            "\t\tid = ${13:GLASGOW}",
+            "\t[node]",
+            "\t\tid = ${14:MANCHESTER}",
+            "",
+            "\t\t[link]",
+            "\t\t\tnodes = ${12:HEATHROW} - ${13:GLASGOW}",
+            "\t\t[link]",
+            "\t\t\tnodes = ${12:HEATHROW} - ${14:MANCHESTER}",
+            "\t\t[link]",
+            "\t\t\tnodes = ${13:GLASGOW} - ${14:MANCHESTER}",
+            "",
+            "\t\t\t[series]",
+            "\t\t\t\tentity = ${12:HEATHROW}",
+            "\t\t\t\tmetric = ${15:uk-air.total_pax_this_period}",
+            "\t\t\t\tlinks = ${12:HEATHROW} - ${13:GLASGOW}",
+            "\t\t\t\t[tags]",
+            "\t\t\t\t\t${16:airport_2_name} = ${13:GLASGOW}",
+            "",
+            "\t\t\t[series]",
+            "\t\t\t\tentity = ${12:HEATHROW}",
+            "\t\t\t\tmetric = ${15:uk-air.total_pax_this_period}",
+            "\t\t\t\tlinks = ${12:HEATHROW} - ${14:MANCHESTER}",
+            "\t\t\t\t[tags]",
+            "\t\t\t\t\t${16:airport_2_name} = ${14:MANCHESTER}",
+            "",
+            "\t\t\t[series]",
+            "\t\t\t\tentity = ${13:GLASGOW}",
+            "\t\t\t\tmetric = ${15:uk-air.total_pax_this_period}",
+            "\t\t\t\tlinks = ${13:GLASGOW} - ${14:MANCHESTER}",
+            "\t\t\t\t[tags]",
+            "\t\t\t\t\t${16:airport_2_name} = ${14:MANCHESTER}",
+            "",
+            "\t\t\t[series]",
+            "\t\t\t\tentity = ${12:HEATHROW}",
+            "\t\t\t\tmetric = ${17:uk-air.total_pax_growth_percent}",
+            "\t\t\t\tnodes = ${12:HEATHROW}",
+            "",
+            "\t\t\t[series]",
+            "\t\t\t\tentity = ${14:MANCHESTER}",
+            "\t\t\t\tmetric = ${17:uk-air.total_pax_growth_percent}",
+            "\t\t\t\tnodes = ${14:MANCHESTER}",
+            "",
+            "\t\t\t[series]",
+            "\t\t\t\tentity = ${13:GLASGOW}",
+            "\t\t\t\tmetric = ${17:uk-air.total_pax_growth_percent}",
+            "\t\t\t\tnodes = ${13:GLASGOW}",
+            "\t\t\t\t${0}"
+        ],
+        "description": "Graph"
+    },
+    "pie": {
+        "prefix": "wpie",
+        "body": [
+            "[widget]",
+            "\ttype = pie",
+            "\ttitle = ${1:Pie}",
+            "",
+            "\t[series]",
+            "\t\tentity = ${2:nurswgvml010}",
+            "\t\tmetric = ${3:disk_used}",
+            "\t\t${0}"
+        ],
+        "description": "Pie"
+    },
+    "property": {
+        "prefix": "wproperty",
+        "body": [
+            "[widget]",
+            "\ttype = property",
+            "\ttitle = ${1:Property}",
+            "\twidth-units = ${2:0.6}",
+            "\tclass = ${3:terminal}",
+            "\ttimespan = ${4:15 minute}",
+            "\tsort = ${5:command}",
+            "\tupdate-interval = ${6:10}",
+            "",
+            "\t[column]",
+            "\t\tkey = ${7:pid}",
+            "\t\tlabel = ${8:PID}",
+            "\t\tformat = ${9:####}",
+            "",
+            "\t[property]",
+            "\t\ttype = ${10:process}",
+            "\t\tentity = ${11:nurswgvml007}",
+            "\t\t${0}"
+        ],
+        "description": "Property"
+    },
+    "table": {
+        "prefix": "wtable",
+        "body": [
+            "[widget]",
+            "\ttype = table",
+            "\ttitle = ${1:CPU Usage}",
+            "\twidth-units = ${2:0.3}",
+            "",
+            "\talert-expression = ${3:value > 5}",
+            "\talert-style = ${4:background-color: orange}",
+            "",
+            "\tsort = ${5:value desc}",
+            "",
+            "\t[series]",
+            "\t\tentity = ${6:nurswgvml010}",
+            "\t\tmetric = ${7:cpu_busy}",
+            "\t\t${0}"
+        ],
+        "description": "Table"
+    },
+    "table-grid": {
+        "prefix": "wtable-grid",
+        "body": [
+            "[widget]",
+            "\ttype = table",
+            "\ttitle = ${2:Table grid}",
+            "\tlast = ${3:true}",
+            "",
+            "\twidth-units = ${3:0.5}",
+            "",
+            "\tmerge-columns = ${4:entity}",
+            "\tsort = ${5:cpu_busy desc}",
+            "",
+            "\t[column]",
+            "\t\tkey = ${6:cpu_busy}",
+            "\t\tlabel = ${7:CPU Busy, %}",
+            "",
+            "\t[series]",
+            "\t\tentity = ${8:nurswgvml010}",
+            "\t\tmetric = ${6:cpu_busy}",
+            "\t\t${0}"
+        ],
+        "description": "Grid table"
+    },
+    "text": {
+        "prefix": "wtext",
+        "body": [
+            "[widget]",
+            "\ttype = text",
+            "\ttitle = ${1:Text}",
+            "\twidth-units = ${2:0.2}",
+            "\theight-units = ${3:0.2}",
+            "\talert-expression = ${4:value > 1}",
+            "\talert-style = ${5:color: red}",
+            "",
+            "\t[series]",
+            "\t\tentity = ${6:nurswgvml007}",
+            "\t\tmetric = ${7:cpu_busy}",
+            "\t\t${0}"
+        ],
+        "description": "Text"
+    },
+    "treemap": {
+        "prefix": "wtreemap",
+        "body": [
+            "[widget]",
+            "\ttype = treemap",
+            "\ttitle = ${1:Treemap}",
+            "\tthresholds = ${2:0, 10, 60, 80, 100}",
+            "\ttimespan = ${3:1 hour}",
+            "",
+            "\t[series]",
+            "\t\tentity = ${4:nurswgvml010}",
+            "\t\tmetric = ${5:cpu_busy}",
+            "\t\tsize = ${6:1}",
+            "\t\t${0}"
+        ],
+        "description": "Treemap"
+    },
+    "histogram": {
+        "prefix": "whistogram",
+        "body": [
+            "[widget]",
+            "\ttype = histogram",
+            "\ttitle = ${1:Treemap}",
+            "\tright-axis = ${2:density}",
+            "\ttop-axis = ${3:percentiles}",
+            "\tmode = ${4:stack}",
+            "\tpercentiles = ${5:1, 25, 50, 75, 90, 99.9}",
+            "",
+            "\thorizontal-grid = ${6:density}",
+            "",
+            "\t[series]",
+            "\t\tentity = ${7:nurswgvml006}",
+            "\t\tmetric = ${8:cpu_busy}",
+            "\t\t${0}"
+        ],
+        "description": "Histogram"
     }
 }
