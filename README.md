@@ -42,7 +42,7 @@ npm install && npm run compile
 
 ### Snippets
 
-* `wgt`: creates a new `[widget]` section with child `[series]` section
+* `w{widget_name}`: creates a new `[widget]` section with a pre-configured sample widget from Charts library
 * `cfg`: creates a new `[configuration]` section with child `[group]` section and several initial settings
 * `for`: creates a new `for` loop with corresponding `endfor`.
 * `if`: creates a new `if` statement with corresponding `endif`.
