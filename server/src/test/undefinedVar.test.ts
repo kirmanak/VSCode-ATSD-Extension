@@ -73,7 +73,7 @@ suite("Undefined variable in for loop", () => {
             {
                 range: {
                     end: { character: `       entity = @{`.length + firstVar.length, line: 4 }
-                    start: { character: `       entity = @{`.length, line: 4 }
+                    start: { character: `       entity = @{`.length, line: 4 },
                 }, uri: document.uri,
             },
             DiagnosticSeverity.Error, Shared.errorMessage(firstVar, secondVar),
@@ -101,7 +101,7 @@ suite("Undefined variable in for loop", () => {
             {
                 range: {
                     end: { character: `       entity = @{`.length + firstVar.length, line: 4 }
-                    start: { character: `       entity = @{`.length, line: 4 }
+                    start: { character: `       entity = @{`.length, line: 4 },
                 }, uri: document.uri,
             },
             DiagnosticSeverity.Error, Shared.errorMessage(firstVar, secondVar),
@@ -109,7 +109,7 @@ suite("Undefined variable in for loop", () => {
             {
                 range: {
                     end: { character: `       entity = @{`.length + secondVar.length, line: 9 }
-                    start: { character: `       entity = @{`.length, line: 9 }
+                    start: { character: `       entity = @{`.length, line: 9 },
                 }, uri: document.uri,
             },
             DiagnosticSeverity.Error, Shared.errorMessage(secondVar, "servers"),
@@ -137,7 +137,7 @@ suite("Undefined variable in for loop", () => {
             {
                 range: {
                     end: { character: `       entity = @{`.length + firstVar.length, line: 4 }
-                    start: { character: `       entity = @{`.length, line: 4 }
+                    start: { character: `       entity = @{`.length, line: 4 },
                 }, uri: document.uri,
             },
             DiagnosticSeverity.Error, Shared.errorMessage(firstVar, secondVar),
@@ -191,7 +191,7 @@ suite("Undefined variable in for loop", () => {
             {
                 range: {
                     end: { character: `           entity = @{`.length + thirdVar.length, line: 8 }
-                    start: { character: `           entity = @{`.length, line: 8 }
+                    start: { character: `           entity = @{`.length, line: 8 },
                 }, uri: document.uri,
             },
             DiagnosticSeverity.Error, Shared.errorMessage(thirdVar, firstVar),
@@ -229,7 +229,7 @@ suite("Undefined variable in for loop", () => {
             {
                 range: {
                     end: { character: `       entity = @{`.length + secondVar.length, line: 4 }
-                    start: { character: `       entity = @{`.length, line: 4 }
+                    start: { character: `       entity = @{`.length, line: 4 },
                 }, uri: document.uri,
             },
             DiagnosticSeverity.Error, Shared.errorMessage(secondVar, "servers"),
@@ -300,7 +300,7 @@ suite("Undefined variable in for loop", () => {
                         character: `       entity = @{keepAfterLast(${secondVar}, 'v')}, @{`.length + firstVar.length,
                         line: 4,
                     },
-                    start: { character: `       entity = @{keepAfterLast(${secondVar}, 'v')}, @{`.length, line: 4 }
+                    start: { character: `       entity = @{keepAfterLast(${secondVar}, 'v')}, @{`.length, line: 4 },
                 }, uri: document.uri,
             },
             DiagnosticSeverity.Error, Shared.errorMessage(firstVar, secondVar),
