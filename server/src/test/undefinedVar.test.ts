@@ -72,7 +72,7 @@ suite("Undefined variable in for loop", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { character: `       entity = @{`.length + firstVar.length, line: 4 }
+                    end: { character: `       entity = @{`.length + firstVar.length, line: 4 },
                     start: { character: `       entity = @{`.length, line: 4 },
                 }, uri: document.uri,
             },
@@ -100,7 +100,7 @@ suite("Undefined variable in for loop", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { character: `       entity = @{`.length + firstVar.length, line: 4 }
+                    end: { character: `       entity = @{`.length + firstVar.length, line: 4 },
                     start: { character: `       entity = @{`.length, line: 4 },
                 }, uri: document.uri,
             },
@@ -108,7 +108,7 @@ suite("Undefined variable in for loop", () => {
         ), Shared.createDiagnostic(
             {
                 range: {
-                    end: { character: `       entity = @{`.length + secondVar.length, line: 9 }
+                    end: { character: `       entity = @{`.length + secondVar.length, line: 9 },
                     start: { character: `       entity = @{`.length, line: 9 },
                 }, uri: document.uri,
             },
@@ -136,7 +136,7 @@ suite("Undefined variable in for loop", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { character: `       entity = @{`.length + firstVar.length, line: 4 }
+                    end: { character: `       entity = @{`.length + firstVar.length, line: 4 },
                     start: { character: `       entity = @{`.length, line: 4 },
                 }, uri: document.uri,
             },
@@ -190,7 +190,7 @@ suite("Undefined variable in for loop", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { character: `           entity = @{`.length + thirdVar.length, line: 8 }
+                    end: { character: `           entity = @{`.length + thirdVar.length, line: 8 },
                     start: { character: `           entity = @{`.length, line: 8 },
                 }, uri: document.uri,
             },
@@ -228,7 +228,7 @@ suite("Undefined variable in for loop", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { character: `       entity = @{`.length + secondVar.length, line: 4 }
+                    end: { character: `       entity = @{`.length + secondVar.length, line: 4 },
                     start: { character: `       entity = @{`.length, line: 4 },
                 }, uri: document.uri,
             },
