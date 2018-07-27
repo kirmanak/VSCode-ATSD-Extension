@@ -1,130 +1,85 @@
-import * as assert from "assert";
-import { Diagnostic, DiagnosticSeverity } from "vscode-languageserver/lib/main";
-import * as Shared from "../sharedFunctions";
-import Validator from "../Validator";
+import { DiagnosticSeverity } from "vscode-languageserver/lib/main";
+import Util from "../Util";
+import Test from "./Test";
 
 suite("Var endvar tests", () => {
-
-    test("Correct oneline var array", () => {
-        const text =
-            "var v = [[9,3], [9,4]]";
-        const document = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
-
-    test("Correct oneline var props", () => {
-        const text =
-            `var v = { "hello": "value", "array": ["val", "value"]}`;
-        const document = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
-
-    test("Correct multiline var props", () => {
-        const text =
+    const tests = [
+        new Test("Correct oneline var array",
+            "var v = [[9,3], [9,4]]",
+            [],
+        ),
+        new Test("Correct oneline var props",
+            `var v = { "hello": "value", "array": ["val", "value"]}`,
+            [],
+        ),
+        new Test("Correct multiline var props",
             `var v = {\n` +
             `   "hello": "value", \n` +
             `   "array": ["val", "value"]\n` +
             `}\n` +
-            `endvar`;
-        const document = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
-
-    test("Correct multiline var array", () => {
-        const text =
+            `endvar`,
+            [],
+        ),
+        new Test("Correct multiline var array",
             "var v = [\n" +
             "    [9,3], [9,4]\n" +
             "]\n" +
-            "endvar";
-        const document = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
-
-    test("Incorrect multiline var array", () => {
-        const text =
+            "endvar",
+            [],
+        ),
+        new Test("Incorrect multiline var array",
             "var v = [\n" +
             "    [9,3], [9,4]\n" +
             "]\n" +
-            "edvar";
-        const document = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [Shared.createDiagnostic(
-            {
-                range: {
-                    end: { character: 3, line: 0 },
-                    start: { character: 0, line: 0 },
-                }, uri: document.uri,
-            },
-            DiagnosticSeverity.Error, "var has no matching endvar",
-        )];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
-
-    test("Incorrect multiline var props", () => {
-        const text =
+            "edvar",
+            [Util.createDiagnostic(
+                {
+                    range: {
+                        end: { character: 3, line: 0 },
+                        start: { character: 0, line: 0 },
+                    }, uri: Test.URI,
+                },
+                DiagnosticSeverity.Error, "var has no matching endvar",
+            )],
+        ),
+        new Test("Incorrect multiline var props",
             `var v = {\n` +
             `   "hello": "value", \n` +
             `   "array": ["val", "value"]\n` +
             `}\n` +
-            `edvar`;
-        const document = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [Shared.createDiagnostic(
-            {
-                range: {
-                    end: { character: 3, line: 0 },
-                    start: { character: 0, line: 0 },
-                }, uri: document.uri,
-            },
-            DiagnosticSeverity.Error, "var has no matching endvar",
-        )];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
-
-    test("Incorrect multiline var mixed array of props", () => {
-        const text =
+            `edvar`,
+            [Util.createDiagnostic(
+                {
+                    range: {
+                        end: { character: 3, line: 0 },
+                        start: { character: 0, line: 0 },
+                    }, uri: Test.URI,
+                },
+                DiagnosticSeverity.Error, "var has no matching endvar",
+            )],
+        ),
+        new Test("Incorrect multiline var mixed array of props",
             `var v = [\n` +
             `   { "hello": "value" }, \n` +
             `   { "array": ["val", "value"] }\n` +
             `]\n` +
-            `edvar`;
-        const document = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [Shared.createDiagnostic(
-            {
-                range: {
-                    end: { character: 3, line: 0 },
-                    start: { character: 0, line: 0 },
-                }, uri: document.uri,
-            },
-            DiagnosticSeverity.Error, "var has no matching endvar",
-        )];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
+            `edvar`,
+            [Util.createDiagnostic(
+                {
+                    range: {
+                        end: { character: 3, line: 0 },
+                        start: { character: 0, line: 0 },
+                    }, uri: Test.URI,
+                },
+                DiagnosticSeverity.Error, "var has no matching endvar",
+            )],
+        ),
+        new Test("Correct var function call",
+            `var v = getEntities("hello")`,
+            [],
+        ),
+    ];
 
-    test("Correct var function call", () => {
-        const text =
-            `var v = getEntities("hello")`;
-        const document = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
+    tests.forEach(Test.RUN_TEST);
 
 });

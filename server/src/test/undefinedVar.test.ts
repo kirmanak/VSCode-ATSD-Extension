@@ -1,46 +1,32 @@
-import * as assert from "assert";
-import { Diagnostic, DiagnosticSeverity, TextDocument } from "vscode-languageserver/lib/main";
-import * as Shared from "../sharedFunctions";
-import Validator from "../Validator";
+import { DiagnosticSeverity } from "vscode-languageserver/lib/main";
+import Util from "../Util";
+import Test from "./Test";
 
 const firstVar = "serv";
 const secondVar = "server";
 const thirdVar = "srv";
 
 suite("Undefined variable in for loop", () => {
-
-    test("One correct loop", () => {
-        const text =
+    const tests = [
+        new Test("One correct loop",
             "list servers = 'srv1', 'srv2'\n" +
             `for ${firstVar} in servers\n` +
             `   [series]\n` +
             "       metric = placeholder\n" +
             `       entity = @{${firstVar}}\n` +
-            "endfor";
-        const document: TextDocument = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
-
-    test("One correct loop with comment", () => {
-        const text =
+            "endfor",
+            [],
+        ),
+        new Test("One correct loop with comment",
             "list servers = 'srv1', 'srv2'\n" +
             `for ${firstVar} /* this is a comment */ in servers\n` +
             `   [series]\n` +
             "       metric = placeholder\n" +
             `       entity = @{${firstVar}}\n` +
-            "endfor";
-        const document: TextDocument = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
-
-    test("Two correct  loops", () => {
-        const text =
+            "endfor",
+            [],
+        ),
+        new Test("Two correct  loops",
             "list servers = 'srv1', 'srv2'\n" +
             `for ${firstVar} in servers\n` +
             `   [series]\n` +
@@ -51,39 +37,27 @@ suite("Undefined variable in for loop", () => {
             `   [series]\n` +
             "       metric = placeholder\n" +
             `       entity = @{${firstVar}}\n` +
-            "endfor";
-        const document: TextDocument = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
-
-    test("One incorrect loop", () => {
-        const text =
+            "endfor",
+            [],
+        ),
+        new Test("One incorrect loop",
             "list servers = 'srv1', 'srv2'\n" +
             `for ${secondVar} in servers\n` +
             `   [series]\n` +
             "       metric = placeholder\n" +
             `       entity = @{${firstVar}}\n` +
-            "endfor";
-        const document: TextDocument = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [Shared.createDiagnostic(
-            {
-                range: {
-                    end: { character: `       entity = @{`.length + firstVar.length, line: 4 },
-                    start: { character: `       entity = @{`.length, line: 4 },
-                }, uri: document.uri,
-            },
-            DiagnosticSeverity.Error, Shared.errorMessage(firstVar, secondVar),
-        )];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
-
-    test("Two incorrect loops", () => {
-        const text =
+            "endfor",
+            [Util.createDiagnostic(
+                {
+                    range: {
+                        end: { character: `       entity = @{`.length + firstVar.length, line: 4 },
+                        start: { character: `       entity = @{`.length, line: 4 },
+                    }, uri: Test.URI,
+                },
+                DiagnosticSeverity.Error, Util.errorMessage(firstVar, secondVar),
+            )],
+        ),
+        new Test("Two incorrect loops",
             "list servers = 'srv1', 'srv2'\n" +
             `for ${secondVar} in servers\n` +
             `   [series]\n` +
@@ -94,32 +68,26 @@ suite("Undefined variable in for loop", () => {
             `   [series]\n` +
             "       metric = placeholder\n" +
             `       entity = @{${secondVar}}\n` +
-            "endfor";
-        const document: TextDocument = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [Shared.createDiagnostic(
-            {
-                range: {
-                    end: { character: `       entity = @{`.length + firstVar.length, line: 4 },
-                    start: { character: `       entity = @{`.length, line: 4 },
-                }, uri: document.uri,
-            },
-            DiagnosticSeverity.Error, Shared.errorMessage(firstVar, secondVar),
-        ), Shared.createDiagnostic(
-            {
-                range: {
-                    end: { character: `       entity = @{`.length + secondVar.length, line: 9 },
-                    start: { character: `       entity = @{`.length, line: 9 },
-                }, uri: document.uri,
-            },
-            DiagnosticSeverity.Error, Shared.errorMessage(secondVar, "servers"),
-        )];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
-
-    test("One incorrect loop, one correct loop", () => {
-        const text =
+            "endfor",
+            [Util.createDiagnostic(
+                {
+                    range: {
+                        end: { character: `       entity = @{`.length + firstVar.length, line: 4 },
+                        start: { character: `       entity = @{`.length, line: 4 },
+                    }, uri: Test.URI,
+                },
+                DiagnosticSeverity.Error, Util.errorMessage(firstVar, secondVar),
+            ), Util.createDiagnostic(
+                {
+                    range: {
+                        end: { character: `       entity = @{`.length + secondVar.length, line: 9 },
+                        start: { character: `       entity = @{`.length, line: 9 },
+                    }, uri: Test.URI,
+                },
+                DiagnosticSeverity.Error, Util.errorMessage(secondVar, "servers"),
+            )],
+        ),
+        new Test("One incorrect loop, one correct loop",
             "list servers = 'srv1', 'srv2'\n" +
             `for ${secondVar} in servers\n` +
             "   [series]\n" +
@@ -130,24 +98,18 @@ suite("Undefined variable in for loop", () => {
             "   [series]\n" +
             "       metric = placeholder\n" +
             `       entity = @{${firstVar}}\n` +
-            "endfor";
-        const document: TextDocument = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [Shared.createDiagnostic(
-            {
-                range: {
-                    end: { character: `       entity = @{`.length + firstVar.length, line: 4 },
-                    start: { character: `       entity = @{`.length, line: 4 },
-                }, uri: document.uri,
-            },
-            DiagnosticSeverity.Error, Shared.errorMessage(firstVar, secondVar),
-        )];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
-
-    test("One correct nested loop", () => {
-        const text =
+            "endfor",
+            [Util.createDiagnostic(
+                {
+                    range: {
+                        end: { character: `       entity = @{`.length + firstVar.length, line: 4 },
+                        start: { character: `       entity = @{`.length, line: 4 },
+                    }, uri: Test.URI,
+                },
+                DiagnosticSeverity.Error, Util.errorMessage(firstVar, secondVar),
+            )],
+        ),
+        new Test("One correct nested loop",
             "list servers = 'srv1', 'srv2'\n" +
             `for ${secondVar} in servers\n` +
             "   [series]\n" +
@@ -161,16 +123,10 @@ suite("Undefined variable in for loop", () => {
             "           metric = placeholder\n" +
             `           entity = @{${firstVar}}\n` +
             "   endfor\n" +
-            "endfor";
-        const document: TextDocument = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
-
-    test("One incorrect nested loop", () => {
-        const text =
+            "endfor",
+            [],
+        ),
+        new Test("One incorrect nested loop",
             "list servers = 'srv1', 'srv2'\n" +
             `for ${secondVar} in servers\n` +
             "   [series]\n" +
@@ -184,129 +140,93 @@ suite("Undefined variable in for loop", () => {
             "           metric = placeholder\n" +
             `           entity = @{${firstVar}}\n` +
             "   endfor\n" +
-            "endfor";
-        const document: TextDocument = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [Shared.createDiagnostic(
-            {
-                range: {
-                    end: { character: `           entity = @{`.length + thirdVar.length, line: 8 },
-                    start: { character: `           entity = @{`.length, line: 8 },
-                }, uri: document.uri,
-            },
-            DiagnosticSeverity.Error, Shared.errorMessage(thirdVar, firstVar),
-        )];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
-
-    test("Arithmetic expression with correct var", () => {
-        const text =
+            "endfor",
+            [Util.createDiagnostic(
+                {
+                    range: {
+                        end: { character: `           entity = @{`.length + thirdVar.length, line: 8 },
+                        start: { character: `           entity = @{`.length, line: 8 },
+                    }, uri: Test.URI,
+                },
+                DiagnosticSeverity.Error, Util.errorMessage(thirdVar, firstVar),
+            )],
+        ),
+        new Test("Arithmetic expression with correct var",
             "list servers = 'srv1', 'srv2'\n" +
             `for ${firstVar} in servers\n` +
             "   [series]\n" +
             "       metric = placeholder\n" +
             `       entity = @{${firstVar} + ${firstVar}}\n` +
-            "endfor";
-        const document: TextDocument = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
-
-    test("Arithmetic expression with incorrect var", () => {
-        const text =
+            "endfor",
+            [],
+        ),
+        new Test("Arithmetic expression with incorrect var",
             "list servers = 'srv1', 'srv2'\n" +
             `for ${firstVar} in servers\n` +
             "   [series]\n" +
             "       metric = placeholder\n" +
             `       entity = @{${secondVar} + ${firstVar}}\n` +
-            "endfor";
-        const document: TextDocument = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [Shared.createDiagnostic(
-            {
-                range: {
-                    end: { character: `       entity = @{`.length + secondVar.length, line: 4 },
-                    start: { character: `       entity = @{`.length, line: 4 },
-                }, uri: document.uri,
-            },
-            DiagnosticSeverity.Error, Shared.errorMessage(secondVar, "servers"),
-        )];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
-
-    test("Function + correct var", () => {
-        const text =
+            "endfor",
+            [Util.createDiagnostic(
+                {
+                    range: {
+                        end: { character: `       entity = @{`.length + secondVar.length, line: 4 },
+                        start: { character: `       entity = @{`.length, line: 4 },
+                    }, uri: Test.URI,
+                },
+                DiagnosticSeverity.Error, Util.errorMessage(secondVar, "servers"),
+            )],
+        ),
+        new Test("Function + correct var",
             "list servers = 's1v1', 's1v2'\n" +
             `for ${secondVar} in servers\n` +
             "   [series]\n" +
             "       metric = placeholder\n" +
             `       entity = @{keepAfterLast(${secondVar}, '1')}\n` +
-            "endfor";
-        const document: TextDocument = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
-
-    test("Property of a correct var", () => {
-        const text =
+            "endfor",
+            [],
+        ),
+        new Test("Property of a correct var",
             "var servers = [ { name: 'srv1' }, { name: 'srv2' } ]\n" +
             `for ${secondVar} in servers\n` +
             "   [series]\n" +
             "       metric = placeholder\n" +
             `       entity = @{${secondVar}.name}\n` +
-            "endfor";
-        const document: TextDocument = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
-
-    test("String", () => {
-        const text =
+            "endfor",
+            [],
+        ),
+        new Test("String",
             "list servers = 'srv1', 'srv2'\n" +
             `for ${secondVar} in servers\n` +
             "   [series]\n" +
             "       metric = placeholder\n" +
             `       entity = @{keepAfterLast(${secondVar}, 'v')}\n` +
-            "endfor";
-        const document: TextDocument = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
-
-    test("Several statements, second incorrect", () => {
-        const text =
+            "endfor",
+            [],
+        ),
+        new Test("Several statements, second incorrect",
             "list servers = 'srv1', 'srv2'\n" +
             `for ${secondVar} in servers\n` +
             "   [series]\n" +
             "       metric = placeholder\n" +
             `       entity = @{keepAfterLast(${secondVar}, 'v')}, @{${firstVar}}\n` +
-            "endfor";
-        const document: TextDocument = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [Shared.createDiagnostic(
-            {
-                range: {
-                    end: {
-                        character: `       entity = @{keepAfterLast(${secondVar}, 'v')}, @{`.length + firstVar.length,
-                        line: 4,
-                    },
-                    start: { character: `       entity = @{keepAfterLast(${secondVar}, 'v')}, @{`.length, line: 4 },
-                }, uri: document.uri,
-            },
-            DiagnosticSeverity.Error, Shared.errorMessage(firstVar, secondVar),
-        )];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
+            "endfor",
+            [Util.createDiagnostic(
+                {
+                    range: {
+                        end: {
+                            character: `       entity = @{keepAfterLast(${secondVar}, 'v')}, @{`.length
+                                + firstVar.length,
+                            line: 4,
+                        },
+                        start: { character: `       entity = @{keepAfterLast(${secondVar}, 'v')}, @{`.length, line: 4 },
+                    }, uri: Test.URI,
+                },
+                DiagnosticSeverity.Error, Util.errorMessage(firstVar, secondVar),
+            )],
+        ),
+    ];
+
+    tests.forEach(Test.RUN_TEST);
 
 });

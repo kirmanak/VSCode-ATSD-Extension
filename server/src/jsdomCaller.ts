@@ -1,5 +1,5 @@
 import { Diagnostic, DiagnosticSeverity, Range, TextDocument } from "vscode-languageserver/lib/main";
-import * as Shared from "./sharedFunctions";
+import Util from "./Util";
 
 // tslint:disable-next-line:no-var-requires
 const jsdom = require("jsdom");
@@ -168,7 +168,7 @@ function generateCall(amount: number): string {
 
 export function validate(document: TextDocument): Diagnostic[] {
     const result: Diagnostic[] = [];
-    const text: string = Shared.deleteComments(document.getText());
+    const text: string = Util.deleteComments(document.getText());
     const statements: Statement[] = parseJsStatements(text);
 
     const dom = new jsdom.JSDOM(`<html></html>`, { runScripts: "outside-only" });
@@ -187,7 +187,7 @@ export function validate(document: TextDocument): Diagnostic[] {
                 }
             });
             if (!isImported) {
-                result.push(Shared.createDiagnostic(
+                result.push(Util.createDiagnostic(
                     { uri: document.uri, range: statement.range },
                     DiagnosticSeverity.Warning, err.message,
                 ));
