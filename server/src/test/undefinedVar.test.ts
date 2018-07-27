@@ -72,8 +72,8 @@ suite("Undefined variable in for loop", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 4, character: `       entity = @{`.length + firstVar.length },
-                    start: { line: 4, character: `       entity = @{`.length },
+                    end: { character: `       entity = @{`.length + firstVar.length, line: 4 }
+                    start: { character: `       entity = @{`.length, line: 4 }
                 }, uri: document.uri,
             },
             DiagnosticSeverity.Error, Shared.errorMessage(firstVar, secondVar),
@@ -100,16 +100,16 @@ suite("Undefined variable in for loop", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 4, character: `       entity = @{`.length + firstVar.length },
-                    start: { line: 4, character: `       entity = @{`.length },
+                    end: { character: `       entity = @{`.length + firstVar.length, line: 4 }
+                    start: { character: `       entity = @{`.length, line: 4 }
                 }, uri: document.uri,
             },
             DiagnosticSeverity.Error, Shared.errorMessage(firstVar, secondVar),
         ), Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 9, character: `       entity = @{`.length + secondVar.length },
-                    start: { line: 9, character: `       entity = @{`.length },
+                    end: { character: `       entity = @{`.length + secondVar.length, line: 9 }
+                    start: { character: `       entity = @{`.length, line: 9 }
                 }, uri: document.uri,
             },
             DiagnosticSeverity.Error, Shared.errorMessage(secondVar, "servers"),
@@ -136,8 +136,8 @@ suite("Undefined variable in for loop", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 4, character: `       entity = @{`.length + firstVar.length },
-                    start: { line: 4, character: `       entity = @{`.length },
+                    end: { character: `       entity = @{`.length + firstVar.length, line: 4 }
+                    start: { character: `       entity = @{`.length, line: 4 }
                 }, uri: document.uri,
             },
             DiagnosticSeverity.Error, Shared.errorMessage(firstVar, secondVar),
@@ -190,8 +190,8 @@ suite("Undefined variable in for loop", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 8, character: `           entity = @{`.length + thirdVar.length },
-                    start: { line: 8, character: `           entity = @{`.length },
+                    end: { character: `           entity = @{`.length + thirdVar.length, line: 8 }
+                    start: { character: `           entity = @{`.length, line: 8 }
                 }, uri: document.uri,
             },
             DiagnosticSeverity.Error, Shared.errorMessage(thirdVar, firstVar),
@@ -228,8 +228,8 @@ suite("Undefined variable in for loop", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 4, character: `       entity = @{`.length + secondVar.length },
-                    start: { line: 4, character: `       entity = @{`.length },
+                    end: { character: `       entity = @{`.length + secondVar.length, line: 4 }
+                    start: { character: `       entity = @{`.length, line: 4 }
                 }, uri: document.uri,
             },
             DiagnosticSeverity.Error, Shared.errorMessage(secondVar, "servers"),
@@ -300,7 +300,7 @@ suite("Undefined variable in for loop", () => {
                         character: `       entity = @{keepAfterLast(${secondVar}, 'v')}, @{`.length + firstVar.length,
                         line: 4,
                     },
-                    start: { line: 4, character: `       entity = @{keepAfterLast(${secondVar}, 'v')}, @{`.length },
+                    start: { character: `       entity = @{keepAfterLast(${secondVar}, 'v')}, @{`.length, line: 4 }
                 }, uri: document.uri,
             },
             DiagnosticSeverity.Error, Shared.errorMessage(firstVar, secondVar),

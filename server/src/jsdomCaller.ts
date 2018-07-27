@@ -29,8 +29,8 @@ function parseJsStatements(text: string): Statement[] {
                 content = match[2];
                 const matchStart = match[1].length;
                 range = {
-                    end: { line: i, character: matchStart + match[2].length },
-                    start: { line: i, character: match[1].length },
+                    end: { character: matchStart + match[2].length, line: i },
+                    start: { character: match[1].length, line: i },
                 };
                 let j = i + 1;
                 while (j < lines.length && !(/\bscript\b/.test(lines[j]) || /\bendscript\b/.test(lines[j]))) {
@@ -46,8 +46,8 @@ function parseJsStatements(text: string): Statement[] {
                 }
             } else {
                 range = {
-                    end: { line: i + 1, character: lines[i + 1].length },
-                    start: { line: i + 1, character: 0 },
+                    end: { character: lines[i + 1].length, line: i + 1 },
+                    start: { character: 0, line: i + 1 },
                 };
                 content = "";
                 line = lines[++i];
@@ -81,8 +81,8 @@ function parseJsStatements(text: string): Statement[] {
                     `.call(window, 5, 5, 5, 5)`,
                 imports,
                 range: {
-                    end: { line: i, character: matchStart + match[2].length },
-                    start: { line: i, character: matchStart },
+                    end: { character: matchStart + match[2].length, line: i },
+                    start: { character: matchStart, line: i },
                 },
             };
             result.push(statement);
@@ -114,8 +114,8 @@ function parseJsStatements(text: string): Statement[] {
                     `proxyArray, proxyFunction, proxyFunction, proxyFunction${call})`,
                 imports,
                 range: {
-                    end: { line: i, character: matchStart + match[2].length },
-                    start: { line: i, character: matchStart },
+                    end: { character: matchStart + match[2].length, line: i },
+                    start: { character: matchStart, line: i },
                 },
 
             };
@@ -134,8 +134,8 @@ function parseJsStatements(text: string): Statement[] {
                     ` proxyFunction, proxyFunction)`,
                 imports,
                 range: {
-                    end: { line: i, character: matchStart + match[2].length },
-                    start: { line: i, character: matchStart },
+                    end: { character: matchStart + match[2].length, line: i },
+                    start: { character: matchStart, line: i },
                 },
 
             };

@@ -15,8 +15,8 @@ suite("Warn about setting interpreted as a tag", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 1, character: "	".length + "starttime".length},
-                    start: { line: 1, character: "	".length },
+                    end: { character: "	".length + "starttime".length, line: 1 },
+                    start: { character: "	".length, line: 1 },
                 }, uri: document.uri,
             },
             DiagnosticSeverity.Information, "starttime is interpreted as a tag",
@@ -47,8 +47,8 @@ suite("Warn about setting interpreted as a tag", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 1, character: "	".length + "stArt-time".length},
-                    start: { line: 1, character: "	".length },
+                    end: { character: "	".length + "stArt-time".length, line: 1 },
+                    start: { character: "	".length, line: 1 },
                 }, uri: document.uri,
             },
             DiagnosticSeverity.Information, "starttime is interpreted as a tag",

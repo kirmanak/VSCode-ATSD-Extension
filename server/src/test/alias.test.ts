@@ -37,8 +37,8 @@ suite("Incorrect dealias tests", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 7, character: "   value = value('".length + "s2".length },
-                    start: { line: 7, character: "   value = value('".length },
+                    end: { character: "   value = value('".length + "s2".length, line: 7 },
+                    start: { character: "   value = value('".length, line: 7 },
                 }, uri: document.uri,
             },
             DiagnosticSeverity.Error, Shared.errorMessage("s2", "s1"),
@@ -83,16 +83,16 @@ suite("Incorrect dealias tests", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 7, character: "   value = value('".length + "s2".length },
-                    start: { line: 7, character: "   value = value('".length },
+                    end: { character: "   value = value('".length + "s2".length, line: 7 },
+                    start: { character: "   value = value('".length, line: 7 },
                 }, uri: document.uri,
             },
             DiagnosticSeverity.Error, Shared.errorMessage("s2", "s1"),
         ), Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 11, character: "   value = value('".length + "s3".length },
-                    start: { line: 11, character:  "   value = value('".length },
+                    end: { character: "   value = value('".length + "s3".length, line: 11 },
+                    start: { character:  "   value = value('".length, line: 11 },
                 }, uri: document.uri,
             },
             DiagnosticSeverity.Error, Shared.errorMessage("s3", "s1"),
@@ -149,8 +149,8 @@ suite("Incorrect dealias tests", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 11, character: "   value = value('".length + "s3".length },
-                    start: { line: 11, character:  "   value = value('".length },
+                    end: { character: "   value = value('".length + "s3".length, line: 11 },
+                    start: { character:  "   value = value('".length, line: 11 },
                 }, uri: document.uri,
             },
             DiagnosticSeverity.Error, Shared.errorMessage("s3", "s1"),

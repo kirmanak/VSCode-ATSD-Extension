@@ -66,16 +66,16 @@ suite("If elseif else endif validation tests", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 5, character: 10 },
-                    start: { line: 5, character: 4 },
+                    end: { character: 10, line: 5 },
+                    start: { character: 4, line: 5 },
                 }, uri: document.uri,
             },
             DiagnosticSeverity.Error, elseIfError,
         ), Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 7, character: 9 },
-                    start: { line: 7, character: 4 },
+                    end: { character: 9, line: 7 },
+                    start: { character: 4, line: 7 },
                 }, uri: document.uri,
             },
             DiagnosticSeverity.Error, endIfError,
@@ -100,16 +100,16 @@ suite("If elseif else endif validation tests", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 5, character: 8 },
-                    start: { line: 5, character: 4 },
+                    end: { character: 8, line: 5 },
+                    start: { character: 4, line: 5 },
                 }, uri: document.uri,
             },
             DiagnosticSeverity.Error, elseError,
         ), Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 7, character: 9 },
-                    start: { line: 7, character: 4 },
+                    end: { character: 9, line: 7 },
+                    start: { character: 4, line: 7 },
                 }, uri: document.uri,
             },
             DiagnosticSeverity.Error, endIfError,
@@ -134,16 +134,16 @@ suite("If elseif else endif validation tests", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 5, character: 32 },
-                    start: { line: 5, character: 28 },
+                    end: { character: 32, line: 5 },
+                    start: { character: 28, line: 5 },
                 }, uri: document.uri,
             },
             DiagnosticSeverity.Error, elseError,
         ), Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 7, character: 9 },
-                    start: { line: 7, character: 4 },
+                    end: { character: 9, line: 7 },
+                    start: { character: 4, line: 7 },
                 }, uri: document.uri,
             },
             DiagnosticSeverity.Error, endIfError,
@@ -169,16 +169,16 @@ suite("If elseif else endif validation tests", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 9, character: 6 },
-                    start: { line: 9, character: 0 },
+                    end: { character: 6, line: 9 },
+                    start: { character: 0, line: 9 },
                 }, uri: document.uri,
             },
             DiagnosticSeverity.Error, "for has finished before if",
         ), Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 5, character: 6 },
-                    start: { line: 5, character: 4 },
+                    end: { character: 6, line: 5 },
+                    start: { character: 4, line: 5 },
                 }, uri: document.uri,
             },
             DiagnosticSeverity.Error, ifError,

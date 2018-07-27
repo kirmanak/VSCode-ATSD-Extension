@@ -43,8 +43,8 @@ suite("CSV tests", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 3, character: 5 },
-                    start: { line: 3, character: 0 },
+                    end: { character: 5, line: 3 },
+                    start: { character: 0, line: 3 },
                 },
                 uri: document.uri,
             },
@@ -52,7 +52,7 @@ suite("CSV tests", () => {
         ), Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 0, character: 3 }, start: { line: 0, character: 0 },
+                    end: { character: 3, line: 0 }, start: { character: 0, line: 0 },
                 }, uri: document.uri,
             },
             DiagnosticSeverity.Error, "csv has no matching endcsv",
@@ -73,8 +73,8 @@ suite("CSV tests", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 4, character: 5 },
-                    start: { line: 4, character: 0 },
+                    end: { character: 5, line: 4 },
+                    start: { character: 0, line: 4 },
                 },
                 uri: document.uri,
             },
@@ -82,8 +82,8 @@ suite("CSV tests", () => {
         ), Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 0, character: 3 },
-                    start: { line: 0, character: 0 },
+                    end: { character: 3, line: 0 },
+                    start: { character: 0, line: 0 },
                 },
                 uri: document.uri,
             },
@@ -104,8 +104,8 @@ suite("CSV tests", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 2, character: 18 },
-                    start: { line: 2, character: 0 },
+                    end: { character: 18, line: 2 },
+                    start: { character: 0, line: 2 },
                 },
                 uri: document.uri,
             },

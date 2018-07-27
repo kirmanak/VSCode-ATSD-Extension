@@ -27,8 +27,8 @@ suite("Script endscript tests", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 0, character: 6 },
-                    start: { line: 0, character: 0 },
+                    end: { character: 6, line: 0 },
+                    start: { character: 0, line: 0 },
                 }, uri: document.uri,
             },
             DiagnosticSeverity.Error, errorMessage,
@@ -75,8 +75,8 @@ suite("Script endscript tests", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 0, character: 6 },
-                    start: { line: 0, character: 0 },
+                    end: { character: 6, line: 0 },
+                    start: { character: 0, line: 0 },
                 }, uri: document.uri,
             },
             DiagnosticSeverity.Error, errorMessage,
@@ -117,8 +117,8 @@ suite("Script endscript tests", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 0, character: 6 },
-                    start: { line: 0, character: 0 },
+                    end: { character: 6, line: 0 },
+                    start: { character: 0, line: 0 },
                 }, uri: document.uri,
             },
             DiagnosticSeverity.Error, errorMessage,

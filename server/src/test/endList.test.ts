@@ -39,8 +39,8 @@ suite("Unfinished list", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 0, character: 4 },
-                    start: { line: 0, character: 0 },
+                    end: { character: 4, line: 0 },
+                    start: { character: 0, line: 0 },
                 }, uri: document.uri,
             },
             DiagnosticSeverity.Error, errorMessage,
@@ -63,8 +63,8 @@ suite("Unfinished list", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 4, character: 4 },
-                    start: { line: 4, character: 0 },
+                    end: { character: 4, line: 4 },
+                    start: { character: 0, line: 4 },
                 }, uri: document.uri,
             },
             DiagnosticSeverity.Error, errorMessage,
@@ -83,8 +83,8 @@ suite("Unfinished list", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 0, character: 15 },
-                    start: { line: 0, character: 11 },
+                    end: { character: 15, line: 0 },
+                    start: { character: 11, line: 0 },
                 }, uri: document.uri,
             },
             DiagnosticSeverity.Error, errorMessage,
@@ -107,8 +107,8 @@ suite("Unfinished list", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 4, character: 15 },
-                    start: { line: 4, character: 11 },
+                    end: { character: 15, line: 4 },
+                    start: { character: 11, line: 4 },
                 }, uri: document.uri,
             },
             DiagnosticSeverity.Error, errorMessage,
@@ -133,8 +133,8 @@ suite("Unfinished list", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 3, character: 4 },
-                    start: { line: 3, character: 0 },
+                    end: { character: 4, line: 3 },
+                    start: { character: 0, line: 3 },
                 }, uri: document.uri,
             },
             DiagnosticSeverity.Error, errorMessage,
@@ -166,8 +166,8 @@ suite("Unfinished list", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 0, character: 4 },
-                    start: { line: 0, character: 0 },
+                    end: { character: 4, line: 0 },
+                    start: { character: 0, line: 0 },
                 }, uri: document.uri,
             },
             DiagnosticSeverity.Error, errorMessage,

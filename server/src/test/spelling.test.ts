@@ -16,8 +16,8 @@ suite("Spelling checks", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 3, character: 9 },
-                    start: { line: 3, character: 1 },
+                    end: { character: 9, line: 3 },
+                    start: { character: 1, line: 3 },
                 }, uri: document.uri,
             },
             DiagnosticSeverity.Error, Shared.errorMessage("startime", "starttime"),
@@ -35,8 +35,8 @@ suite("Spelling checks", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 0, character: 6 },
-                    start: { line: 0, character: 1 },
+                    end: { character: 6, line: 0 },
+                    start: { character: 1, line: 0 },
                 }, uri: document.uri,
             },
             DiagnosticSeverity.Error, Shared.errorMessage("eries", "series"),
@@ -54,8 +54,8 @@ suite("Spelling checks", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 0, character: 10 },
-                    start: { line: 0, character: 1 },
+                    end: { character: 10, line: 0 },
+                    start: { character: 1, line: 0 },
                 }, uri: document.uri,
             },
             DiagnosticSeverity.Error, Shared.errorMessage("starttime", "series"),
@@ -86,16 +86,16 @@ suite("Spelling checks", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 2, character: "[".length + "starttime".length },
-                    start: { line: 2, character: "[".length },
+                    end: { character: "[".length + "starttime".length, line: 2 },
+                    start: { character: "[".length, line: 2 },
                 }, uri: document.uri,
             },
             DiagnosticSeverity.Error, Shared.errorMessage("starttime", "series"),
         ), Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 3, character: "	".length + "startime".length },
-                    start: { line: 3, character: "	".length },
+                    end: { character: "	".length + "startime".length, line: 3 },
+                    start: { character: "	".length, line: 3 },
                 }, uri: document.uri,
             },
             DiagnosticSeverity.Error, Shared.errorMessage("startime", "starttime"),
@@ -115,8 +115,8 @@ suite("Spelling checks", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 3, character: "startime".length },
-                    start: { line: 3, character: 0 },
+                    end: { character: "startime".length, line: 3 },
+                    start: { character: 0, line: 3 },
                 }, uri: document.uri,
             },
             DiagnosticSeverity.Error, Shared.errorMessage("startime", "starttime"),

@@ -44,8 +44,8 @@ suite("Unmatched endfor tests", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 1, character: 3 },
-                    start: { line: 1, character: 0 },
+                    end: { character: 3, line: 1 },
+                    start: { character: 0, line: 1 },
                 }, uri: document.uri,
             },
             DiagnosticSeverity.Error, "for has no matching endfor",
@@ -66,16 +66,16 @@ suite("Unmatched endfor tests", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                  range: {
-                    end: { line: 1, character: 3 },
-                    start: { line: 1, character: 0 },
+                    end: { character: 3, line: 1 },
+                    start: { character: 0, line: 1 },
                 }, uri: document.uri,
             },
             DiagnosticSeverity.Error, "for has no matching endfor",
         ), Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 3, character: 3 },
-                    start: { line: 3, character: 0 },
+                    end: { character: 3, line: 3 },
+                    start: { character: 0, line: 3 },
                 }, uri: document.uri,
             },
             DiagnosticSeverity.Error, "for has no matching endfor",
@@ -97,8 +97,8 @@ suite("Unmatched endfor tests", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 1, character: 3 },
-                    start: { line: 1, character: 0 },
+                    end: { character: 3, line: 1 },
+                    start: { character: 0, line: 1 },
                 }, uri: document.uri,
             },
             DiagnosticSeverity.Error, "for has no matching endfor",

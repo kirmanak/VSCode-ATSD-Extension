@@ -29,8 +29,8 @@ suite("for in ... tests", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 1, character: 17 },
-                    start: { line: 1, character: 11 },
+                    end: { character: 17, line: 1 },
+                    start: { character: 11, line: 1 },
                 }, uri: document.uri,
             },
             DiagnosticSeverity.Error, Shared.errorMessage("server", "servers"),
@@ -50,8 +50,8 @@ suite("for in ... tests", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 1, character: 17 },
-                    start: { line: 1, character: 11 },
+                    end: { character: 17, line: 1 },
+                    start: { character: 11, line: 1 },
                 }, uri: document.uri,
             },
             DiagnosticSeverity.Error, Shared.errorMessage("server", "servers"),
@@ -84,8 +84,8 @@ suite("for in ... tests", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 1, character: 17 },
-                    start: { line: 1, character: 11 },
+                    end: { character: 17, line: 1 },
+                    start: { character: 11, line: 1 },
                 }, uri: document.uri,
             },
             DiagnosticSeverity.Error, Shared.errorMessage("server", "servers"),
@@ -135,8 +135,8 @@ suite("for in ... tests", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 3, character: 17 },
-                    start: { line: 3, character: 11 },
+                    end: { character: 17, line: 3 },
+                    start: { character: 11, line: 3 },
                 }, uri: document.uri,
             },
             DiagnosticSeverity.Error, Shared.errorMessage("server", "servers"),
@@ -159,8 +159,8 @@ suite("for in ... tests", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 4, character: 17 },
-                    start: { line: 4, character: 11 },
+                    end: { character: 17, line: 4 },
+                    start: { character: 11, line: 4 },
                 }, uri: document.uri,
             },
             DiagnosticSeverity.Error, Shared.errorMessage("server", "servers"),
@@ -199,8 +199,8 @@ suite("for in ... tests", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 4, character: 17 },
-                    start: { line: 4, character: 11 },
+                    end: { character: 17, line: 4 },
+                    start: { character: 11, line: 4 },
                 }, uri: document.uri,
             },
             DiagnosticSeverity.Error, Shared.errorMessage("server", "servers"),
@@ -239,8 +239,8 @@ suite("for in ... tests", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 0, character: 18 },
-                    start: { line: 0, character: 11 },
+                    end: { character: 18, line: 0 },
+                    start: { character: 11, line: 0 },
                 }, uri: document.uri,
             },
             DiagnosticSeverity.Error, Shared.errorMessage("servers", null),
@@ -263,8 +263,8 @@ suite("for in ... tests", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 0, character: 18 },
-                    start: { line: 0, character: 11 },
+                    end: { character: 18, line: 0 },
+                    start: { character: 11, line: 0 },
                 }, uri: document.uri,
             },
             DiagnosticSeverity.Error, Shared.errorMessage("servers", null),
@@ -283,8 +283,8 @@ suite("for in ... tests", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 0, character: 12 },
-                    start: { line: 0, character: 11 },
+                    end: { character: 12, line: 0 },
+                    start: { character: 11, line: 0 },
                 }, uri: document.uri,
             },
             DiagnosticSeverity.Error, "Empty 'in' statement",

@@ -26,8 +26,8 @@ suite("Required settings for sections tests", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 0, character: "[".length + "series".length },
-                    start: { line: 0, character: "[".length },
+                    end: { character: "[".length + "series".length, line: 0 },
+                    start: { character: "[".length, line: 0 },
                 },
                 uri: document.uri,
             },
@@ -83,8 +83,8 @@ suite("Required settings for sections tests", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 8, character: "       [".length + "series".length },
-                    start: { line: 8, character: "       [".length },
+                    end: { character: "       [".length + "series".length, line: 8 },
+                    start: { character: "       [".length, line: 8 },
                 },
                 uri: document.uri,
             },
@@ -105,8 +105,8 @@ suite("Required settings for sections tests", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 0, character: "[".length + "series".length },
-                    start: { line: 0, character: "[".length },
+                    end: { character: "[".length + "series".length, line: 0 },
+                    start: { character: "[".length, line: 0 },
                 },
                 uri: document.uri,
             },
@@ -114,8 +114,8 @@ suite("Required settings for sections tests", () => {
         ), Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 2, character: "[".length + "series".length },
-                    start: { line: 2, character: "[".length },
+                    end: { character: "[".length + "series".length, line: 2 },
+                    start: { character: "[".length, line: 2 },
                 },
                 uri: document.uri,
             },
@@ -161,8 +161,8 @@ suite("Required settings for sections tests", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 2, character: "   [".length + "series".length },
-                    start: { line: 2, character: "   [".length },
+                    end: { character: "   [".length + "series".length, line: 2 },
+                    start: { character: "   [".length, line: 2 },
                 },
                 uri: document.uri,
             },

@@ -63,8 +63,8 @@ suite("Var endvar tests", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 0, character: 3 },
-                    start: { line: 0, character: 0 },
+                    end: { character: 3, line: 0 },
+                    start: { character: 0, line: 0 },
                 }, uri: document.uri,
             },
             DiagnosticSeverity.Error, "var has no matching endvar",
@@ -85,8 +85,8 @@ suite("Var endvar tests", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 0, character: 3 },
-                    start: { line: 0, character: 0 },
+                    end: { character: 3, line: 0 },
+                    start: { character: 0, line: 0 },
                 }, uri: document.uri,
             },
             DiagnosticSeverity.Error, "var has no matching endvar",
@@ -107,8 +107,8 @@ suite("Var endvar tests", () => {
         const expected: Diagnostic[] = [Shared.createDiagnostic(
             {
                 range: {
-                    end: { line: 0, character: 3 },
-                    start: { line: 0, character: 0 },
+                    end: { character: 3, line: 0 },
+                    start: { character: 0, line: 0 },
                 }, uri: document.uri,
             },
             DiagnosticSeverity.Error, "var has no matching endvar",
