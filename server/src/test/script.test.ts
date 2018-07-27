@@ -1,155 +1,98 @@
-import * as assert from "assert";
-import { Diagnostic, DiagnosticSeverity } from "vscode-languageserver/lib/main";
-import * as Shared from "../sharedFunctions";
-import Validator from "../Validator";
+import { DiagnosticSeverity } from "vscode-languageserver/lib/main";
+import Util from "../Util";
+import Test from "./Test";
 
 const errorMessage = "script has no matching endscript";
 
 suite("Script endscript tests", () => {
-
-    test("Correct empty script", () => {
-        const text =
+    const tests = [
+        new Test("Correct empty script",
             `script\n` +
-            `endscript`;
-        const document = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
-
-    test("Unclosed empty script", () => {
-        const text =
+            `endscript`,
+            [],
+        ),
+        new Test("Unclosed empty script",
             `script\n` +
-            `endscrpt`;
-        const document = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [Shared.createDiagnostic(
-            {
-                range: {
-                    end: { character: 6, line: 0 },
-                    start: { character: 0, line: 0 },
-                }, uri: document.uri,
-            },
-            DiagnosticSeverity.Error, errorMessage,
-        )];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
-
-    test("Script with unclosed for", () => {
-        const text =
+            `endscrpt`,
+            [Util.createDiagnostic(
+                {
+                    range: {
+                        end: { character: 6, line: 0 },
+                        start: { character: 0, line: 0 },
+                    }, uri: Test.URI,
+                },
+                DiagnosticSeverity.Error, errorMessage,
+            )],
+        ),
+        new Test("Script with unclosed for",
             `script\n` +
-            `	for (let i = 0; i < 5; i++) {}\n` +
-            `endscript`;
-        const document = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
-
-    test("Two correct scripts", () => {
-        const text =
+            `	for (let i = 0, i < 5, i++) {}\n` +
+            `endscript`,
+            [],
+        ),
+        new Test("Two correct scripts",
             `script\n` +
-            `	for (let i = 0; i < 5; i++) {}\n` +
+            `	for (let i = 0, i < 5, i++) {}\n` +
             `endscript\n` +
             `script\n` +
-            `	for (let i = 0; i < 5; i++) {}\n` +
-            `endscript`;
-        const document = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
-
-    test("Two unclosed scripts", () => {
-        const text =
+            `	for (let i = 0, i < 5, i++) {}\n` +
+            `endscript`,
+            [],
+        ),
+        new Test("Two unclosed scripts",
             `script\n` +
             `endscrpt\n` +
             `script\n` +
-            `endscrpt`;
-        const document = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [Shared.createDiagnostic(
-            {
-                range: {
-                    end: { character: 6, line: 0 },
-                    start: { character: 0, line: 0 },
-                }, uri: document.uri,
-            },
-            DiagnosticSeverity.Error, errorMessage,
-        )];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
-
-    test("Correct one-line script = ", () => {
-        const text =
-            `script = if (!config.isDialog) c = widget`;
-        const document = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
-
-    test("Correct multi-line script = ", () => {
-        const text =
+            `endscrpt`,
+            [Util.createDiagnostic(
+                {
+                    range: {
+                        end: { character: 6, line: 0 },
+                        start: { character: 0, line: 0 },
+                    }, uri: Test.URI,
+                },
+                DiagnosticSeverity.Error, errorMessage,
+            )],
+        ),
+        new Test("Correct one-line script = ",
+            `script = if (!config.isDialog) c = widget`,
+            [],
+        ),
+        new Test("Correct multi-line script = ",
             `script = if \n` +
             `\n` +
             `		(!config.isDialog)\n` +
             `			c = widget\n` +
-            `endscript`;
-        const document = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
-
-    test("Unfinished one-line script = ", () => {
-        const text =
-            `script = `;
-        const document = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [Shared.createDiagnostic(
-            {
-                range: {
-                    end: { character: 6, line: 0 },
-                    start: { character: 0, line: 0 },
-                }, uri: document.uri,
-            },
-            DiagnosticSeverity.Error, errorMessage,
-        )];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
-
-    test("Correct empty one-line script = ", () => {
-        const text =
+            `endscript`,
+            [],
+        ),
+        new Test("Unfinished one-line script = ",
+            `script = `,
+            [Util.createDiagnostic(
+                {
+                    range: {
+                        end: { character: 6, line: 0 },
+                        start: { character: 0, line: 0 },
+                    }, uri: Test.URI,
+                },
+                DiagnosticSeverity.Error, errorMessage,
+            )],
+        ),
+        new Test("Correct empty one-line script = ",
             `script = \n` +
-            `endscript`;
-        const document = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
-
-    test("Incorrect multi-line script = ", () => {
-        const text =
+            `endscript`,
+            [],
+        ),
+        new Test("Incorrect multi-line script = ",
             `script = if \n` +
             `\n` +
             `		(!config.isDialog)\n` +
             `			c = widget\n` +
-            `endscript`;
-        const document = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
+            `endscript`,
+            [],
+        ),
+    ];
+
+    tests.forEach(Test.RUN_TEST);
 
 });
