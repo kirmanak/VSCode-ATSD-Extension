@@ -1,12 +1,10 @@
-import * as assert from "assert";
-import { Diagnostic, DiagnosticSeverity } from "vscode-languageserver/lib/main";
-import * as Shared from "../sharedFunctions";
-import Validator from "../Validator";
+import { DiagnosticSeverity } from "vscode-languageserver/lib/main";
+import Util from "../Util";
+import Test from "./Test";
 
 suite("Incorrect dealias tests", () => {
-
-    test("One alias, one correct dealias", () => {
-        const text =
+    const tests = [
+        new Test("One alias, one correct dealias",
             "[series]\n" +
             "   metric = temp\n" +
             "   entity = srv\n" +
@@ -14,16 +12,11 @@ suite("Incorrect dealias tests", () => {
             "[series]\n" +
             "   metric = temp\n" +
             "   entity = srv\n" +
-            "   value = value('s1') * 2";
-        const document = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
+            "   value = value('s1') * 2",
+            [],
+        ),
 
-    test("One alias, one incorrect dealias", () => {
-        const text =
+        new Test("One alias, one incorrect dealias",
             "[series]\n" +
             "   metric = temp\n" +
             "   entity = srv\n" +
@@ -31,24 +24,19 @@ suite("Incorrect dealias tests", () => {
             "[series]\n" +
             "   metric = temp\n" +
             "   entity = srv\n" +
-            "   value = value('s2') * 2";
-        const document = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [Shared.createDiagnostic(
-            {
-                range: {
-                    end: { character: "   value = value('".length + "s2".length, line: 7 },
-                    start: { character: "   value = value('".length, line: 7 },
-                }, uri: document.uri,
-            },
-            DiagnosticSeverity.Error, Shared.errorMessage("s2", "s1"),
-        )];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
+            "   value = value('s2') * 2",
+            [Util.createDiagnostic(
+                {
+                    range: {
+                        end: { character: "   value = value('".length + "s2".length, line: 7 },
+                        start: { character: "   value = value('".length, line: 7 },
+                    }, uri: Test.URI,
+                },
+                DiagnosticSeverity.Error, Util.errorMessage("s2", "s1"),
+            )],
+        ),
 
-    test("One alias, one correct dealias before the declaration", () => {
-        const text =
+        new Test("One alias, one correct dealias before the declaration",
             "[series]\n" +
             "   metric = temp\n" +
             "   entity = srv\n" +
@@ -56,16 +44,11 @@ suite("Incorrect dealias tests", () => {
             "[series]\n" +
             "   metric = temp\n" +
             "   entity = srv\n" +
-            "   alias = s1";
-        const document = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
+            "   alias = s1",
+            [],
+        ),
 
-    test("One alias, two incorrect dealiases", () => {
-        const text =
+        new Test("One alias, two incorrect dealiases",
             "[series]\n" +
             "   metric = temp\n" +
             "   entity = srv\n" +
@@ -77,32 +60,27 @@ suite("Incorrect dealias tests", () => {
             "[series]\n" +
             "   metric = temp\n" +
             "   entity = srv\n" +
-            "   value = value('s3') * 2";
-        const document = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [Shared.createDiagnostic(
-            {
-                range: {
-                    end: { character: "   value = value('".length + "s2".length, line: 7 },
-                    start: { character: "   value = value('".length, line: 7 },
-                }, uri: document.uri,
-            },
-            DiagnosticSeverity.Error, Shared.errorMessage("s2", "s1"),
-        ), Shared.createDiagnostic(
-            {
-                range: {
-                    end: { character: "   value = value('".length + "s3".length, line: 11 },
-                    start: { character:  "   value = value('".length, line: 11 },
-                }, uri: document.uri,
-            },
-            DiagnosticSeverity.Error, Shared.errorMessage("s3", "s1"),
-        )];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
+            "   value = value('s3') * 2",
+            [Util.createDiagnostic(
+                {
+                    range: {
+                        end: { character: "   value = value('".length + "s2".length, line: 7 },
+                        start: { character: "   value = value('".length, line: 7 },
+                    }, uri: Test.URI,
+                },
+                DiagnosticSeverity.Error, Util.errorMessage("s2", "s1"),
+            ), Util.createDiagnostic(
+                {
+                    range: {
+                        end: { character: "   value = value('".length + "s3".length, line: 11 },
+                        start: { character: "   value = value('".length, line: 11 },
+                    }, uri: Test.URI,
+                },
+                DiagnosticSeverity.Error, Util.errorMessage("s3", "s1"),
+            )],
+        ),
 
-    test("Two aliases, two correct dealiases", () => {
-        const text =
+        new Test("Two aliases, two correct dealiases",
             "[series]\n" +
             "   metric = temp\n" +
             "   entity = srv\n" +
@@ -118,16 +96,11 @@ suite("Incorrect dealias tests", () => {
             "[series]\n" +
             "   metric = temp\n" +
             "   entity = srv\n" +
-            "   value = value('s2') * 2";
-        const document = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
+            "   value = value('s2') * 2",
+            [],
+        ),
 
-    test("Two aliases, one incorrect dealias. one correct dealias", () => {
-        const text =
+        new Test("Two aliases, one incorrect dealias. one correct dealias",
             "[series]\n" +
             "   metric = temp\n" +
             "   entity = srv\n" +
@@ -143,24 +116,19 @@ suite("Incorrect dealias tests", () => {
             "[series]\n" +
             "   metric = temp\n" +
             "   entity = srv\n" +
-            "   value = value('s2') * 2";
-        const document = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [Shared.createDiagnostic(
-            {
-                range: {
-                    end: { character: "   value = value('".length + "s3".length, line: 11 },
-                    start: { character:  "   value = value('".length, line: 11 },
-                }, uri: document.uri,
-            },
-            DiagnosticSeverity.Error, Shared.errorMessage("s3", "s1"),
-        )];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
+            "   value = value('s2') * 2",
+            [Util.createDiagnostic(
+                {
+                    range: {
+                        end: { character: "   value = value('".length + "s3".length, line: 11 },
+                        start: { character: "   value = value('".length, line: 11 },
+                    }, uri: Test.URI,
+                },
+                DiagnosticSeverity.Error, Util.errorMessage("s3", "s1"),
+            )],
+        ),
 
-    test("Declared series, indents are used, correct alias and dealias", () => {
-        const text =
+        new Test("Declared series, indents are used, correct alias and dealias",
             "[series]\n" +
             "   metric = temp\n" +
             "   entity = srv\n" +
@@ -168,12 +136,11 @@ suite("Incorrect dealias tests", () => {
             "[series]\n" +
             "   metric = temp\n" +
             "   entity = srv\n" +
-            "	value = value('src');\n";
-        const document = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
+            "	value = value('src'),\n",
+            [],
+        ),
+    ];
+
+    tests.forEach(Test.RUN_TEST);
 
 });

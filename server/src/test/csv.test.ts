@@ -1,7 +1,5 @@
-import * as assert from "assert";
 import { DiagnosticSeverity } from "vscode-languageserver/lib/main";
 import Util from "../Util";
-import Validator from "../Validator";
 import Test from "./Test";
 
 suite("CSV tests", () => {
@@ -101,10 +99,6 @@ suite("CSV tests", () => {
         ),
     ];
 
-    tests.forEach((data) => {
-        test(data.getName(), () => {
-            assert.deepEqual(new Validator(data.getDocument()).lineByLine(), data.getExpected());
-        });
-    });
+    tests.forEach(Test.RUN_TEST);
 
 });

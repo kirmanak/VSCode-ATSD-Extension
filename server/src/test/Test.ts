@@ -1,7 +1,14 @@
+import * as assert from "assert";
 import { Diagnostic, TextDocument } from "vscode-languageserver/lib/main";
+import Validator from "../Validator";
 
 export default class Test {
     public static URI = "test";
+    public static RUN_TEST = (data: Test) => {
+        test((data.getName()), () => {
+            assert.deepEqual(new Validator(data.getDocument()).lineByLine(), data.getExpected());
+        });
+    }
     private static LANGUAGE_ID = "test";
     private name: string;
     private document: TextDocument;

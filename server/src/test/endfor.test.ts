@@ -1,110 +1,87 @@
-import * as assert from "assert";
-import { Diagnostic, DiagnosticSeverity, TextDocument } from "vscode-languageserver/lib/main";
-import * as Shared from "../sharedFunctions";
-import Validator from "../Validator";
+import { DiagnosticSeverity } from "vscode-languageserver/lib/main";
+import Util from "../Util";
+import Test from "./Test";
 
 suite("Unmatched endfor tests", () => {
-
-    test("One correct loop", () => {
-        const text =
+    const tests = [
+        new Test("One correct loop",
             "list servers = 'srv1', 'srv2'\n" +
             "for server in servers\n" +
             "   do something\n" +
-            "endfor";
-        const document: TextDocument = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
+            "endfor",
+            [],
+        ),
 
-    test("Two correct loops", () => {
-        const text =
+        new Test("Two correct loops",
             "list servers = 'srv1', 'srv2'\n" +
             "for server in servers\n" +
             "   do something\n" +
             "endfor\n" +
             "for server in servers\n" +
             "   do something\n" +
-            "endfor";
-        const document: TextDocument = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
+            "endfor",
+            [],
+        ),
 
-    test("One incorrect loop", () => {
-        const text =
+        new Test("One incorrect loop",
             "list servers = 'srv1', 'srv2'\n" +
             "for server in servers\n" +
-            "   do something\n";
-        const document: TextDocument = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [Shared.createDiagnostic(
-            {
-                range: {
-                    end: { character: 3, line: 1 },
-                    start: { character: 0, line: 1 },
-                }, uri: document.uri,
-            },
-            DiagnosticSeverity.Error, "for has no matching endfor",
-        )];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
+            "   do something\n",
+            [Util.createDiagnostic(
+                {
+                    range: {
+                        end: { character: 3, line: 1 },
+                        start: { character: 0, line: 1 },
+                    }, uri: Test.URI,
+                },
+                DiagnosticSeverity.Error, "for has no matching endfor",
+            )],
+        ),
 
-    test("Two incorrect loops", () => {
-        const text =
+        new Test("Two incorrect loops",
             "list servers = 'srv1', 'srv2'\n" +
             "for server in servers\n" +
             "   do something\n" +
             "for srv in servers\n" +
-            "   do something\n";
-        const document: TextDocument = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [Shared.createDiagnostic(
-            {
-                 range: {
-                    end: { character: 3, line: 1 },
-                    start: { character: 0, line: 1 },
-                }, uri: document.uri,
-            },
-            DiagnosticSeverity.Error, "for has no matching endfor",
-        ), Shared.createDiagnostic(
-            {
-                range: {
-                    end: { character: 3, line: 3 },
-                    start: { character: 0, line: 3 },
-                }, uri: document.uri,
-            },
-            DiagnosticSeverity.Error, "for has no matching endfor",
-        )];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
+            "   do something\n",
+            [Util.createDiagnostic(
+                {
+                    range: {
+                        end: { character: 3, line: 1 },
+                        start: { character: 0, line: 1 },
+                    }, uri: Test.URI,
+                },
+                DiagnosticSeverity.Error, "for has no matching endfor",
+            ), Util.createDiagnostic(
+                {
+                    range: {
+                        end: { character: 3, line: 3 },
+                        start: { character: 0, line: 3 },
+                    }, uri: Test.URI,
+                },
+                DiagnosticSeverity.Error, "for has no matching endfor",
+            )],
+        ),
 
-    test("One incorrect loop, one correct loop", () => {
-        const text =
+        new Test("One incorrect loop, one correct loop",
             "list servers = 'srv1', 'srv2'\n" +
             "for server in servers\n" +
             "   do something\n" +
             "for srv in servers\n" +
             "   do something\n" +
-            "endfor";
-        const document: TextDocument = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [Shared.createDiagnostic(
-            {
-                range: {
-                    end: { character: 3, line: 1 },
-                    start: { character: 0, line: 1 },
-                }, uri: document.uri,
-            },
-            DiagnosticSeverity.Error, "for has no matching endfor",
-        )];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
+            "endfor",
+            [Util.createDiagnostic(
+                {
+                    range: {
+                        end: { character: 3, line: 1 },
+                        start: { character: 0, line: 1 },
+                    }, uri: Test.URI,
+                },
+                DiagnosticSeverity.Error, "for has no matching endfor",
+            )],
+        ),
+    ];
+
+    tests.forEach(Test.RUN_TEST);
 
 });
