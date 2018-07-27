@@ -1,73 +1,47 @@
-import * as assert from "assert";
-import { Diagnostic, DiagnosticSeverity } from "vscode-languageserver/lib/main";
-import * as Shared from "../sharedFunctions";
-import Validator from "../Validator";
+import { DiagnosticSeverity } from "vscode-languageserver/lib/main";
+import Util from "../Util";
+import Test from "./Test";
 
 suite("Required settings for sections tests", () => {
-
-    test("correct series without parent section", () => {
-        const text =
+    const tests = [
+        new Test("correct series without parent section",
             "[series]\n" +
             "   entity = hello\n" +
-            "   metric = hello\n";
-        const document = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
-
-    test("incorrect series without parent categories", () => {
-        const text =
+            "   metric = hello\n",
+            [],
+        ),
+        new Test("incorrect series without parent categories",
             "[series]\n" +
-            "   metric = hello\n";
-        const document = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [Shared.createDiagnostic(
-            {
-                range: {
-                    end: { character: "[".length + "series".length, line: 0 },
-                    start: { character: "[".length, line: 0 },
+            "   metric = hello\n",
+            [Util.createDiagnostic(
+                {
+                    range: {
+                        end: { character: "[".length + "series".length, line: 0 },
+                        start: { character: "[".length, line: 0 },
+                    },
+                    uri: Test.URI,
                 },
-                uri: document.uri,
-            },
-            DiagnosticSeverity.Error, "entity is required",
-        )];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
-
-    test("correct series with parent section", () => {
-        const text =
+                DiagnosticSeverity.Error, "entity is required",
+            )],
+        ),
+        new Test("correct series with parent section",
             "[widget]\n" +
             "   type = chart\n" +
             "   entity = hello\n" +
             "   [series]\n" +
-            "       metric = hello\n";
-        const document = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
-
-    test("correct series with grandparent section", () => {
-        const text =
+            "       metric = hello\n",
+            [],
+        ),
+        new Test("correct series with grandparent section",
             "[group]\n" +
             "   entity = hello\n" +
             "[widget]\n" +
             "   type = chart\n" +
             "   [series]\n" +
-            "       metric = hello\n";
-        const document = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
-
-    test("incorrect series with closed parent section", () => {
-        const text =
+            "       metric = hello\n",
+            [],
+        ),
+        new Test("incorrect series with closed parent section",
             "[group]\n" +
             "   type = chart\n" +
             "   [widget]\n" +
@@ -77,56 +51,44 @@ suite("Required settings for sections tests", () => {
             "\n" +
             "   [widget]\n" +
             "       [series]\n" +
-            "           metric = hello\n";
-        const document = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [Shared.createDiagnostic(
-            {
-                range: {
-                    end: { character: "       [".length + "series".length, line: 8 },
-                    start: { character: "       [".length, line: 8 },
+            "           metric = hello\n",
+            [Util.createDiagnostic(
+                {
+                    range: {
+                        end: { character: "       [".length + "series".length, line: 8 },
+                        start: { character: "       [".length, line: 8 },
+                    },
+                    uri: Test.URI,
                 },
-                uri: document.uri,
-            },
-            DiagnosticSeverity.Error, "entity is required",
-        )];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
-
-    test("two incorrect series without parent categories", () => {
-        const text =
+                DiagnosticSeverity.Error, "entity is required",
+            )],
+        ),
+        new Test("two incorrect series without parent categories",
             "[series]\n" +
             "   metric = hello\n" +
             "[series]\n" +
-            "   entity = hello\n";
-        const document = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [Shared.createDiagnostic(
-            {
-                range: {
-                    end: { character: "[".length + "series".length, line: 0 },
-                    start: { character: "[".length, line: 0 },
+            "   entity = hello\n",
+            [Util.createDiagnostic(
+                {
+                    range: {
+                        end: { character: "[".length + "series".length, line: 0 },
+                        start: { character: "[".length, line: 0 },
+                    },
+                    uri: Test.URI,
                 },
-                uri: document.uri,
-            },
-            DiagnosticSeverity.Error, "entity is required",
-        ), Shared.createDiagnostic(
-            {
-                range: {
-                    end: { character: "[".length + "series".length, line: 2 },
-                    start: { character: "[".length, line: 2 },
+                DiagnosticSeverity.Error, "entity is required",
+            ), Util.createDiagnostic(
+                {
+                    range: {
+                        end: { character: "[".length + "series".length, line: 2 },
+                        start: { character: "[".length, line: 2 },
+                    },
+                    uri: Test.URI,
                 },
-                uri: document.uri,
-            },
-            DiagnosticSeverity.Error, "metric is required",
-        )];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
-
-    test("A setting is specified in if statement", () => {
-        const text =
+                DiagnosticSeverity.Error, "metric is required",
+            )],
+        ),
+        new Test("A setting is specified in if statement",
             "list servers = vps, vds\n" +
             "for server in servers\n" +
             "   [series]\n" +
@@ -136,16 +98,10 @@ suite("Required settings for sections tests", () => {
             "       else\n" +
             "           entity = vps\n" +
             "       endif\n" +
-            "endfor\n";
-        const document = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
-
-    test("A setting is specified only in if-elseif statements", () => {
-        const text =
+            "endfor\n",
+            [],
+        ),
+        new Test("A setting is specified only in if-elseif statements",
             "list servers = vps, vds\n" +
             "for server in servers\n" +
             "   [series]\n" +
@@ -155,21 +111,20 @@ suite("Required settings for sections tests", () => {
             "       elseif server = 'vds'\n" +
             "           entity = vps\n" +
             "       endif\n" +
-            "endfor\n";
-        const document = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [Shared.createDiagnostic(
-            {
-                range: {
-                    end: { character: "   [".length + "series".length, line: 2 },
-                    start: { character: "   [".length, line: 2 },
+            "endfor\n",
+            [Util.createDiagnostic(
+                {
+                    range: {
+                        end: { character: "   [".length + "series".length, line: 2 },
+                        start: { character: "   [".length, line: 2 },
+                    },
+                    uri: Test.URI,
                 },
-                uri: document.uri,
-            },
-            DiagnosticSeverity.Error, "entity is required",
-        )];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
+                DiagnosticSeverity.Error, "entity is required",
+            )],
+        ),
+    ];
+
+    tests.forEach(Test.RUN_TEST);
 
 });

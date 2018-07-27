@@ -1,150 +1,106 @@
-import * as assert from "assert";
-import { Diagnostic, DiagnosticSeverity } from "vscode-languageserver/lib/main";
-import * as Shared from "../sharedFunctions";
-import Validator from "../Validator";
+import { DiagnosticSeverity } from "vscode-languageserver/lib/main";
+import Util from "../Util";
+import Test from "./Test";
 
 suite("Repetition of variables or settings tests", () => {
-
-    test("Repetition of var name in 'var' and 'list'", () => {
-        const text =
+    const tests = [
+        new Test("Repetition of var name in 'var' and 'list'",
             "list servers = 'srv1', 'srv2'\n" +
-            "var servers = 'srv1', 'srv2'\n";
-        const document = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [Shared.createDiagnostic(
-            {
-                range: {
-                    end: { character: "var ".length + "servers".length, line: 1 },
-                    start: { character: "var ".length, line: 1 },
+            "var servers = 'srv1', 'srv2'\n",
+            [Util.createDiagnostic(
+                {
+                    range: {
+                        end: { character: "var ".length + "servers".length, line: 1 },
+                        start: { character: "var ".length, line: 1 },
+                    },
+                    uri: Test.URI,
                 },
-                uri: document.uri,
-            },
-            DiagnosticSeverity.Error, "servers is already defined",
-        )];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
-
-    test("Repetition of var name in 'for' and 'list'", () => {
-        const text =
+                DiagnosticSeverity.Error, "servers is already defined",
+            )],
+        ),
+        new Test("Repetition of var name in 'for' and 'list'",
             "list servers = 'srv1', 'srv2'\n" +
             "for servers in servers\n" +
-            "endfor";
-        const document = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [Shared.createDiagnostic(
-            {
-                range: {
-                    end: { character: "for ".length + "servers".length, line: 1 },
-                    start: { character: "for ".length, line: 1 },
-                }, uri: document.uri,
-            },
-            DiagnosticSeverity.Error, "servers is already defined",
-        )];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
-
-    test("Repetition of var name in 'csv' and 'list'", () => {
-        const text =
+            "endfor",
+            [Util.createDiagnostic(
+                {
+                    range: {
+                        end: { character: "for ".length + "servers".length, line: 1 },
+                        start: { character: "for ".length, line: 1 },
+                    }, uri: Test.URI,
+                },
+                DiagnosticSeverity.Error, "servers is already defined",
+            )],
+        ),
+        new Test("Repetition of var name in 'csv' and 'list'",
             "list servers = 'srv1', 'srv2'\n" +
             "csv servers = vps, vds\n" +
             "   true, false\n" +
-            "endcsv";
-        const document = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [Shared.createDiagnostic(
-            {
-                range: {
-                    end: { character: "csv ".length + "servers".length, line: 1 },
-                    start: { character: "csv ".length, line: 1 },
-                }, uri: document.uri,
-            },
-            DiagnosticSeverity.Error, "servers is already defined",
-        )];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
-
-    test("Repetition of var name in 'list' and 'csv'", () => {
-        const text =
+            "endcsv",
+            [Util.createDiagnostic(
+                {
+                    range: {
+                        end: { character: "csv ".length + "servers".length, line: 1 },
+                        start: { character: "csv ".length, line: 1 },
+                    }, uri: Test.URI,
+                },
+                DiagnosticSeverity.Error, "servers is already defined",
+            )],
+        ),
+        new Test("Repetition of var name in 'list' and 'csv'",
             "csv servers = vps, vds\n" +
             "   true, false\n" +
             "endcsv\n" +
-            "list servers = 'srv1', 'srv2'";
-        const document = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [Shared.createDiagnostic(
-            {
-                range: {
-                    end: { character: "list ".length + "servers".length, line: 3 },
-                    start: { character: "list ".length, line: 3 },
-                }, uri: document.uri,
-            },
-            DiagnosticSeverity.Error, "servers is already defined",
-        )];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
-
-    test("Repetition of var name in 'for' and 'var'", () => {
-        const text =
+            "list servers = 'srv1', 'srv2'",
+            [Util.createDiagnostic(
+                {
+                    range: {
+                        end: { character: "list ".length + "servers".length, line: 3 },
+                        start: { character: "list ".length, line: 3 },
+                    }, uri: Test.URI,
+                },
+                DiagnosticSeverity.Error, "servers is already defined",
+            )],
+        ),
+        new Test("Repetition of var name in 'for' and 'var'",
             "list servers = 'srv1', 'srv2'\n" +
             "for srv in servers\n" +
             "endfor\n" +
-            "var srv = ['srv1', 'srv2']";
-        const document = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
-
-    test("Repetition of setting name", () => {
-        const text =
+            "var srv = ['srv1', 'srv2']",
+            [],
+        ),
+        new Test("Repetition of setting name",
             "[series]\n" +
             "   entity = srv\n" +
             "   entity = srv2\n" +
-            "   metric = status";
-        const document = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [Shared.createDiagnostic(
-            {
-                range: {
-                    end: { character: "   ".length + "entity".length, line: 2 },
-                    start: { character: "   ".length, line: 2 },
-                }, uri: document.uri,
-            },
-            DiagnosticSeverity.Warning, "entity is already defined",
-        )];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
-
-    test("Shadowing of a setting from parent section", () => {
-        const text =
+            "   metric = status",
+            [Util.createDiagnostic(
+                {
+                    range: {
+                        end: { character: "   ".length + "entity".length, line: 2 },
+                        start: { character: "   ".length, line: 2 },
+                    }, uri: Test.URI,
+                },
+                DiagnosticSeverity.Warning, "entity is already defined",
+            )],
+        ),
+        new Test("Shadowing of a setting from parent section",
             "[configuration]\n" +
             "   entity = srv\n" +
             "[series]\n" +
             "   entity = srv2\n" +
-            "   metric = status";
-        const document = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [Shared.createDiagnostic(
-            {
-                range: {
-                    end: { character:  "   ".length + "entity".length, line: 3 },
-                    start: { character: "   ".length, line: 3 },
-                }, uri: document.uri,
-            },
-            DiagnosticSeverity.Hint, "entity is already defined",
-        )];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
-
-    test("Repetition of aliases", () => {
-        const text =
+            "   metric = status",
+            [Util.createDiagnostic(
+                {
+                    range: {
+                        end: { character: "   ".length + "entity".length, line: 3 },
+                        start: { character: "   ".length, line: 3 },
+                    }, uri: Test.URI,
+                },
+                DiagnosticSeverity.Hint, "entity is already defined",
+            )],
+        ),
+        new Test("Repetition of aliases",
             "[series]\n" +
             "   entity = srv\n" +
             "   metric = temp\n" +
@@ -152,24 +108,18 @@ suite("Repetition of variables or settings tests", () => {
             "[series]\n" +
             "   entity = srv\n" +
             "   metric = temp\n" +
-            "   alias = server";
-        const document = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [Shared.createDiagnostic(
-            {
-                range: {
-                    end: { character: "   alias = ".length + "server".length, line: 7 },
-                    start: { character: "   alias = ".length, line: 7 },
-                }, uri: document.uri,
-            },
-            DiagnosticSeverity.Error, "server is already defined",
-        )];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
-
-    test("Repetition of aliases in different widgets", () => {
-        const text =
+            "   alias = server",
+            [Util.createDiagnostic(
+                {
+                    range: {
+                        end: { character: "   alias = ".length + "server".length, line: 7 },
+                        start: { character: "   alias = ".length, line: 7 },
+                    }, uri: Test.URI,
+                },
+                DiagnosticSeverity.Error, "server is already defined",
+            )],
+        ),
+        new Test("Repetition of aliases in different widgets",
             "[widget]\n" +
             "   type = chart\n" +
             "[series]\n" +
@@ -181,30 +131,18 @@ suite("Repetition of variables or settings tests", () => {
             "[series]\n" +
             "   entity = srv\n" +
             "   metric = temp\n" +
-            "   alias = server";
-        const document = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
-
-    test("Same name for alias and list", () => {
-        const text =
+            "   alias = server",
+            [],
+        ),
+        new Test("Same name for alias and list",
             "list server = 'srv1', 'srv2'\n" +
             "[series]\n" +
             "   entity = srv\n" +
             "   metric = temp\n" +
-            "   alias = server";
-        const document = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
-
-    test("Repetition of declared settings in if", () => {
-        const text =
+            "   alias = server",
+            [],
+        ),
+        new Test("Repetition of declared settings in if",
             "list servers = 'srv1', 'srv2'\n" +
             "for server in servers\n" +
             "   [series]\n" +
@@ -216,32 +154,26 @@ suite("Repetition of variables or settings tests", () => {
             "       else\n" +
             "           color = 'green'\n" +
             "       endif\n" +
-            "endfor\n";
-        const document = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [Shared.createDiagnostic(
-            {
-                range: {
-                    end: { character: "           ".length +  "color".length, line: 7 },
-                    start: { character: "           ".length, line: 7 },
-                }, uri: document.uri,
-            },
-            DiagnosticSeverity.Warning, "color is already defined",
-        ), Shared.createDiagnostic(
-            {
-                range: {
-                    end: { character: "           ".length +  "color".length, line: 9 },
-                    start: { character: "           ".length, line: 9 },
-                }, uri: document.uri,
-            },
-            DiagnosticSeverity.Warning, "color is already defined",
-        )];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
-
-    test("Repetition of declared in parent settings in if", () => {
-        const text =
+            "endfor\n",
+            [Util.createDiagnostic(
+                {
+                    range: {
+                        end: { character: "           ".length + "color".length, line: 7 },
+                        start: { character: "           ".length, line: 7 },
+                    }, uri: Test.URI,
+                },
+                DiagnosticSeverity.Warning, "color is already defined",
+            ), Util.createDiagnostic(
+                {
+                    range: {
+                        end: { character: "           ".length + "color".length, line: 9 },
+                        start: { character: "           ".length, line: 9 },
+                    }, uri: Test.URI,
+                },
+                DiagnosticSeverity.Warning, "color is already defined",
+            )],
+        ),
+        new Test("Repetition of declared in parent settings in if",
             "[widget]\n" +
             "   type = chart\n" +
             "   entity = srv\n" +
@@ -254,32 +186,26 @@ suite("Repetition of variables or settings tests", () => {
             "       else\n" +
             "           entity = srv1\n" +
             "       endif\n" +
-            "endfor\n";
-        const document = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [Shared.createDiagnostic(
-            {
-                range: {
-                    end: { character: "           ".length +  "entity".length, line: 8 },
-                    start: { character: "           ".length, line: 8 },
-                }, uri: document.uri,
-            },
-            DiagnosticSeverity.Hint, "entity is already defined",
-        ), Shared.createDiagnostic(
-            {
-                range: {
-                    end: { character: "           ".length +  "entity".length, line: 10 },
-                    start: { character: "           ".length, line: 10 },
-                }, uri: document.uri,
-            },
-            DiagnosticSeverity.Hint, "entity is already defined",
-        )];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
-
-    test("Repetition of settings in if then", () => {
-        const text =
+            "endfor\n",
+            [Util.createDiagnostic(
+                {
+                    range: {
+                        end: { character: "           ".length + "entity".length, line: 8 },
+                        start: { character: "           ".length, line: 8 },
+                    }, uri: Test.URI,
+                },
+                DiagnosticSeverity.Hint, "entity is already defined",
+            ), Util.createDiagnostic(
+                {
+                    range: {
+                        end: { character: "           ".length + "entity".length, line: 10 },
+                        start: { character: "           ".length, line: 10 },
+                    }, uri: Test.URI,
+                },
+                DiagnosticSeverity.Hint, "entity is already defined",
+            )],
+        ),
+        new Test("Repetition of settings in if then",
             "list servers = 'srv1', 'srv2'\n" +
             "for server in servers\n" +
             "   [series]\n" +
@@ -291,24 +217,18 @@ suite("Repetition of variables or settings tests", () => {
             "       else\n" +
             "           color = 'green'\n" +
             "       endif\n" +
-            "endfor\n";
-        const document = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [Shared.createDiagnostic(
-            {
-                range: {
-                    end: { character: "           ".length +  "color".length, line: 7 },
-                    start: { character: "           ".length, line: 7 },
-                }, uri: document.uri,
-            },
-            DiagnosticSeverity.Warning, "color is already defined",
-        )];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
-
-    test("Repetition of settings in if else", () => {
-        const text =
+            "endfor\n",
+            [Util.createDiagnostic(
+                {
+                    range: {
+                        end: { character: "           ".length + "color".length, line: 7 },
+                        start: { character: "           ".length, line: 7 },
+                    }, uri: Test.URI,
+                },
+                DiagnosticSeverity.Warning, "color is already defined",
+            )],
+        ),
+        new Test("Repetition of settings in if else",
             "list servers = 'srv1', 'srv2'\n" +
             "for server in servers\n" +
             "   [series]\n" +
@@ -320,24 +240,18 @@ suite("Repetition of variables or settings tests", () => {
             "           color = 'red'\n" +
             "           color = 'green'\n" +
             "       endif\n" +
-            "endfor\n";
-        const document = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [Shared.createDiagnostic(
-            {
-                range: {
-                    end: { character: "           ".length +  "color".length, line: 9 },
-                    start: { character: "           ".length, line: 9 },
-                }, uri: document.uri,
-            },
-            DiagnosticSeverity.Warning, "color is already defined",
-        )];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
-
-    test("Repetition of settings in if elseif", () => {
-        const text =
+            "endfor\n",
+            [Util.createDiagnostic(
+                {
+                    range: {
+                        end: { character: "           ".length + "color".length, line: 9 },
+                        start: { character: "           ".length, line: 9 },
+                    }, uri: Test.URI,
+                },
+                DiagnosticSeverity.Warning, "color is already defined",
+            )],
+        ),
+        new Test("Repetition of settings in if elseif",
             "list servers = 'srv1', 'srv2'\n" +
             "for server in servers\n" +
             "   [series]\n" +
@@ -351,24 +265,18 @@ suite("Repetition of variables or settings tests", () => {
             "           color = 'red'\n" +
             "           color = 'green'\n" +
             "       endif\n" +
-            "endfor\n";
-        const document = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [Shared.createDiagnostic(
-            {
-                range: {
-                    end: { character: "           ".length +  "color".length, line: 11 },
-                    start: { character: "           ".length, line: 11 },
-                }, uri: document.uri,
-            },
-            DiagnosticSeverity.Warning, "color is already defined",
-        )];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
-
-    test("Repetition of settings in if else next section", () => {
-        const text =
+            "endfor\n",
+            [Util.createDiagnostic(
+                {
+                    range: {
+                        end: { character: "           ".length + "color".length, line: 11 },
+                        start: { character: "           ".length, line: 11 },
+                    }, uri: Test.URI,
+                },
+                DiagnosticSeverity.Warning, "color is already defined",
+            )],
+        ),
+        new Test("Repetition of settings in if else next section",
             "list servers = 'srv1', 'srv2'\n" +
             "for server in servers\n" +
             "   [series]\n" +
@@ -389,16 +297,10 @@ suite("Repetition of variables or settings tests", () => {
             "       else\n" +
             "           color = 'green'\n" +
             "       endif\n" +
-            "endfor\n";
-        const document = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
-
-    test("Repetition of settings in if else next section without if", () => {
-        const text =
+            "endfor\n",
+            [],
+        ),
+        new Test("Repetition of settings in if else next section without if",
             "list servers = 'srv1', 'srv2'\n" +
             "for server in servers\n" +
             "   [series]\n" +
@@ -415,12 +317,11 @@ suite("Repetition of variables or settings tests", () => {
             "       entity = srv\n" +
             "       metric = temp\n" +
             "       color = 'yellow'\n" +
-            "endfor\n";
-        const document = Shared.createDoc(text);
-        const validator = new Validator(document);
-        const expected: Diagnostic[] = [];
-        const result = validator.lineByLine();
-        assert.deepEqual(result, expected);
-    });
+            "endfor\n",
+            [],
+        ),
+    ];
+
+    tests.forEach(Test.RUN_TEST);
 
 });

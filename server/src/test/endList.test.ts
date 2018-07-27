@@ -10,14 +10,12 @@ suite("Unfinished list", () => {
             "list servers = vps, vds\n",
             [],
         ),
-
         new Test("One correct multiline list",
             "list servers = vps, \n" +
             "	vds\n" +
             "endlist",
             [],
         ),
-
         new Test("One incorrect multiline list",
             "list servers = vps, \n" +
             "	vds\n" +
@@ -32,7 +30,6 @@ suite("Unfinished list", () => {
                 DiagnosticSeverity.Error, errorMessage,
             )],
         ),
-
         new Test("One incorrect multiline list with comment before",
             "/* this is\n" +
             "a comment\n" +
@@ -51,7 +48,6 @@ suite("Unfinished list", () => {
                 DiagnosticSeverity.Error, errorMessage,
             )],
         ),
-
         new Test("One incorrect multiline list with comment on the line",
             "/* test */ list servers = vps, \n" +
             "	vds\n" +
@@ -66,7 +62,6 @@ suite("Unfinished list", () => {
                 DiagnosticSeverity.Error, errorMessage,
             )],
         ),
-
         new Test("One incorrect multiline list with comments",
             "/* this is\n" +
             "a comment\n" +
@@ -85,7 +80,6 @@ suite("Unfinished list", () => {
                 DiagnosticSeverity.Error, errorMessage,
             )],
         ),
-
         new Test("Three lists, one incorrect",
             "list servers1 = vps, \n" +
             "	vds\n" +
@@ -106,14 +100,12 @@ suite("Unfinished list", () => {
                 DiagnosticSeverity.Error, errorMessage,
             )],
         ),
-
         new Test("Correct multiline list, comma on next line",
             "list servers = vps\n" +
             "	,vds\n" +
             "endlist",
             [],
         ),
-
         new Test("Incorrect multiline list, comma on next line",
             "list servers = vps\n" +
             "	,vds\n" +

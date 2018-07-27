@@ -11,7 +11,6 @@ suite("Unmatched endfor tests", () => {
             "endfor",
             [],
         ),
-
         new Test("Two correct loops",
             "list servers = 'srv1', 'srv2'\n" +
             "for server in servers\n" +
@@ -22,7 +21,6 @@ suite("Unmatched endfor tests", () => {
             "endfor",
             [],
         ),
-
         new Test("One incorrect loop",
             "list servers = 'srv1', 'srv2'\n" +
             "for server in servers\n" +
@@ -37,7 +35,6 @@ suite("Unmatched endfor tests", () => {
                 DiagnosticSeverity.Error, "for has no matching endfor",
             )],
         ),
-
         new Test("Two incorrect loops",
             "list servers = 'srv1', 'srv2'\n" +
             "for server in servers\n" +
@@ -62,7 +59,6 @@ suite("Unmatched endfor tests", () => {
                 DiagnosticSeverity.Error, "for has no matching endfor",
             )],
         ),
-
         new Test("One incorrect loop, one correct loop",
             "list servers = 'srv1', 'srv2'\n" +
             "for server in servers\n" +

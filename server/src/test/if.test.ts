@@ -23,7 +23,6 @@ suite("If elseif else endif validation tests", () => {
             "endfor\n",
             [],
         ),
-
         new Test("One correct if-else-endif",
             "list servers = 'srv1', 'srv2'\n" +
             "for server in servers\n" +
@@ -38,7 +37,6 @@ suite("If elseif else endif validation tests", () => {
             "endfor\n",
             [],
         ),
-
         new Test("One incorrect elseif-endif",
             "list servers = 'srv1', 'srv2'\n" +
             "for server in servers\n" +
@@ -67,7 +65,6 @@ suite("If elseif else endif validation tests", () => {
                 DiagnosticSeverity.Error, endIfError,
             )],
         ),
-
         new Test("One incorrect else-endif",
             "list servers = 'srv1', 'srv2'\n" +
             "for server in servers\n" +
@@ -96,7 +93,6 @@ suite("If elseif else endif validation tests", () => {
                 DiagnosticSeverity.Error, endIfError,
             )],
         ),
-
         new Test("One incorrect else-endif with comment",
             "list servers = 'srv1', 'srv2'\n" +
             "for server in servers\n" +
@@ -125,7 +121,6 @@ suite("If elseif else endif validation tests", () => {
                 DiagnosticSeverity.Error, endIfError,
             )],
         ),
-
         new Test("One incorrect if-else",
             "list servers = 'srv1', 'srv2'\n" +
             "for server in servers\n" +

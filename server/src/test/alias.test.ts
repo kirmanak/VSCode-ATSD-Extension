@@ -15,7 +15,6 @@ suite("Incorrect dealias tests", () => {
             "   value = value('s1') * 2",
             [],
         ),
-
         new Test("One alias, one incorrect dealias",
             "[series]\n" +
             "   metric = temp\n" +
@@ -35,7 +34,6 @@ suite("Incorrect dealias tests", () => {
                 DiagnosticSeverity.Error, Util.errorMessage("s2", "s1"),
             )],
         ),
-
         new Test("One alias, one correct dealias before the declaration",
             "[series]\n" +
             "   metric = temp\n" +
@@ -47,7 +45,6 @@ suite("Incorrect dealias tests", () => {
             "   alias = s1",
             [],
         ),
-
         new Test("One alias, two incorrect dealiases",
             "[series]\n" +
             "   metric = temp\n" +
@@ -79,7 +76,6 @@ suite("Incorrect dealias tests", () => {
                 DiagnosticSeverity.Error, Util.errorMessage("s3", "s1"),
             )],
         ),
-
         new Test("Two aliases, two correct dealiases",
             "[series]\n" +
             "   metric = temp\n" +
@@ -99,7 +95,6 @@ suite("Incorrect dealias tests", () => {
             "   value = value('s2') * 2",
             [],
         ),
-
         new Test("Two aliases, one incorrect dealias. one correct dealias",
             "[series]\n" +
             "   metric = temp\n" +
@@ -127,7 +122,6 @@ suite("Incorrect dealias tests", () => {
                 DiagnosticSeverity.Error, Util.errorMessage("s3", "s1"),
             )],
         ),
-
         new Test("Declared series, indents are used, correct alias and dealias",
             "[series]\n" +
             "   metric = temp\n" +
