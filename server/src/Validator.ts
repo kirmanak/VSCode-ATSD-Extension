@@ -1,7 +1,6 @@
 import { Diagnostic, DiagnosticSeverity, Location, TextDocument } from "vscode-languageserver/lib/main";
 import { FoundKeyword } from "./FoundKeyword";
 import * as resources from "./resources";
-import * as Shared from "./sharedFunctions";
 import Util from "./Util";
 
 export default class Validator {
@@ -23,7 +22,7 @@ export default class Validator {
 
     constructor(textDocument: TextDocument) {
         this.textDocument = textDocument;
-        this.lines = Shared.deleteComments(textDocument.getText()).split("\n");
+        this.lines = Util.deleteComments(textDocument.getText()).split("\n");
     }
 
     public lineByLine(): Diagnostic[] {
@@ -77,7 +76,7 @@ export default class Validator {
                                 `${foundKeyword.keyword} has started before ${this.getLastKeyword()} has finished`;
                         }
                         if (message) {
-                            this.result.push(Shared.createDiagnostic(
+                            this.result.push(Util.createDiagnostic(
                                 { range: foundKeyword.range, uri: this.textDocument.uri },
                                 DiagnosticSeverity.Error, message,
                             ));
@@ -158,7 +157,7 @@ export default class Validator {
         this.deAliases.forEach((deAlias) => {
             if (!Util.isInArray(this.aliases, deAlias.keyword)) {
                 const message = Util.suggestionMessage(deAlias.keyword, this.aliases);
-                this.result.push(Shared.createDiagnostic(
+                this.result.push(Util.createDiagnostic(
                     { range: deAlias.range, uri: this.textDocument.uri },
                     DiagnosticSeverity.Error, message,
                 ));
@@ -180,7 +179,7 @@ export default class Validator {
                 const variable = this.match[2];
                 if (!Util.isInMap(variable, this.variables)) {
                     const message = Util.suggestionMessage(variable, Util.MapToArray(this.variables));
-                    this.result.push(Shared.createDiagnostic(
+                    this.result.push(Util.createDiagnostic(
                         {
                             range: {
                                 end: {
@@ -197,7 +196,7 @@ export default class Validator {
                     ));
                 }
             } else {
-                this.result.push(Shared.createDiagnostic(
+                this.result.push(Util.createDiagnostic(
                     {
                         range: {
                             end: { character: matching[0].length + 2, line: this.currentLineNumber },
@@ -216,7 +215,7 @@ export default class Validator {
         const line = this.getCurrentLine();
         const columns = Util.countCsvColumns(line);
         if (columns !== this.csvColumns && !/^[ \t]*$/m.test(line)) {
-            this.result.push(Shared.createDiagnostic(
+            this.result.push(Util.createDiagnostic(
                 {
                     range: {
                         end: { character: line.length, line: this.currentLineNumber },
@@ -241,7 +240,7 @@ export default class Validator {
         for (let i = 0, length = this.keywordsStack.length; i < length; i++) {
             const nestedConstruction = this.keywordsStack[i];
             if (!nestedConstruction) { continue; }
-            this.result.push(Shared.createDiagnostic(
+            this.result.push(Util.createDiagnostic(
                 { range: nestedConstruction.range, uri: this.textDocument.uri }, DiagnosticSeverity.Error,
                 `${nestedConstruction.keyword} has no matching end${nestedConstruction.keyword}`,
             ));
@@ -274,7 +273,7 @@ export default class Validator {
             }
             if (!Util.isInArray(dictionary, cleared)) {
                 const message = Util.suggestionMessage(word, dictionary);
-                this.result.push(Shared.createDiagnostic({
+                this.result.push(Util.createDiagnostic({
                     range: {
                         end: { character: indent + word.length, line: this.currentLineNumber },
                         start: { character: indent, line: this.currentLineNumber },
@@ -293,14 +292,14 @@ export default class Validator {
             return;
         }
         if (!this.areWeIn(expectedEnd)) {
-            this.result.push(Shared.createDiagnostic(
+            this.result.push(Util.createDiagnostic(
                 { range: foundKeyword.range, uri: this.textDocument.uri }, DiagnosticSeverity.Error,
                 `${foundKeyword.keyword} has no matching ${expectedEnd}`,
             ));
         } else {
             const index = this.keywordsStack.findIndex((keyword) => keyword.keyword === expectedEnd);
             delete this.keywordsStack[index];
-            this.result.push(Shared.createDiagnostic(
+            this.result.push(Util.createDiagnostic(
                 { range: foundKeyword.range, uri: this.textDocument.uri }, DiagnosticSeverity.Error,
                 `${expectedEnd} has finished before ${lastKeyword}`,
             ));
@@ -312,7 +311,7 @@ export default class Validator {
         const variable = this.match[2];
         if (Util.isInMap(variable, map)) {
             const startPosition = this.match.index + this.match[1].length;
-            this.result.push(Shared.createDiagnostic(
+            this.result.push(Util.createDiagnostic(
                 {
                     range: {
                         end: { character: startPosition + variable.length, line: this.currentLineNumber },
@@ -366,7 +365,7 @@ export default class Validator {
                 } else { notFound.push(options[0]); }
             });
             notFound.forEach((option) => {
-                this.result.push(Shared.createDiagnostic(
+                this.result.push(Util.createDiagnostic(
                     { range: this.currentSection.range, uri: this.textDocument.uri },
                     DiagnosticSeverity.Error, `${option} is required`,
                 ));
@@ -399,7 +398,7 @@ export default class Validator {
         if (!this.match) { return array; }
         const variable = this.match[2];
         if (Util.isInArray(array, variable)) {
-            this.result.push(Shared.createDiagnostic(
+            this.result.push(Util.createDiagnostic(
                 {
                     range: {
                         end: {
@@ -457,12 +456,12 @@ export default class Validator {
                 this.ifSettings.set(this.lastCondition, array);
                 if (Util.isInArray(this.settings, this.match[2])) {
                     // the setting was defined before if
-                    this.result.push(Shared.createDiagnostic(location, DiagnosticSeverity.Warning, message));
+                    this.result.push(Util.createDiagnostic(location, DiagnosticSeverity.Warning, message));
                 }
             } else { this.addToArray(this.settings, DiagnosticSeverity.Warning); }
             if (Util.isInMap(this.match[2], this.parentSettings)) {
                 // the setting was defined before in a parent section
-                this.result.push(Shared.createDiagnostic(location, DiagnosticSeverity.Hint, message));
+                this.result.push(Util.createDiagnostic(location, DiagnosticSeverity.Hint, message));
             }
             if (this.currentSection && Util.isInMap(this.currentSection.keyword, resources.parentSections)) {
                 this.addToMap(this.parentSettings, this.currentSection.keyword, DiagnosticSeverity.Hint);
@@ -474,7 +473,7 @@ export default class Validator {
             const map = new Map<string, string[]>();
             map.set("possibleOptions", resources.possibleOptions);
             if (Util.isInMap(setting, map)) {
-                this.result.push(Shared.createDiagnostic(
+                this.result.push(Util.createDiagnostic(
                     {
                         range: {
                             end: {
@@ -513,7 +512,7 @@ export default class Validator {
                     if (!Util.isInMap(variable, this.variables)) {
                         const position = startPosition + this.match.index;
                         const message = Util.suggestionMessage(variable, Util.MapToArray(this.variables));
-                        this.result.push(Shared.createDiagnostic(
+                        this.result.push(Util.createDiagnostic(
                             {
                                 range: {
                                     end: {

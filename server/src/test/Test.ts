@@ -1,18 +1,20 @@
-import { Diagnostic } from "vscode-languageserver/lib/main";
+import { Diagnostic, TextDocument } from "vscode-languageserver/lib/main";
 
 export default class Test {
+    public static URI = "test";
+    private static LANGUAGE_ID = "test";
     private name: string;
-    private text: string;
+    private document: TextDocument;
     private expected: Diagnostic[];
 
     constructor(name: string, text: string, expected: Diagnostic[]) {
         this.name = name;
-        this.text = text;
+        this.document = TextDocument.create(Test.URI, Test.LANGUAGE_ID, 0, text);
         this.expected = expected;
     }
 
-    public getText(): string {
-        return this.text;
+    public getDocument(): TextDocument {
+        return this.document;
     }
 
     public getName(): string {
