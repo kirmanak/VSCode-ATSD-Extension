@@ -74,15 +74,18 @@ suite("Spelling checks", () => {
             )],
         ),
         new Test("tags ignoring finished with whitespace",
-            "[tags]\n" +
-            "	startime = 20 second\n" +
+            "[series]\n" +
+            "  entity = server\n" +
+            "  metric = cpu_busy\n" +
+            "  [tags]\n" +
+            "    startime = 20 second\n" +
             "\n" +
-            "startime = 20 second\n",
+            "  startime = 20 second\n",
             [Util.createDiagnostic(
                 {
                     range: {
-                        end: { character: "startime".length, line: 3 },
-                        start: { character: 0, line: 3 },
+                        end: { character: "  ".length  + "startime".length, line: 6 },
+                        start: { character: "  ".length, line: 6 },
                     }, uri: Test.URI,
                 },
                 DiagnosticSeverity.Error, Util.errorMessage("startime", "starttime"),

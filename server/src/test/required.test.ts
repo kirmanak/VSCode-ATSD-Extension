@@ -41,6 +41,27 @@ suite("Required settings for sections tests", () => {
             "       metric = hello\n",
             [],
         ),
+        new Test("correct series with greatgrandparent section",
+            "[configuration]\n" +
+            "   entity = hello\n" +
+            "[group]\n" +
+            "[widget]\n" +
+            "   type = chart\n" +
+            "   [series]\n" +
+            "       metric = hello\n",
+            [],
+        ),
+        new Test("correct series with greatgrandparent section and empty line",
+            "[configuration]\n" +
+            "\n" +
+            "   entity = hello\n" +
+            "[group]\n" +
+            "[widget]\n" +
+            "   type = chart\n" +
+            "   [series]\n" +
+            "       metric = hello\n",
+            [],
+        ),
         new Test("incorrect series with closed parent section",
             "[group]\n" +
             "   type = chart\n" +

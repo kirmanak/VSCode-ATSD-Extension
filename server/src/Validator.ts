@@ -9,9 +9,11 @@ export default class Validator {
     private textDocument: TextDocument;
     private lines: string[];
     private currentSection: FoundKeyword;
+    private previousSection: FoundKeyword;
+    private settings: string[] = [];
+    private previousSettings: string[] = [];
     private parentSettings: Map<string, string[]> = new Map<string, string[]>();
     private variables: Map<string, string[]> = new Map<string, string[]>();
-    private settings: string[] = [];
     private ifSettings: Map<string, string[]> = new Map<string, string[]>();
     private aliases: string[] = [];
     private deAliases: FoundKeyword[] = [];
@@ -375,13 +377,18 @@ export default class Validator {
 
     private handleSection() {
         this.checkPreviousSection();
-        this.settings = [];
-        this.ifSettings.clear();
         if (!this.match) {
-            this.currentSection = null;
+            if (this.previousSection) {
+                this.currentSection = this.previousSection;
+                this.settings = this.previousSettings;
+            }
             return;
         }
         if (/widget/i.test(this.match[2])) { this.aliases = []; }
+        this.previousSettings = this.settings;
+        this.previousSection = this.currentSection;
+        this.settings = [];
+        this.ifSettings.clear();
         this.currentSection = {
             keyword: this.match[2],
             range: {
@@ -450,6 +457,7 @@ export default class Validator {
                 }, uri: this.textDocument.uri,
             };
             const message = `${this.match[2]} is already defined`;
+
             if (this.areWeIn("if")) {
                 let array = this.ifSettings.get(this.lastCondition);
                 array = this.addToArray(array, DiagnosticSeverity.Warning);
@@ -459,12 +467,16 @@ export default class Validator {
                     this.result.push(Util.createDiagnostic(location, DiagnosticSeverity.Warning, message));
                 }
             } else { this.addToArray(this.settings, DiagnosticSeverity.Warning); }
-            if (Util.isInMap(this.match[2], this.parentSettings)) {
-                // the setting was defined before in a parent section
-                this.result.push(Util.createDiagnostic(location, DiagnosticSeverity.Hint, message));
-            }
+
             if (this.currentSection && Util.isInMap(this.currentSection.keyword, resources.parentSections)) {
-                this.addToMap(this.parentSettings, this.currentSection.keyword, DiagnosticSeverity.Hint);
+                if (Util.isInMap(this.match[2], resources.requiredSectionSettingsMap)) {
+                    this.addToMap(this.parentSettings, this.currentSection.keyword, DiagnosticSeverity.Hint);
+                }
+            } else {
+                if (Util.isInMap(this.match[2], this.parentSettings)) {
+                    // the setting was defined before in a parent section
+                    this.result.push(Util.createDiagnostic(location, DiagnosticSeverity.Hint, message));
+                }
             }
         } else if (/(^[ \t]*)([-\w]+)[ \t]*=/.test(line)) {
             // we are in tags/keys section
@@ -535,7 +547,7 @@ export default class Validator {
     private eachLine() {
         const line = this.getCurrentLine();
         this.match = /(^[\t ]*\[)(\w+)\][\t ]*/.exec(line);
-        if (this.match || /^\s*$/.test(line)) {
+        if (this.match || (/^\s*$/.test(line) && this.currentSection && this.currentSection.keyword === "tags")) {
             this.handleSection();
         } else {
             this.match = /(^\s*)(\S+)\s*=\s*(.+)$/m.exec(line);

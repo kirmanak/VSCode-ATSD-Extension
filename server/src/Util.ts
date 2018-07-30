@@ -2,11 +2,17 @@ import * as Levenshtein from "levenshtein";
 import { Diagnostic, DiagnosticSeverity, Location } from "vscode-languageserver/lib/main";
 
 export default class Util {
-    public static isInMap(value: string, map: Map<string, string[]>): boolean {
+    public static isInMap(value: string, map: Map<string, string[]> | Map<string, string[][]>): boolean {
         if (!value || !map) { return false; }
         for (const array of map.values()) {
             for (const item of array) {
-                if (item === value) { return true; }
+                if (typeof item === "string") {
+                    if (item === value) { return true; }
+                } else {
+                    for (const word of item) {
+                        if (word === value) { return true; }
+                    }
+                }
             }
         }
         return false;
