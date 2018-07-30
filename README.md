@@ -40,6 +40,10 @@ npm install && npm run compile
 
 ![Screenshot of highlighted syntax](./images/syntax.png)
 
+### Code prettifier
+
+![GIF animation showing updating indents](./images/formatting.gif)
+
 ### Snippets
 
 * `w{widget_name}`: creates a new `[widget]` section with a pre-configured sample widget from Charts library
