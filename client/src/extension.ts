@@ -25,7 +25,7 @@ export function activate(context: ExtensionContext) {
     // Options to control the language client
     const clientOptions: LanguageClientOptions = {
         // Register the server for plain text documents
-        documentSelector: [{ scheme: "file", language: "axibase-charts" }],
+        documentSelector: [{ language: "axibase-charts", scheme: "file" }],
         synchronize: {
             // Notify the server about file changes to ".clientrc files contain in the workspace
             fileEvents: workspace.createFileSystemWatcher("**/.clientrc"),
