@@ -19,7 +19,6 @@ export default class Formatter {
     public lineByLine(): TextEdit[] {
         for (; this.currentLine < this.lines.length; this.currentLine++) {
             if (this.isSection()) {
-                console.log("calculating indent, section " + this.match[2]);
                 this.decreaseIndent();
                 this.calculateIndent();
                 this.checkIndent();
@@ -48,7 +47,6 @@ export default class Formatter {
     }
 
     private decreaseIndent() {
-        console.log("decreasing indent");
         let newLength = this.currentIndent.length;
         if (this.params.options.insertSpaces) {
             newLength -= this.params.options.tabSize;
@@ -59,7 +57,6 @@ export default class Formatter {
     }
 
     private increaseIndent() {
-        console.log("increasing indent");
         if (this.params.options.insertSpaces) {
             for (let i = 0; i < this.params.options.tabSize; i++) {
                 this.currentIndent = this.currentIndent + " ";
@@ -76,8 +73,8 @@ export default class Formatter {
                 this.edits.push({
                     newText: this.currentIndent,
                     range: {
-                        end: { character: 0, line: this.currentLine },
-                        start: { character: this.match[1].length, line: this.currentLine },
+                        end: { character: this.match[1].length, line: this.currentLine },
+                        start: { character: 0, line: this.currentLine },
                     },
                 });
             }
