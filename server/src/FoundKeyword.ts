@@ -1,6 +1,6 @@
 import { Range } from "vscode-languageserver";
 
-export class FoundKeyword {
+export default class FoundKeyword {
     public static parse(line: string, i: number): FoundKeyword | null {
         const match = FoundKeyword.regexp.exec(line);
         if (match === null) { return null; }

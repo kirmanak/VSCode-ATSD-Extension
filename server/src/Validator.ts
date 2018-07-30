@@ -1,5 +1,5 @@
 import { Diagnostic, DiagnosticSeverity, Location, TextDocument } from "vscode-languageserver/lib/main";
-import { FoundKeyword } from "./FoundKeyword";
+import FoundKeyword from "./FoundKeyword";
 import * as resources from "./resources";
 import Util from "./Util";
 

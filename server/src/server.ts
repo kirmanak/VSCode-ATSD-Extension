@@ -108,7 +108,7 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 
 connection.onDocumentFormatting((params: DocumentFormattingParams): TextEdit[] => {
     const document = documents.get(params.textDocument.uri);
-    const formatter = new Formatter(document);
+    const formatter = new Formatter(document, params);
     return formatter.lineByLine();
 });
 
