@@ -227,6 +227,6 @@ suite("Undefined variable in for loop", () => {
         ),
     ];
 
-    tests.forEach(Test.RUN_TEST);
+    tests.forEach(Test.VALIDATION_TEST);
 
 });

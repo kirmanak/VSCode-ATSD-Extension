@@ -1,4 +1,4 @@
-import { DiagnosticSeverity } from "vscode-languageserver";
+import { DiagnosticSeverity } from "vscode-languageserver/lib/main";
 import Util from "../Util";
 import Test from "./Test";
 
@@ -153,6 +153,6 @@ suite("If elseif else endif validation tests", () => {
 
     ];
 
-    tests.forEach(Test.RUN_TEST);
+    tests.forEach(Test.VALIDATION_TEST);
 
 });

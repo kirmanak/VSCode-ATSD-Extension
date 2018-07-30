@@ -2,7 +2,7 @@ import {
     createConnection, Diagnostic, DidChangeConfigurationNotification, DocumentFormattingParams,
     InitializeParams, ProposedFeatures, TextDocument, TextDocuments, TextEdit,
 } from "vscode-languageserver/lib/main";
-import * as formatFunctions from "./formatFunctions";
+import Formatter from "./Formatter";
 import * as jsDomCaller from "./jsdomCaller";
 import Validator from "./Validator";
 
@@ -107,19 +107,9 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 }
 
 connection.onDocumentFormatting((params: DocumentFormattingParams): TextEdit[] => {
-    const edits: TextEdit[] = [];
     const document = documents.get(params.textDocument.uri);
-    formatFunctions.extraTextSectionLine(document).forEach((edit) => {
-        edits.push(edit);
-    });
-    formatFunctions.megaFunction(document).forEach((edit) => {
-        edits.push(edit);
-    });
-    formatFunctions.severalStatementsPerLine(document).forEach((edit) => {
-        edits.push(edit);
-    });
-
-    return edits;
+    const formatter = new Formatter(document);
+    return formatter.lineByLine();
 });
 
 // Make the text document manager listen on the connection

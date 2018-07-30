@@ -40,6 +40,6 @@ suite("Warn about setting interpreted as a tag", () => {
         ),
     ];
 
-    tests.forEach(Test.RUN_TEST);
+    tests.forEach(Test.VALIDATION_TEST);
 
 });
