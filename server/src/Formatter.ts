@@ -25,6 +25,9 @@ export default class Formatter {
                 this.increaseIndent();
             } else {
                 if (this.isDescreasingIndentKeyword()) {
+                    // leaving keyword
+                    this.decreaseIndent();
+                    // leaving section
                     this.decreaseIndent();
                 }
                 this.checkIndent();
