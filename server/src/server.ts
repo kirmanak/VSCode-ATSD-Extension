@@ -3,7 +3,7 @@ import {
     InitializeParams, ProposedFeatures, TextDocument, TextDocuments, TextEdit,
 } from "vscode-languageserver/lib/main";
 import Formatter from "./Formatter";
-import * as jsDomCaller from "./jsdomCaller";
+import JsDomCaller from "./jsdomCaller";
 import Validator from "./Validator";
 
 // Create a connection for the server. The connection uses Node"s IPC as a transport.
@@ -94,10 +94,11 @@ documents.onDidChangeContent((change) => {
 async function validateTextDocument(textDocument: TextDocument): Promise<void> {
     const settings = await getDocumentSettings(textDocument.uri);
     const validator = new Validator(textDocument);
+    const jsDomCaller = new JsDomCaller(textDocument);
     const diagnostics: Diagnostic[] = validator.lineByLine();
 
     if (settings.validateFunctions) {
-        jsDomCaller.validate(textDocument).forEach((element) => {
+        jsDomCaller.validate().forEach((element) => {
             diagnostics.push(element);
         });
     }
