@@ -90,19 +90,15 @@ documents.onDidChangeContent((change) => {
 });
 
 async function validateTextDocument(textDocument: TextDocument): Promise<void> {
-    const diagnostics: Diagnostic[] = [];
     const settings = await getDocumentSettings(textDocument.uri);
     const validator = new Validator(textDocument);
+    const diagnostics: Diagnostic[] = validator.lineByLine();
 
     if (settings.validateFunctions) {
         jsDomCaller.validate(textDocument).forEach((element) => {
             diagnostics.push(element);
         });
     }
-
-    validator.lineByLine().forEach((diagnostic) => {
-        diagnostics.push(diagnostic);
-    });
 
     // Send the computed diagnostics to VSCode.
     connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
