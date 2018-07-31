@@ -9,6 +9,7 @@ const jquery = require("jquery");
 
 export default class JsDomCaller {
     private static stringifyStatement(content: string): string {
+        content = content.trim();
         if (!content.startsWith("return")) {
             content = "return " + content;
         }
@@ -50,7 +51,7 @@ export default class JsDomCaller {
                 window.eval(toEvaluate);
             } catch (err) {
                 let isImported = false;
-                for (const imported of statement.imports) {
+                for (const imported of this.imports) {
                     if (new RegExp(imported, "i").test(err.message)) {
                         isImported = true;
                         break;
@@ -156,7 +157,7 @@ export default class JsDomCaller {
                 `const proxyFunction = new Proxy(new Function(), {});` +
                 `(new Function("widget","config","dialog", ${content}))` +
                 `.call(window${JsDomCaller.generateCall(1, "proxyFunction")}${JsDomCaller.generateCall(2, "proxy")})`,
-            imports: this.imports, range,
+                range,
         };
         this.statements.push(statement);
 
@@ -169,7 +170,6 @@ export default class JsDomCaller {
             declaration:
                 `(new Function("value","time","previousValue","previousTime", ${content}))\n` +
                 `.call(window${JsDomCaller.generateCall(4, "5")})`,
-            imports: this.imports,
             range: {
                 end: { character: matchStart + this.match[2].length, line: this.currentLineNumber },
                 start: { character: matchStart, line: this.currentLineNumber },
@@ -181,7 +181,7 @@ export default class JsDomCaller {
     private processValue() {
         const content = JsDomCaller.stringifyStatement(this.match[2]);
         const matchStart = this.match.index + this.match[1].length;
-        const importList = this.imports.join();
+        const importList = '"' + this.imports.join('","') + '"';
         const statement = {
             declaration:
                 `const proxy = new Proxy({}, {});` +
@@ -193,13 +193,12 @@ export default class JsDomCaller {
                 `"min_value_time","max_value_time","count","threshold_count","threshold_percent",` +
                 `"threshold_duration","time","bottom","top","meta","entityTag","metricTag","median",` +
                 `"average","minimum","maximum","series","getValueWithOffset","getValueForDate",` +
-                `"getMaximumValue", ${importList} ${content}` +
+                `"getMaximumValue", ${importList}, ${content}` +
                 `)).call(window${JsDomCaller.generateCall(4, "proxy")}` +
                 `${JsDomCaller.generateCall(33, "proxyFunction")}` +
                 `${JsDomCaller.generateCall(1, "proxyArray")}` +
                 `${JsDomCaller.generateCall(3, "proxyFunction")}` +
                 `${JsDomCaller.generateCall(this.importCounter, "proxy")})`,
-            imports: this.imports,
             range: {
                 end: { character: matchStart + this.match[2].length, line: this.currentLineNumber },
                 start: { character: matchStart, line: this.currentLineNumber },
@@ -219,7 +218,6 @@ export default class JsDomCaller {
                 `"requestPropertiesValues","requestMetricsSeriesOptions","requestEntitiesMetricsOptions",` +
                 `"requestPropertiesOptions", ${content}` +
                 `)).call(window${JsDomCaller.generateCall(6, "proxyFunction")})`,
-            imports: this.imports,
             range: {
                 end: { character: matchStart + this.match[2].length, line: this.currentLineNumber },
                 start: { character: matchStart, line: this.currentLineNumber },
