@@ -19,7 +19,6 @@ export default class JsDomCaller {
         return content;
     }
 
-    // amount is the number of arguments required for a function
     private static generateCall(amount: number, name: string): string {
         return "," + Array(amount).fill(name).join();
     }
@@ -46,17 +45,17 @@ export default class JsDomCaller {
         const window = dom.window;
         const $ = jquery(dom.window);
         this.statements.forEach((statement) => {
-            // statement.declaration = "try {" + statement.declaration + "} catch (err) { throw err; }";
             const toEvaluate = `(new Function("$", ${JSON.stringify(statement.declaration)})).call(window, ${$})`;
             try {
                 window.eval(toEvaluate);
             } catch (err) {
                 let isImported = false;
-                statement.imports.forEach((imported) => {
-                    if (imported.length !== 0 && new RegExp(imported, "i").test(err.message)) {
+                for (const imported of statement.imports) {
+                    if (new RegExp(imported, "i").test(err.message)) {
                         isImported = true;
+                        break;
                     }
-                });
+                }
                 if (!isImported) {
                     this.result.push(Util.createDiagnostic(
                         { range: statement.range, uri: this.document.uri },
@@ -182,8 +181,7 @@ export default class JsDomCaller {
     private processValue() {
         const content = JsDomCaller.stringifyStatement(this.match[2]);
         const matchStart = this.match.index + this.match[1].length;
-        let importList = "";
-        this.imports.forEach((imported) => importList += `"${imported}", `);
+        const importList = this.imports.join();
         const statement = {
             declaration:
                 `const proxy = new Proxy({}, {});` +
