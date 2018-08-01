@@ -69,12 +69,12 @@
         "test": "cd server && npm test"
     },
     "devDependencies": {
-        "@types/mocha": "^5.2.0",
-        "@types/node": "^8.0.0",
+        "@types/mocha": "^5.2.5",
+        "@types/node": "^10.5.5",
         "tslint": "^5.11.0",
-        "typescript": "2.8.3"
+        "typescript": "3.0.1"
     },
     "dependencies": {
-        "vscode-languageserver": "^4.3.0"
+        "vscode-languageserver": "^4.4.0"
     }
 }
