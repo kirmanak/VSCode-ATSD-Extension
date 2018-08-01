@@ -13,6 +13,7 @@ const connection = createConnection(ProposedFeatures.all);
 // Create a simple text document manager. The text document manager
 // supports full document sync only
 const documents: TextDocuments = new TextDocuments();
+const callers: Map<string, JsDomCaller> = new Map();
 
 let hasConfigurationCapability: boolean = false;
 
@@ -80,31 +81,43 @@ function getDocumentSettings(resource: string): Thenable<IServerSettings> {
     return result;
 }
 
+function getJsCaller(document: TextDocument): JsDomCaller {
+    let result = callers.get(document.uri);
+    if (!result) {
+        result = new JsDomCaller(document);
+        callers.set(document.uri, result);
+    }
+    result.setDocument(document);
+    return result;
+}
+
 // Only keep settings for open documents
 documents.onDidClose((e) => {
     documentSettings.delete(e.document.uri);
+    callers.delete(e.document.uri);
 });
 
 // The content of a text document has changed. This event is emitted
 // when the text document first opened or when its content has changed.
 documents.onDidChangeContent((change) => {
-    validateTextDocument(change.document);
+    validateTextDocument(change.document)
+        .catch((reason) => { connection.console.log(reason.message); });
 });
 
 async function validateTextDocument(textDocument: TextDocument): Promise<void> {
-    const settings = await getDocumentSettings(textDocument.uri);
     const validator = new Validator(textDocument);
-    const jsDomCaller = new JsDomCaller(textDocument);
-    const diagnostics: Diagnostic[] = validator.lineByLine();
-
+    let diagnostics: Diagnostic[] = validator.lineByLine();
+    let settings;
+    try { settings = await getDocumentSettings(textDocument.uri); } catch (err) { return Promise.reject(err); }
     if (settings.validateFunctions) {
-        jsDomCaller.validate().forEach((element) => {
-            diagnostics.push(element);
-        });
+        const jsDomCaller = getJsCaller(textDocument);
+        try { await jsDomCaller.parseImports(); } catch (err) { return Promise.reject(err); }
+        diagnostics = diagnostics.concat(jsDomCaller.validate());
+        connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
+    } else {
+        // Send the computed diagnostics to VSCode.
+        connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
     }
-
-    // Send the computed diagnostics to VSCode.
-    connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
 }
 
 connection.onDocumentFormatting((params: DocumentFormattingParams): TextEdit[] => {
