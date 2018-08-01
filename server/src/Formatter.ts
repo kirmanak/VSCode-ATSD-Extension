@@ -1,4 +1,5 @@
 import { DocumentFormattingParams, TextDocument, TextEdit } from "vscode-languageserver/lib/main";
+import FoundKeyword from "./FoundKeyword";
 import Util from "./Util";
 
 export default class Formatter {
@@ -10,6 +11,7 @@ export default class Formatter {
     private previous: string;
     private current: string;
     private params: DocumentFormattingParams;
+    private openKeywordsIndent: string[] = [];
 
     constructor(document: TextDocument, formattingParams: DocumentFormattingParams) {
         this.params = formattingParams;
@@ -24,14 +26,14 @@ export default class Formatter {
                 this.checkIndent();
                 this.increaseIndent();
             } else {
-                if (this.isDescreasingIndentKeyword()) {
-                    // leaving keyword
-                    this.decreaseIndent();
-                    // leaving section
-                    this.decreaseIndent();
+                if (FoundKeyword.isClosingKeyword(this.getCurrentLine())) {
+                    this.currentIndent = this.openKeywordsIndent.pop();
                 }
                 this.checkIndent();
-                if (this.isIncreasingIndentKeyword()) {
+                if (FoundKeyword.isCloseAbleKeyword(this.getCurrentLine())) {
+                    this.openKeywordsIndent.push(this.currentIndent);
+                }
+                if (FoundKeyword.isIncreasingIndentKeyword(this.getCurrentLine())) {
                     this.increaseIndent();
                 }
             }
@@ -113,13 +115,4 @@ export default class Formatter {
             this.current === "link" && this.previous === "node" ||
             this.current === "node" && this.previous === "link";
     }
-
-    private isIncreasingIndentKeyword() {
-        return /\b(?:for|if|else|elseif|script|csv|var|list)\b/.test(this.getCurrentLine());
-    }
-
-    private isDescreasingIndentKeyword() {
-        return /\bend(?:for|if|list|var|script|csv)\b/.test(this.getCurrentLine());
-    }
-
 }
