@@ -43,9 +43,13 @@ export default class Formatter {
     }
 
     private calculateIndent() {
-        this.decreaseIndent();
         this.previous = this.current;
         this.current = this.match[2];
+        if (/\[(?:group|configuration)\]/i.test(this.getCurrentLine())) {
+            this.currentIndent = "";
+            return;
+        }
+        this.decreaseIndent();
         if (this.isNested()) {
             this.increaseIndent();
         } else if (!this.isSameLevel()) {
