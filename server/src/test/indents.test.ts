@@ -162,6 +162,48 @@ suite("Formatting indents tests", () => {
                 textDocument: { uri: Test.URI },
             },
         ),
+        new Test("Incorrect formatting in the first for, correct in second",
+            "[widget]\n" +
+            "  type = chart\n" +
+            "  metric = cpu_busy\n" +
+            "\n" +
+            "  list servers = nurswgvml006, \n" +
+            "    nurswgvml007\n" +
+            "  endlist\n" +
+            "\n" +
+            "  for server in servers\n" +
+            "  [series]\n" +
+            "      entity = @{server}\n" +
+            "\n" +
+            "  [series]\n" +
+            "      entity = @{server}\n" +
+            "  endfor\n" +
+            "\n" +
+            "  for server in servers\n" +
+            "    [series]\n" +
+            "      entity = @{server}\n" +
+            "      if server == 'nurswgvml007'\n" +
+            "        color = red\n" +
+            "      elseif server == 'nurswgvml006'\n" +
+            "        color = yellow\n" +
+            "      endif\n" +
+            "  endfor\n",
+            [{
+                newText: "    ", range: {
+                    end: { character: 2, line: 9 },
+                    start: {character: 0, line: 9 },
+                },
+            }, {
+                newText: "    ", range: {
+                    end: { character: 2, line: 12 },
+                    start: {character: 0, line: 12 },
+                },
+            }],
+            {
+                options: { insertSpaces: true, tabSize: 2 },
+                textDocument: { uri: Test.URI },
+            },
+        ),
     ];
 
     tests.forEach(Test.FORMAT_TEST);

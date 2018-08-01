@@ -11,7 +11,7 @@ export default class Formatter {
     private previous: string;
     private current: string;
     private params: DocumentFormattingParams;
-    private openKeywordsIndent: string[] = [];
+    private openKeywordsIndents: string[] = [];
 
     constructor(document: TextDocument, formattingParams: DocumentFormattingParams) {
         if (!document || !formattingParams) { throw new Error("Invalid arguments"); }
@@ -21,25 +21,26 @@ export default class Formatter {
 
     public lineByLine(): TextEdit[] {
         for (; this.currentLine < this.lines.length; this.currentLine++) {
+            const line = this.getCurrentLine();
             if (this.isSection()) {
                 this.calculateIndent();
                 this.checkIndent();
                 this.increaseIndent();
             } else {
-                if (FoundKeyword.isClosing(this.getCurrentLine())) {
-                    const stackHead = this.openKeywordsIndent.pop();
+                if (FoundKeyword.isClosing(line)) {
+                    const stackHead = this.openKeywordsIndents.pop();
                     if (stackHead !== undefined) {
                         this.currentIndent = stackHead;
-                        if (FoundKeyword.isNotCloseAble(this.getCurrentLine())) {
-                            this.openKeywordsIndent.push(stackHead);
+                        if (FoundKeyword.isNotCloseAble(line)) {
+                            this.openKeywordsIndents.push(stackHead);
                         }
                     }
                 }
                 this.checkIndent();
-                if (FoundKeyword.isCloseAble(this.getCurrentLine())) {
-                    this.openKeywordsIndent.push(this.currentIndent);
+                if (FoundKeyword.isCloseAble(line)) {
+                    this.openKeywordsIndents.push(this.currentIndent);
                 }
-                if (FoundKeyword.isIncreasingIndent(this.getCurrentLine())) {
+                if (FoundKeyword.isIncreasingIndent(line)) {
                     this.increaseIndent();
                 }
             }
@@ -59,6 +60,9 @@ export default class Formatter {
     }
 
     private decreaseIndent() {
+        if (this.currentIndent.length === 0) {
+            return;
+        }
         let newLength = this.currentIndent.length;
         if (this.params.options.insertSpaces) {
             newLength -= this.params.options.tabSize;
@@ -69,13 +73,8 @@ export default class Formatter {
     }
 
     private increaseIndent() {
-        if (this.params.options.insertSpaces) {
-            for (let i = 0; i < this.params.options.tabSize; i++) {
-                this.currentIndent = this.currentIndent + " ";
-            }
-        } else {
-            this.currentIndent = this.currentIndent + "\t";
-        }
+        this.currentIndent += (this.params.options.insertSpaces) ?
+            Array(this.params.options.tabSize).fill(" ").join("") : "\t";
     }
 
     private checkIndent() {
@@ -107,17 +106,17 @@ export default class Formatter {
     }
 
     private isNested(): boolean {
-        return this.current === "widget" && this.previous === "group" ||
+        return this.previous && (this.current === "widget" && this.previous === "group" ||
             this.current === "widget" && this.previous === "configuration" ||
             this.current === "node" && this.previous === "widget" ||
             this.current === "link" && this.previous === "widget" ||
             this.current === "series" && this.previous === "link" ||
             this.current === "series" && this.previous === "widget" ||
-            this.current === "tags" && this.previous === "series";
+            this.current === "tags" && this.previous === "series");
     }
 
     private isSameLevel(): boolean {
-        return this.current === this.previous ||
+        return !this.previous || this.current === this.previous ||
             this.current === "group" && this.previous === "configuration" ||
             this.current === "link" && this.previous === "node" ||
             this.current === "node" && this.previous === "link";

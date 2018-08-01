@@ -27,7 +27,7 @@ export default class FoundKeyword {
     }
 
     public static isNotCloseAble(line: string): boolean {
-        return /^[ \t]*(?:else|elseif)\b/.test(line);
+        return /^[ \t]*else(?:if)?\b/.test(line);
     }
 
     private static regexp =
