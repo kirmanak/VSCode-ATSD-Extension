@@ -12,8 +12,10 @@ export default class Formatter {
     private current: string;
     private params: DocumentFormattingParams;
     private openKeywordsIndent: string[] = [];
+    private isDecreaseAble = true;
 
     constructor(document: TextDocument, formattingParams: DocumentFormattingParams) {
+        if (!document || !formattingParams) { throw new Error("Invalid arguments"); }
         this.params = formattingParams;
         this.lines = Util.deleteComments(document.getText()).split("\n");
     }
@@ -21,20 +23,28 @@ export default class Formatter {
     public lineByLine(): TextEdit[] {
         for (; this.currentLine < this.lines.length; this.currentLine++) {
             if (this.isSection()) {
-                this.decreaseIndent();
                 this.calculateIndent();
                 this.checkIndent();
                 this.increaseIndent();
             } else {
-                if (FoundKeyword.isClosingKeyword(this.getCurrentLine())) {
-                    this.currentIndent = this.openKeywordsIndent.pop();
+                if (FoundKeyword.isClosing(this.getCurrentLine())) {
+                    const stackHead = this.openKeywordsIndent.pop();
+                    if (stackHead !== undefined) {
+                        this.currentIndent = stackHead;
+                        if (FoundKeyword.isNotCloseAble(this.getCurrentLine())) {
+                            this.openKeywordsIndent.push(stackHead);
+                        }
+                    }
                 }
                 this.checkIndent();
-                if (FoundKeyword.isCloseAbleKeyword(this.getCurrentLine())) {
+                if (FoundKeyword.isCloseAble(this.getCurrentLine())) {
                     this.openKeywordsIndent.push(this.currentIndent);
                 }
-                if (FoundKeyword.isIncreasingIndentKeyword(this.getCurrentLine())) {
+                if (FoundKeyword.isIncreasingIndent(this.getCurrentLine())) {
                     this.increaseIndent();
+                }
+                if (FoundKeyword.canContainSection(this.getCurrentLine())) {
+                    this.isDecreaseAble = false;
                 }
             }
         }
@@ -44,11 +54,15 @@ export default class Formatter {
     private calculateIndent() {
         this.previous = this.current;
         this.current = this.match[2];
+        if (this.isDecreaseAble) {
+            this.decreaseIndent();
+        }
         if (this.isNested()) {
             this.increaseIndent();
         } else if (!this.isSameLevel()) {
             this.decreaseIndent();
         }
+        this.isDecreaseAble = true;
     }
 
     private decreaseIndent() {
@@ -74,11 +88,11 @@ export default class Formatter {
     private checkIndent() {
         if (!this.isEmpty()) {
             this.match = /(^\s*)\S/.exec(this.getCurrentLine());
-            if (this.match[1].length !== this.currentIndent.length) {
+            if (this.match[1] !== this.currentIndent) {
                 this.edits.push({
                     newText: this.currentIndent,
                     range: {
-                        end: { character: this.match[1].length, line: this.currentLine },
+                        end: { character: (this.match[1]) ? this.match[1].length : 0, line: this.currentLine },
                         start: { character: 0, line: this.currentLine },
                     },
                 });

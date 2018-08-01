@@ -14,16 +14,24 @@ export default class FoundKeyword {
         };
     }
 
-    public static isCloseAbleKeyword(line: string): boolean {
+    public static isCloseAble(line: string): boolean {
         return /^[ \t]*(?:for|if|list|var|script|csv)\b/.test(line);
     }
 
-    public static isClosingKeyword(line: string): boolean {
-        return /^[ \t]*end(?:for|if|list|var|script|csv)\b/.test(line);
+    public static isClosing(line: string): boolean {
+        return /^[ \t]*(?:end(?:for|if|list|var|script|csv)|elseif|else)\b/.test(line);
     }
 
-    public static isIncreasingIndentKeyword(line: string): boolean {
+    public static isIncreasingIndent(line: string): boolean {
         return /^[ \t]*(?:for|if|else|elseif|script|csv|var|list)\b/.test(line);
+    }
+
+    public static isNotCloseAble(line: string): boolean {
+        return /^[ \t]*(?:else|elseif)\b/.test(line);
+    }
+
+    public static canContainSection(line: string): boolean {
+        return /^[ \t]*(?:for|if|else|elseif)\b/.test(line);
     }
 
     private static regexp =
