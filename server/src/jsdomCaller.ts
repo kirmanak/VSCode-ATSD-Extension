@@ -28,7 +28,6 @@ export default class JsDomCaller {
     private match: RegExpExecArray;
     private currentLineNumber: number = 0;
     private lines: string[];
-    private result: Diagnostic[] = [];
     private statements: Statement[] = [];
     private imports: string[] = [];
     private importCounter = 0;
@@ -40,6 +39,7 @@ export default class JsDomCaller {
     }
 
     public validate(): Diagnostic[] {
+        const result: Diagnostic[] = [];
         this.parseJsStatements();
 
         const dom = new jsdom.JSDOM(`<html></html>`, { runScripts: "outside-only" });
@@ -58,7 +58,7 @@ export default class JsDomCaller {
                     }
                 }
                 if (!isImported) {
-                    this.result.push(Util.createDiagnostic(
+                    result.push(Util.createDiagnostic(
                         { range: statement.range, uri: this.document.uri },
                         DiagnosticSeverity.Warning, err.message,
                     ));
@@ -66,7 +66,7 @@ export default class JsDomCaller {
             }
         });
 
-        return this.result;
+        return result;
     }
 
     private getCurrentLine(): string {
@@ -194,7 +194,7 @@ export default class JsDomCaller {
                 `"threshold_duration","time","bottom","top","meta","entityTag","metricTag","median",` +
                 `"average","minimum","maximum","series","getValueWithOffset","getValueForDate",` +
                 `"getMaximumValue", ${importList}, ${content}` +
-                `)).call(window${JsDomCaller.generateCall(4, "proxy")}` +
+                `)).call(window${JsDomCaller.generateCall(3, "proxy")}` +
                 `${JsDomCaller.generateCall(33, "proxyFunction")}` +
                 `${JsDomCaller.generateCall(1, "proxyArray")}` +
                 `${JsDomCaller.generateCall(3, "proxyFunction")}` +
