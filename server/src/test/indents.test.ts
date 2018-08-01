@@ -131,29 +131,29 @@ suite("Formatting indents tests", () => {
             "  vds\n" +
             "endlist\n" +
             "for item in servers\n" +
-            "  [series]\n" +
-            "    entity = ${item}\n" +
-            "    if ${item} = vps\n" +
-            "      metric = cpu_busy\n" +
-            "      elseif ${item} = vds\n" +
-            "      metric = cpu_user\n" +
-            "      else\n" +
-            "      metric = cpu_system\n" +
-            "      endif\n" +
+            "[series]\n" +
+            "  entity = ${item}\n" +
+            "  if ${item} = vps\n" +
+            "    metric = cpu_busy\n" +
+            "    elseif ${item} = vds\n" +
+            "    metric = cpu_user\n" +
+            "    else\n" +
+            "    metric = cpu_system\n" +
+            "    endif\n" +
             "endfor\n",
             [{
-                newText: "    ", range: {
-                    end: { character: "      ".length, line: 8 },
+                newText: "  ", range: {
+                    end: { character: "    ".length, line: 8 },
                     start: { character: 0, line: 8 },
                 },
             }, {
-                newText: "    ", range: {
-                    end: { character: "      ".length, line: 10 },
+                newText: "  ", range: {
+                    end: { character: "    ".length, line: 10 },
                     start: { character: 0, line: 10 },
                 },
             }, {
-                newText: "    ", range: {
-                    end: { character: "      ".length, line: 12 },
+                newText: "  ", range: {
+                    end: { character: "    ".length, line: 12 },
                     start: { character: 0, line: 12 },
                 },
             }],

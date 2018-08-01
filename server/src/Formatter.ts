@@ -12,7 +12,6 @@ export default class Formatter {
     private current: string;
     private params: DocumentFormattingParams;
     private openKeywordsIndent: string[] = [];
-    private isDecreaseAble = true;
 
     constructor(document: TextDocument, formattingParams: DocumentFormattingParams) {
         if (!document || !formattingParams) { throw new Error("Invalid arguments"); }
@@ -43,26 +42,20 @@ export default class Formatter {
                 if (FoundKeyword.isIncreasingIndent(this.getCurrentLine())) {
                     this.increaseIndent();
                 }
-                if (FoundKeyword.canContainSection(this.getCurrentLine())) {
-                    this.isDecreaseAble = false;
-                }
             }
         }
         return this.edits;
     }
 
     private calculateIndent() {
+        this.decreaseIndent();
         this.previous = this.current;
         this.current = this.match[2];
-        if (this.isDecreaseAble) {
-            this.decreaseIndent();
-        }
         if (this.isNested()) {
             this.increaseIndent();
         } else if (!this.isSameLevel()) {
             this.decreaseIndent();
         }
-        this.isDecreaseAble = true;
     }
 
     private decreaseIndent() {

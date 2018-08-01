@@ -30,10 +30,6 @@ export default class FoundKeyword {
         return /^[ \t]*(?:else|elseif)\b/.test(line);
     }
 
-    public static canContainSection(line: string): boolean {
-        return /^[ \t]*(?:for|if|else|elseif)\b/.test(line);
-    }
-
     private static regexp =
         /^([ \t]*)(endvar|endcsv|endfor|elseif|endif|endscript|endlist|script|else|if|list|for|csv|var)\b/i;
 
