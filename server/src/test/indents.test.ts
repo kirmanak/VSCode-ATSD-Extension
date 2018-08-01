@@ -191,14 +191,43 @@ suite("Formatting indents tests", () => {
             [{
                 newText: "    ", range: {
                     end: { character: 2, line: 9 },
-                    start: {character: 0, line: 9 },
+                    start: { character: 0, line: 9 },
                 },
             }, {
                 newText: "    ", range: {
                     end: { character: 2, line: 12 },
-                    start: {character: 0, line: 12 },
+                    start: { character: 0, line: 12 },
                 },
             }],
+            {
+                options: { insertSpaces: true, tabSize: 2 },
+                textDocument: { uri: Test.URI },
+            },
+        ),
+        new Test("A couple of correct groups",
+            "[group]\n" +
+            "  [widget]\n" +
+            "    type = chart\n" +
+            "    [series]\n" +
+            "      entity = vps\n" +
+            "      metric = cpu_busy\n" +
+            "  [widget]\n" +
+            "    type = chart\n" +
+            "    [series]\n" +
+            "      entity = vds\n" +
+            "      metric = cpu_busy\n" +
+            "[group]\n" +
+            "  [widget]\n" +
+            "    type = chart\n" +
+            "    [series]\n" +
+            "      entity = vps\n" +
+            "      metric = cpu_busy\n" +
+            "  [widget]\n" +
+            "    type = chart\n" +
+            "    [series]\n" +
+            "      entity = vds\n" +
+            "      metric = cpu_busy\n",
+            [],
             {
                 options: { insertSpaces: true, tabSize: 2 },
                 textDocument: { uri: Test.URI },
