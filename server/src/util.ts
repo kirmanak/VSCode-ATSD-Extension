@@ -1,0 +1,104 @@
+import * as Levenshtein from "levenshtein";
+import { Diagnostic, DiagnosticSeverity, Location } from "vscode-languageserver";
+
+// tslint:disable-next-line:typedef
+const DIAGNOSTIC_SOURCE = "Axibase Charts";
+
+export const isInMap: (value: string, map: Map<string, string[]> | Map<string, string[][]>) => boolean =
+    (value: string, map: Map<string, string[]> | Map<string, string[][]>): boolean => {
+        if (!value || !map) { return false; }
+        for (const array of map.values()) {
+            for (const item of array) {
+                if (typeof item === "string") {
+                    if (item === value) { return true; }
+                } else {
+                    for (const word of item) {
+                        if (word === value) { return true; }
+                    }
+                }
+            }
+        }
+
+        return false;
+    };
+
+export const mapToArray: (map: Map<string, string[]>) => string[] =
+    (map: Map<string, string[]>): string[] => {
+        const array: string[] = [];
+        if (!map) { return array; }
+        map.forEach((arr: string[]) => arr.forEach((item: string) => array.push(item)));
+
+        return array;
+    };
+
+export const suggestionMessage: (word: string, dictionary: string[]) => string =
+    (word: string, dictionary: string[]): string => {
+        if (!word || !dictionary) { return undefined; }
+        let suggestion: string;
+        let min: number = Number.MAX_VALUE;
+        dictionary.forEach((value: string) => {
+            if (value === undefined) { return; }
+            const distance: number = new Levenshtein(value, word).distance;
+            if (distance < min) {
+                min = distance;
+                suggestion = value;
+            }
+        });
+
+        return errorMessage(word, suggestion);
+    };
+
+export const isAnyInArray: (toCheck: string[], array: string[]) => boolean =
+    (toCheck: string[], array: string[]): boolean =>
+        !toCheck || (toCheck.find((item: string) => this.isInArray(array, item)) !== undefined);
+
+export const isInArray: (array: string[], value: string) => boolean =
+    (array: string[], value: string): boolean =>
+        array && array.find((item: string) => value === item) !== undefined;
+
+export const countCsvColumns: (line: string) => number = (line: string): number => {
+    const regex: RegExp = /(['"]).+\1|[^, \t]+/g;
+    // tslint:disable-next-line:typedef
+    let counter = 0;
+    while (regex.exec(line)) { counter++; }
+
+    return counter;
+};
+
+export const createDiagnostic: (location: Location, severity: DiagnosticSeverity, message: string) => Diagnostic =
+    (location: Location, severity: DiagnosticSeverity, message: string): Diagnostic => {
+        const diagnostic: Diagnostic = {
+            message, range: location.range,
+            severity, source: DIAGNOSTIC_SOURCE,
+        };
+
+        return diagnostic;
+    };
+
+export const deleteComments: (text: string) => string = (text: string): string => {
+    let content: string = text;
+    const multiLine: RegExp = /\/\*[\s\S]*?\*\//g;
+    const oneLine: RegExp = /^[ \t]*#.*/mg;
+    let i: RegExpExecArray = multiLine.exec(content);
+    if (!i) { i = oneLine.exec(content); }
+
+    while (i) {
+        // tslint:disable-next-line:typedef
+        let spaces = " ";
+        // tslint:disable-next-line:typedef
+        for (let j = 1; j < i[0].length; j++) { spaces += " "; }
+        const newLines: number = i[0].split("\n").length - 1;
+        // tslint:disable-next-line:typedef
+        for (let j = 0; j < newLines; j++) { spaces += "\n"; }
+        content = content.substring(0, i.index) + spaces +
+            content.substring(i.index + i[0].length);
+        i = multiLine.exec(content);
+        if (!i) { i = oneLine.exec(content); }
+    }
+
+    return content;
+};
+
+export const errorMessage: (found: string, suggestion: string) => string =
+    (found: string, suggestion: string): string =>
+        (suggestion === null) ? `${found} is unknown.` : `${found} is unknown. Suggestion: ${suggestion}`;

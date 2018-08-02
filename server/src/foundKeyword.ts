@@ -1,19 +1,6 @@
 import { Range } from "vscode-languageserver";
 
-export default class FoundKeyword {
-    public static parse(line: string, i: number): FoundKeyword | null {
-        const match = FoundKeyword.regexp.exec(line);
-        if (match === null) { return null; }
-        const keywordStart = match[1].length;
-        return {
-            keyword: match[2],
-            range: {
-                end: { character: keywordStart + match[2].length, line: i },
-                start: { character: keywordStart, line: i },
-            },
-        };
-    }
-
+export class FoundKeyword {
     public static isCloseAble(line: string): boolean {
         return /^[ \t]*(?:for|if|list|var|script|csv)\b/.test(line);
     }
@@ -30,7 +17,23 @@ export default class FoundKeyword {
         return /^[ \t]*else(?:if)?\b/.test(line);
     }
 
-    private static regexp =
+    public static parse(line: string, i: number): FoundKeyword | undefined {
+        const match: RegExpExecArray = FoundKeyword.regexp.exec(line);
+        if (match === null) { return undefined; }
+        const keywordStart: number = match[1].length;
+
+        return {
+            keyword: match[this.KEYWORD_POSITION],
+            range: {
+                end: { character: keywordStart + match[this.KEYWORD_POSITION].length, line: i },
+                start: { character: keywordStart, line: i },
+            },
+        };
+    }
+
+    // tslint:disable-next-line:typedef
+    private static KEYWORD_POSITION = 2;
+    private static regexp: RegExp =
         /^([ \t]*)(endvar|endcsv|endfor|elseif|endif|endscript|endlist|script|else|if|list|for|csv|var)\b/i;
 
     public keyword: string;

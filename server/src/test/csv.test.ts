@@ -1,9 +1,9 @@
-import { DiagnosticSeverity } from "vscode-languageserver/lib/main";
-import Util from "../Util";
+import { DiagnosticSeverity } from "vscode-languageserver";
+import { createDiagnostic } from "../util";
 import Test from "./Test";
 
 suite("CSV tests", () => {
-    const tests = [
+    const tests: Test[] = [
         new Test(
             "Correct inline csv(header next line)",
             "csv countries = \n" +
@@ -27,7 +27,7 @@ suite("CSV tests", () => {
             "   Russia, 65, 63\n" +
             "   USA, 63, 63\n" +
             "encsv",
-            [Util.createDiagnostic(
+            [createDiagnostic(
                 {
                     range: {
                         end: { character: 5, line: 3 },
@@ -36,7 +36,7 @@ suite("CSV tests", () => {
                     uri: Test.URI,
                 },
                 DiagnosticSeverity.Error, "Expected 3 columns, but found 1",
-            ), Util.createDiagnostic(
+            ), createDiagnostic(
                 {
                     range: {
                         end: { character: 3, line: 0 }, start: { character: 0, line: 0 },
@@ -52,7 +52,7 @@ suite("CSV tests", () => {
             "   Russia, 65, 63\n" +
             "   USA, 63, 63\n" +
             "encsv",
-            [Util.createDiagnostic(
+            [createDiagnostic(
                 {
                     range: {
                         end: { character: 5, line: 4 },
@@ -61,7 +61,7 @@ suite("CSV tests", () => {
                     uri: Test.URI,
                 },
                 DiagnosticSeverity.Error, "Expected 3 columns, but found 1",
-            ), Util.createDiagnostic(
+            ), createDiagnostic(
                 {
                     range: {
                         end: { character: 3, line: 0 },
@@ -78,7 +78,7 @@ suite("CSV tests", () => {
             "   Russia, 65, 63\n" +
             "   USA, 63, 63, 63\n" +
             "endcsv",
-            [Util.createDiagnostic(
+            [createDiagnostic(
                 {
                     range: {
                         end: { character: 18, line: 2 },

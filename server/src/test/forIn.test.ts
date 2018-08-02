@@ -1,9 +1,9 @@
-import { DiagnosticSeverity } from "vscode-languageserver/lib/main";
-import Util from "../Util";
+import { DiagnosticSeverity } from "vscode-languageserver";
+import { createDiagnostic } from "../util";
 import Test from "./Test";
 
 suite("for in ... tests", () => {
-    const tests = [
+    const tests: Test[] = [
         new Test("Correct one-line list, correct for",
             "list servers = 'srv1', 'srv2'\n" +
             "for srv in servers\n" +

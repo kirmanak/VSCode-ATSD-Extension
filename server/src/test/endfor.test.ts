@@ -1,9 +1,9 @@
-import { DiagnosticSeverity } from "vscode-languageserver/lib/main";
-import Util from "../Util";
+import { DiagnosticSeverity } from "vscode-languageserver";
+import { createDiagnostic } from "../util";
 import Test from "./Test";
 
 suite("Unmatched endfor tests", () => {
-    const tests = [
+    const tests: Test[] = [
         new Test("One correct loop",
             "list servers = 'srv1', 'srv2'\n" +
             "for server in servers\n" +
@@ -25,7 +25,7 @@ suite("Unmatched endfor tests", () => {
             "list servers = 'srv1', 'srv2'\n" +
             "for server in servers\n" +
             "   do something\n",
-            [Util.createDiagnostic(
+            [createDiagnostic(
                 {
                     range: {
                         end: { character: 3, line: 1 },
@@ -41,7 +41,7 @@ suite("Unmatched endfor tests", () => {
             "   do something\n" +
             "for srv in servers\n" +
             "   do something\n",
-            [Util.createDiagnostic(
+            [createDiagnostic(
                 {
                     range: {
                         end: { character: 3, line: 1 },
@@ -49,7 +49,7 @@ suite("Unmatched endfor tests", () => {
                     }, uri: Test.URI,
                 },
                 DiagnosticSeverity.Error, "for has no matching endfor",
-            ), Util.createDiagnostic(
+            ), createDiagnostic(
                 {
                     range: {
                         end: { character: 3, line: 3 },
@@ -66,7 +66,7 @@ suite("Unmatched endfor tests", () => {
             "for srv in servers\n" +
             "   do something\n" +
             "endfor",
-            [Util.createDiagnostic(
+            [createDiagnostic(
                 {
                     range: {
                         end: { character: 3, line: 1 },

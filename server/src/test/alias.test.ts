@@ -1,10 +1,11 @@
-import { DiagnosticSeverity } from "vscode-languageserver/lib/main";
-import Util from "../Util";
+import { DiagnosticSeverity } from "vscode-languageserver";
+import { createDiagnostic, errorMessage } from "../util";
 import Test from "./Test";
 
 suite("Incorrect dealias tests", () => {
-    const tests = [
-        new Test("One alias, one correct dealias",
+    const tests: Test[] = [
+        new Test(
+            "One alias, one correct dealias",
             "[series]\n" +
             "   metric = temp\n" +
             "   entity = srv\n" +
@@ -15,7 +16,8 @@ suite("Incorrect dealias tests", () => {
             "   value = value('s1') * 2",
             [],
         ),
-        new Test("One alias, one incorrect dealias",
+        new Test(
+            "One alias, one incorrect dealias",
             "[series]\n" +
             "   metric = temp\n" +
             "   entity = srv\n" +
@@ -24,14 +26,15 @@ suite("Incorrect dealias tests", () => {
             "   metric = temp\n" +
             "   entity = srv\n" +
             "   value = value('s2') * 2",
-            [Util.createDiagnostic(
+            [createDiagnostic(
                 {
                     range: {
                         end: { character: "   value = value('".length + "s2".length, line: 7 },
                         start: { character: "   value = value('".length, line: 7 },
-                    }, uri: Test.URI,
+                    }, 
+                    uri: Test.URI,
                 },
-                DiagnosticSeverity.Error, Util.errorMessage("s2", "s1"),
+                DiagnosticSeverity.Error, errorMessage("s2", "s1"),
             )],
         ),
         new Test("One alias, one correct dealias before the declaration",
@@ -58,22 +61,22 @@ suite("Incorrect dealias tests", () => {
             "   metric = temp\n" +
             "   entity = srv\n" +
             "   value = value('s3') * 2",
-            [Util.createDiagnostic(
+            [createDiagnostic(
                 {
                     range: {
                         end: { character: "   value = value('".length + "s2".length, line: 7 },
                         start: { character: "   value = value('".length, line: 7 },
                     }, uri: Test.URI,
                 },
-                DiagnosticSeverity.Error, Util.errorMessage("s2", "s1"),
-            ), Util.createDiagnostic(
+                DiagnosticSeverity.Error, errorMessage("s2", "s1"),
+            ), createDiagnostic(
                 {
                     range: {
                         end: { character: "   value = value('".length + "s3".length, line: 11 },
                         start: { character: "   value = value('".length, line: 11 },
                     }, uri: Test.URI,
                 },
-                DiagnosticSeverity.Error, Util.errorMessage("s3", "s1"),
+                DiagnosticSeverity.Error, errorMessage("s3", "s1"),
             )],
         ),
         new Test("Two aliases, two correct dealiases",
@@ -112,14 +115,14 @@ suite("Incorrect dealias tests", () => {
             "   metric = temp\n" +
             "   entity = srv\n" +
             "   value = value('s2') * 2",
-            [Util.createDiagnostic(
+            [createDiagnostic(
                 {
                     range: {
                         end: { character: "   value = value('".length + "s3".length, line: 11 },
                         start: { character: "   value = value('".length, line: 11 },
                     }, uri: Test.URI,
                 },
-                DiagnosticSeverity.Error, Util.errorMessage("s3", "s1"),
+                DiagnosticSeverity.Error, errorMessage("s3", "s1"),
             )],
         ),
         new Test("Declared series, indents are used, correct alias and dealias",

@@ -1,5 +1,5 @@
-import { DiagnosticSeverity } from "vscode-languageserver/lib/main";
-import Util from "../Util";
+import { DiagnosticSeverity } from "vscode-languageserver";
+import Util from "../util";
 import Test from "./Test";
 
 const elseIfError = "elseif has no matching if";

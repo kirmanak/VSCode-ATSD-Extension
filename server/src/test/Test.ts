@@ -1,7 +1,7 @@
 import * as assert from "assert";
 import { Diagnostic, DocumentFormattingParams, TextDocument, TextEdit } from "vscode-languageserver/lib/main";
-import Formatter from "../Formatter";
-import Validator from "../Validator";
+import Formatter from "../formatter";
+import Validator from "../validator";
 
 export default class Test {
     public static URI = "test";

@@ -1,23 +1,24 @@
 import {
-    createConnection, Diagnostic, DidChangeConfigurationNotification, DocumentFormattingParams,
-    InitializeParams, ProposedFeatures, TextDocument, TextDocuments, TextEdit,
-} from "vscode-languageserver/lib/main";
-import Formatter from "./Formatter";
-import JsDomCaller from "./jsdomCaller";
-import Validator from "./Validator";
+    ClientCapabilities, createConnection, Diagnostic, DidChangeConfigurationNotification, DidChangeConfigurationParams,
+    DocumentFormattingParams, IConnection, InitializeParams, ProposedFeatures,
+    TextDocument, TextDocumentChangeEvent, TextDocuments, TextEdit,
+} from "vscode-languageserver";
+import { Formatter } from "./formatter";
+import { JsDomCaller } from "./jsDomCaller";
+import { Validator } from "./validator";
 
 // Create a connection for the server. The connection uses Node"s IPC as a transport.
 // Also include all preview / proposed LSP features.
-const connection = createConnection(ProposedFeatures.all);
+const connection: IConnection = createConnection(ProposedFeatures.all);
 
-// Create a simple text document manager. The text document manager
-// supports full document sync only
+// Create a simple text document manager.
 const documents: TextDocuments = new TextDocuments();
 
-let hasConfigurationCapability: boolean = false;
+// tslint:disable-next-line:typedef
+let hasConfigurationCapability = false;
 
 connection.onInitialize((params: InitializeParams) => {
-    const capabilities = params.capabilities;
+    const capabilities: ClientCapabilities = params.capabilities;
 
     // Does the client support the `workspace/configuration` request?
     // If not, we will fall back using global settings
@@ -43,15 +44,13 @@ interface IServerSettings {
 }
 
 // The global settings, used when the `workspace/configuration` request is not supported by the client.
-// Please note that this is not the case when using this server with the client provided in this example
-// but could happen with other clients.
 const defaultSettings: IServerSettings = { validateFunctions: false };
 let globalSettings: IServerSettings = defaultSettings;
 
 // Cache the settings of all open documents
 const documentSettings: Map<string, Thenable<IServerSettings>> = new Map();
 
-connection.onDidChangeConfiguration((change) => {
+connection.onDidChangeConfiguration((change: DidChangeConfigurationParams) => {
     if (hasConfigurationCapability) {
         // Reset all cached document settings
         documentSettings.clear();
@@ -62,59 +61,62 @@ connection.onDidChangeConfiguration((change) => {
     }
 
     // Revalidate all open text documents
-    documents.all().forEach(validateTextDocument);
+    documents.all()
+        .forEach(validateTextDocument);
 });
 
-function getDocumentSettings(resource: string): Thenable<IServerSettings> {
-    if (!hasConfigurationCapability) {
-        return Promise.resolve(globalSettings);
-    }
-    let result = documentSettings.get(resource);
-    if (!result) {
-        result = connection.workspace.getConfiguration({
-            scopeUri: resource,
-            section: "axibaseCharts",
-        });
-        documentSettings.set(resource, result);
-    }
-    return result;
-}
+const getDocumentSettings: (resource: string) => Thenable<IServerSettings> =
+    (resource: string): Thenable<IServerSettings> => {
+        if (!hasConfigurationCapability) {
+            return Promise.resolve(globalSettings);
+        }
+        let result: Thenable<IServerSettings> = documentSettings.get(resource);
+        if (!result) {
+            result = connection.workspace.getConfiguration({
+                scopeUri: resource,
+                section: "axibaseCharts",
+            });
+            documentSettings.set(resource, result);
+        }
+
+        return result;
+    };
 
 // Only keep settings for open documents
-documents.onDidClose((e) => {
+documents.onDidClose((e: TextDocumentChangeEvent) => {
     documentSettings.delete(e.document.uri);
 });
 
-// The content of a text document has changed. This event is emitted
-// when the text document first opened or when its content has changed.
-documents.onDidChangeContent((change) => {
+documents.onDidChangeContent((change: TextDocumentChangeEvent) => {
     validateTextDocument(change.document);
 });
 
-async function validateTextDocument(textDocument: TextDocument): Promise<void> {
-    const settings = await getDocumentSettings(textDocument.uri);
-    const validator = new Validator(textDocument);
-    const jsDomCaller = new JsDomCaller(textDocument);
-    const diagnostics: Diagnostic[] = validator.lineByLine();
+const validateTextDocument: (textDocument: TextDocument) => Promise<void> =
+    async (textDocument: TextDocument): Promise<void> => {
+        const settings: IServerSettings = await getDocumentSettings(textDocument.uri);
+        const validator: Validator = new Validator(textDocument);
+        const jsDomCaller: JsDomCaller = new JsDomCaller(textDocument);
+        const diagnostics: Diagnostic[] = validator.lineByLine();
 
-    if (settings.validateFunctions) {
-        jsDomCaller.validate().forEach((element) => {
-            diagnostics.push(element);
-        });
-    }
+        if (settings.validateFunctions) {
+            jsDomCaller.validate()
+                .forEach((element: Diagnostic) => {
+                    diagnostics.push(element);
+                });
+        }
 
-    // Send the computed diagnostics to VSCode.
-    connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
-}
+        // Send the computed diagnostics to VSCode.
+        connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
+    };
 
 connection.onDocumentFormatting((params: DocumentFormattingParams): TextEdit[] => {
-    const document = documents.get(params.textDocument.uri);
-    const formatter = new Formatter(document, params);
+    const document: TextDocument = documents.get(params.textDocument.uri);
+    const formatter: Formatter = new Formatter(document, params);
+
     return formatter.lineByLine();
 });
 
 // Make the text document manager listen on the connection
-// for open, change and close text document events
 documents.listen(connection);
 
 // Listen on the connection

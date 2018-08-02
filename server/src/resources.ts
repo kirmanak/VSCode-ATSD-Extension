@@ -1,25 +1,27 @@
-export const requiredSectionSettingsMap = new Map<string, string[][]>();
+export const requiredSectionSettingsMap: Map<string, string[][]> = new Map<string, string[][]>();
 requiredSectionSettingsMap.set("series", [["entity"], ["metric", "table", "attribute"]]);
 requiredSectionSettingsMap.set("widget", [["type"]]);
 
-export const parentSections = new Map<string, string[]>();
+export const parentSections: Map<string, string[]> = new Map<string, string[]>();
 parentSections.set("widget", ["group", "configuration"]);
 parentSections.set("series", ["widget"]);
 
-// returns array of parent sections for the section
-export function getParents(section: string): string[] {
+// Returns array of parent sections for the section
+export const getParents: (section: string) => string[] = (section: string): string[] => {
     const parents: string[] = [];
-    const found = parentSections.get(section);
+    const found: string[] = parentSections.get(section);
     if (found) {
-        found.forEach((father) => {
+        found.forEach((father: string) => {
             parents.push(father);
-            getParents(father).forEach((grand) => parents.push(grand));
+            getParents(father)
+                .forEach((grand: string) => parents.push(grand));
         });
     }
-    return parents;
-}
 
-export const possibleOptions = [
+    return parents;
+};
+
+export const possibleOptions: string[] = [
     "actionenable", "add", "addmeta", "aheadtimespan", "alert", "alertexpression", "alertrowstyle", "alertstyle",
     "alias", "align", "arcs", "arrowlength", "arrows", "attribute", "audio", "audioalert", "audioonload", "autoheight",
     "autopadding", "autoperiod", "autoscale", "axis", "axislabel", "axistitle", "axistitleright", "bar", "barcount",

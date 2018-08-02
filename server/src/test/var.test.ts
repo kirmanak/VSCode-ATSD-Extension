@@ -1,5 +1,5 @@
 import { DiagnosticSeverity } from "vscode-languageserver/lib/main";
-import Util from "../Util";
+import Util from "../util";
 import Test from "./Test";
 
 suite("Var endvar tests", () => {

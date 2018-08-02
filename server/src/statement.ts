@@ -1,6 +1,6 @@
 import { Range } from "vscode-languageserver";
 
-export default class Statement {
-    public range: Range;
+export class Statement {
     public declaration: string;
+    public range: Range;
 }

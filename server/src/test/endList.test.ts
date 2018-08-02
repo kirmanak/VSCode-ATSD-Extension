@@ -1,11 +1,12 @@
-import { DiagnosticSeverity } from "vscode-languageserver/lib/main";
-import Util from "../Util";
+import { DiagnosticSeverity } from "vscode-languageserver";
+import { createDiagnostic } from "../util";
 import Test from "./Test";
 
+// tslint:disable-next-line:typedef
 const errorMessage = "list has no matching endlist";
 
 suite("Unfinished list", () => {
-    const tests = [
+    const tests: Test[] = [
         new Test("One correct oneline list",
             "list servers = vps, vds\n",
             [],
@@ -20,7 +21,7 @@ suite("Unfinished list", () => {
             "list servers = vps, \n" +
             "	vds\n" +
             "edlist",
-            [Util.createDiagnostic(
+            [createDiagnostic(
                 {
                     range: {
                         end: { character: 4, line: 0 },
@@ -38,7 +39,7 @@ suite("Unfinished list", () => {
             "list servers = vps, \n" +
             "	vds\n" +
             "edlist",
-            [Util.createDiagnostic(
+            [createDiagnostic(
                 {
                     range: {
                         end: { character: 4, line: 4 },
@@ -52,7 +53,7 @@ suite("Unfinished list", () => {
             "/* test */ list servers = vps, \n" +
             "	vds\n" +
             "edlist",
-            [Util.createDiagnostic(
+            [createDiagnostic(
                 {
                     range: {
                         end: { character: 15, line: 0 },
@@ -70,7 +71,7 @@ suite("Unfinished list", () => {
             "/* test */ list servers = vps, \n" +
             "	vds\n" +
             "edlist",
-            [Util.createDiagnostic(
+            [createDiagnostic(
                 {
                     range: {
                         end: { character: 15, line: 4 },
@@ -90,7 +91,7 @@ suite("Unfinished list", () => {
             "list servers3 = vps, \n" +
             "	vds\n" +
             "endlist\n",
-            [Util.createDiagnostic(
+            [createDiagnostic(
                 {
                     range: {
                         end: { character: 4, line: 3 },
@@ -110,7 +111,7 @@ suite("Unfinished list", () => {
             "list servers = vps\n" +
             "	,vds\n" +
             "edlist",
-            [Util.createDiagnostic(
+            [createDiagnostic(
                 {
                     range: {
                         end: { character: 4, line: 0 },
