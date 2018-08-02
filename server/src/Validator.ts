@@ -141,9 +141,7 @@ export default class Validator {
                         this.keywordsStack.push(foundKeyword);
                         break;
                     }
-                    default: {
-                        console.log(`${foundKeyword.keyword} is not handled`);
-                    }
+                    default: throw new Error(`${foundKeyword.keyword} is not handled`);
                 }
             }
         }

@@ -71,7 +71,7 @@ export default class Formatter {
                 }
                 break;
             }
-            default: console.log("Update switch-case in Formatter.shouldBeClosed()");
+            default: { return true; }
         }
         return false;
     }
