@@ -59,7 +59,7 @@ suite("If elseif else endif validation tests", () => {
                     }, uri: Test.URI,
                 },
                 DiagnosticSeverity.Error, elseIfError,
-            ), createDiagnostic(
+            ),    createDiagnostic(
                 {
                     range: {
                         end: { character: 9, line: 7 },
@@ -87,7 +87,7 @@ suite("If elseif else endif validation tests", () => {
                     }, uri: Test.URI,
                 },
                 DiagnosticSeverity.Error, elseError,
-            ), createDiagnostic(
+            ),    createDiagnostic(
                 {
                     range: {
                         end: { character: 9, line: 7 },
@@ -115,7 +115,7 @@ suite("If elseif else endif validation tests", () => {
                     }, uri: Test.URI,
                 },
                 DiagnosticSeverity.Error, elseError,
-            ), createDiagnostic(
+            ),    createDiagnostic(
                 {
                     range: {
                         end: { character: 9, line: 7 },
@@ -144,7 +144,7 @@ suite("If elseif else endif validation tests", () => {
                     }, uri: Test.URI,
                 },
                 DiagnosticSeverity.Error, "for has finished before if",
-            ), createDiagnostic(
+            ),    createDiagnostic(
                 {
                     range: {
                         end: { character: 6, line: 5 },
