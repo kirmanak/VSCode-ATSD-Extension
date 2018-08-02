@@ -167,7 +167,7 @@ suite("Formatting indents tests", () => {
             "  type = chart\n" +
             "  metric = cpu_busy\n" +
             "\n" +
-            "  list servers = nurswgvml006, \n" +
+            "  list servers = nurswgvml006,\n" +
             "    nurswgvml007\n" +
             "  endlist\n" +
             "\n" +
