@@ -233,6 +233,23 @@ suite("Formatting indents tests", () => {
                 textDocument: { uri: Test.URI },
             },
         ),
+        new Test("Correct for after var declaration",
+            "[widget]\n" +
+            "  type = chart\n" +
+            "\n" +
+            "  var servers = [ 'vps', 'vds' ];\n" +
+            "\n" +
+            "  for item in servers\n" +
+            "  [series]\n" +
+            "    entity = @{item}\n" +
+            "    metric = cpu_busy\n" +
+            "  endfor\n",
+            [],
+            {
+                options: { insertSpaces: true, tabSize: 2 },
+                textDocument: { uri: Test.URI },
+            }
+        ),
     ];
 
     tests.forEach(Test.FORMAT_TEST);

@@ -63,7 +63,6 @@ export default class Formatter {
     }
 
     private decreaseIndent() {
-        console.log(`This line is "${this.getCurrentLine()}", decreasing indent.`);
         if (this.currentIndent.length === 0) { return; }
         let newLength = this.currentIndent.length;
         if (this.params.options.insertSpaces) {
@@ -75,14 +74,11 @@ export default class Formatter {
     }
 
     private increaseIndent() {
-        console.log(`This line is "${this.getCurrentLine()}", increasing indent.`);
         this.currentIndent += (this.params.options.insertSpaces) ?
             Array(this.params.options.tabSize).fill(" ").join("") : "\t";
     }
 
     private setIndent(newIndent: string) {
-        console.log(`This line is "${this.getCurrentLine()}",` +
-            ` setting indent from ${this.currentIndent.length} to "${newIndent.length}".`);
         this.currentIndent = newIndent;
     }
 
