@@ -22,22 +22,27 @@ export default class Formatter {
     public lineByLine(): TextEdit[] {
         for (; this.currentLine < this.lines.length; this.currentLine++) {
             const line = this.getCurrentLine();
-            if (this.isSection()) {
-                this.calculateIndent();
-                this.checkIndent();
-                this.increaseIndent();
-            } else {
-                if (FoundKeyword.isClosing(line)) {
-                    const stackHead = this.keywordsLevels.pop();
-                    if (stackHead !== undefined) {
-                        this.currentIndent = stackHead;
-                        if (FoundKeyword.isNotCloseAble(line)) { this.keywordsLevels.push(stackHead); }
-                    }
+            if (this.isSection() || this.isEmpty()) {
+                if (this.isSection()) {
+                    this.calculateIndent();
+                    this.checkIndent();
+                    this.increaseIndent();
                 }
-                this.checkIndent();
-                if (FoundKeyword.isCloseAble(line)) { this.keywordsLevels.push(this.currentIndent); }
-                if (FoundKeyword.isIncreasingIndent(line)) { this.increaseIndent(); }
+                continue;
             }
+            if (FoundKeyword.isClosing(line)) {
+                const stackHead = this.keywordsLevels.pop();
+                if (stackHead !== undefined) {
+                    this.setIndent(stackHead);
+                    if (FoundKeyword.isNotCloseAble(line)) { this.keywordsLevels.push(stackHead); }
+                }
+            }
+            this.checkIndent();
+            if (FoundKeyword.isCloseAble(line)) {
+                this.current = undefined;
+                this.keywordsLevels.push(this.currentIndent);
+            }
+            if (FoundKeyword.isIncreasingIndent(line)) { this.increaseIndent(); }
         }
         return this.edits;
     }
@@ -46,7 +51,7 @@ export default class Formatter {
         this.previous = this.current;
         this.current = this.match[2];
         if (/\[(?:group|configuration)\]/i.test(this.getCurrentLine())) {
-            this.currentIndent = "";
+            this.setIndent("");
             return;
         }
         this.decreaseIndent();
@@ -58,6 +63,7 @@ export default class Formatter {
     }
 
     private decreaseIndent() {
+        console.log(`This line is "${this.getCurrentLine()}", decreasing indent.`);
         if (this.currentIndent.length === 0) { return; }
         let newLength = this.currentIndent.length;
         if (this.params.options.insertSpaces) {
@@ -69,22 +75,27 @@ export default class Formatter {
     }
 
     private increaseIndent() {
+        console.log(`This line is "${this.getCurrentLine()}", increasing indent.`);
         this.currentIndent += (this.params.options.insertSpaces) ?
             Array(this.params.options.tabSize).fill(" ").join("") : "\t";
     }
 
+    private setIndent(newIndent: string) {
+        console.log(`This line is "${this.getCurrentLine()}",` +
+            ` setting indent from ${this.currentIndent.length} to "${newIndent.length}".`);
+        this.currentIndent = newIndent;
+    }
+
     private checkIndent() {
-        if (!this.isEmpty()) {
-            this.match = /(^\s*)\S/.exec(this.getCurrentLine());
-            if (this.match[1] !== this.currentIndent) {
-                this.edits.push({
-                    newText: this.currentIndent,
-                    range: {
-                        end: { character: (this.match[1]) ? this.match[1].length : 0, line: this.currentLine },
-                        start: { character: 0, line: this.currentLine },
-                    },
-                });
-            }
+        this.match = /(^\s*)\S/.exec(this.getCurrentLine());
+        if (this.match[1] !== this.currentIndent) {
+            this.edits.push({
+                newText: this.currentIndent,
+                range: {
+                    end: { character: (this.match[1]) ? this.match[1].length : 0, line: this.currentLine },
+                    start: { character: 0, line: this.currentLine },
+                },
+            });
         }
     }
 

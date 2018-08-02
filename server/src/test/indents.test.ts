@@ -96,8 +96,8 @@ suite("Formatting indents tests", () => {
             "  [widget]\n" +
             "    type = chart\n" +
             "    for server in servers\n" +
-            "      [series]\n" +
-            "        entity = @{server}\n" +
+            "    [series]\n" +
+            "      entity = @{server}\n" +
             "    endfor\n",
             [],
             {
@@ -116,9 +116,9 @@ suite("Formatting indents tests", () => {
             "      entity = @{server}\n" +
             "    endfor\n",
             [{
-                newText: "        ", range: {
-                    end: { character: "      ".length, line: 7 },
-                    start: { character: 0, line: 7 },
+                newText: "    ", range: {
+                    end: { character: "      ".length, line: 6 },
+                    start: { character: 0, line: 6 },
                 },
             }],
             {
@@ -172,30 +172,30 @@ suite("Formatting indents tests", () => {
             "  endlist\n" +
             "\n" +
             "  for server in servers\n" +
-            "  [series]\n" +
-            "      entity = @{server}\n" +
+            "[series]\n" +
+            "    entity = @{server}\n" +
             "\n" +
-            "  [series]\n" +
-            "      entity = @{server}\n" +
+            "[series]\n" +
+            "    entity = @{server}\n" +
             "  endfor\n" +
             "\n" +
             "  for server in servers\n" +
-            "    [series]\n" +
-            "      entity = @{server}\n" +
-            "      if server == 'nurswgvml007'\n" +
-            "        color = red\n" +
-            "      elseif server == 'nurswgvml006'\n" +
-            "        color = yellow\n" +
-            "      endif\n" +
+            "  [series]\n" +
+            "    entity = @{server}\n" +
+            "    if server == 'nurswgvml007'\n" +
+            "      color = red\n" +
+            "    elseif server == 'nurswgvml006'\n" +
+            "      color = yellow\n" +
+            "    endif\n" +
             "  endfor\n",
             [{
-                newText: "    ", range: {
-                    end: { character: 2, line: 9 },
+                newText: "  ", range: {
+                    end: { character: 0, line: 9 },
                     start: { character: 0, line: 9 },
                 },
             }, {
-                newText: "    ", range: {
-                    end: { character: 2, line: 12 },
+                newText: "  ", range: {
+                    end: { character: 0, line: 12 },
                     start: { character: 0, line: 12 },
                 },
             }],
