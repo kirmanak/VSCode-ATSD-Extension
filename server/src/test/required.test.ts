@@ -98,7 +98,7 @@ suite("Required settings for sections tests", () => {
                     uri: Test.URI,
                 },
                 DiagnosticSeverity.Error, "entity is required",
-            ), createDiagnostic(
+            ),    createDiagnostic(
                 {
                     range: {
                         end: { character: "[".length + "series".length, line: 2 },

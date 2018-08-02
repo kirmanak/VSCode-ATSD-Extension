@@ -5,27 +5,27 @@ import { Test } from "./test";
 suite("Unmatched endfor tests", () => {
     const tests: Test[] = [
         new Test("One correct loop",
-            "list servers = 'srv1', 'srv2'\n" +
+                 "list servers = 'srv1', 'srv2'\n" +
             "for server in servers\n" +
             "   do something\n" +
             "endfor",
-            [],
+                 [],
         ),
         new Test("Two correct loops",
-            "list servers = 'srv1', 'srv2'\n" +
+                 "list servers = 'srv1', 'srv2'\n" +
             "for server in servers\n" +
             "   do something\n" +
             "endfor\n" +
             "for server in servers\n" +
             "   do something\n" +
             "endfor",
-            [],
+                 [],
         ),
         new Test("One incorrect loop",
-            "list servers = 'srv1', 'srv2'\n" +
+                 "list servers = 'srv1', 'srv2'\n" +
             "for server in servers\n" +
             "   do something\n",
-            [createDiagnostic(
+                 [createDiagnostic(
                 {
                     range: {
                         end: { character: 3, line: 1 },
@@ -36,12 +36,12 @@ suite("Unmatched endfor tests", () => {
             )],
         ),
         new Test("Two incorrect loops",
-            "list servers = 'srv1', 'srv2'\n" +
+                 "list servers = 'srv1', 'srv2'\n" +
             "for server in servers\n" +
             "   do something\n" +
             "for srv in servers\n" +
             "   do something\n",
-            [createDiagnostic(
+                 [createDiagnostic(
                 {
                     range: {
                         end: { character: 3, line: 1 },
@@ -60,13 +60,13 @@ suite("Unmatched endfor tests", () => {
             )],
         ),
         new Test("One incorrect loop, one correct loop",
-            "list servers = 'srv1', 'srv2'\n" +
+                 "list servers = 'srv1', 'srv2'\n" +
             "for server in servers\n" +
             "   do something\n" +
             "for srv in servers\n" +
             "   do something\n" +
             "endfor",
-            [createDiagnostic(
+                 [createDiagnostic(
                 {
                     range: {
                         end: { character: 3, line: 1 },

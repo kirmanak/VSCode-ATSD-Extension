@@ -5,11 +5,11 @@ import { Test } from "./test";
 suite("Spelling checks", () => {
     const tests: Test[] = [
         new Test("starttime",
-            "[configuration]\n" +
+                 "[configuration]\n" +
             "	start-time = 15 second\n" +
             "	starttime = 20 second\n" +
             "	startime = 30 minute\n",
-            [createDiagnostic(
+                 [createDiagnostic(
                 {
                     range: {
                         end: { character: 9, line: 3 },
@@ -20,9 +20,9 @@ suite("Spelling checks", () => {
             )],
         ),
         new Test("section eries",
-            "[eries]\n" +
+                 "[eries]\n" +
             "	starttime = 20 second\n",
-            [createDiagnostic(
+                 [createDiagnostic(
                 {
                     range: {
                         end: { character: 6, line: 0 },
@@ -33,9 +33,9 @@ suite("Spelling checks", () => {
             )],
         ),
         new Test("section starttime",
-            "[starttime]\n" +
+                 "[starttime]\n" +
             "	starttime = 20 second\n",
-            [createDiagnostic(
+                 [createDiagnostic(
                 {
                     range: {
                         end: { character: 10, line: 0 },
@@ -46,16 +46,16 @@ suite("Spelling checks", () => {
             )],
         ),
         new Test("tags ignored",
-            "[tags]\n" +
+                 "[tags]\n" +
             "	startime = 20 second\n",
-            [],
+                 [],
         ),
         new Test("tags ignoring finished with new section",
-            "[tags]\n" +
+                 "[tags]\n" +
             "	startime = 20 second\n" +
             "[starttime]\n" +
             "	startime = 20 second\n",
-            [createDiagnostic(
+                 [createDiagnostic(
                 {
                     range: {
                         end: { character: "[".length + "starttime".length, line: 2 },
@@ -74,14 +74,14 @@ suite("Spelling checks", () => {
             )],
         ),
         new Test("tags ignoring finished with whitespace",
-            "[series]\n" +
+                 "[series]\n" +
             "  entity = server\n" +
             "  metric = cpu_busy\n" +
             "  [tags]\n" +
             "    startime = 20 second\n" +
             "\n" +
             "  startime = 20 second\n",
-            [createDiagnostic(
+                 [createDiagnostic(
                 {
                     range: {
                         end: { character: "  ".length + "startime".length, line: 6 },
