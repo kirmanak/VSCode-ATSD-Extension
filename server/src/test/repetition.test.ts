@@ -1,13 +1,13 @@
-import { DiagnosticSeverity } from "vscode-languageserver/lib/main";
-import Util from "../util";
+import { DiagnosticSeverity } from "vscode-languageserver";
+import { createDiagnostic } from "../util";
 import Test from "./Test";
 
 suite("Repetition of variables or settings tests", () => {
-    const tests = [
+    const tests: Test[] = [
         new Test("Repetition of var name in 'var' and 'list'",
             "list servers = 'srv1', 'srv2'\n" +
             "var servers = 'srv1', 'srv2'\n",
-            [Util.createDiagnostic(
+            [createDiagnostic(
                 {
                     range: {
                         end: { character: "var ".length + "servers".length, line: 1 },
@@ -22,7 +22,7 @@ suite("Repetition of variables or settings tests", () => {
             "list servers = 'srv1', 'srv2'\n" +
             "for servers in servers\n" +
             "endfor",
-            [Util.createDiagnostic(
+            [createDiagnostic(
                 {
                     range: {
                         end: { character: "for ".length + "servers".length, line: 1 },
@@ -37,7 +37,7 @@ suite("Repetition of variables or settings tests", () => {
             "csv servers = vps, vds\n" +
             "   true, false\n" +
             "endcsv",
-            [Util.createDiagnostic(
+            [createDiagnostic(
                 {
                     range: {
                         end: { character: "csv ".length + "servers".length, line: 1 },
@@ -52,7 +52,7 @@ suite("Repetition of variables or settings tests", () => {
             "   true, false\n" +
             "endcsv\n" +
             "list servers = 'srv1', 'srv2'",
-            [Util.createDiagnostic(
+            [createDiagnostic(
                 {
                     range: {
                         end: { character: "list ".length + "servers".length, line: 3 },
@@ -74,7 +74,7 @@ suite("Repetition of variables or settings tests", () => {
             "   entity = srv\n" +
             "   entity = srv2\n" +
             "   metric = status",
-            [Util.createDiagnostic(
+            [createDiagnostic(
                 {
                     range: {
                         end: { character: "   ".length + "entity".length, line: 2 },
@@ -90,7 +90,7 @@ suite("Repetition of variables or settings tests", () => {
             "[series]\n" +
             "   entity = srv2\n" +
             "   metric = status",
-            [Util.createDiagnostic(
+            [createDiagnostic(
                 {
                     range: {
                         end: { character: "   ".length + "entity".length, line: 3 },
@@ -109,7 +109,7 @@ suite("Repetition of variables or settings tests", () => {
             "   entity = srv\n" +
             "   metric = temp\n" +
             "   alias = server",
-            [Util.createDiagnostic(
+            [createDiagnostic(
                 {
                     range: {
                         end: { character: "   alias = ".length + "server".length, line: 7 },
@@ -155,7 +155,7 @@ suite("Repetition of variables or settings tests", () => {
             "           color = 'green'\n" +
             "       endif\n" +
             "endfor\n",
-            [Util.createDiagnostic(
+            [createDiagnostic(
                 {
                     range: {
                         end: { character: "           ".length + "color".length, line: 7 },
@@ -163,7 +163,7 @@ suite("Repetition of variables or settings tests", () => {
                     }, uri: Test.URI,
                 },
                 DiagnosticSeverity.Warning, "color is already defined",
-            ), Util.createDiagnostic(
+            ), createDiagnostic(
                 {
                     range: {
                         end: { character: "           ".length + "color".length, line: 9 },
@@ -187,7 +187,7 @@ suite("Repetition of variables or settings tests", () => {
             "           entity = srv1\n" +
             "       endif\n" +
             "endfor\n",
-            [Util.createDiagnostic(
+            [createDiagnostic(
                 {
                     range: {
                         end: { character: "           ".length + "entity".length, line: 8 },
@@ -195,7 +195,7 @@ suite("Repetition of variables or settings tests", () => {
                     }, uri: Test.URI,
                 },
                 DiagnosticSeverity.Hint, "entity is already defined",
-            ), Util.createDiagnostic(
+            ), createDiagnostic(
                 {
                     range: {
                         end: { character: "           ".length + "entity".length, line: 10 },
@@ -218,7 +218,7 @@ suite("Repetition of variables or settings tests", () => {
             "           color = 'green'\n" +
             "       endif\n" +
             "endfor\n",
-            [Util.createDiagnostic(
+            [createDiagnostic(
                 {
                     range: {
                         end: { character: "           ".length + "color".length, line: 7 },
@@ -241,7 +241,7 @@ suite("Repetition of variables or settings tests", () => {
             "           color = 'green'\n" +
             "       endif\n" +
             "endfor\n",
-            [Util.createDiagnostic(
+            [createDiagnostic(
                 {
                     range: {
                         end: { character: "           ".length + "color".length, line: 9 },
@@ -266,7 +266,7 @@ suite("Repetition of variables or settings tests", () => {
             "           color = 'green'\n" +
             "       endif\n" +
             "endfor\n",
-            [Util.createDiagnostic(
+            [createDiagnostic(
                 {
                     range: {
                         end: { character: "           ".length + "color".length, line: 11 },

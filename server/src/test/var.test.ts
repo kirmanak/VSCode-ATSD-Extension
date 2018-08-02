@@ -1,38 +1,38 @@
 import { DiagnosticSeverity } from "vscode-languageserver/lib/main";
-import Util from "../util";
+import { createDiagnostic } from "../util";
 import Test from "./Test";
 
 suite("Var endvar tests", () => {
-    const tests = [
+    const tests: Test[] = [
         new Test("Correct oneline var array",
-            "var v = [[9,3], [9,4]]",
-            [],
+                 "var v = [[9,3], [9,4]]",
+                 [],
         ),
         new Test("Correct oneline var props",
-            `var v = { "hello": "value", "array": ["val", "value"]}`,
-            [],
+                 'var v = { "hello": "value", "array": ["val", "value"]}',
+                 [],
         ),
         new Test("Correct multiline var props",
-            `var v = {\n` +
-            `   "hello": "value", \n` +
-            `   "array": ["val", "value"]\n` +
-            `}\n` +
-            `endvar`,
-            [],
+                 "var v = {\n" +
+            '   "hello": "value", \n' +
+            '   "array": ["val", "value"]\n' +
+            "}\n" +
+            "endvar",
+                 [],
         ),
         new Test("Correct multiline var array",
-            "var v = [\n" +
+                 "var v = [\n" +
             "    [9,3], [9,4]\n" +
             "]\n" +
             "endvar",
-            [],
+                 [],
         ),
         new Test("Incorrect multiline var array",
-            "var v = [\n" +
+                 "var v = [\n" +
             "    [9,3], [9,4]\n" +
             "]\n" +
             "edvar",
-            [Util.createDiagnostic(
+                 [createDiagnostic(
                 {
                     range: {
                         end: { character: 3, line: 0 },
@@ -43,12 +43,12 @@ suite("Var endvar tests", () => {
             )],
         ),
         new Test("Incorrect multiline var props",
-            `var v = {\n` +
-            `   "hello": "value", \n` +
-            `   "array": ["val", "value"]\n` +
-            `}\n` +
-            `edvar`,
-            [Util.createDiagnostic(
+                 "var v = {\n" +
+            '   "hello": "value", \n' +
+            '   "array": ["val", "value"]\n' +
+            "}\n" +
+            "edvar",
+                 [createDiagnostic(
                 {
                     range: {
                         end: { character: 3, line: 0 },
@@ -59,12 +59,12 @@ suite("Var endvar tests", () => {
             )],
         ),
         new Test("Incorrect multiline var mixed array of props",
-            `var v = [\n` +
-            `   { "hello": "value" }, \n` +
-            `   { "array": ["val", "value"] }\n` +
-            `]\n` +
-            `edvar`,
-            [Util.createDiagnostic(
+                 "var v = [\n" +
+            '   { "hello": "value" }, \n' +
+            '   { "array": ["val", "value"] }\n' +
+            "]\n" +
+            "edvar",
+                 [createDiagnostic(
                 {
                     range: {
                         end: { character: 3, line: 0 },
@@ -75,8 +75,8 @@ suite("Var endvar tests", () => {
             )],
         ),
         new Test("Correct var function call",
-            `var v = getEntities("hello")`,
-            [],
+                 'var v = getEntities("hello")',
+                 [],
         ),
     ];
 

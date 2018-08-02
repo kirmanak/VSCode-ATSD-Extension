@@ -1,16 +1,20 @@
 import { DiagnosticSeverity } from "vscode-languageserver";
-import Util from "../util";
+import { createDiagnostic } from "../util";
 import Test from "./Test";
 
+// tslint:disable-next-line:typedef
 const elseIfError = "elseif has no matching if";
+// tslint:disable-next-line:typedef
 const elseError = "else has no matching if";
+// tslint:disable-next-line:typedef
 const endIfError = "endif has no matching if";
+// tslint:disable-next-line:typedef
 const ifError = "if has no matching endif";
 
 suite("If elseif else endif validation tests", () => {
-    const tests = [
+    const tests: Test[] = [
         new Test("One correct if-elseif-endif",
-            "list servers = 'srv1', 'srv2'\n" +
+                 "list servers = 'srv1', 'srv2'\n" +
             "for server in servers\n" +
             "  [series]\n" +
             "    metric = temp\n" +
@@ -21,10 +25,10 @@ suite("If elseif else endif validation tests", () => {
             "      color = yellow\n" +
             "    endif\n" +
             "endfor\n",
-            [],
+                 [],
         ),
         new Test("One correct if-else-endif",
-            "list servers = 'srv1', 'srv2'\n" +
+                 "list servers = 'srv1', 'srv2'\n" +
             "for server in servers\n" +
             "  [series]\n" +
             "    metric = temp\n" +
@@ -35,10 +39,10 @@ suite("If elseif else endif validation tests", () => {
             "      color = yellow\n" +
             "    endif\n" +
             "endfor\n",
-            [],
+                 [],
         ),
         new Test("One incorrect elseif-endif",
-            "list servers = 'srv1', 'srv2'\n" +
+                 "list servers = 'srv1', 'srv2'\n" +
             "for server in servers\n" +
             "  [series]\n" +
             "    metric = temp\n" +
@@ -47,7 +51,7 @@ suite("If elseif else endif validation tests", () => {
             "      color = yellow\n" +
             "    endif\n" +
             "endfor\n",
-            [Util.createDiagnostic(
+                 [createDiagnostic(
                 {
                     range: {
                         end: { character: 10, line: 5 },
@@ -55,7 +59,7 @@ suite("If elseif else endif validation tests", () => {
                     }, uri: Test.URI,
                 },
                 DiagnosticSeverity.Error, elseIfError,
-            ), Util.createDiagnostic(
+            ), createDiagnostic(
                 {
                     range: {
                         end: { character: 9, line: 7 },
@@ -66,7 +70,7 @@ suite("If elseif else endif validation tests", () => {
             )],
         ),
         new Test("One incorrect else-endif",
-            "list servers = 'srv1', 'srv2'\n" +
+                 "list servers = 'srv1', 'srv2'\n" +
             "for server in servers\n" +
             "  [series]\n" +
             "    metric = temp\n" +
@@ -75,7 +79,7 @@ suite("If elseif else endif validation tests", () => {
             "      color = yellow\n" +
             "    endif\n" +
             "endfor\n",
-            [Util.createDiagnostic(
+                 [createDiagnostic(
                 {
                     range: {
                         end: { character: 8, line: 5 },
@@ -83,7 +87,7 @@ suite("If elseif else endif validation tests", () => {
                     }, uri: Test.URI,
                 },
                 DiagnosticSeverity.Error, elseError,
-            ), Util.createDiagnostic(
+            ), createDiagnostic(
                 {
                     range: {
                         end: { character: 9, line: 7 },
@@ -94,7 +98,7 @@ suite("If elseif else endif validation tests", () => {
             )],
         ),
         new Test("One incorrect else-endif with comment",
-            "list servers = 'srv1', 'srv2'\n" +
+                 "list servers = 'srv1', 'srv2'\n" +
             "for server in servers\n" +
             "  [series]\n" +
             "    metric = temp\n" +
@@ -103,7 +107,7 @@ suite("If elseif else endif validation tests", () => {
             "      color = yellow\n" +
             "    endif /* a comment */ # too\n" +
             "endfor\n",
-            [Util.createDiagnostic(
+                 [createDiagnostic(
                 {
                     range: {
                         end: { character: 32, line: 5 },
@@ -111,7 +115,7 @@ suite("If elseif else endif validation tests", () => {
                     }, uri: Test.URI,
                 },
                 DiagnosticSeverity.Error, elseError,
-            ), Util.createDiagnostic(
+            ), createDiagnostic(
                 {
                     range: {
                         end: { character: 9, line: 7 },
@@ -122,7 +126,7 @@ suite("If elseif else endif validation tests", () => {
             )],
         ),
         new Test("One incorrect if-else",
-            "list servers = 'srv1', 'srv2'\n" +
+                 "list servers = 'srv1', 'srv2'\n" +
             "for server in servers\n" +
             "  [series]\n" +
             "    metric = temp\n" +
@@ -132,7 +136,7 @@ suite("If elseif else endif validation tests", () => {
             "    else\n" +
             "      color = yellow\n" +
             "endfor\n",
-            [Util.createDiagnostic(
+                 [createDiagnostic(
                 {
                     range: {
                         end: { character: 6, line: 9 },
@@ -140,7 +144,7 @@ suite("If elseif else endif validation tests", () => {
                     }, uri: Test.URI,
                 },
                 DiagnosticSeverity.Error, "for has finished before if",
-            ), Util.createDiagnostic(
+            ), createDiagnostic(
                 {
                     range: {
                         end: { character: 6, line: 5 },

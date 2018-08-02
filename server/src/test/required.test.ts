@@ -1,19 +1,19 @@
-import { DiagnosticSeverity } from "vscode-languageserver/lib/main";
-import Util from "../util";
+import { DiagnosticSeverity } from "vscode-languageserver";
+import { createDiagnostic } from "../util";
 import Test from "./Test";
 
 suite("Required settings for sections tests", () => {
     const tests = [
         new Test("correct series without parent section",
-            "[series]\n" +
+                 "[series]\n" +
             "   entity = hello\n" +
             "   metric = hello\n",
-            [],
+                 [],
         ),
         new Test("incorrect series without parent categories",
-            "[series]\n" +
+                 "[series]\n" +
             "   metric = hello\n",
-            [Util.createDiagnostic(
+                 [Util.createDiagnostic(
                 {
                     range: {
                         end: { character: "[".length + "series".length, line: 0 },
@@ -25,34 +25,34 @@ suite("Required settings for sections tests", () => {
             )],
         ),
         new Test("correct series with parent section",
-            "[widget]\n" +
+                 "[widget]\n" +
             "   type = chart\n" +
             "   entity = hello\n" +
             "   [series]\n" +
             "       metric = hello\n",
-            [],
+                 [],
         ),
         new Test("correct series with grandparent section",
-            "[group]\n" +
+                 "[group]\n" +
             "   entity = hello\n" +
             "[widget]\n" +
             "   type = chart\n" +
             "   [series]\n" +
             "       metric = hello\n",
-            [],
+                 [],
         ),
         new Test("correct series with greatgrandparent section",
-            "[configuration]\n" +
+                 "[configuration]\n" +
             "   entity = hello\n" +
             "[group]\n" +
             "[widget]\n" +
             "   type = chart\n" +
             "   [series]\n" +
             "       metric = hello\n",
-            [],
+                 [],
         ),
         new Test("correct series with greatgrandparent section and empty line",
-            "[configuration]\n" +
+                 "[configuration]\n" +
             "\n" +
             "   entity = hello\n" +
             "[group]\n" +
@@ -60,10 +60,10 @@ suite("Required settings for sections tests", () => {
             "   type = chart\n" +
             "   [series]\n" +
             "       metric = hello\n",
-            [],
+                 [],
         ),
         new Test("incorrect series with closed parent section",
-            "[group]\n" +
+                 "[group]\n" +
             "   type = chart\n" +
             "   [widget]\n" +
             "       entity = hello\n" +
@@ -73,7 +73,7 @@ suite("Required settings for sections tests", () => {
             "   [widget]\n" +
             "       [series]\n" +
             "           metric = hello\n",
-            [Util.createDiagnostic(
+                 [Util.createDiagnostic(
                 {
                     range: {
                         end: { character: "       [".length + "series".length, line: 8 },
@@ -85,11 +85,11 @@ suite("Required settings for sections tests", () => {
             )],
         ),
         new Test("two incorrect series without parent categories",
-            "[series]\n" +
+                 "[series]\n" +
             "   metric = hello\n" +
             "[series]\n" +
             "   entity = hello\n",
-            [Util.createDiagnostic(
+                 [Util.createDiagnostic(
                 {
                     range: {
                         end: { character: "[".length + "series".length, line: 0 },
@@ -110,7 +110,7 @@ suite("Required settings for sections tests", () => {
             )],
         ),
         new Test("A setting is specified in if statement",
-            "list servers = vps, vds\n" +
+                 "list servers = vps, vds\n" +
             "for server in servers\n" +
             "   [series]\n" +
             "       metric = cpu_busy\n" +
@@ -120,10 +120,10 @@ suite("Required settings for sections tests", () => {
             "           entity = vps\n" +
             "       endif\n" +
             "endfor\n",
-            [],
+                 [],
         ),
         new Test("A setting is specified only in if-elseif statements",
-            "list servers = vps, vds\n" +
+                 "list servers = vps, vds\n" +
             "for server in servers\n" +
             "   [series]\n" +
             "       metric = cpu_busy\n" +
@@ -133,7 +133,7 @@ suite("Required settings for sections tests", () => {
             "           entity = vps\n" +
             "       endif\n" +
             "endfor\n",
-            [Util.createDiagnostic(
+                 [Util.createDiagnostic(
                 {
                     range: {
                         end: { character: "   [".length + "series".length, line: 2 },
