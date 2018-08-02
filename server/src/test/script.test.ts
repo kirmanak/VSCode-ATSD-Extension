@@ -1,7 +1,8 @@
-import { DiagnosticSeverity } from "vscode-languageserver/lib/main";
-import Util from "../util";
-import Test from "./Test";
+import { DiagnosticSeverity } from "vscode-languageserver";
+import { createDiagnostic } from "../util";
+import { Test } from "./test";
 
+// tslint:disable-next-line:typedef
 const errorMessage = "script has no matching endscript";
 
 suite("Script endscript tests", () => {
@@ -14,7 +15,7 @@ suite("Script endscript tests", () => {
         new Test("Unclosed empty script",
                  "script\n" +
             "endscrpt",
-                 [Util.createDiagnostic(
+                 [createDiagnostic(
                 {
                     range: {
                         end: { character: 6, line: 0 },
@@ -44,7 +45,7 @@ suite("Script endscript tests", () => {
             "endscrpt\n" +
             "script\n" +
             "endscrpt",
-                 [Util.createDiagnostic(
+                 [createDiagnostic(
                 {
                     range: {
                         end: { character: 6, line: 0 },
@@ -68,7 +69,7 @@ suite("Script endscript tests", () => {
         ),
         new Test("Unfinished one-line script = ",
                  "script = ",
-                 [Util.createDiagnostic(
+                 [createDiagnostic(
                 {
                     range: {
                         end: { character: 6, line: 0 },

@@ -66,118 +66,6 @@ export class Validator {
         return this.result;
     }
 
-    private handleEndFor(): void {
-        let forVariables: string[] = this.variables.get("forVariables");
-        if (!forVariables) { forVariables = []; }
-        forVariables.pop();
-        this.variables.set("forVariables", forVariables);
-    }
-
-    private handleElse(): void {
-        this.setLastCondition();
-        let message: string;
-        if (!this.areWeIn("if")) {
-            message = `${this.foundKeyword.keyword} has no matching if`;
-        } else if (this.getLastKeyword() !== "if") {
-            message =
-                `${this.foundKeyword.keyword} has started before ${this.getLastKeyword()} has finished`;
-        }
-        if (message) {
-            this.result.push(createDiagnostic(
-                { range: this.foundKeyword.range, uri: this.textDocument.uri },
-                DiagnosticSeverity.Error, message,
-            ));
-        }
-    }
-
-    private handleCsv(): void {
-        const line: string = this.getCurrentLine();
-        let header: string;
-        if (/=[ \t]*$/m.test(line)) {
-            let j: number = this.currentLineNumber + 1;
-            header = this.getLine(j);
-            while (header && /^[ \t]*$/m.test(header)) {
-                header = this.getLine(++j);
-            }
-        } else { header = line.substring(/=/.exec(line).index + 1); }
-        this.match = /(^[ \t]*csv[ \t]+)(\w+)[ \t]*=/m.exec(line);
-        this.addToMap(this.variables, "csvNames", DiagnosticSeverity.Error);
-        this.csvColumns = countCsvColumns(header);
-    }
-
-    private handleList(): void {
-        const line: string = this.getCurrentLine();
-        this.match = /(^\s*list\s+)(\w+)\s+=/.exec(line);
-        this.addToMap(this.variables, "listNames", DiagnosticSeverity.Error);
-        if (/(=|,)[ \t]*$/m.test(line)) {
-            this.keywordsStack.push(this.foundKeyword);
-        } else {
-            let j: number = this.currentLineNumber + 1;
-            while (this.getLine(j) && /^[ \t]*$/m.test(this.getLine(j))) {
-                j++;
-            }
-            if (this.getLine(j) &&
-                (/^[ \t]*,/.test(this.getLine(j)) || /\bendlist\b/.test(this.getLine(j)))) {
-                this.keywordsStack.push(this.foundKeyword);
-            }
-        }
-    }
-
-    private switchKeyword(): void {
-        const line: string = this.getCurrentLine();
-        switch (this.foundKeyword.keyword) {
-            case "endfor": this.handleEndFor();
-            case "endif":
-            case "endvar":
-            case "endcsv":
-            case "endlist":
-            case "endscript": {
-                const expectedEnd: string = this.foundKeyword.keyword.substring("end".length);
-                this.checkEnd(expectedEnd);
-                break;
-            }
-            case "else":
-            case "elseif": {
-                this.handleElse();
-                break;
-            }
-            case "csv": {
-                this.handleCsv();
-                break;
-            }
-            case "var": {
-                if (/=\s*(\[|\{)(|.*,)\s*$/m.test(line)) { this.keywordsStack.push(this.foundKeyword); }
-                this.match = /(var\s*)(\w+)\s*=/.exec(line);
-                this.addToMap(this.variables, "varNames", DiagnosticSeverity.Error);
-                break;
-            }
-            case "list": {
-                this.handleList();
-                break;
-            }
-            case "for": {
-                this.handleFor();
-                break;
-            }
-            case "if": {
-                this.setLastCondition();
-                break;
-            }
-            case "script": {
-                if (/^[ \t]*script[ \t]*=[ \t]*\S+.*$/m.test(line)) {
-                    let j: number = this.currentLineNumber + 1;
-                    while (!(/\bscript\b/.test(this.getLine(j)) || /\bendscript\b/.test(this.getLine(j)))) {
-                        if (!this.getLine(++j)) { break; }
-                    }
-                    if (!this.getLine(j) || /\bscript\b/.test(this.getLine(j))) { break; }
-                }
-                this.keywordsStack.push(this.foundKeyword);
-                break;
-            }
-            default: throw new Error(`${this.foundKeyword.keyword} is not handled`);
-        }
-    }
-
     private addToArray(array: string[], severity: DiagnosticSeverity): string[] {
         let result: string[] = array;
         if (!this.match) { return result; }
@@ -354,6 +242,45 @@ export class Validator {
         return (line < this.lines.length) ? this.lines[line].toLowerCase() : undefined;
     }
 
+    private handleCsv(): void {
+        const line: string = this.getCurrentLine();
+        let header: string;
+        if (/=[ \t]*$/m.test(line)) {
+            let j: number = this.currentLineNumber + 1;
+            header = this.getLine(j);
+            while (header && /^[ \t]*$/m.test(header)) {
+                header = this.getLine(++j);
+            }
+        } else { header = line.substring(/=/.exec(line).index + 1); }
+        this.match = /(^[ \t]*csv[ \t]+)(\w+)[ \t]*=/m.exec(line);
+        this.addToMap(this.variables, "csvNames", DiagnosticSeverity.Error);
+        this.csvColumns = countCsvColumns(header);
+    }
+
+    private handleElse(): void {
+        this.setLastCondition();
+        let message: string;
+        if (!this.areWeIn("if")) {
+            message = `${this.foundKeyword.keyword} has no matching if`;
+        } else if (this.getLastKeyword() !== "if") {
+            message =
+                `${this.foundKeyword.keyword} has started before ${this.getLastKeyword()} has finished`;
+        }
+        if (message) {
+            this.result.push(createDiagnostic(
+                { range: this.foundKeyword.range, uri: this.textDocument.uri },
+                DiagnosticSeverity.Error, message,
+            ));
+        }
+    }
+
+    private handleEndFor(): void {
+        let forVariables: string[] = this.variables.get("forVariables");
+        if (!forVariables) { forVariables = []; }
+        forVariables.pop();
+        this.variables.set("forVariables", forVariables);
+    }
+
     private handleFor(): void {
         const line: string = this.getCurrentLine();
         this.match = /(^\s*for\s+)(\w+)\s+in/m.exec(line);
@@ -395,6 +322,24 @@ export class Validator {
             }
             this.match = matching;
             this.addToMap(this.variables, "forVariables", DiagnosticSeverity.Error);
+        }
+    }
+
+    private handleList(): void {
+        const line: string = this.getCurrentLine();
+        this.match = /(^\s*list\s+)(\w+)\s+=/.exec(line);
+        this.addToMap(this.variables, "listNames", DiagnosticSeverity.Error);
+        if (/(=|,)[ \t]*$/m.test(line)) {
+            this.keywordsStack.push(this.foundKeyword);
+        } else {
+            let j: number = this.currentLineNumber + 1;
+            while (this.getLine(j) && /^[ \t]*$/m.test(this.getLine(j))) {
+                j++;
+            }
+            if (this.getLine(j) &&
+                (/^[ \t]*,/.test(this.getLine(j)) || /\bendlist\b/.test(this.getLine(j)))) {
+                this.keywordsStack.push(this.foundKeyword);
+            }
         }
     }
 
@@ -545,6 +490,61 @@ export class Validator {
                     message,
                 ));
             }
+        }
+    }
+
+    private switchKeyword(): void {
+        const line: string = this.getCurrentLine();
+        switch (this.foundKeyword.keyword) {
+            case "endfor": this.handleEndFor();
+            case "endif":
+            case "endvar":
+            case "endcsv":
+            case "endlist":
+            case "endscript": {
+                const expectedEnd: string = this.foundKeyword.keyword.substring("end".length);
+                this.checkEnd(expectedEnd);
+                break;
+            }
+            case "else":
+            case "elseif": {
+                this.handleElse();
+                break;
+            }
+            case "csv": {
+                this.handleCsv();
+                break;
+            }
+            case "var": {
+                if (/=\s*(\[|\{)(|.*,)\s*$/m.test(line)) { this.keywordsStack.push(this.foundKeyword); }
+                this.match = /(var\s*)(\w+)\s*=/.exec(line);
+                this.addToMap(this.variables, "varNames", DiagnosticSeverity.Error);
+                break;
+            }
+            case "list": {
+                this.handleList();
+                break;
+            }
+            case "for": {
+                this.handleFor();
+                break;
+            }
+            case "if": {
+                this.setLastCondition();
+                break;
+            }
+            case "script": {
+                if (/^[ \t]*script[ \t]*=[ \t]*\S+.*$/m.test(line)) {
+                    let j: number = this.currentLineNumber + 1;
+                    while (!(/\bscript\b/.test(this.getLine(j)) || /\bendscript\b/.test(this.getLine(j)))) {
+                        if (!this.getLine(++j)) { break; }
+                    }
+                    if (!this.getLine(j) || /\bscript\b/.test(this.getLine(j))) { break; }
+                }
+                this.keywordsStack.push(this.foundKeyword);
+                break;
+            }
+            default: throw new Error(`${this.foundKeyword.keyword} is not handled`);
         }
     }
 

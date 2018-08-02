@@ -1,6 +1,6 @@
 import { DiagnosticSeverity } from "vscode-languageserver";
 import { createDiagnostic } from "../util";
-import Test from "./Test";
+import { Test } from "./test";
 
 suite("Repetition of variables or settings tests", () => {
     const tests: Test[] = [

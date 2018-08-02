@@ -1,5 +1,5 @@
 import { DocumentFormattingParams, TextDocument, TextEdit } from "vscode-languageserver";
-import FoundKeyword from "./foundKeyword";
+import { FoundKeyword } from "./foundKeyword";
 import { deleteComments } from "./util";
 
 export class Formatter {

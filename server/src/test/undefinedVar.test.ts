@@ -1,9 +1,12 @@
-import { DiagnosticSeverity } from "vscode-languageserver/lib/main";
+import { DiagnosticSeverity } from "vscode-languageserver";
 import { createDiagnostic, errorMessage } from "../util";
-import Test from "./Test";
+import { Test } from "./test";
 
+// tslint:disable-next-line:typedef
 const firstVar = "serv";
+// tslint:disable-next-line:typedef
 const secondVar = "server";
+// tslint:disable-next-line:typedef
 const thirdVar = "srv";
 
 suite("Undefined variable in for loop", () => {

@@ -1,6 +1,6 @@
 import { DiagnosticSeverity } from "vscode-languageserver";
 import { createDiagnostic, errorMessage } from "../util";
-import Test from "./Test";
+import { Test } from "./test";
 
 suite("Incorrect dealias tests", () => {
     const tests: Test[] = [

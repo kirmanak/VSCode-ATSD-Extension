@@ -1,96 +1,96 @@
-import Test from "./Test";
+import { Test } from "./test";
 
 suite("Formatting indents tests", () => {
     const tests: Test[] = [
         new Test("correct cfg section",
-                 "[configuration]\n" +
+            "[configuration]\n" +
             "  width-units = 200\n" +
             "  height-units = 200\n",
-                 [],
-                 {
+            [],
+            {
                 options: { insertSpaces: true, tabSize: 2 },
                 textDocument: { uri: Test.URI },
             },
         ),
         new Test("incorrect cfg section",
-                 "[configuration]\n" +
+            "[configuration]\n" +
             "width-units = 200\n" +
             "  height-units = 200\n",
-                 [{
+            [{
                 newText: "  ", range: {
                     end: { character: 0, line: 1 },
                     start: { character: 0, line: 1 },
                 },
             }],
-                 {
+            {
                 options: { insertSpaces: true, tabSize: 2 },
                 textDocument: { uri: Test.URI },
             },
         ),
         new Test("correct nested wgt section",
-                 "[configuration]\n" +
+            "[configuration]\n" +
             "  width-units = 200\n" +
             "  height-units = 200\n" +
             "  [widget]\n" +
             "    type = chart\n",
-                 [],
-                 {
+            [],
+            {
                 options: { insertSpaces: true, tabSize: 2 },
                 textDocument: { uri: Test.URI },
             },
         ),
         new Test("incorrect nested wgt section",
-                 "[configuration]\n" +
+            "[configuration]\n" +
             "  width-units = 200\n" +
             "  height-units = 200\n" +
             "  [widget]\n" +
             "  type = chart\n",
-                 [{
+            [{
                 newText: "    ", range: {
                     end: { character: 2, line: 4 },
                     start: { character: 0, line: 4 },
                 },
             }],
-                 {
+            {
                 options: { insertSpaces: true, tabSize: 2 },
                 textDocument: { uri: Test.URI },
             },
         ),
         new Test("correct nested series section",
-                 "[configuration]\n" +
+            "[configuration]\n" +
             "  width-units = 200\n" +
             "  height-units = 200\n" +
             "  [widget]\n" +
             "    type = chart\n" +
             "    [series]\n" +
             "      entity = server\n",
-                 [],
-                 {
+            [],
+            {
                 options: { insertSpaces: true, tabSize: 2 },
                 textDocument: { uri: Test.URI },
             },
         ),
         new Test("incorrect nested series section",
-                 "[configuration]\n" +
+            "[configuration]\n" +
             "  width-units = 200\n" +
             "  height-units = 200\n" +
             "  [widget]\n" +
             "    type = chart\n" +
             "  [series]\n" +
             "      entity = server\n",
-                 [{
+            [{
                 newText: "    ", range: {
                     end: { character: 2, line: 5 },
                     start: { character: 0, line: 5 },
                 },
             }],
-                 {
+            {
                 options: { insertSpaces: true, tabSize: 2 },
                 textDocument: { uri: Test.URI },
             },
         ),
         new Test("Correct for loop",
-                 "[configuration]\n" +
+            "[configuration]\n" +
             "  width-units = 200\n" +
             "  height-units = 200\n" +
             "  [widget]\n" +
@@ -99,14 +99,14 @@ suite("Formatting indents tests", () => {
             "    [series]\n" +
             "      entity = @{server}\n" +
             "    endfor\n",
-                 [],
-                 {
+            [],
+            {
                 options: { insertSpaces: true, tabSize: 2 },
                 textDocument: { uri: Test.URI },
             },
         ),
         new Test("Incorrect for loop",
-                 "[configuration]\n" +
+            "[configuration]\n" +
             "  width-units = 200\n" +
             "  height-units = 200\n" +
             "  [widget]\n" +
@@ -115,19 +115,19 @@ suite("Formatting indents tests", () => {
             "      [series]\n" +
             "      entity = @{server}\n" +
             "    endfor\n",
-                 [{
+            [{
                 newText: "    ", range: {
                     end: { character: "      ".length, line: 6 },
                     start: { character: 0, line: 6 },
                 },
             }],
-                 {
+            {
                 options: { insertSpaces: true, tabSize: 2 },
                 textDocument: { uri: Test.URI },
             },
         ),
         new Test("Incorrect nested if in for",
-                 "list servers = vps,\n" +
+            "list servers = vps,\n" +
             "  vds\n" +
             "endlist\n" +
             "for item in servers\n" +
@@ -141,7 +141,7 @@ suite("Formatting indents tests", () => {
             "    metric = cpu_system\n" +
             "    endif\n" +
             "endfor\n",
-                 [{
+            [{
                 newText: "  ", range: {
                     end: { character: "    ".length, line: 8 },
                     start: { character: 0, line: 8 },
@@ -157,13 +157,13 @@ suite("Formatting indents tests", () => {
                     start: { character: 0, line: 12 },
                 },
             }],
-                 {
+            {
                 options: { insertSpaces: true, tabSize: 2 },
                 textDocument: { uri: Test.URI },
             },
         ),
         new Test("Incorrect formatting in the first for, correct in second",
-                 "[widget]\n" +
+            "[widget]\n" +
             "  type = chart\n" +
             "  metric = cpu_busy\n" +
             "\n" +
@@ -188,7 +188,7 @@ suite("Formatting indents tests", () => {
             "      color = yellow\n" +
             "    endif\n" +
             "  endfor\n",
-                 [{
+            [{
                 newText: "  ", range: {
                     end: { character: 0, line: 9 },
                     start: { character: 0, line: 9 },
@@ -199,13 +199,13 @@ suite("Formatting indents tests", () => {
                     start: { character: 0, line: 12 },
                 },
             }],
-                 {
+            {
                 options: { insertSpaces: true, tabSize: 2 },
                 textDocument: { uri: Test.URI },
             },
         ),
         new Test("A couple of correct groups",
-                 "[group]\n" +
+            "[group]\n" +
             "  [widget]\n" +
             "    type = chart\n" +
             "    [series]\n" +
@@ -227,14 +227,14 @@ suite("Formatting indents tests", () => {
             "    [series]\n" +
             "      entity = vds\n" +
             "      metric = cpu_busy\n",
-                 [],
-                 {
+            [],
+            {
                 options: { insertSpaces: true, tabSize: 2 },
                 textDocument: { uri: Test.URI },
             },
         ),
         new Test("Correct for after var declaration",
-                 "[widget]\n" +
+            "[widget]\n" +
             "  type = chart\n" +
             "\n" +
             "  var servers = [ 'vps', 'vds' ]\n" +
@@ -244,8 +244,8 @@ suite("Formatting indents tests", () => {
             "    entity = @{item}\n" +
             "    metric = cpu_busy\n" +
             "  endfor\n",
-                 [],
-                 {
+            [],
+            {
                 options: { insertSpaces: true, tabSize: 2 },
                 textDocument: { uri: Test.URI },
             },

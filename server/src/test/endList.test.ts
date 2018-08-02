@@ -1,6 +1,6 @@
 import { DiagnosticSeverity } from "vscode-languageserver";
 import { createDiagnostic } from "../util";
-import Test from "./Test";
+import { Test } from "./test";
 
 // tslint:disable-next-line:typedef
 const errorMessage = "list has no matching endlist";
@@ -8,20 +8,20 @@ const errorMessage = "list has no matching endlist";
 suite("Unfinished list", () => {
     const tests: Test[] = [
         new Test("One correct oneline list",
-                 "list servers = vps, vds\n",
-                 [],
+            "list servers = vps, vds\n",
+            [],
         ),
         new Test("One correct multiline list",
-                 "list servers = vps, \n" +
+            "list servers = vps, \n" +
             "	vds\n" +
             "endlist",
-                 [],
+            [],
         ),
         new Test("One incorrect multiline list",
-                 "list servers = vps, \n" +
+            "list servers = vps, \n" +
             "	vds\n" +
             "edlist",
-                 [createDiagnostic(
+            [createDiagnostic(
                 {
                     range: {
                         end: { character: 4, line: 0 },
@@ -32,14 +32,14 @@ suite("Unfinished list", () => {
             )],
         ),
         new Test("One incorrect multiline list with comment before",
-                 "/* this is\n" +
+            "/* this is\n" +
             "a comment\n" +
             "to check correct range */\n" +
             "\n" +
             "list servers = vps, \n" +
             "	vds\n" +
             "edlist",
-                 [createDiagnostic(
+            [createDiagnostic(
                 {
                     range: {
                         end: { character: 4, line: 4 },
@@ -50,10 +50,10 @@ suite("Unfinished list", () => {
             )],
         ),
         new Test("One incorrect multiline list with comment on the line",
-                 "/* test */ list servers = vps, \n" +
+            "/* test */ list servers = vps, \n" +
             "	vds\n" +
             "edlist",
-                 [createDiagnostic(
+            [createDiagnostic(
                 {
                     range: {
                         end: { character: 15, line: 0 },
@@ -64,14 +64,14 @@ suite("Unfinished list", () => {
             )],
         ),
         new Test("One incorrect multiline list with comments",
-                 "/* this is\n" +
+            "/* this is\n" +
             "a comment\n" +
             "to check correct range */\n" +
             "\n" +
             "/* test */ list servers = vps, \n" +
             "	vds\n" +
             "edlist",
-                 [createDiagnostic(
+            [createDiagnostic(
                 {
                     range: {
                         end: { character: 15, line: 4 },
@@ -82,7 +82,7 @@ suite("Unfinished list", () => {
             )],
         ),
         new Test("Three lists, one incorrect",
-                 "list servers1 = vps, \n" +
+            "list servers1 = vps, \n" +
             "	vds\n" +
             "endlist\n" +
             "list servers2 = vps, \n" +
@@ -91,7 +91,7 @@ suite("Unfinished list", () => {
             "list servers3 = vps, \n" +
             "	vds\n" +
             "endlist\n",
-                 [createDiagnostic(
+            [createDiagnostic(
                 {
                     range: {
                         end: { character: 4, line: 3 },
@@ -102,16 +102,16 @@ suite("Unfinished list", () => {
             )],
         ),
         new Test("Correct multiline list, comma on next line",
-                 "list servers = vps\n" +
+            "list servers = vps\n" +
             "	,vds\n" +
             "endlist",
-                 [],
+            [],
         ),
         new Test("Incorrect multiline list, comma on next line",
-                 "list servers = vps\n" +
+            "list servers = vps\n" +
             "	,vds\n" +
             "edlist",
-                 [createDiagnostic(
+            [createDiagnostic(
                 {
                     range: {
                         end: { character: 4, line: 0 },

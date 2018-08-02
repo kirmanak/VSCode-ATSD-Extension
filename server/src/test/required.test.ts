@@ -1,9 +1,9 @@
 import { DiagnosticSeverity } from "vscode-languageserver";
 import { createDiagnostic } from "../util";
-import Test from "./Test";
+import { Test } from "./test";
 
 suite("Required settings for sections tests", () => {
-    const tests = [
+    const tests: Test[] = [
         new Test("correct series without parent section",
                  "[series]\n" +
             "   entity = hello\n" +
@@ -13,7 +13,7 @@ suite("Required settings for sections tests", () => {
         new Test("incorrect series without parent categories",
                  "[series]\n" +
             "   metric = hello\n",
-                 [Util.createDiagnostic(
+                 [createDiagnostic(
                 {
                     range: {
                         end: { character: "[".length + "series".length, line: 0 },
@@ -73,7 +73,7 @@ suite("Required settings for sections tests", () => {
             "   [widget]\n" +
             "       [series]\n" +
             "           metric = hello\n",
-                 [Util.createDiagnostic(
+                 [createDiagnostic(
                 {
                     range: {
                         end: { character: "       [".length + "series".length, line: 8 },
@@ -89,7 +89,7 @@ suite("Required settings for sections tests", () => {
             "   metric = hello\n" +
             "[series]\n" +
             "   entity = hello\n",
-                 [Util.createDiagnostic(
+                 [createDiagnostic(
                 {
                     range: {
                         end: { character: "[".length + "series".length, line: 0 },
@@ -98,7 +98,7 @@ suite("Required settings for sections tests", () => {
                     uri: Test.URI,
                 },
                 DiagnosticSeverity.Error, "entity is required",
-            ), Util.createDiagnostic(
+            ), createDiagnostic(
                 {
                     range: {
                         end: { character: "[".length + "series".length, line: 2 },
@@ -133,7 +133,7 @@ suite("Required settings for sections tests", () => {
             "           entity = vps\n" +
             "       endif\n" +
             "endfor\n",
-                 [Util.createDiagnostic(
+                 [createDiagnostic(
                 {
                     range: {
                         end: { character: "   [".length + "series".length, line: 2 },
