@@ -237,7 +237,7 @@ suite("Formatting indents tests", () => {
             "[widget]\n" +
             "  type = chart\n" +
             "\n" +
-            "  var servers = [ 'vps', 'vds' ];\n" +
+            "  var servers = [ 'vps', 'vds' ]\n" +
             "\n" +
             "  for item in servers\n" +
             "  [series]\n" +
@@ -248,7 +248,7 @@ suite("Formatting indents tests", () => {
             {
                 options: { insertSpaces: true, tabSize: 2 },
                 textDocument: { uri: Test.URI },
-            }
+            },
         ),
     ];
 

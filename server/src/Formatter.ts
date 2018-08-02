@@ -38,13 +38,42 @@ export default class Formatter {
                 }
             }
             this.checkIndent();
-            if (FoundKeyword.isCloseAble(line)) {
-                this.current = undefined;
-                this.keywordsLevels.push(this.currentIndent);
+            if (this.shouldBeClosed()) {
+                if (FoundKeyword.isCloseAble(line)) {
+                    this.current = undefined;
+                    this.keywordsLevels.push(this.currentIndent);
+                }
+                if (FoundKeyword.isIncreasingIndent(line)) { this.increaseIndent(); }
             }
-            if (FoundKeyword.isIncreasingIndent(line)) { this.increaseIndent(); }
         }
         return this.edits;
+    }
+
+    private shouldBeClosed() {
+        const line = this.getCurrentLine();
+        this.match = /^[ \t]*((?:var|list)|script =)/.exec(line);
+        if (!this.match) { return true; }
+        switch (this.match[1]) {
+            case "var": {
+                if (/=\s*(\[|\{)(|.*,)\s*$/m.test(line)) { return true; }
+                break;
+            }
+            case "list": {
+                if (/(=|,)[ \t]*$/m.test(line)) { return true; }
+                break;
+            }
+            case "script =": {
+                let j = this.currentLine + 1;
+                while (j < this.lines.length) {
+                    if (/\bscript\b/.test(line)) { break; }
+                    if (/\bendscript\b/.test(line)) { return true; }
+                    j++;
+                }
+                break;
+            }
+            default: console.log("Update switch-case in Formatter.shouldBeClosed()");
+        }
+        return false;
     }
 
     private calculateIndent() {
@@ -105,7 +134,11 @@ export default class Formatter {
     }
 
     private getCurrentLine() {
-        return this.lines[this.currentLine].toLowerCase();
+        return this.getLine(this.currentLine);
+    }
+
+    private getLine(i: number) {
+        return this.lines[i].toLowerCase();
     }
 
     private isNested(): boolean {
