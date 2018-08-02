@@ -12,6 +12,8 @@ export default class Formatter {
     private current: string;
     private params: DocumentFormattingParams;
     private keywordsLevels: string[] = [];
+    private lastLineNumber: number;
+    private lastLine: string;
 
     constructor(document: TextDocument, formattingParams: DocumentFormattingParams) {
         if (!document || !formattingParams) { throw new Error("Invalid arguments"); }
@@ -138,7 +140,26 @@ export default class Formatter {
     }
 
     private getLine(i: number) {
-        return this.lines[i].toLowerCase();
+        if (this.lastLineNumber !== i) {
+            const line = this.lines[i].toLowerCase();
+            this.removeExtraSpaces(line);
+            this.lastLine = line;
+            this.lastLineNumber = i;
+        }
+        return this.lastLine;
+    }
+
+    private removeExtraSpaces(line: string) {
+        const match = /(\s+)$/.exec(line);
+        if (match) {
+            this.edits.push({
+                newText: "",
+                range: {
+                    end: { character: line.length, line: this.currentLine },
+                    start: { character: line.length - match[1].length, line: this.currentLine },
+                },
+            });
+        }
     }
 
     private isNested(): boolean {
