@@ -1,6 +1,6 @@
 import * as path from "path";
 
-import { ExtensionContext,  workspace } from "vscode";
+import { ExtensionContext, workspace } from "vscode";
 
 import {
     LanguageClient, LanguageClientOptions, ServerOptions, TransportKind,
@@ -18,7 +18,7 @@ export function activate(context: ExtensionContext) {
     // If the extension is launched in debug mode then the debug server options are used
     // Otherwise the run options are used
     const serverOptions: ServerOptions = {
-        debug: { module: serverModule, transport: TransportKind.ipc, options: debugOptions },
+        debug: { module: serverModule, options: debugOptions, transport: TransportKind.ipc },
         run: { module: serverModule, transport: TransportKind.ipc },
     };
 
