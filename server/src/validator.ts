@@ -180,7 +180,7 @@ export class Validator {
                         }
                     }
                     let ifCounter: number = 0;
-                    let elseCounter: number  = 0;
+                    let elseCounter: number = 0;
                     for (const statement of this.ifSettings.keys()) {
                         if (/\bif\b/.test(statement)) {
                             ifCounter++;
@@ -200,7 +200,7 @@ export class Validator {
 
     private diagnosticForLeftKeywords(): void {
         const length: number = this.keywordsStack.length;
-        for (let i: number  = 0; i < length; i++) {
+        for (let i: number = 0; i < length; i++) {
             const nestedConstruction: FoundKeyword = this.keywordsStack[i];
             if (!nestedConstruction) { continue; }
             this.result.push(createDiagnostic(
@@ -338,6 +338,17 @@ export class Validator {
         }
     }
 
+    private handleScript(): void {
+        if (/^[ \t]*script[ \t]*=[ \t]*\S+.*$/m.test(this.getCurrentLine())) {
+            let j: number = this.currentLineNumber + 1;
+            while (!(/\bscript\b/.test(this.getLine(j)) || /\bendscript\b/.test(this.getLine(j)))) {
+                if (!this.getLine(++j)) { break; }
+            }
+            if (!this.getLine(j) || /\bscript\b/.test(this.getLine(j))) { return; }
+        }
+        this.keywordsStack.push(this.foundKeyword);
+    }
+
     private handleSection(): void {
         this.checkPreviousSection();
         if (!this.match) {
@@ -401,7 +412,7 @@ export class Validator {
                 },
                 uri: this.textDocument.uri,
             };
-            const message: string  = `${this.match[Validator.CONTENT_POSITION]} is already defined`;
+            const message: string = `${this.match[Validator.CONTENT_POSITION]} is already defined`;
 
             if (this.areWeIn("if")) {
                 let array: string[] = this.ifSettings.get(this.lastCondition);
@@ -527,14 +538,7 @@ export class Validator {
                 break;
             }
             case "script": {
-                if (/^[ \t]*script[ \t]*=[ \t]*\S+.*$/m.test(line)) {
-                    let j: number = this.currentLineNumber + 1;
-                    while (!(/\bscript\b/.test(this.getLine(j)) || /\bendscript\b/.test(this.getLine(j)))) {
-                        if (!this.getLine(++j)) { break; }
-                    }
-                    if (!this.getLine(j) || /\bscript\b/.test(this.getLine(j))) { break; }
-                }
-                this.keywordsStack.push(this.foundKeyword);
+                this.handleScript();
                 break;
             }
             default: throw new Error(`${this.foundKeyword.keyword} is not handled`);
