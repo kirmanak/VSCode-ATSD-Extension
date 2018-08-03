@@ -71,7 +71,11 @@
                 "language": "axibase-charts",
                 "path": "./snippets/snippets.json"
             }
-        ]
+        ],
+        "commands": {
+            "command": "axibase-charts.showPortal",
+            "title": "Show the configured portal preview"
+        }
     },
     "main": "./client/out/extension",
     "activationEvents": [
