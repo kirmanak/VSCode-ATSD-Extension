@@ -38,7 +38,7 @@ suite("Incorrect dealias tests", () => {
             )],
         ),
         new Test("One alias, one correct dealias before the declaration",
-            `[series]
+                 `[series]
                metric = temp
                entity = srv
                value = value('s1') * 2
@@ -46,10 +46,10 @@ suite("Incorrect dealias tests", () => {
                metric = temp
                entity = srv
                alias = s1`,
-            [],
+                 [],
         ),
         new Test("One alias, two incorrect dealiases",
-            `[series]
+                 `[series]
                metric = temp
                entity = srv
                alias = s1
@@ -61,7 +61,7 @@ suite("Incorrect dealias tests", () => {
                metric = temp
                entity = srv
                value = value('s3') * 2`,
-            [createDiagnostic(
+                 [createDiagnostic(
                 {
                     range: {
                         end: { character: "value = value('".length + "s2".length, line: 7 },
@@ -73,10 +73,10 @@ suite("Incorrect dealias tests", () => {
                 {
                     range: {
                         end: {
-                            character: "value = value('".length + "s3".length, line: 11
+                            character: "value = value('".length + "s3".length, line: 11,
                         },
                         start: {
-                            character: "value = value('".length, line: 11
+                            character: "value = value('".length, line: 11,
                         },
                     }, uri: Test.URI,
                 },
@@ -84,7 +84,7 @@ suite("Incorrect dealias tests", () => {
             )],
         ),
         new Test("Two aliases, two correct dealiases",
-            `[series]
+                 `[series]
                metric = temp
                entity = srv
                alias = s1
@@ -100,10 +100,10 @@ suite("Incorrect dealias tests", () => {
                metric = temp
                entity = srv
                value = value('s2') * 2`,
-            [],
+                 [],
         ),
         new Test("Two aliases, one incorrect dealias. one correct dealias",
-            `[series]
+                 `[series]
                metric = temp
                entity = srv
                alias = s1
@@ -119,14 +119,14 @@ suite("Incorrect dealias tests", () => {
                metric = temp
                entity = srv
                value = value('s2') * 2`,
-            [createDiagnostic(
+                 [createDiagnostic(
                 {
                     range: {
                         end: {
-                            character: "value = value('".length + "s3".length, line: 11
+                            character: "value = value('".length + "s3".length, line: 11,
                         },
                         start: {
-                            character: "value = value('".length, line: 11
+                            character: "value = value('".length, line: 11,
                         },
                     }, uri: Test.URI,
                 },
@@ -134,7 +134,7 @@ suite("Incorrect dealias tests", () => {
             )],
         ),
         new Test("Declared series, indents are used, correct alias and dealias",
-            `[series]
+                 `[series]
                metric = temp
                entity = srv
             	alias = src
@@ -142,7 +142,7 @@ suite("Incorrect dealias tests", () => {
                metric = temp
                entity = srv
             	value = value('src'), \n`,
-            [],
+                 [],
         ),
     ];
 
