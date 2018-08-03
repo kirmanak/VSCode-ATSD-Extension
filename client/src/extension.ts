@@ -77,7 +77,7 @@ class PreviewShower {
     <link rel="stylesheet" type="text/css" href="https://apps.axibase.com/chartlab/portal/CSS/charts.min.css">
     <script type="text/javascript" src="https://apps.axibase.com/chartlab/portal/JavaScript/portal_init.js"></script>
     <script>initializePortal(function () {
-            var configText = \`${document.getText()}\`;
+            var configText = \`${replaceImports(document.getText())}\`;
             return [configText, window.portalPlaceholders = getPortalPlaceholders()];
         });
     </script>
@@ -94,5 +94,37 @@ class PreviewShower {
 </body>
 
 </html>`;
+        console.log(panel.webview.html);
     }
 }
+
+const replaceImports: (text: string) => string = (text: string): string => {
+    const url: string = findUrl(text);
+    if (url === undefined) {
+        return text;
+    }
+    const regexp: RegExp = /(^\s*import\s+\S+\s*=\s*)(\S+)\s*$/mg;
+    const urlPosition: number = 2;
+    let modifiedText: string = text;
+    let match: RegExpExecArray = regexp.exec(modifiedText);
+    while (match) {
+        const external: string = match[urlPosition];
+        if (!/\//.test(external)) {
+            modifiedText = modifiedText.substr(match.index, match[1].length) +
+                url + external + modifiedText.substr(match.index + match[0].length);
+        }
+        match = regexp.exec(modifiedText);
+    }
+
+    return modifiedText;
+};
+
+const findUrl: (text: string) => string | undefined = (text: string): string | undefined => {
+    const regexp: RegExp = /^\s*url\s*=\s*(\S+)\s*$/m;
+    const match: RegExpExecArray = regexp.exec(text);
+    if (match) {
+        return `${match[1]}/portal/resource/scripts/`;
+    } else {
+        return undefined;
+    }
+};
