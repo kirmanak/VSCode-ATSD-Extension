@@ -83,10 +83,10 @@ export class Validator {
             ));
         } else {
             if (!result) { result = []; }
-            array.push(variable);
+            result.push(variable);
         }
 
-        return array;
+        return result;
     }
 
     private addToMap(map: Map<string, string[]>, key: string, severity: DiagnosticSeverity): Map<string, string[]> {

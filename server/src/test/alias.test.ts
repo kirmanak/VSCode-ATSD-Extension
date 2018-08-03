@@ -29,8 +29,8 @@ suite("Incorrect dealias tests", () => {
             [createDiagnostic(
                 {
                     range: {
-                        end: { character: "   value = value('".length + "s2".length, line: 7 },
-                        start: { character: "   value = value('".length, line: 7 },
+                        end: { character: "  value = value('".length + "s2".length, line: 7 },
+                        start: { character: "  value = value('".length, line: 7 },
                     },
                     uri: Test.URI,
                 },
@@ -67,8 +67,8 @@ suite("Incorrect dealias tests", () => {
                 createDiagnostic(
                     {
                         range: {
-                            end: { character: "value = value('".length + "s2".length, line: 7 },
-                            start: { character: "value = value('".length, line: 7 },
+                            end: { character: "  value = value('".length + "s2".length, line: 7 },
+                            start: { character: "  value = value('".length, line: 7 },
                         },
                         uri: Test.URI,
                     },
@@ -78,10 +78,10 @@ suite("Incorrect dealias tests", () => {
                     {
                         range: {
                             end: {
-                                character: "value = value('".length + "s3".length, line: 11,
+                                character: "  value = value('".length + "s3".length, line: 11,
                             },
                             start: {
-                                character: "value = value('".length, line: 11,
+                                character: "  value = value('".length, line: 11,
                             },
                         },
                         uri: Test.URI,
@@ -131,10 +131,10 @@ suite("Incorrect dealias tests", () => {
                 {
                     range: {
                         end: {
-                            character: "value = value('".length + "s3".length, line: 11,
+                            character: "  value = value('".length + "s3".length, line: 11,
                         },
                         start: {
-                            character: "value = value('".length, line: 11,
+                            character: "  value = value('".length, line: 11,
                         },
                     },
                     uri: Test.URI,

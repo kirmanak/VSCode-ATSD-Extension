@@ -22,8 +22,8 @@ var servers = 'srv1', 'srv2'`,
         new Test(
             "Repetition of var name in 'for' and 'list'",
             `list servers = 'srv1', 'srv2'
-            for servers in servers
-            endfor`,
+for servers in servers
+endfor`,
             [createDiagnostic(
                 {
                     range: {
@@ -38,9 +38,9 @@ var servers = 'srv1', 'srv2'`,
         new Test(
             "Repetition of var name in 'csv' and 'list'",
             `list servers = 'srv1', 'srv2'
-            csv servers = vps, vds
-               true, false
-            endcsv`,
+csv servers = vps, vds
+  true, false
+endcsv`,
             [createDiagnostic(
                 {
                     range: {
@@ -55,9 +55,9 @@ var servers = 'srv1', 'srv2'`,
         new Test(
             "Repetition of var name in 'list' and 'csv'",
             `csv servers = vps, vds
-               true, false
-            endcsv
-            list servers = 'srv1', 'srv2'`,
+   true, false
+endcsv
+list servers = 'srv1', 'srv2'`,
             [createDiagnostic(
                 {
                     range: {
