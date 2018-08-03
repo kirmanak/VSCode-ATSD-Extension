@@ -2,8 +2,7 @@ import { DiagnosticSeverity } from "vscode-languageserver";
 import { createDiagnostic } from "../util";
 import { Test } from "./test";
 
-// tslint:disable-next-line:typedef
-const errorMessage = "list has no matching endlist";
+const errorMessage: string = "list has no matching endlist";
 
 suite("Unfinished list", () => {
     const tests: Test[] = [
