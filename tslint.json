@@ -1,7 +1,8 @@
 {
     "extends": "tslint:all",
     "rules": {
-        "no-inferrable-types": false
+        "no-inferrable-types": false,
+        "no-implicit-dependencies": [true, "dev"]
     },
     "jsRules": {
         "max-line-length": {
