@@ -4,24 +4,13 @@ import { Formatter } from "../formatter";
 import { Validator } from "../validator";
 
 export class Test {
-    // tslint:disable-next-line:typedef
-    public static URI = "test";
-    public static FORMAT_TEST: (data: Test) => void = (data: Test) => {
-        test((data.getName()), () => {
-            assert.deepEqual(new Formatter(data.getDocument(), data.getParams()).lineByLine(), data.getExpected());
-        });
-    }
-    public static VALIDATION_TEST: (data: Test) => void = (data: Test) => {
-        test((data.getName()), () => {
-            assert.deepEqual(new Validator(data.getDocument()).lineByLine(), data.getExpected());
-        });
-    }
-    // tslint:disable-next-line:typedef
-    private static LANGUAGE_ID = "test";
-    private document: TextDocument;
-    private expected: Diagnostic[] | TextEdit[];
-    private name: string;
-    private params: DocumentFormattingParams;
+    public static readonly URI: string = "test";
+
+    private static readonly LANGUAGE_ID: string = "test";
+    private readonly document: TextDocument;
+    private readonly expected: Diagnostic[] | TextEdit[];
+    private readonly name: string;
+    private readonly params: DocumentFormattingParams;
 
     public constructor(name: string, text: string, expected: Diagnostic[] | TextEdit[],
                        params?: DocumentFormattingParams) {
@@ -31,19 +20,15 @@ export class Test {
         this.params = params;
     }
 
-    public getDocument(): TextDocument {
-        return this.document;
+    public formatTest(): void {
+        test((this.name), () => {
+            assert.deepEqual(new Formatter(this.document, this.params).lineByLine(), this.expected);
+        });
     }
 
-    public getExpected(): Diagnostic[] | TextEdit[] {
-        return this.expected;
-    }
-
-    public getName(): string {
-        return this.name;
-    }
-
-    public getParams(): DocumentFormattingParams {
-        return this.params;
+    public validationTest(): void {
+        test((this.name), () => {
+            assert.deepEqual(new Validator(this.document).lineByLine(), this.expected);
+        });
     }
 }

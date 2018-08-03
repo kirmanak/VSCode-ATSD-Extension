@@ -96,4 +96,4 @@ export const deleteComments: (text: string) => string = (text: string): string =
 
 export const errorMessage: (found: string, suggestion: string) => string =
     (found: string, suggestion: string): string =>
-        (suggestion === null) ? `${found} is unknown.` : `${found} is unknown. Suggestion: ${suggestion}`;
+        (suggestion === undefined) ? `${found} is unknown.` : `${found} is unknown. Suggestion: ${suggestion}`;

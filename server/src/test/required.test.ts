@@ -4,16 +4,18 @@ import { Test } from "./test";
 
 suite("Required settings for sections tests", () => {
     const tests: Test[] = [
-        new Test("correct series without parent section",
-                 "[series]\n" +
-            "   entity = hello\n" +
-            "   metric = hello\n",
-                 [],
+        new Test(
+            "correct series without parent section",
+            `[series]
+   entity = hello
+   metric = hello`,
+            [],
         ),
-        new Test("incorrect series without parent categories",
-                 "[series]\n" +
-            "   metric = hello\n",
-                 [createDiagnostic(
+        new Test(
+            "incorrect series without parent categories",
+            `[series]
+   metric = hello`,
+            [createDiagnostic(
                 {
                     range: {
                         end: { character: "[".length + "series".length, line: 0 },
@@ -24,56 +26,61 @@ suite("Required settings for sections tests", () => {
                 DiagnosticSeverity.Error, "entity is required",
             )],
         ),
-        new Test("correct series with parent section",
-                 "[widget]\n" +
-            "   type = chart\n" +
-            "   entity = hello\n" +
-            "   [series]\n" +
-            "       metric = hello\n",
-                 [],
+        new Test(
+            "correct series with parent section",
+            `[widget]
+   type = chart
+   entity = hello
+   [series]
+       metric = hello`,
+            [],
         ),
-        new Test("correct series with grandparent section",
-                 "[group]\n" +
-            "   entity = hello\n" +
-            "[widget]\n" +
-            "   type = chart\n" +
-            "   [series]\n" +
-            "       metric = hello\n",
-                 [],
+        new Test(
+            "correct series with grandparent section",
+            `[group]
+   entity = hello
+[widget]
+   type = chart
+   [series]
+       metric = hello`,
+            [],
         ),
-        new Test("correct series with greatgrandparent section",
-                 "[configuration]\n" +
-            "   entity = hello\n" +
-            "[group]\n" +
-            "[widget]\n" +
-            "   type = chart\n" +
-            "   [series]\n" +
-            "       metric = hello\n",
-                 [],
+        new Test(
+            "correct series with greatgrandparent section",
+            `[configuration]
+   entity = hello
+[group]
+[widget]
+   type = chart
+   [series]
+       metric = hello`,
+            [],
         ),
-        new Test("correct series with greatgrandparent section and empty line",
-                 "[configuration]\n" +
-            "\n" +
-            "   entity = hello\n" +
-            "[group]\n" +
-            "[widget]\n" +
-            "   type = chart\n" +
-            "   [series]\n" +
-            "       metric = hello\n",
-                 [],
+        new Test(
+            "correct series with greatgrandparent section and empty line",
+            `[configuration]
+
+   entity = hello
+[group]
+[widget]
+   type = chart
+   [series]
+       metric = hello`,
+            [],
         ),
-        new Test("incorrect series with closed parent section",
-                 "[group]\n" +
-            "   type = chart\n" +
-            "   [widget]\n" +
-            "       entity = hello\n" +
-            "       [series]\n" +
-            "           metric = hello\n" +
-            "\n" +
-            "   [widget]\n" +
-            "       [series]\n" +
-            "           metric = hello\n",
-                 [createDiagnostic(
+        new Test(
+            "incorrect series with closed parent section",
+            `[group]
+   type = chart
+   [widget]
+       entity = hello
+       [series]
+           metric = hello
+
+   [widget]
+       [series]
+           metric = hello`,
+            [createDiagnostic(
                 {
                     range: {
                         end: { character: "       [".length + "series".length, line: 8 },
@@ -84,56 +91,61 @@ suite("Required settings for sections tests", () => {
                 DiagnosticSeverity.Error, "entity is required",
             )],
         ),
-        new Test("two incorrect series without parent categories",
-                 "[series]\n" +
-            "   metric = hello\n" +
-            "[series]\n" +
-            "   entity = hello\n",
-                 [createDiagnostic(
-                {
-                    range: {
-                        end: { character: "[".length + "series".length, line: 0 },
-                        start: { character: "[".length, line: 0 },
+        new Test(
+            "two incorrect series without parent categories",
+            `[series]
+   metric = hello
+[series]
+   entity = hello`,
+            [
+                createDiagnostic(
+                    {
+                        range: {
+                            end: { character: "[".length + "series".length, line: 0 },
+                            start: { character: "[".length, line: 0 },
+                        },
+                        uri: Test.URI,
                     },
-                    uri: Test.URI,
-                },
-                DiagnosticSeverity.Error, "entity is required",
-            ),    createDiagnostic(
-                {
-                    range: {
-                        end: { character: "[".length + "series".length, line: 2 },
-                        start: { character: "[".length, line: 2 },
+                    DiagnosticSeverity.Error, "entity is required",
+                ),
+                createDiagnostic(
+                    {
+                        range: {
+                            end: { character: "[".length + "series".length, line: 2 },
+                            start: { character: "[".length, line: 2 },
+                        },
+                        uri: Test.URI,
                     },
-                    uri: Test.URI,
-                },
-                DiagnosticSeverity.Error, "metric is required",
-            )],
+                    DiagnosticSeverity.Error, "metric is required",
+                )],
         ),
-        new Test("A setting is specified in if statement",
-                 "list servers = vps, vds\n" +
-            "for server in servers\n" +
-            "   [series]\n" +
-            "       metric = cpu_busy\n" +
-            "       if server == 'vps'\n" +
-            "           entity = vds\n" +
-            "       else\n" +
-            "           entity = vps\n" +
-            "       endif\n" +
-            "endfor\n",
-                 [],
+        new Test(
+            "A setting is specified in if statement",
+            `list servers = vps, vds
+for server in servers
+   [series]
+       metric = cpu_busy
+       if server == 'vps'
+           entity = vds
+       else
+           entity = vps
+       endif
+endfor`,
+            [],
         ),
-        new Test("A setting is specified only in if-elseif statements",
-                 "list servers = vps, vds\n" +
-            "for server in servers\n" +
-            "   [series]\n" +
-            "       metric = cpu_busy\n" +
-            "       if server == 'vps'\n" +
-            "           entity = vds\n" +
-            "       elseif server = 'vds'\n" +
-            "           entity = vps\n" +
-            "       endif\n" +
-            "endfor\n",
-                 [createDiagnostic(
+        new Test(
+            "A setting is specified only in if-elseif statements",
+            `list servers = vps, vds
+for server in servers
+   [series]
+       metric = cpu_busy
+       if server == 'vps'
+           entity = vds
+       elseif server = 'vds'
+           entity = vps
+       endif
+endfor`,
+            [createDiagnostic(
                 {
                     range: {
                         end: { character: "   [".length + "series".length, line: 2 },
@@ -146,6 +158,6 @@ suite("Required settings for sections tests", () => {
         ),
     ];
 
-    tests.forEach(Test.VALIDATION_TEST);
+    tests.forEach((test: Test) => { test.validationTest(); });
 
 });
