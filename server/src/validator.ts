@@ -48,18 +48,17 @@ export class Validator {
             this.eachLine();
 
             if (this.foundKeyword) {
-                if (this.areWeIn("script") && this.foundKeyword.keyword !== "endscript") {
-                    continue;
-                } else if (/\b(if|for|csv)\b/i.test(this.foundKeyword.keyword)) {
+                if (/\b(if|for|csv)\b/i.test(this.foundKeyword.keyword)) {
                     this.keywordsStack.push(this.foundKeyword);
                 }
 
                 this.switchKeyword();
-                this.checkAliases();
-                this.diagnosticForLeftKeywords();
-                this.checkPreviousSection();
             }
         }
+
+        this.checkAliases();
+        this.diagnosticForLeftKeywords();
+        this.checkPreviousSection();
 
         return this.result;
     }
