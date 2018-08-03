@@ -1,6 +1,7 @@
 import { Diagnostic, DiagnosticSeverity, Range, TextDocument } from "vscode-languageserver";
 import { createDiagnostic, deleteComments } from "./util";
 
+import * as $ from "jquery";
 import { DOMWindow, JSDOM } from "jsdom";
 
 interface IStatement {
