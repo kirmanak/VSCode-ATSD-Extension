@@ -62,14 +62,37 @@ export const deactivate: () => Thenable<void> = (): Thenable<void> => {
 class PreviewShower {
     public readonly id: string = "axibase-charts.showPortal";
     public showPreview: (editor: TextEditor) => void = (editor: TextEditor): void => {
-            const document: TextDocument = editor.document;
-            const panel: WebviewPanel = window.createWebviewPanel("portal", "Portal", ViewColumn.Beside);
-            panel.webview.html =
-                `<!DOCTYPE HTML>
-<html lang="en">
-    <head><title>Preview ${document.fileName}</title></head>
-    <body>${document.getText()}</body>
+        const document: TextDocument = editor.document;
+        const panel: WebviewPanel = window.createWebviewPanel("portal", "Portal", ViewColumn.Beside, {
+            enableScripts: true,
+        });
+        panel.webview.html =
+            `<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Preview ${document.fileName}</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="stylesheet" type="text/css" href="https://apps.axibase.com/chartlab/portal/JavaScript/jquery-ui-1.9.0.custom/css/smoothness/jquery-ui-1.9.1.custom.min.css">
+    <link rel="stylesheet" type="text/css" href="https://apps.axibase.com/chartlab/portal/CSS/charts.min.css">
+    <script type="text/javascript" src="https://apps.axibase.com/chartlab/portal/JavaScript/portal_init.js"></script>
+    <script>initializePortal(function () {
+            var configText = \`${document.getText()}\`;
+            return [configText, window.portalPlaceholders = getPortalPlaceholders()];
+        });
+    </script>
+    <script type="text/javascript" src="https://apps.axibase.com/chartlab/portal/JavaScript/jquery-ui-1.9.0.custom/js/jquery-1.8.2.min.js"></script>
+    <script type="text/javascript" src="https://apps.axibase.com/chartlab/portal/JavaScript/jquery-ui-1.9.0.custom/js/jquery-ui-1.9.0.custom.min.js"></script>
+    <script type="text/javascript" src="https://apps.axibase.com/chartlab/portal/JavaScript/d3.min.js"></script>
+    <script type="text/javascript" src="https://apps.axibase.com/chartlab/portal/JavaScript/highlight.pack.js"></script>
+    <script type="text/javascript" src="https://apps.axibase.com/chartlab/portal/JavaScript/charts.min.js"></script>
+</head>
+
+<body onload="onBodyLoad()">
+    <div class="portalView"></div>
+    <div id="dialog"></div>
+</body>
+
 </html>`;
-            panel.title = "My portal";
-        }
+    }
 }
