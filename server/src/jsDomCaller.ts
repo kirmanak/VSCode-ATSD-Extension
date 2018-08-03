@@ -1,9 +1,13 @@
 import { Diagnostic, DiagnosticSeverity, Range, TextDocument } from "vscode-languageserver";
-import { Statement } from "./statement";
 import { createDiagnostic, deleteComments } from "./util";
 
 import * as jquery from "jquery";
 import { DOMWindow, JSDOM } from "jsdom";
+
+interface IStatement {
+    readonly declaration: string;
+    readonly range: Range;
+}
 
 export class JsDomCaller {
     private static readonly CONTENT_POSITION: number = 2;
@@ -33,7 +37,7 @@ export class JsDomCaller {
     private readonly imports: string[] = [];
     private readonly lines: string[];
     private match: RegExpExecArray;
-    private readonly statements: Statement[] = [];
+    private readonly statements: IStatement[] = [];
 
     public constructor(document: TextDocument) {
         this.document = document;
@@ -48,7 +52,7 @@ export class JsDomCaller {
         const dom: JSDOM = new JSDOM("<html></html>", { runScripts: "outside-only" });
         const window: DOMWindow = dom.window;
         const $: JQuery<DOMWindow> = jquery(dom.window);
-        this.statements.forEach((statement: Statement) => {
+        this.statements.forEach((statement: IStatement) => {
             const toEvaluate: string =
                 `(new Function("$", ${JSON.stringify(statement.declaration)})).call(window, ${$})`;
             try {
@@ -116,7 +120,7 @@ export class JsDomCaller {
         const content: string = JsDomCaller.stringifyStatement(this.match[JsDomCaller.CONTENT_POSITION]);
         const matchStart: number = this.match[1].length;
         const proxyFunctionCount: number  = 6;
-        const statement: Statement = {
+        const statement: IStatement = {
             declaration:
                 "const proxyFunction = new Proxy(new Function(), {});" +
                 '(new Function("requestMetricsSeriesValues","requestEntitiesMetricsValues",' +
@@ -139,7 +143,7 @@ export class JsDomCaller {
         const content: string = JsDomCaller.stringifyStatement(this.match[JsDomCaller.CONTENT_POSITION]);
         const matchStart: number = this.match.index + this.match[1].length;
         const numbersCount: number  = 4;
-        const statement: Statement = {
+        const statement: IStatement = {
             declaration:
                 `(new Function("value","time","previousValue","previousTime", ${content}))
                 .call(window${JsDomCaller.generateCall(numbersCount, "5")})`,
@@ -201,7 +205,7 @@ export class JsDomCaller {
         }
         content = JSON.stringify(content);
         const proxyCount: number  = 2;
-        const statement: Statement = {
+        const statement: IStatement = {
             declaration:
                 "const proxy = new Proxy({}, {});" +
                 "const proxyFunction = new Proxy(new Function(), {});" +
@@ -222,7 +226,7 @@ export class JsDomCaller {
         const proxyFunctionCountFirst: number  = 33;
         const proxyArrayCount: number  = 1;
         const proxyFunctionCountSecond: number  = 3;
-        const statement: Statement = {
+        const statement: IStatement = {
             declaration:
                 "const proxy = new Proxy({}, {});" +
                 "const proxyFunction = new Proxy(new Function(), {});" +
