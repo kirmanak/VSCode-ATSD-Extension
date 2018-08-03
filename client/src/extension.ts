@@ -1,7 +1,7 @@
 import * as path from "path";
 
 import {
-    commands, Disposable, ExtensionContext, TextDocument, Uri, ViewColumn, WebviewPanel, window, workspace,
+    commands, Disposable, ExtensionContext, TextDocument, TextEditor, ViewColumn, WebviewPanel, window, workspace,
 } from "vscode";
 
 import {
@@ -46,7 +46,7 @@ export const activate: (context: ExtensionContext) => void = (context: Extension
     // Start the client. This will also launch the server
     client.start();
     const preview: PreviewShower = new PreviewShower();
-    const disposable: Disposable = commands.registerCommand(preview.id, preview.showPreview, preview);
+    const disposable: Disposable = commands.registerTextEditorCommand(preview.id, preview.showPreview, preview);
     context.subscriptions.push(disposable);
 
 };
@@ -61,18 +61,15 @@ export const deactivate: () => Thenable<void> = (): Thenable<void> => {
 
 class PreviewShower {
     public readonly id: string = "axibase-charts.showPortal";
-    public showPreview: (mainUri?: Uri, allUris?: Uri[]) => void =
-        async (mainUri?: Uri, allUris?: Uri[]): Promise<void> => {
-            for (const uri of (allUris) ? allUris : [mainUri]) {
-                const document: TextDocument = await workspace.openTextDocument(uri);
-                const panel: WebviewPanel = window.createWebviewPanel("portal", "Portal", ViewColumn.Beside);
-                panel.webview.html =
-                    `<!DOCTYPE HTML>
+    public showPreview: (editor: TextEditor) => void = (editor: TextEditor): void => {
+            const document: TextDocument = editor.document;
+            const panel: WebviewPanel = window.createWebviewPanel("portal", "Portal", ViewColumn.Beside);
+            panel.webview.html =
+                `<!DOCTYPE HTML>
 <html lang="en">
     <head><title>Preview ${document.fileName}</title></head>
     <body>${document.getText()}</body>
 </html>`;
-                panel.title = "My portal";
-            }
+            panel.title = "My portal";
         }
 }
