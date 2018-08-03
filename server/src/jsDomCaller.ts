@@ -1,7 +1,6 @@
 import { Diagnostic, DiagnosticSeverity, Range, TextDocument } from "vscode-languageserver";
 import { createDiagnostic, deleteComments } from "./util";
 
-import * as jquery from "jquery";
 import { DOMWindow, JSDOM } from "jsdom";
 
 interface IStatement {
@@ -51,10 +50,10 @@ export class JsDomCaller {
 
         const dom: JSDOM = new JSDOM("<html></html>", { runScripts: "outside-only" });
         const window: DOMWindow = dom.window;
-        const $: JQuery<DOMWindow> = jquery(dom.window);
+        const jquery: JQuery<DOMWindow> = $(dom.window);
         this.statements.forEach((statement: IStatement) => {
             const toEvaluate: string =
-                `(new Function("$", ${JSON.stringify(statement.declaration)})).call(window, ${$})`;
+                `(new Function("$", ${JSON.stringify(statement.declaration)})).call(window, ${jquery})`;
             try {
                 window.eval(toEvaluate);
             } catch (err) {
