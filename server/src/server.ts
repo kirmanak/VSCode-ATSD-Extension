@@ -14,8 +14,7 @@ const connection: IConnection = createConnection(ProposedFeatures.all);
 // Create a simple text document manager.
 const documents: TextDocuments = new TextDocuments();
 
-// tslint:disable-next-line:typedef
-let hasConfigurationCapability = false;
+let hasConfigurationCapability: boolean = false;
 
 connection.onInitialize((params: InitializeParams) => {
     const capabilities: ClientCapabilities = params.capabilities;

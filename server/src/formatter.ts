@@ -3,18 +3,17 @@ import { FoundKeyword } from "./foundKeyword";
 import { deleteComments } from "./util";
 
 export class Formatter {
+    private static readonly CONTENT_POSITION: number = 2;
     private current: string;
-    // tslint:disable-next-line:typedef
-    private currentIndent = "";
-    // tslint:disable-next-line:typedef
-    private currentLine = 0;
-    private edits: TextEdit[] = [];
-    private keywordsLevels: string[] = [];
+    private currentIndent: string = "";
+    private currentLine: number = 0;
+    private readonly edits: TextEdit[] = [];
+    private readonly keywordsLevels: string[] = [];
     private lastLine: string;
     private lastLineNumber: number;
-    private lines: string[];
+    private readonly lines: string[];
     private match: RegExpExecArray;
-    private params: DocumentFormattingParams;
+    private readonly params: DocumentFormattingParams;
     private previous: string;
 
     public constructor(document: TextDocument, formattingParams: DocumentFormattingParams) {
@@ -57,8 +56,7 @@ export class Formatter {
 
     private calculateIndent(): void {
         this.previous = this.current;
-        // tslint:disable-next-line:no-magic-numbers
-        this.current = this.match[2];
+        this.current = this.match[Formatter.CONTENT_POSITION];
         if (/\[(?:group|configuration)\]/i.test(this.getCurrentLine())) {
             this.setIndent("");
 
@@ -112,8 +110,7 @@ export class Formatter {
     }
 
     private increaseIndent(): void {
-        // tslint:disable-next-line:typedef
-        let addition = "\t";
+        let addition: string = "\t";
         if (this.params.options.insertSpaces) {
             addition = Array(this.params.options.tabSize)
                 .fill(" ")

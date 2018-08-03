@@ -6,27 +6,25 @@ import {
 } from "./util";
 
 export class Validator {
-    // tslint:disable-next-line:typedef
-    private static CONTENT_POSITION = 2;
+    private static readonly CONTENT_POSITION: number = 2;
     private aliases: string[] = [];
     private csvColumns: number;
-    // tslint:disable-next-line:typedef
-    private currentLineNumber = 0;
+    private currentLineNumber: number = 0;
     private currentSection: FoundKeyword;
-    private deAliases: FoundKeyword[] = [];
+    private readonly deAliases: FoundKeyword[] = [];
     private foundKeyword: FoundKeyword;
-    private ifSettings: Map<string, string[]> = new Map<string, string[]>();
-    private keywordsStack: FoundKeyword[] = [];
+    private readonly ifSettings: Map<string, string[]> = new Map<string, string[]>();
+    private readonly keywordsStack: FoundKeyword[] = [];
     private lastCondition: string;
-    private lines: string[];
+    private readonly lines: string[];
     private match: RegExpExecArray;
-    private parentSettings: Map<string, string[]> = new Map<string, string[]>();
+    private readonly parentSettings: Map<string, string[]> = new Map<string, string[]>();
     private previousSection: FoundKeyword;
     private previousSettings: string[] = [];
-    private result: Diagnostic[] = [];
+    private readonly result: Diagnostic[] = [];
     private settings: string[] = [];
-    private textDocument: TextDocument;
-    private variables: Map<string, string[]> = new Map<string, string[]>();
+    private readonly textDocument: TextDocument;
+    private readonly variables: Map<string, string[]> = new Map<string, string[]>();
 
     public constructor(textDocument: TextDocument) {
         this.textDocument = textDocument;
@@ -181,10 +179,8 @@ export class Validator {
                             return;
                         }
                     }
-                    // tslint:disable-next-line:typedef
-                    let ifCounter = 0;
-                    // tslint:disable-next-line:typedef
-                    let elseCounter = 0;
+                    let ifCounter: number = 0;
+                    let elseCounter: number  = 0;
                     for (const statement of this.ifSettings.keys()) {
                         if (/\bif\b/.test(statement)) {
                             ifCounter++;
@@ -204,8 +200,7 @@ export class Validator {
 
     private diagnosticForLeftKeywords(): void {
         const length: number = this.keywordsStack.length;
-        // tslint:disable-next-line:typedef
-        for (let i = 0; i < length; i++) {
+        for (let i: number  = 0; i < length; i++) {
             const nestedConstruction: FoundKeyword = this.keywordsStack[i];
             if (!nestedConstruction) { continue; }
             this.result.push(createDiagnostic(
@@ -381,8 +376,7 @@ export class Validator {
             this.match = /(^\s*alias\s*=\s*)(\w+)\s*$/m.exec(line);
             if (this.match) { this.addToArray(this.aliases, DiagnosticSeverity.Error); }
             this.match = /(^\s*value\s*=.*value\((['"]))(\w+)\2\).*$/.exec(line);
-            // tslint:disable-next-line:typedef
-            const deAliasPosition = 3;
+            const deAliasPosition: number = 3;
             if (this.match) {
                 this.deAliases.push({
                     keyword: this.match[deAliasPosition], range: {
@@ -407,8 +401,7 @@ export class Validator {
                 },
                 uri: this.textDocument.uri,
             };
-            // tslint:disable-next-line:typedef
-            const message = `${this.match[Validator.CONTENT_POSITION]} is already defined`;
+            const message: string  = `${this.match[Validator.CONTENT_POSITION]} is already defined`;
 
             if (this.areWeIn("if")) {
                 let array: string[] = this.ifSettings.get(this.lastCondition);

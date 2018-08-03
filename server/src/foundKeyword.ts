@@ -31,12 +31,11 @@ export class FoundKeyword {
         };
     }
 
-    // tslint:disable-next-line:typedef
-    private static KEYWORD_POSITION = 2;
-    private static regexp: RegExp =
+    private static readonly KEYWORD_POSITION: number = 2;
+    private static readonly regexp: RegExp =
         /^([ \t]*)(endvar|endcsv|endfor|elseif|endif|endscript|endlist|script|else|if|list|for|csv|var)\b/i;
 
-    public keyword: string;
-    public range: Range;
+    public readonly keyword: string;
+    public readonly range: Range;
 
 }

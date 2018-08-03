@@ -1,8 +1,7 @@
 import * as Levenshtein from "levenshtein";
 import { Diagnostic, DiagnosticSeverity, Location } from "vscode-languageserver";
 
-// tslint:disable-next-line:typedef
-const DIAGNOSTIC_SOURCE = "Axibase Charts";
+const DIAGNOSTIC_SOURCE: string = "Axibase Charts";
 
 export const isInMap: (value: string, map: Map<string, string[]> | Map<string, string[][]>) => boolean =
     (value: string, map: Map<string, string[]> | Map<string, string[][]>): boolean => {
@@ -58,8 +57,7 @@ export const isInArray: (array: string[], value: string) => boolean =
 
 export const countCsvColumns: (line: string) => number = (line: string): number => {
     const regex: RegExp = /(['"]).+\1|[^, \t]+/g;
-    // tslint:disable-next-line:typedef
-    let counter = 0;
+    let counter: number = 0;
     while (regex.exec(line)) { counter++; }
 
     return counter;
@@ -83,13 +81,10 @@ export const deleteComments: (text: string) => string = (text: string): string =
     if (!i) { i = oneLine.exec(content); }
 
     while (i) {
-        // tslint:disable-next-line:typedef
-        let spaces = " ";
-        // tslint:disable-next-line:typedef
-        for (let j = 1; j < i[0].length; j++) { spaces += " "; }
+        let spaces: string = " ";
+        for (let j: number = 1; j < i[0].length; j++) { spaces += " "; }
         const newLines: number = i[0].split("\n").length - 1;
-        // tslint:disable-next-line:typedef
-        for (let j = 0; j < newLines; j++) { spaces += "\n"; }
+        for (let j: number = 0; j < newLines; j++) { spaces += "\n"; }
         content = content.substring(0, i.index) + spaces +
             content.substring(i.index + i[0].length);
         i = multiLine.exec(content);
