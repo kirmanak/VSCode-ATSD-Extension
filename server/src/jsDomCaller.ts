@@ -6,8 +6,7 @@ import * as jquery from "jquery";
 import { DOMWindow, JSDOM } from "jsdom";
 
 export class JsDomCaller {
-    // tslint:disable-next-line:typedef
-    private static CONTENT_POSITION = 2;
+    private static readonly CONTENT_POSITION: number = 2;
     private static generateCall(amount: number, name: string): string {
         const names: string = Array(amount)
             .fill(name)
@@ -28,15 +27,13 @@ export class JsDomCaller {
         return JSON.stringify(statement);
     }
 
-    // tslint:disable-next-line:typedef
-    private currentLineNumber = 0;
-    private document: TextDocument;
-    // tslint:disable-next-line:typedef
-    private importCounter = 0;
-    private imports: string[] = [];
-    private lines: string[];
+    private currentLineNumber: number = 0;
+    private readonly document: TextDocument;
+    private importCounter: number = 0;
+    private readonly imports: string[] = [];
+    private readonly lines: string[];
     private match: RegExpExecArray;
-    private statements: Statement[] = [];
+    private readonly statements: Statement[] = [];
 
     public constructor(document: TextDocument) {
         this.document = document;
@@ -52,13 +49,12 @@ export class JsDomCaller {
         const window: DOMWindow = dom.window;
         const $: JQuery<DOMWindow> = jquery(dom.window);
         this.statements.forEach((statement: Statement) => {
-            // tslint:disable-next-line:typedef
-            const toEvaluate = `(new Function("$", ${JSON.stringify(statement.declaration)})).call(window, ${$})`;
+            const toEvaluate: string =
+                `(new Function("$", ${JSON.stringify(statement.declaration)})).call(window, ${$})`;
             try {
                 window.eval(toEvaluate);
             } catch (err) {
-                // tslint:disable-next-line:typedef
-                let isImported = false;
+                let isImported: boolean = false;
                 for (const imported of this.imports) {
                     if (new RegExp(imported, "i").test(err.message)) {
                         isImported = true;
@@ -119,8 +115,7 @@ export class JsDomCaller {
     private processOptions(): void {
         const content: string = JsDomCaller.stringifyStatement(this.match[JsDomCaller.CONTENT_POSITION]);
         const matchStart: number = this.match[1].length;
-        // tslint:disable-next-line:typedef
-        const proxyFunctionCount = 6;
+        const proxyFunctionCount: number  = 6;
         const statement: Statement = {
             declaration:
                 "const proxyFunction = new Proxy(new Function(), {});" +
@@ -143,8 +138,7 @@ export class JsDomCaller {
     private processReplaceValue(): void {
         const content: string = JsDomCaller.stringifyStatement(this.match[JsDomCaller.CONTENT_POSITION]);
         const matchStart: number = this.match.index + this.match[1].length;
-        // tslint:disable-next-line:typedef
-        const numbersCount = 4;
+        const numbersCount: number  = 4;
         const statement: Statement = {
             declaration:
                 `(new Function("value","time","previousValue","previousTime", ${content}))
@@ -206,8 +200,7 @@ export class JsDomCaller {
             };
         }
         content = JSON.stringify(content);
-        // tslint:disable-next-line:typedef
-        const proxyCount = 2;
+        const proxyCount: number  = 2;
         const statement: Statement = {
             declaration:
                 "const proxy = new Proxy({}, {});" +
@@ -224,16 +217,11 @@ export class JsDomCaller {
     private processValue(): void {
         const content: string = JsDomCaller.stringifyStatement(this.match[JsDomCaller.CONTENT_POSITION]);
         const matchStart: number = this.match.index + this.match[1].length;
-        // tslint:disable-next-line:typedef
-        const importList = `"${this.imports.join('","')}"`;
-        // tslint:disable-next-line:typedef
-        const proxyCount = 3;
-        // tslint:disable-next-line:typedef
-        const proxyFunctionCountFirst = 33;
-        // tslint:disable-next-line:typedef
-        const proxyArrayCount = 1;
-        // tslint:disable-next-line:typedef
-        const proxyFunctionCountSecond = 3;
+        const importList: string = `"${this.imports.join('","')}"`;
+        const proxyCount: number  = 3;
+        const proxyFunctionCountFirst: number  = 33;
+        const proxyArrayCount: number  = 1;
+        const proxyFunctionCountSecond: number  = 3;
         const statement: Statement = {
             declaration:
                 "const proxy = new Proxy({}, {});" +

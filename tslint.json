@@ -1,6 +1,8 @@
 {
     "extends": "tslint:all",
-    "rules": {},
+    "rules": {
+        "no-inferrable-types": false
+    },
     "jsRules": {
         "max-line-length": {
             "options": [120]
