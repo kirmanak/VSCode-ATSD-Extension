@@ -3,17 +3,17 @@ import * as path from "path";
 import { ExtensionContext, workspace } from "vscode";
 
 import {
-    LanguageClient, LanguageClientOptions, ServerOptions, TransportKind,
+    ForkOptions, LanguageClient, LanguageClientOptions, ServerOptions, TransportKind,
 } from "vscode-languageclient";
 
 let client: LanguageClient;
 
-export function activate(context: ExtensionContext) {
+export const activate: (context: ExtensionContext) => void = (context: ExtensionContext): void => {
 
     // The server is implemented in node
-    const serverModule = context.asAbsolutePath(path.join("server", "out", "server.js"));
+    const serverModule: string = context.asAbsolutePath(path.join("server", "out", "server.js"));
     // The debug options for the server
-    const debugOptions = { execArgv: ["--nolazy", "--inspect=6009"] };
+    const debugOptions: ForkOptions = { execArgv: ["--nolazy", "--inspect=6009"] };
 
     // If the extension is launched in debug mode then the debug server options are used
     // Otherwise the run options are used
@@ -37,11 +37,12 @@ export function activate(context: ExtensionContext) {
 
     // Start the client. This will also launch the server
     client.start();
-}
+};
 
-export function deactivate(): Thenable<void> {
+export const deactivate: () => Thenable<void> = (): Thenable<void> => {
     if (!client) {
         return undefined;
     }
+
     return client.stop();
-}
+};
