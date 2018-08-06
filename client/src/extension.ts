@@ -63,29 +63,36 @@ class PreviewShower {
     public readonly id: string = "axibase-charts.showPortal";
     public showPreview: (editor: TextEditor) => void = (editor: TextEditor): void => {
         const document: TextDocument = editor.document;
+        const url: string = findUrl(document.getText());
         const panel: WebviewPanel = window.createWebviewPanel("portal", "Portal", ViewColumn.Beside, {
             enableScripts: true,
         });
+        panel.title = `Preview ${previewName(document.fileName)}`;
+        if (url === undefined) {
+            panel.webview.html = errorWebview;
+
+            return;
+        }
         panel.webview.html =
             `<!DOCTYPE html>
 <html>
 
 <head>
-    <title>Preview ${document.fileName}</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <link rel="stylesheet" type="text/css" href="https://apps.axibase.com/chartlab/portal/JavaScript/jquery-ui-1.9.0.custom/css/smoothness/jquery-ui-1.9.1.custom.min.css">
-    <link rel="stylesheet" type="text/css" href="https://apps.axibase.com/chartlab/portal/CSS/charts.min.css">
-    <script type="text/javascript" src="https://apps.axibase.com/chartlab/portal/JavaScript/portal_init.js"></script>
+    <link rel="stylesheet" type="text/css"
+        href="${url}/web/js/portal/jquery-ui-1.9.0.custom/css/smoothness/jquery-ui-1.9.1.custom.min.css">
+    <link rel="stylesheet" type="text/css" href="${url}/web/css/portal/charts.min.css">
+    <script type="text/javascript" src="${url}/web/js/portal/portal_init.js"></script>
     <script>initializePortal(function () {
             var configText = \`${replaceImports(document.getText())}\`;
             return [configText, window.portalPlaceholders = getPortalPlaceholders()];
         });
     </script>
-    <script type="text/javascript" src="https://apps.axibase.com/chartlab/portal/JavaScript/jquery-ui-1.9.0.custom/js/jquery-1.8.2.min.js"></script>
-    <script type="text/javascript" src="https://apps.axibase.com/chartlab/portal/JavaScript/jquery-ui-1.9.0.custom/js/jquery-ui-1.9.0.custom.min.js"></script>
-    <script type="text/javascript" src="https://apps.axibase.com/chartlab/portal/JavaScript/d3.min.js"></script>
-    <script type="text/javascript" src="https://apps.axibase.com/chartlab/portal/JavaScript/highlight.pack.js"></script>
-    <script type="text/javascript" src="https://apps.axibase.com/chartlab/portal/JavaScript/charts.min.js"></script>
+    <script type="text/javascript" src="${url}/web/js/portal/jquery-ui-1.9.0.custom/js/jquery-1.8.2.min.js"></script>
+    <script type="text/javascript"
+            src="${url}/web/js/portal/jquery-ui-1.9.0.custom/js/jquery-ui-1.9.0.custom.min.js"></script>
+    <script type="text/javascript" src="${url}/web/js/portal/d3.min.js"></script>
+    <script type="text/javascript" src="${url}/web/js/portal/highlight.pack.js"></script>
+    <script type="text/javascript" src="${url}/web/js/portal/charts.min.js"></script>
 </head>
 
 <body onload="onBodyLoad()">
@@ -94,14 +101,15 @@ class PreviewShower {
 </body>
 
 </html>`;
-        console.log(panel.webview.html);
     }
 }
 
 const replaceImports: (text: string) => string = (text: string): string => {
-    const url: string = findUrl(text);
+    let url: string = findUrl(text);
     if (url === undefined) {
         return text;
+    } else {
+        url += "/web/js/portal/resources/scripts/";
     }
     const regexp: RegExp = /(^\s*import\s+\S+\s*=\s*)(\S+)\s*$/mg;
     const urlPosition: number = 2;
@@ -120,11 +128,22 @@ const replaceImports: (text: string) => string = (text: string): string => {
 };
 
 const findUrl: (text: string) => string | undefined = (text: string): string | undefined => {
-    const regexp: RegExp = /^\s*url\s*=\s*(\S+)\s*$/m;
+    const regexp: RegExp = /^\s*url\s*=\s*(\S+?(?=\/?\s*$))/m;
     const match: RegExpExecArray = regexp.exec(text);
     if (match) {
-        return `${match[1]}/portal/resource/scripts/`;
+        return `${match[1]}`;
     } else {
         return undefined;
     }
 };
+
+const previewName: (fullName: string) => string =
+    (fullName: string): string => fullName.substr(fullName.lastIndexOf("/") + 1);
+
+const errorWebview: string = `<!DOCTYPE html>
+<html>
+    <head><title>Error preview</title></head>
+    <body>
+        To get preview specify the ATSD instance address via "url = {address}" setting in [configuration] section
+    </body>
+</html>`;
