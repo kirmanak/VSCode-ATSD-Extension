@@ -1,6 +1,5 @@
 import { DocumentFormattingParams, TextDocument, TextEdit } from "vscode-languageserver";
 import { FoundKeyword } from "./foundKeyword";
-import { deleteComments } from "./util";
 
 export class Formatter {
     private static readonly CONTENT_POSITION: number = 2;
@@ -19,7 +18,7 @@ export class Formatter {
     public constructor(document: TextDocument, formattingParams: DocumentFormattingParams) {
         if (!document || !formattingParams) { throw new Error("Invalid arguments"); }
         this.params = formattingParams;
-        this.lines = deleteComments(document.getText())
+        this.lines = document.getText()
             .split("\n");
     }
 
