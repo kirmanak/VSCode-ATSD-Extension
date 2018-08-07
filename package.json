@@ -3,6 +3,7 @@
     "displayName": "Axibase Charts",
     "description": "Axibase Charts syntax validation and highligting extension",
     "version": "0.0.1",
+    "license": "Apache-2.0",
     "repository": {
         "type": "git",
         "url": "https://github.com/kirmanak/Axibase-Charts-Syntax"
