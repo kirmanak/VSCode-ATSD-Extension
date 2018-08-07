@@ -566,5 +566,91 @@
             "    ${0}"
         ],
         "description": "Histogram"
+    },
+    "portal: 3x2": {
+        "prefix": "portal: 3x2",
+        "body": [
+            "\n[configuration]",
+            "  offset-right = ${1:50}",
+            "  width-units = ${2:3}",
+            "  height-units = ${3:2}",
+            "",
+            "  timespan = ${4:1 day}",
+            "",
+            "  [group]",
+            "",
+            "    [widget]",
+            "      type = ${5:chart}",
+            "      [series]",
+            "        entity = ${6:entity-1}",
+            "        metric = ${7:metric-1}",
+            "",
+            "    [widget]",
+            "      type = ${8:chart}",
+            "      [series]",
+            "        entity = ${9:entity-2}",
+            "        metric = ${10:metric-2}",
+            "",
+            "    [widget]",
+            "      type = ${11:chart}",
+            "      [series]",
+            "        entity = ${12:entity-3}",
+            "        metric = ${13:metric-3}",
+            "",
+            "  [group]",
+            "    [widget]",
+            "      type = ${14:chart}",
+            "      [series]",
+            "        entity = ${15:entity-4}",
+            "        metric = ${16:metric-4}",
+            "",
+            "    [widget]",
+            "      type = ${17:chart}",
+            "      [series]",
+            "        entity = ${18:entity-5}",
+            "        metric = ${19:metric-5}",
+            "",
+            "    [widget]",
+            "      type = ${20:chart}",
+            "      [series]",
+            "        entity = ${21:entity-6}",
+            "        metric = ${22:metric-6}",
+            "        ${0}"
+        ],
+        "description": "Portal 3x2"
+    },
+    "series with tags": {
+        "prefix": "series with tags",
+        "body": [
+            "\n[series]",
+            "  entity = ${1:entity-1}",
+            "  metric = ${2:metric-1}",
+            "  [tags]",
+            "    ${3:tag} = ${4:value}",
+            "    ${0}"
+        ],
+        "description": "Series section with child tags section"
+    },
+    "detail series": {
+        "prefix": "series detail",
+        "body": [
+            "\n[series]",
+            "  entity = ${1:entity-1}",
+            "  metric = ${2:metric-1}",
+            "  ${0}"
+        ],
+        "description": "Series section with entity and metric settings"
+    },
+    "averaged series": {
+        "prefix": "series averaged",
+        "body": [
+            "\n[series]",
+            "  entity = ${1:entity-1}",
+            "  metric = ${2:metric-1}",
+            "  statistics = ${3:avg}",
+            "  period = ${4:10 minute}",
+            "  ${0}"
+        ],
+        "description": "Detail series section with average aggregation"
     }
 }
