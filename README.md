@@ -31,10 +31,10 @@ npm install && npm run compile
 
 ### Snipetts
 
-To display the list of preconfigured snippets, press `Ctrl+Shift+P` on PC or `⇧⌘P` on Mac, then write `Insert Snippet`.
+To display the list of pre-configured snippets, press `Ctrl+Shift+P` on PC or `⇧⌘P` on Mac, then write `Insert Snippet`.
 To create your own snippet, follow [the official documentation](https://code.visualstudio.com/docs/editor/userdefinedsnippets).
 
-#
+### Settings
 
 ## Configuration
 
@@ -55,10 +55,12 @@ To create your own snippet, follow [the official documentation](https://code.vis
 
 ### Snippets
 
-* `w{widget_name}`: creates a new `[widget]` section with a pre-configured sample widget from Charts library
-* `cfg`: creates a new `[configuration]` section with child `[group]` section and several initial settings
+* `{widget_name}`: creates a new `[widget]` section with a pre-configured sample widget from Charts library
+* `configuration`: creates a new `[configuration]` section with child `[group]` section and several initial settings
 * `for`: creates a new `for` loop with corresponding `endfor`.
 * `if`: creates a new `if` statement with corresponding `endif`.
+* `series {type}`, where type one of `with tags`, `detail`, `averaged`: creates a new `[series]` section.
+* `portal: 3x2`: creates a new portal with 6 widgets: 3 columns, 2 rows.
 
 ### Validation
 
