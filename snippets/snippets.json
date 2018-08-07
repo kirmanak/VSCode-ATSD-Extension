@@ -1,6 +1,6 @@
 {
     "Configuration": {
-        "prefix": "cfg",
+        "prefix": "configuration",
         "body": [
             "[configuration]",
             "\toffset-right = ${1:50}",
@@ -32,7 +32,7 @@
         "description": "If condition"
     },
     "chart-basic": {
-        "prefix": "wchart-basic",
+        "prefix": "chart-basic",
         "body": [
             "[widget]",
             "\ttype = chart",
@@ -46,7 +46,7 @@
         "description": "Basic chart"
     },
     "bar": {
-        "prefix": "wbar",
+        "prefix": "bar",
         "body": [
             "[widget]",
             "\ttype = bar",
@@ -63,7 +63,7 @@
         "description": "Bar"
     },
     "bar-horizontal": {
-        "prefix": "wbar-horizontal",
+        "prefix": "bar-horizontal",
         "body": [
             "[widget]",
             "\ttype = bar",
@@ -81,7 +81,7 @@
         "description": "Horizontal bar"
     },
     "box": {
-        "prefix": "wbox",
+        "prefix": "box",
         "body": [
             "[widget]",
             "\ttype = box",
@@ -99,7 +99,7 @@
         "description": "Box"
     },
     "calendar": {
-        "prefix": "wcalendar",
+        "prefix": "calendar",
         "body": [
             "[widget]",
             "\ttype = calendar",
@@ -116,7 +116,7 @@
         "description": "Calendar"
     },
     "calendar-thresholds": {
-        "prefix": "wcalendar-thresholds",
+        "prefix": "calendar-thresholds",
         "body": [
             "[widget]",
             "\ttype = calendar",
@@ -137,7 +137,7 @@
         "description": "Calendar with thresholds"
     },
     "chart": {
-        "prefix": "wchart",
+        "prefix": "chart",
         "body": [
             "[widget]",
             "\ttype = chart",
@@ -157,7 +157,7 @@
         "description": "Chart"
     },
     "chart-alert": {
-        "prefix": "wchart-alert",
+        "prefix": "chart-alert",
         "body": [
             "[widget]",
             "\ttype = chart",
@@ -175,7 +175,7 @@
         "description": "Alert chart "
     },
     "chart-column": {
-        "prefix": "wchart-column",
+        "prefix": "chart-column",
         "body": [
             "[widget]",
             "\ttype = chart",
@@ -194,7 +194,7 @@
         "description": "Column chart"
     },
     "chart-combo": {
-        "prefix": "wchart-combo",
+        "prefix": "chart-combo",
         "body": [
             "[widget]",
             "\ttype = chart",
@@ -214,7 +214,7 @@
         "description": "Combo chart"
     },
     "chart-computed": {
-        "prefix": "wchart-computed",
+        "prefix": "chart-computed",
         "body": [
             "[widget]",
             "\ttype = chart",
@@ -243,7 +243,7 @@
         "description": "Computed chart"
     },
     "chart-dual-axis": {
-        "prefix": "wchart-dual-axis",
+        "prefix": "chart-dual-axis",
         "body": [
             "[widget]",
             "\ttype = chart",
@@ -270,7 +270,7 @@
         "description": "Dual axis chart"
     },
     "chart-range": {
-        "prefix": "wchart-range",
+        "prefix": "chart-range",
         "body": [
             "[widget]",
             "\ttype = chart",
@@ -295,7 +295,7 @@
         "description": "Range chart"
     },
     "chart-stack": {
-        "prefix": "wchart-stack",
+        "prefix": "chart-stack",
         "body": [
             "[widget]",
             "\ttype = chart",
@@ -314,7 +314,7 @@
         "description": "Stack chart"
     },
     "alert-console": {
-        "prefix": "walert-console",
+        "prefix": "alert-console",
         "body": [
             "[widget]",
             "\ttype = console",
@@ -329,7 +329,7 @@
         "description": "Alert console"
     },
     "message-console": {
-        "prefix": "wmessage-console",
+        "prefix": "message-console",
         "body": [
             "[widget]",
             "\ttype = console",
@@ -341,7 +341,7 @@
         "description": "Message console"
     },
     "gauge": {
-        "prefix": "wgauge",
+        "prefix": "gauge",
         "body": [
             "[widget]",
             "\ttype = gauge",
@@ -358,7 +358,7 @@
         "description": "Gauge"
     },
     "graph": {
-        "prefix": "wgraph",
+        "prefix": "graph",
         "body": [
             "[widget]",
             "\ttype = graph",
@@ -431,7 +431,7 @@
         "description": "Graph"
     },
     "pie": {
-        "prefix": "wpie",
+        "prefix": "pie",
         "body": [
             "[widget]",
             "\ttype = pie",
@@ -445,7 +445,7 @@
         "description": "Pie"
     },
     "property": {
-        "prefix": "wproperty",
+        "prefix": "property",
         "body": [
             "[widget]",
             "\ttype = property",
@@ -469,7 +469,7 @@
         "description": "Property"
     },
     "table": {
-        "prefix": "wtable",
+        "prefix": "table",
         "body": [
             "[widget]",
             "\ttype = table",
@@ -489,7 +489,7 @@
         "description": "Table"
     },
     "table-grid": {
-        "prefix": "wtable-grid",
+        "prefix": "table-grid",
         "body": [
             "[widget]",
             "\ttype = table",
@@ -513,7 +513,7 @@
         "description": "Grid table"
     },
     "text": {
-        "prefix": "wtext",
+        "prefix": "text",
         "body": [
             "[widget]",
             "\ttype = text",
@@ -531,7 +531,7 @@
         "description": "Text"
     },
     "treemap": {
-        "prefix": "wtreemap",
+        "prefix": "treemap",
         "body": [
             "[widget]",
             "\ttype = treemap",
@@ -548,7 +548,7 @@
         "description": "Treemap"
     },
     "histogram": {
-        "prefix": "whistogram",
+        "prefix": "histogram",
         "body": [
             "[widget]",
             "\ttype = histogram",
