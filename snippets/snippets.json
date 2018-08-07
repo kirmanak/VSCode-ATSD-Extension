@@ -13,15 +13,6 @@
         ],
         "description": "Initial configuration"
     },
-    "For loop": {
-        "prefix": "for",
-        "body": [
-            "\nfor ${1:item} in ${2:collection}",
-            "  ${0}",
-            "endfor"
-        ],
-        "description": "For loop"
-    },
     "If condition": {
         "prefix": "if",
         "body": [

@@ -1,8 +1,10 @@
 import {
-    ClientCapabilities, createConnection, Diagnostic, DidChangeConfigurationNotification, DidChangeConfigurationParams,
+    ClientCapabilities, CompletionItem, CompletionList, CompletionParams, createConnection, Diagnostic,
+    DidChangeConfigurationNotification, DidChangeConfigurationParams,
     DocumentFormattingParams, IConnection, InitializeParams, ProposedFeatures,
     TextDocument, TextDocumentChangeEvent, TextDocuments, TextEdit,
 } from "vscode-languageserver";
+import { CompletionProvider } from "./completionProvider";
 import { Formatter } from "./formatter";
 import { JsDomCaller } from "./jsDomCaller";
 import { Validator } from "./validator";
@@ -25,6 +27,10 @@ connection.onInitialize((params: InitializeParams) => {
 
     return {
         capabilities: {
+            completionProvider: {
+                resolveProvider: true,
+                triggerCharacters: ["for"],
+            },
             documentFormattingProvider: true,
             textDocumentSync: documents.syncKind,
         },
@@ -114,6 +120,15 @@ connection.onDocumentFormatting((params: DocumentFormattingParams): TextEdit[] =
 
     return formatter.lineByLine();
 });
+
+connection.onCompletion((params: CompletionParams): CompletionList => {
+    const textDocument: TextDocument = documents.get(params.textDocument.uri);
+    const completionProvider: CompletionProvider = new CompletionProvider(textDocument, params.position);
+
+    return completionProvider.getCompletionList();
+});
+
+connection.onCompletionResolve((item: CompletionItem): CompletionItem => item);
 
 // Make the text document manager listen on the connection
 documents.listen(connection);
