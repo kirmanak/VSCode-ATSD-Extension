@@ -3,7 +3,7 @@
 	"description": "VSCode part of a language server",
 	"author": "Kirill Kamakin",
 	"version": "0.0.1",
-    "license": "Apache-2.0",
+	"license": "Apache-2.0",
 	"publisher": "Axibase",
 	"repository": {
 		"type": "git",
