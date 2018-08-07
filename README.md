@@ -24,7 +24,7 @@ cd ~/.vscode/extensions/axibase-charts
 npm install && npm run compile
 ```
 
-* Plugin is ready to handle `.ac` extension files.
+* Plugin is ready to handle `.config` extension files.
   * See examples in ``~/.vscode/extensions/axibase-charts/examples/``.
 
 ## Configuration

@@ -10,7 +10,7 @@
     },
     "publisher": "Axibase",
     "engines": {
-        "vscode": "^1.24.0"
+        "vscode": "^1.25.0"
     },
     "categories": [
         "Programming Languages"
@@ -36,7 +36,7 @@
                     "axibase-charts"
                 ],
                 "extensions": [
-                    ".ac"
+                    ".config"
                 ],
                 "configuration": "./language-configuration.json"
             }
