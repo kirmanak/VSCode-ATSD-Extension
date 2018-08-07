@@ -27,6 +27,15 @@ npm install && npm run compile
 * Plugin is ready to handle `.config` extension files.
   * See examples in ``~/.vscode/extensions/axibase-charts/examples/``.
 
+## Introduction
+
+### Snipetts
+
+To display the list of preconfigured snippets, press `Ctrl+Shift+P` on PC or `⇧⌘P` on Mac, then write `Insert Snippet`.
+To create your own snippet, follow [the official documentation](https://code.visualstudio.com/docs/editor/userdefinedsnippets).
+
+#
+
 ## Configuration
 
 * `axibaseCharts.validateFunctions`
