@@ -82,10 +82,15 @@ class PreviewShower {
         href="${url}/web/js/portal/jquery-ui-1.9.0.custom/css/smoothness/jquery-ui-1.9.1.custom.min.css">
     <link rel="stylesheet" type="text/css" href="${url}/web/css/portal/charts.min.css">
     <script type="text/javascript" src="${url}/web/js/portal/portal_init.js"></script>
-    <script>initializePortal(function () {
-            var configText = \`${replaceImports(document.getText())}\`;
-            return [configText, window.portalPlaceholders = getPortalPlaceholders()];
-        });
+    <script>
+        if (typeof initializePortal === "function") {
+            initializePortal(function (callback) {
+                var configText = ${JSON.stringify(replaceImports(document.getText()))};
+                if (typeof callback === "function") {
+                    callback([configText, portalPlaceholders = getPortalPlaceholders()]) ;
+                }
+            });
+        }
     </script>
     <script type="text/javascript" src="${url}/web/js/portal/jquery-ui-1.9.0.custom/js/jquery-1.8.2.min.js"></script>
     <script type="text/javascript"
@@ -109,7 +114,7 @@ const replaceImports: (text: string) => string = (text: string): string => {
     if (url === undefined) {
         return text;
     } else {
-        url += "/web/js/portal/resources/scripts/";
+        url += "/portal/resource/scripts/";
     }
     const regexp: RegExp = /(^\s*import\s+\S+\s*=\s*)(\S+)\s*$/mg;
     const urlPosition: number = 2;
@@ -118,7 +123,7 @@ const replaceImports: (text: string) => string = (text: string): string => {
     while (match) {
         const external: string = match[urlPosition];
         if (!/\//.test(external)) {
-            modifiedText = modifiedText.substr(match.index, match[1].length) +
+            modifiedText = modifiedText.substr(0, match.index + match[1].length) +
                 url + external + modifiedText.substr(match.index + match[0].length);
         }
         match = regexp.exec(modifiedText);
