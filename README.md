@@ -43,11 +43,11 @@ To display the list of available completions (such as snippets or settings like 
 
 * To add new snippets to your VSCode installation follow the official [documentation](https://code.visualstudio.com/docs/editor/userdefinedsnippets).
 
-* To add new snippets to the plugin use `snippets/snippets.json` file. Pre-configured snippets can be used as examples.
+* To add new snippets to the extension use `snippets/snippets.json` file. Pre-configured snippets can be used as examples.
 
 #### Settings
 
-* To add new settings to the completion list, add them to `possibleOptions` array in `server/src/resources.ts` and recompile the plugin using
+* To add new settings to the completion list, add them to `possibleOptions` array in `server/src/resources.ts` and recompile the extension.
 
   ```bash
   npm run compile
