@@ -29,10 +29,10 @@ npm install && npm run compile
 
 ## Introduction
 
-### Snipetts
+### Snippets
 
 To display the list of pre-configured snippets, press `Ctrl+Shift+P` on PC or `⇧⌘P` on Mac, then write `Insert Snippet`.
-To create your own snippet, follow [the official documentation](https://code.visualstudio.com/docs/editor/userdefinedsnippets).
+To create your own snippet, follow the official VSCode [documentation](https://code.visualstudio.com/docs/editor/userdefinedsnippets).
 
 ### Settings
 

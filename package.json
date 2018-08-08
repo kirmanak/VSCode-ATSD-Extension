@@ -1,7 +1,7 @@
 {
     "name": "axibase-charts-syntax",
     "displayName": "Axibase Charts",
-    "description": "Axibase Charts syntax validation and highligting extension",
+    "description": "Axibase Charts syntax validation and highlighting extension",
     "version": "0.0.1",
     "license": "Apache-2.0",
     "repository": {
