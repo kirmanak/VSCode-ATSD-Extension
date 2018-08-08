@@ -17,7 +17,7 @@ export class CompletionProvider {
             isIncomplete: true,
             items: [],
         };
-        const regexp: RegExp = /^(?:list|var)\s+(\S+)\s*=\s*\S+/mg;
+        const regexp: RegExp = /(?:list|var)[ \t]+(\S+)[ \t]*=/g;
         let match: RegExpExecArray = regexp.exec(this.text);
         let lastMatch: RegExpExecArray;
 
