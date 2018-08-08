@@ -15,6 +15,12 @@ export const activate: (context: ExtensionContext) => void = (context: Extension
     // The debug options for the server
     const debugOptions: ForkOptions = { execArgv: ["--nolazy", "--inspect=6009"] };
 
+    const tabSize: number = 2;
+    workspace.getConfiguration()
+        .update("editor.tabSize", tabSize);
+    workspace.getConfiguration()
+        .update("editor.insertSpaces", true);
+
     // If the extension is launched in debug mode then the debug server options are used
     // Otherwise the run options are used
     const serverOptions: ServerOptions = {
