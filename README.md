@@ -29,12 +29,25 @@ npm install && npm run compile
 
 ## Introduction
 
-### Snippets
+To display the list of available completions (such as snippets or settings like `entity`, `metric`...), press `Ctrl+Space` on PC or `⌃Space` on Mac.
 
-To display the list of pre-configured snippets, press `Ctrl+Shift+P` on PC or `⇧⌘P` on Mac, then write `Insert Snippet`.
-To create your own snippet, follow the official VSCode [documentation](https://code.visualstudio.com/docs/editor/userdefinedsnippets).
+### User Defined Completions
 
-### Settings
+#### Snippets
+
+* To display the list of pre-configured snippets, press `Ctrl+Shift+P` on PC or `⇧⌘P` on Mac, then write `Insert Snippet`.
+
+* To add new snippets to your VSCode installation follow the official [documentation](https://code.visualstudio.com/docs/editor/userdefinedsnippets).
+
+* To add new snippets to the plugin use `snippets/snippets.json` file. Pre-configured snippets can be used as examples.
+
+#### Settings
+
+* To add new settings to the completion list, add them to `possibleOptions` array in `server/src/resources.ts` and recompile the plugin using
+
+  ```bash
+  npm run compile
+  ```
 
 ## Configuration
 
