@@ -31,11 +31,15 @@ npm install && npm run compile
 
 To display the list of available completions (such as snippets or settings like `entity`, `metric`...), press `Ctrl+Space` on PC or `⌃Space` on Mac.
 
+![Completion list screenshot](./images/completion.png)
+
 ### User Defined Completions
 
 #### Snippets
 
 * To display the list of pre-configured snippets, press `Ctrl+Shift+P` on PC or `⇧⌘P` on Mac, then write `Insert Snippet`.
+
+![Snippets list screenshot](./images/snippets.png)
 
 * To add new snippets to your VSCode installation follow the official [documentation](https://code.visualstudio.com/docs/editor/userdefinedsnippets).
 
