@@ -8,21 +8,21 @@ VSCode extension supporting [Axibase Charts](https://github.com/axibase/charts/b
 
 * Clone `Axibase Charts Syntax` repository.
 
-```bash
-git clone https://github.com/kirmanak/axibase-charts-syntax.git ~/.vscode/extensions/axibase-charts
-```
+  ```bash
+  git clone https://github.com/kirmanak/axibase-charts-syntax.git ~/.vscode/extensions/axibase-charts
+  ```
 
 * `cd` into the newly created directory.
 
-```bash
-cd ~/.vscode/extensions/axibase-charts
-```
+  ```bash
+  cd ~/.vscode/extensions/axibase-charts
+  ```
 
 * Install node modules and compile the extension.
 
-```bash
-npm install && npm run compile
-```
+  ```bash
+  npm install && npm run compile
+  ```
 
 * Plugin is ready to handle `.config` extension files.
   * See examples in ``~/.vscode/extensions/axibase-charts/examples/``.
@@ -31,7 +31,7 @@ npm install && npm run compile
 
 To display the list of available completions (such as snippets or settings like `entity`, `metric`...), press `Ctrl+Space` on PC or `⌃Space` on Mac.
 
-![Completion list screenshot](./images/completion.png)
+  ![Completion list screenshot](./images/completion.png)
 
 ### User Defined Completions
 
@@ -39,7 +39,7 @@ To display the list of available completions (such as snippets or settings like 
 
 * To display the list of pre-configured snippets, press `Ctrl+Shift+P` on PC or `⇧⌘P` on Mac, then write `Insert Snippet`.
 
-![Snippets list screenshot](./images/snippets.png)
+  ![Snippets list screenshot](./images/snippets.png)
 
 * To add new snippets to your VSCode installation follow the official [documentation](https://code.visualstudio.com/docs/editor/userdefinedsnippets).
 
