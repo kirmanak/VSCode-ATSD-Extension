@@ -27,10 +27,7 @@ connection.onInitialize((params: InitializeParams) => {
 
     return {
         capabilities: {
-            completionProvider: {
-                resolveProvider: true,
-                triggerCharacters: ["for"],
-            },
+            completionProvider: { resolveProvider: true },
             documentFormattingProvider: true,
             textDocumentSync: documents.syncKind,
         },
