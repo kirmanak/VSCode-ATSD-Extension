@@ -64,6 +64,8 @@ To display the list of available completions (such as snippets or settings like 
 
 ### Syntax highlighting
 
+Theme used to create the screenshot is `Light+(default light)` (Choose theme by **File > Color theme**).
+
 ![Screenshot of highlighted syntax](./images/syntax.png)
 
 ### Code prettifier

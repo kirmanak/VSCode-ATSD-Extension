@@ -44,7 +44,7 @@
         "grammars": [
             {
                 "language": "axibase-charts",
-                "scopeName": "source.ac",
+                "scopeName": "source.axibase.charts",
                 "path": "./syntaxes/axibase-charts.tmLanguage.json"
             }
         ],

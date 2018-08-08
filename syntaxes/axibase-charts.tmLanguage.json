@@ -1,6 +1,6 @@
 {
 	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
-	"name": "ATSD Visualization",
+	"name": "Axibase Charts",
 	"patterns": [
 		{
 			"include": "#keywords"
@@ -10,52 +10,48 @@
 		"keywords": {
 			"patterns": [
 				{
-					"name": "entity.name.class",
+					"name": "storage.type.section.axibase.charts",
 					"match": "\\[[a-z]+\\]"
 				},
 				{
-					"name": "keyword.control",
+					"name": "keyword.control.axibase.charts",
 					"match": "\\b(import|csv|endcsv|endvar|script|endscript|for|endfor|in|list|endlist|var|if|elseif|else|endif)\\b"
 				},
 				{
-					"name": "entity.name.function",
+					"name": "entity.name.function.axibase.charts",
 					"match": "\\w[\\w\\d]+(?=\\(.*?\\))"
 				},
 				{
-					"name": "support.variable",
+					"name": "variable.other.axibase.charts",
 					"match": "@\\{.+?\\}"
 				},
 				{
-					"name": "string.quoted",
+					"name": "string.axibase.charts",
 					"match": "([`'\"]).+?\\1"
 				},
 				{
-					"name": "keyword.operator",
-					"match": "->|="
-				},
-				{
-					"name": "comment.block",
+					"name": "comment.block.axibase.charts",
 					"begin": "/\\*",
 					"end": "\\*/"
 				},
 				{
-					"name": "comment.line.number-sign",
+					"name": "comment.line.number-sign.axibase.charts",
 					"match": "^[ \t]*#.*"
-				}, 
+				},
 				{
-					"name": "variable.name",
+					"name": "entity.name.tag.axibase.charts",
 					"match": "\\b\\w[-\\w\\d_]+?(?=\\s*=)"
 				},
 				{
-					"name":"constant.regexp",
-					"match": "\\b([0-9]+|true|false)\\b"
+					"name": "constant.language.axibase.charts",
+					"match": "\\b(true|false)\\b"
 				},
 				{
-					"name": "constant.numeric",
+					"name": "constant.numeric.axibase.charts",
 					"match": "\\b[0-9]+\\b"
 				}
 			]
 		}
 	},
-	"scopeName": "source.ac"
+	"scopeName": "source.axibase.charts"
 }
