@@ -20,5 +20,9 @@
     "surroundingPairs": [
         ["[", "]"],
         ["(", ")"]
-    ]
+    ],
+    "indentationRules": {
+        "increaseIndentPattern": "\\[\\w+\\]|\\b(for|if|elseif|else)\\b",
+        "decreaseIndentPattern": "\\bend(if|for)\\b"
+    }
 }
