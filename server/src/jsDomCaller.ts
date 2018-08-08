@@ -82,7 +82,7 @@ export class JsDomCaller {
     }
 
     private getLine(i: number): string {
-        return this.lines[i].toLowerCase();
+        return this.lines[i];
     }
 
     private parseJsStatements(): void {
