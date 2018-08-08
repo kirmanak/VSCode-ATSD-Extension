@@ -1,7 +1,7 @@
 {
     "name": "axibase-charts-syntax",
     "displayName": "Axibase Charts",
-    "description": "Axibase Charts syntax validation and highligting extension",
+    "description": "Axibase Charts syntax validation and highlighting extension",
     "version": "0.0.1",
     "license": "Apache-2.0",
     "repository": {
@@ -71,7 +71,7 @@
     },
     "devDependencies": {
         "@types/mocha": "^5.2.5",
-        "@types/node": "^10.5.5",
+        "@types/node": "^10.5.7",
         "tslint": "^5.11.0",
         "typescript": "3.0.1"
     },

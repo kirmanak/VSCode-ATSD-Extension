@@ -8,5 +8,14 @@
 	"typescript.tsdk": "./node_modules/typescript/lib",
 	"typescript.tsc.autoDetect": "off",
 	"npm.exclude": ["**/client", "**/server"],
-	"npm.enableScriptExplorer": true
+	"npm.enableScriptExplorer": true,
+	"cSpell.words": [
+		"Axibase",
+		"Codacy",
+		"endcsv",
+		"endfor",
+		"endlist",
+		"endscript",
+		"endvar"
+	]
 }
