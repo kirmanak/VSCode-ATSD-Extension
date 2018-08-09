@@ -1,5 +1,5 @@
 import {
-    ClientCapabilities, CompletionItem, CompletionList, CompletionParams, createConnection, Diagnostic,
+    ClientCapabilities, CompletionItem, CompletionParams, createConnection, Diagnostic,
     DidChangeConfigurationNotification, DidChangeConfigurationParams,
     DocumentFormattingParams, IConnection, InitializeParams, ProposedFeatures,
     TextDocument, TextDocumentChangeEvent, TextDocuments, TextEdit,
@@ -118,11 +118,11 @@ connection.onDocumentFormatting((params: DocumentFormattingParams): TextEdit[] =
     return formatter.lineByLine();
 });
 
-connection.onCompletion((params: CompletionParams): CompletionList => {
+connection.onCompletion((params: CompletionParams): CompletionItem[] => {
     const textDocument: TextDocument = documents.get(params.textDocument.uri);
     const completionProvider: CompletionProvider = new CompletionProvider(textDocument, params.position);
 
-    return completionProvider.getCompletionList();
+    return completionProvider.getCompletionItems();
 });
 
 connection.onCompletionResolve((item: CompletionItem): CompletionItem => item);

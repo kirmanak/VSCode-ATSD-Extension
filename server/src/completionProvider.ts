@@ -1,33 +1,25 @@
 import {
-    CompletionItem, CompletionItemKind, CompletionList, InsertTextFormat, Position, TextDocument, TextEdit,
+    CompletionItem, CompletionItemKind, InsertTextFormat, Position, TextDocument,
 } from "vscode-languageserver";
 import { possibleOptions } from "./resources";
-import { deleteComments } from "./util";
+import { deleteComments, deleteScripts } from "./util";
 
 export class CompletionProvider {
-    private readonly position: Position;
     private readonly text: string;
 
     public constructor(textDocument: TextDocument, position: Position) {
         const text: string = textDocument.getText()
             .substr(0, textDocument.offsetAt(position));
-        this.text = deleteComments(text);
-        this.position = position;
+        this.text = deleteScripts(deleteComments(text));
     }
 
-    public getCompletionList(): CompletionList {
-        const result: CompletionList = {
-            isIncomplete: false,
-            items: this.completeSettings(),
-        };
-
-        result.items.push(this.completeFor());
-
-        return result;
+    public getCompletionItems(): CompletionItem[] {
+        return this.completeSettings()
+            .concat([this.completeFor()]);
     }
 
     private completeFor(): CompletionItem {
-        const regexp: RegExp = /(?:list|var)[ \t]+(\S+)[ \t]*=/g;
+        const regexp: RegExp = /^[ \t]*(?:list|var)[ \t]+(\S+)[ \t]*=/mg;
         let match: RegExpExecArray = regexp.exec(this.text);
         let lastMatch: RegExpExecArray;
 
@@ -47,19 +39,19 @@ export class CompletionProvider {
         }
 
         return {
+            detail: "For Loop",
             insertText: `\nfor \${1:${item}} in \${2:${collection}}\n  \${0}\nendfor`,
             insertTextFormat: InsertTextFormat.Snippet,
             kind: CompletionItemKind.Keyword,
-            label: "For loop",
+            label: "for",
         };
     }
 
-    private completeSettings(): CompletionItem[] {
-        return possibleOptions.map((setting: string): CompletionItem => ({
+    private readonly completeSettings: () => CompletionItem[] = (): CompletionItem[] =>
+        possibleOptions.map((setting: string): CompletionItem => ({
+            insertText: `${setting} = \${0}`,
             insertTextFormat: InsertTextFormat.Snippet,
             kind: CompletionItemKind.Constant,
             label: setting,
-            textEdit: TextEdit.replace({ end: this.position, start: this.position }, `${setting} = \${0}`),
-        }));
-    }
+        }))
 }

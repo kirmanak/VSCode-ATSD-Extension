@@ -97,3 +97,9 @@ export const deleteComments: (text: string) => string = (text: string): string =
 export const errorMessage: (found: string, suggestion: string) => string =
     (found: string, suggestion: string): string =>
         (suggestion === undefined) ? `${found} is unknown.` : `${found} is unknown. Suggestion: ${suggestion}`;
+
+export const deleteScripts: (text: string) => string = (text: string): string => {
+    const multiLine: RegExp = /\bscript\b([\s\S]+?)\bendscript\b/g;
+
+    return text.replace(multiLine, "script\nendscript");
+};
