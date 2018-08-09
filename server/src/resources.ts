@@ -1,6 +1,6 @@
 export const requiredSectionSettingsMap: Map<string, string[][]> = new Map<string, string[][]>();
 requiredSectionSettingsMap.set("series", [
-    ["entity", "table", "value", "attribute"],
+    ["entity", "value"],
     ["metric", "table", "value", "attribute"],
 ]);
 requiredSectionSettingsMap.set("widget", [["type"]]);
