@@ -14,14 +14,6 @@
 					"match": "\\[[a-z]+\\]"
 				},
 				{
-					"name": "keyword.control.axibase.charts",
-					"match": "\\b(import|csv|endcsv|endvar|script|endscript|for|endfor|in|list|endlist|var|if|elseif|else|endif)\\b"
-				},
-				{
-					"name": "variable.other.axibase.charts",
-					"match": "@\\{.+?\\}"
-				},
-				{
 					"name": "string.axibase.charts",
 					"match": "([`'\"]).+?\\1"
 				},
@@ -35,10 +27,6 @@
 					"match": "^[ \t]*#.*"
 				},
 				{
-					"name": "entity.name.tag.axibase.charts",
-					"match": "\\b\\w[-\\w\\d_]+?(?=\\s*=)"
-				},
-				{
 					"name": "constant.language.axibase.charts",
 					"match": "\\b(true|false)\\b"
 				},
@@ -47,16 +35,52 @@
 					"match": "\\b[0-9]+\\b"
 				},
 				{
-					"begin": "\\G",
-					"end": "\\bendscript\\b",
-					"name": "source.js",
+					"begin": "@{",
+					"end": "}",
+					"name": "variable.other.axibase.charts",
 					"patterns": [
 						{
-							"begin": "\\bscript\\b",
-							"end": "\\bendscript\\b",
+							"include": "source.js"
 						}
 					]
-					"include": "source.js",
+				},
+				{
+					"begin": "(\\b(value|script|replace-?value|on-?series-?click)(?=[ \\t]*=))|options[ \\t]*=[ \\t]*javascript:",
+					"end": "\\n",
+					"name": "entity.name.tag.axibase.charts",
+					"patterns": [
+						{
+							"include": "source.js"
+						}
+					]
+				},
+				{
+					"name": "entity.name.tag.axibase.charts",
+					"match": "\\b\\w[-\\w\\d_]+?(?=\\s*=)"
+				},
+				{
+					"begin": "\\bvar[ \\t]*\\S+[ \\t]*(?=[ \\t]*=)",
+					"end": "(?=\\n)",
+					"name": "keyword.control.axibase.charts",
+					"patterns": [
+						{
+							"include": "source.js"
+						}
+					]
+				},
+				{
+					"begin": "\\bscript\\b",
+					"end": "\\bendscript\\b",
+					"name": "keyword.control.axibase.charts",
+					"patterns": [
+						{
+							"include": "source.js"
+						}
+					]
+				},
+				{
+					"name": "keyword.control.axibase.charts",
+					"match": "\\b(import|csv|endcsv|endvar|for|endfor|in|list|endlist|if|elseif|else|endif)\\b"
 				}
 			]
 		}

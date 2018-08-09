@@ -180,9 +180,9 @@ export class JsDomCaller {
             }
             if (!(j === this.lines.length || /\bscript\b/.test(this.getLine(j)))) {
                 line = this.getLine(++this.currentLineNumber);
-                while (line && !/\bendscript\b/.test(line)) {
-                    line = this.getLine(++this.currentLineNumber);
+                while (line !== undefined && !/\bendscript\b/.test(line)) {
                     content += `${line}\n`;
+                    line = this.getLine(++this.currentLineNumber);
                 }
                 range.end = {
                     character: this.getLine(this.currentLineNumber - 1).length, line: this.currentLineNumber - 1,
@@ -195,9 +195,9 @@ export class JsDomCaller {
             };
             content = "";
             line = this.getLine(++this.currentLineNumber);
-            while (line && !/\bendscript\b/.test(line)) {
-                line = this.getLine(++this.currentLineNumber);
+            while (line !== undefined && !/\bendscript\b/.test(line)) {
                 content += `${line}\n`;
+                line = this.getLine(++this.currentLineNumber);
             }
             range.end = {
                 character: this.getLine(this.currentLineNumber - 1).length, line: this.currentLineNumber - 1,
