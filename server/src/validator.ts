@@ -21,9 +21,11 @@ export class Validator {
     private readonly parentSettings: Map<string, string[]> = new Map<string, string[]>();
     private previousSection: FoundKeyword;
     private previousSettings: string[] = [];
+    private requiredSettings: string[][] = [];
     private readonly result: Diagnostic[] = [];
     private settings: string[] = [];
     private readonly textDocument: TextDocument;
+    private urlParameters: string[];
     private readonly variables: Map<string, string[]> = new Map<string, string[]>();
 
     public constructor(textDocument: TextDocument) {
@@ -156,10 +158,11 @@ export class Validator {
 
     private checkPreviousSection(): void {
         if (!this.currentSection) { return; }
-        const requiredSettings: string[][] = resources.requiredSectionSettingsMap.get(this.currentSection.keyword);
-        if (requiredSettings) {
+        this.requiredSettings =
+            this.requiredSettings.concat(resources.requiredSectionSettingsMap.get(this.currentSection.keyword));
+        if (this.requiredSettings.length !== 0) {
             const notFound: string[] = [];
-            requiredSettings.forEach((options: string[]) => {
+            this.requiredSettings.forEach((options: string[]) => {
                 if (isAnyInArray(options, this.settings)) {
                     return;
                 }
@@ -194,6 +197,43 @@ export class Validator {
                     DiagnosticSeverity.Error, `${option} is required`,
                 ));
             });
+        }
+        this.requiredSettings = [];
+    }
+
+    private checkRepetition(): void {
+        const setting: string = this.match[Validator.CONTENT_POSITION].replace(/[^a-z]/g, "");
+        const location: Location = {
+            range: {
+                end: {
+                    character: this.match[1].length + this.match[Validator.CONTENT_POSITION].length,
+                    line: this.currentLineNumber,
+                },
+                start: { character: this.match[1].length, line: this.currentLineNumber },
+            },
+            uri: this.textDocument.uri,
+        };
+        const message: string = `${this.match[Validator.CONTENT_POSITION]} is already defined`;
+
+        if (this.areWeIn("if")) {
+            let array: string[] = this.ifSettings.get(this.lastCondition);
+            array = this.addToArray(array, DiagnosticSeverity.Warning);
+            this.ifSettings.set(this.lastCondition, array);
+            if (isInArray(this.settings, setting)) {
+                // The setting was defined before if
+                this.result.push(createDiagnostic(location, DiagnosticSeverity.Warning, message));
+            }
+        } else { this.addToArray(this.settings, DiagnosticSeverity.Warning); }
+
+        if (this.currentSection && isInMap(this.currentSection.keyword, resources.parentSections)) {
+            if (isInMap(setting, resources.requiredSectionSettingsMap)) {
+                this.addToMap(this.parentSettings, this.currentSection.keyword, DiagnosticSeverity.Hint);
+            }
+        } else {
+            if (isInMap(setting, this.parentSettings)) {
+                // The setting was defined before in a parent section
+                this.result.push(createDiagnostic(location, DiagnosticSeverity.Hint, message));
+            }
         }
     }
 
@@ -399,38 +439,26 @@ export class Validator {
                 });
             }
 
-            // Repetition
-            this.match = /(^\s*)([-\w]+)\s*=/.exec(line);
-            const location: Location = {
-                range: {
-                    end: {
-                        character: this.match[1].length + this.match[Validator.CONTENT_POSITION].length,
-                        line: this.currentLineNumber,
-                    },
-                    start: { character: this.match[1].length, line: this.currentLineNumber },
-                },
-                uri: this.textDocument.uri,
-            };
-            const message: string = `${this.match[Validator.CONTENT_POSITION]} is already defined`;
+            this.match = /(^\s*)([-\w]+)\s*=/.exec(this.getCurrentLine());
+            const setting: string = this.match[Validator.CONTENT_POSITION].replace(/[^a-z]/g, "");
+            if (setting === "table") {
+                this.requiredSettings.push(["attribute"]);
+            } else if (setting === "attribute") {
+                this.requiredSettings.push(["table"]);
+            }
 
-            if (this.areWeIn("if")) {
-                let array: string[] = this.ifSettings.get(this.lastCondition);
-                array = this.addToArray(array, DiagnosticSeverity.Warning);
-                this.ifSettings.set(this.lastCondition, array);
-                if (isInArray(this.settings, this.match[Validator.CONTENT_POSITION])) {
-                    // The setting was defined before if
-                    this.result.push(createDiagnostic(location, DiagnosticSeverity.Warning, message));
-                }
-            } else { this.addToArray(this.settings, DiagnosticSeverity.Warning); }
+            if (setting !== "onseriesclick") {
+                this.checkRepetition();
+            }
 
-            if (this.currentSection && isInMap(this.currentSection.keyword, resources.parentSections)) {
-                if (isInMap(this.match[Validator.CONTENT_POSITION], resources.requiredSectionSettingsMap)) {
-                    this.addToMap(this.parentSettings, this.currentSection.keyword, DiagnosticSeverity.Hint);
-                }
-            } else {
-                if (isInMap(this.match[Validator.CONTENT_POSITION], this.parentSettings)) {
-                    // The setting was defined before in a parent section
-                    this.result.push(createDiagnostic(location, DiagnosticSeverity.Hint, message));
+            if (setting === "urlparameters") {
+                this.urlParameters = [];
+                const regexp: RegExp = /{(.+?)}/g;
+                this.match = regexp.exec(line);
+                while (this.match) {
+                    const cleared: string = this.match[1].replace(/[^a-z]/g, "");
+                    this.urlParameters.push(cleared);
+                    this.match = regexp.exec(line);
                 }
             }
         } else if (/(^[ \t]*)([-\w]+)[ \t]*=/.test(line)) {
@@ -451,7 +479,7 @@ export class Validator {
                         },
                         uri: this.textDocument.uri,
                     },
-                    DiagnosticSeverity.Information, `${setting} is interpreted as a tag`,
+                    DiagnosticSeverity.Information, `${this.match[Validator.CONTENT_POSITION]} is interpreted as a tag`,
                 ));
             }
         }
@@ -478,6 +506,9 @@ export class Validator {
                 dictionary = resources.possibleSections;
             } else if (cleared.startsWith("column")) {
                 return;
+            }
+            if (this.currentSection && this.currentSection.keyword === "placeholders") {
+                dictionary = dictionary.concat(this.urlParameters);
             }
             if (!isInArray(dictionary, cleared)) {
                 const message: string = suggestionMessage(word, dictionary);

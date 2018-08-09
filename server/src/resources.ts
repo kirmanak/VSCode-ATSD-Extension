@@ -1,5 +1,8 @@
 export const requiredSectionSettingsMap: Map<string, string[][]> = new Map<string, string[][]>();
-requiredSectionSettingsMap.set("series", [["entity"], ["metric", "table", "attribute"]]);
+requiredSectionSettingsMap.set("series", [
+    ["entity", "table", "value", "attribute"],
+    ["metric", "table", "value", "attribute"],
+]);
 requiredSectionSettingsMap.set("widget", [["type"]]);
 
 export const parentSections: Map<string, string[]> = new Map<string, string[]>();
@@ -23,16 +26,16 @@ export const getParents: (section: string) => string[] = (section: string): stri
 
 export const possibleOptions: string[] = [
     "actionenable", "add", "addmeta", "aheadtimespan", "alert", "alertexpression", "alertrowstyle", "alertstyle",
-    "alias", "align", "arcs", "arrowlength", "arrows", "attribute", "audio", "audioalert", "audioonload", "autoheight",
-    "autopadding", "autoperiod", "autoscale", "axis", "axislabel", "axistitle", "axistitleright", "bar", "barcount",
-    "batchsize", "batchupdate", "borderwidth", "bottomaxis", "bundle", "bundled", "buttons", "cache", "capitalize",
-    "caption", "captionstyle", "case", "centralizecolumns", "centralizeticks", "changefield", "chartmode", "circle",
-    "class", "collapsible", "color", "colorrange", "colors", "columnlabelformat", "columns", "connect", "connectvalues",
-    "context", "contextheight", "contextpath", "counter", "counterposition", "current", "currentperiodstyle", "data",
-    "datatype", "dayformat", "default", "defaultcolor", "defaultsize", "depth", "dialogmaximize", "disablealert",
-    "disconnect", "disconnectcount", "disconnectednodedisplay", "disconnectinterval", "disconnectvalue", "display",
-    "displaydate", "displayinlegend", "displaylabels", "displayother", "displaypanels", "displaytags",
-    "displayticks", "displaytip", "displaytotal", "displayvalues", "downsample", "downsampledifference",
+    "alias", "align", "arcs", "arrowlength", "arrows", "attribute", "audio", "audioalert", "audioonload", "author",
+    "autoheight", "autopadding", "autoperiod", "autoscale", "axis", "axislabel", "axistitle", "axistitleright", "bar",
+    "barcount", "batchsize", "batchupdate", "borderwidth", "bottomaxis", "bundle", "bundled", "buttons", "cache",
+    "capitalize", "caption", "captionstyle", "case", "centralizecolumns", "centralizeticks", "changefield", "chartmode",
+    "circle", "class", "collapsible", "color", "colorrange", "colors", "columnlabelformat", "columns", "connect",
+    "connectvalues", "context", "contextheight", "contextpath", "counter", "counterposition", "current",
+    "currentperiodstyle", "data", "datatype", "dayformat", "default", "defaultcolor", "defaultsize", "depth",
+    "dialogmaximize", "disablealert", "disconnect", "disconnectcount", "disconnectednodedisplay", "disconnectinterval",
+    "disconnectvalue", "display", "displaydate", "displayinlegend", "displaylabels", "displayother", "displaypanels",
+    "displaytags", "displayticks", "displaytip", "displaytotal", "displayvalues", "downsample", "downsampledifference",
     "downsamplefactor", "downsamplegap", "dummy", "duration", "effects", "empty", "emptyrefreshinterval",
     "emptythreshold", "enabled", "end", "endtime", "endworkingminutes", "entities", "entitiesbatchupdate", "entity",
     "entityexpression", "entitygroup", "entitylabel", "error", "errorrefreshinterval", "exact", "exactmatch", "expand",
@@ -75,7 +78,6 @@ export const possibleOptions: string[] = [
 ];
 
 export const possibleSections: string[] = [
-    "column", "configuration", "dropdown", "group", "keys", "link", "node",
-    "option", "other", "properties", "property", "series", "tag", "tags",
-    "threshold", "widget",
+    "column", "configuration", "dropdown", "group", "keys", "link", "node", "option", "other", "placeholders",
+    "properties", "property", "series", "tag", "tags", "threshold", "widget",
 ];

@@ -40,7 +40,7 @@ suite("Warn about setting interpreted as a tag", () => {
                     },
                     uri: Test.URI,
                 },
-                DiagnosticSeverity.Information, "starttime is interpreted as a tag",
+                DiagnosticSeverity.Information, "start-time is interpreted as a tag",
             )],
         ),
     ];
