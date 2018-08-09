@@ -4,6 +4,24 @@
     "description": "Axibase Charts syntax validation and highlighting extension",
     "version": "0.0.1",
     "license": "Apache-2.0",
+    "icon": "./images/icon.png",
+    "badges": [
+        {
+            "description": "Codacy",
+            "href": "https://app.codacy.com/app/kirmanak/Axibase-Charts-Syntax?utm_source=github.com&utm_medium=referral&utm_content=kirmanak/Axibase-Charts-Syntax&utm_campaign=badger",
+            "url": "https://api.codacy.com/project/badge/Grade/733f4b159db44cff920edc92721d0e38"
+        },
+        {
+            "description": "Travis CI",
+            "href": "https://travis-ci.org/kirmanak/Axibase-Charts-Syntax",
+            "url": "https://travis-ci.org/kirmanak/Axibase-Charts-Syntax.svg?branch=master"
+        },
+        {
+            "description": "CodeFactor",
+            "href": "https://www.codefactor.io/repository/github/kirmanak/axibase-charts-syntax",
+            "url": "https://www.codefactor.io/repository/github/kirmanak/axibase-charts-syntax/badge"
+        }
+    ],
     "repository": {
         "type": "git",
         "url": "https://github.com/kirmanak/Axibase-Charts-Syntax"
