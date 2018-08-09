@@ -18,10 +18,6 @@
 					"match": "\\b(import|csv|endcsv|endvar|script|endscript|for|endfor|in|list|endlist|var|if|elseif|else|endif)\\b"
 				},
 				{
-					"name": "entity.name.function.axibase.charts",
-					"match": "\\w[\\w\\d]+(?=\\(.*?\\))"
-				},
-				{
 					"name": "variable.other.axibase.charts",
 					"match": "@\\{.+?\\}"
 				},
@@ -49,6 +45,18 @@
 				{
 					"name": "constant.numeric.axibase.charts",
 					"match": "\\b[0-9]+\\b"
+				},
+				{
+					"begin": "\\G",
+					"end": "\\bendscript\\b",
+					"name": "source.js",
+					"patterns": [
+						{
+							"begin": "\\bscript\\b",
+							"end": "\\bendscript\\b",
+						}
+					]
+					"include": "source.js",
 				}
 			]
 		}
