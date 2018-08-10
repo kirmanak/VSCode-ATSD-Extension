@@ -218,16 +218,12 @@ export class Validator {
 
     private checkRepetition(): void {
         const setting: string = this.match[Validator.CONTENT_POSITION].replace(/[^a-z]/g, "");
-        const location: Location = {
-            range: {
-                end: {
-                    character: this.match[1].length + this.match[Validator.CONTENT_POSITION].length,
-                    line: this.currentLineNumber,
-                },
-                start: { character: this.match[1].length, line: this.currentLineNumber },
-            },
-            uri: this.textDocument.uri,
-        };
+        const location: Location = Location.create(
+            this.textDocument.uri, Range.create(
+                this.currentLineNumber, this.match[1].length,
+                this.currentLineNumber, this.match[1].length + this.match[Validator.CONTENT_POSITION].length,
+            ),
+        );
         const message: string = `${this.match[Validator.CONTENT_POSITION]} is already defined`;
 
         if (this.areWeIn("if")) {
@@ -378,7 +374,7 @@ export class Validator {
     private handleList(): void {
         const line: string = this.getCurrentLine();
         this.match = /(^\s*list\s+)(\w+)\s+=/.exec(line);
-        this.addToMap(this.variables, "listNames", DiagnosticSeverity.Error);
+        this.addToMap(this.variables, "listNames", DiagnosticSeverity.Warning);
         if (/(=|,)[ \t]*$/m.test(line)) {
             this.keywordsStack.push(this.foundKeyword);
         } else {
