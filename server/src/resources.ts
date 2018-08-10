@@ -1,9 +1,13 @@
 export const requiredSectionSettingsMap: Map<string, string[][]> = new Map<string, string[][]>();
 requiredSectionSettingsMap.set("series", [
-    ["entity", "value"],
+    ["entity", "value", "entities"],
     ["metric", "table", "value", "attribute"],
 ]);
 requiredSectionSettingsMap.set("widget", [["type"]]);
+
+export const repeatAble: string[] = [
+    "onseriesclick", "script", "thresholds", "colors",
+];
 
 export const parentSections: Map<string, string[]> = new Map<string, string[]>();
 parentSections.set("widget", ["group", "configuration"]);

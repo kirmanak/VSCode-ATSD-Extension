@@ -447,7 +447,7 @@ export class Validator {
                 this.requiredSettings.push(["table"]);
             }
 
-            if (setting !== "onseriesclick") {
+            if (!isInArray(resources.repeatAble, setting)) {
                 this.checkRepetition();
             }
 
