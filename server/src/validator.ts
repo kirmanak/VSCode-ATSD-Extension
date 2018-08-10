@@ -1,4 +1,4 @@
-import { Diagnostic, DiagnosticSeverity, Location, TextDocument } from "vscode-languageserver";
+import { Diagnostic, DiagnosticSeverity, Location, Range, TextDocument } from "vscode-languageserver";
 import { FoundKeyword } from "./foundKeyword";
 import * as resources from "./resources";
 import {
@@ -156,6 +156,21 @@ export class Validator {
         }
     }
 
+    private checkFreemarker(): void {
+        const line: string = this.getCurrentLine();
+        this.match = /<#(?:list|assign)/.exec(line);
+        if (this.match) {
+            this.result.push(Diagnostic.create(
+                Range.create(
+                    this.currentLineNumber, this.match.index,
+                    this.currentLineNumber, this.match.index + this.match[0].length,
+                ),
+                "Freemarker expressions are deprecated. Use a native collection: list, csv table, var object.",
+                DiagnosticSeverity.Information,
+            ));
+        }
+    }
+
     private checkPreviousSection(): void {
         if (!this.currentSection) { return; }
         this.requiredSettings =
@@ -250,6 +265,7 @@ export class Validator {
     }
 
     private eachLine(): void {
+        this.checkFreemarker();
         const line: string = this.getCurrentLine();
         this.match = /(^[\t ]*\[)(\w+)\][\t ]*/.exec(line);
         if (this.match || (/^\s*$/.test(line) && this.currentSection && this.currentSection.keyword === "tags")) {
