@@ -33,7 +33,7 @@ export const activate: (context: ExtensionContext) => void = (context: Extension
     // Options to control the language client
     const clientOptions: LanguageClientOptions = {
         // Register the server for plain text documents
-        documentSelector: [{ language: "axibase-charts", scheme: "file" }],
+        documentSelector: [{ language: "axibasecharts", scheme: "file" }],
         synchronize: {
             // Notify the server about file changes to ".clientrc files contain in the workspace
             fileEvents: workspace.createFileSystemWatcher("**/.clientrc"),
@@ -60,7 +60,7 @@ export const deactivate: () => Thenable<void> = (): Thenable<void> => {
 };
 
 class PreviewShower {
-    public readonly id: string = "axibase-charts.showPortal";
+    public readonly id: string = "axibasecharts.showPortal";
     public showPreview: (editor: TextEditor) => void = (editor: TextEditor): void => {
         const document: TextDocument = editor.document;
         const url: string = findUrl(document.getText());

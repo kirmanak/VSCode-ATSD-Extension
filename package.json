@@ -1,5 +1,5 @@
 {
-    "name": "axibase-charts-syntax",
+    "name": "axibasecharts-syntax",
     "displayName": "Axibase Charts",
     "description": "Axibase Charts syntax validation and highlighting extension",
     "version": "0.0.1",
@@ -18,8 +18,8 @@
         },
         {
             "description": "CodeFactor",
-            "href": "https://www.codefactor.io/repository/github/kirmanak/axibase-charts-syntax",
-            "url": "https://www.codefactor.io/repository/github/kirmanak/axibase-charts-syntax/badge"
+            "href": "https://www.codefactor.io/repository/github/kirmanak/axibasecharts-syntax",
+            "url": "https://www.codefactor.io/repository/github/kirmanak/axibasecharts-syntax/badge"
         }
     ],
     "repository": {
@@ -48,10 +48,10 @@
         },
         "languages": [
             {
-                "id": "axibase-charts",
+                "id": "axibasecharts",
                 "aliases": [
                     "Axibase Charts",
-                    "axibase-charts"
+                    "axibasecharts"
                 ],
                 "extensions": [
                     ".config"
@@ -61,25 +61,35 @@
         ],
         "grammars": [
             {
-                "language": "axibase-charts",
+                "language": "axibasecharts",
                 "scopeName": "source.axibase.charts",
-                "path": "./syntaxes/axibase-charts.tmLanguage.json"
+                "path": "./syntaxes/axibasecharts.tmLanguage.json"
             }
         ],
         "snippets": [
             {
-                "language": "axibase-charts",
+                "language": "axibasecharts",
                 "path": "./snippets/snippets.json"
             }
         ],
         "commands": {
-            "command": "axibase-charts.showPortal",
-            "title": "Show the configured portal preview"
+            "command": "axibasecharts.showPortal",
+            "title": "Show preview",
+            "category": "Axibase Charts"
+        },
+        "menus": {
+            "editor/context": [
+                {
+                    "command": "axibasecharts.showPortal",
+                    "when": "editorLangId == axibasecharts",
+                    "group": "modification"
+                }
+            ]
         }
     },
     "main": "./client/out/extension",
     "activationEvents": [
-        "onLanguage:axibase-charts"
+        "onLanguage:axibasecharts"
     ],
     "scripts": {
         "vscode:prepublish": "cd client && npm run update-vscode && cd .. && npm run compile",
