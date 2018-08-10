@@ -336,7 +336,7 @@ export class Validator {
         this.match = /(^\s*for\s+)(\w+)\s+in/m.exec(line);
         if (this.match) {
             const matching: RegExpExecArray = this.match;
-            this.match = /^(\s*for\s+\w+\s+in\s+)(\w+)/m.exec(line);
+            this.match = /^(\s*for\s+\w+\s+in\s+)(?:Object\.keys\((\w+)\)|\w+)/im.exec(line);
             if (this.match) {
                 const variable: string = this.match[Validator.CONTENT_POSITION];
                 if (!isInMap(variable, this.variables)) {
