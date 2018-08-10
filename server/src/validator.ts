@@ -217,13 +217,13 @@ export class Validator {
 
         if (this.areWeIn("if")) {
             let array: string[] = this.ifSettings.get(this.lastCondition);
-            array = this.addToArray(array, DiagnosticSeverity.Warning);
+            array = this.addToArray(array, DiagnosticSeverity.Error);
             this.ifSettings.set(this.lastCondition, array);
             if (isInArray(this.settings, setting)) {
                 // The setting was defined before if
-                this.result.push(createDiagnostic(location, DiagnosticSeverity.Warning, message));
+                this.result.push(createDiagnostic(location, DiagnosticSeverity.Error, message));
             }
-        } else { this.addToArray(this.settings, DiagnosticSeverity.Warning); }
+        } else { this.addToArray(this.settings, DiagnosticSeverity.Error); }
 
         if (this.currentSection && isInMap(this.currentSection.keyword, resources.parentSections)) {
             if (isInMap(setting, resources.requiredSectionSettingsMap)) {
