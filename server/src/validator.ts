@@ -479,7 +479,9 @@ export class Validator {
                         },
                         uri: this.textDocument.uri,
                     },
-                    DiagnosticSeverity.Information, `${this.match[Validator.CONTENT_POSITION]} is interpreted as a tag`,
+                    DiagnosticSeverity.Information, `${this.match[Validator.CONTENT_POSITION]} is interpreted as a` +
+                    " series tag and is sent to the server. Remove the setting from the [tags] section or enclose it" +
+                    " double-quotes to suppress the warning.",
                 ));
             }
         }
@@ -496,13 +498,14 @@ export class Validator {
         const line: string = this.getCurrentLine();
 
         /* statements like `[section] variable = value` aren't supported */
-        if (!this.match) { this.match = /^(['" \t]*)([-\w]+)['" \t]*=/gm.exec(line); }
+        if (!this.match) { this.match = /^(['" \t]*)([-\w]+)['" \t]*=/m.exec(line); }
         if (this.match) {
             const indent: number = this.match[1].length;
             const word: string = this.match[Validator.CONTENT_POSITION];
             const cleared: string = word.replace(/[^a-z]/g, "");
             let dictionary: string[] = resources.possibleOptions;
-            if (this.match[0].endsWith("]")) {
+            const trimmed: string = this.match[0].trim();
+            if (trimmed.endsWith("]")) {
                 dictionary = resources.possibleSections;
             } else if (cleared.startsWith("column")) {
                 return;

@@ -2,6 +2,10 @@ import { DiagnosticSeverity } from "vscode-languageserver";
 import { createDiagnostic } from "../util";
 import { Test } from "./test";
 
+const errorMessage: (setting: string) => string = (setting: string): string => `${setting} is interpreted as a` +
+    " series tag and is sent to the server. Remove the setting from the [tags] section or enclose it" +
+    " double-quotes to suppress the warning.";
+
 suite("Warn about setting interpreted as a tag", () => {
     const tests: Test[] = [
         new Test(
@@ -17,7 +21,7 @@ suite("Warn about setting interpreted as a tag", () => {
                     },
                     uri: Test.URI,
                 },
-                DiagnosticSeverity.Information, "starttime is interpreted as a tag",
+                DiagnosticSeverity.Information, errorMessage("starttime"),
             )],
         ),
         new Test(
@@ -40,7 +44,7 @@ suite("Warn about setting interpreted as a tag", () => {
                     },
                     uri: Test.URI,
                 },
-                DiagnosticSeverity.Information, "start-time is interpreted as a tag",
+                DiagnosticSeverity.Information, errorMessage("start-time"),
             )],
         ),
     ];
