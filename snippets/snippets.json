@@ -13,15 +13,6 @@
         ],
         "description": "Initial configuration"
     },
-    "If condition": {
-        "prefix": "if",
-        "body": [
-            "\nif ${1:condition}",
-            "  ${0}",
-            "endif"
-        ],
-        "description": "If condition"
-    },
     "csv": {
         "prefix": "csv",
         "body": [

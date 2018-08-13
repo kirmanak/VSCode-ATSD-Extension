@@ -15,7 +15,7 @@ export class CompletionProvider {
 
     public getCompletionItems(): CompletionItem[] {
         return this.completeSettings()
-            .concat([this.completeFor()]);
+            .concat([this.completeFor(), this.completeIf()]);
     }
 
     private completeFor(): CompletionItem {
@@ -40,10 +40,36 @@ export class CompletionProvider {
 
         return {
             detail: "For Loop",
-            insertText: `\nfor \${1:${item}} in \${2:${collection}}\n  \${0}\nendfor`,
+            insertText:
+                `\nfor \${1:${item}} in \${2:${collection}}\n  \${3:entity = @{\${1:${item}}}}\n  \${0}\nendfor`,
             insertTextFormat: InsertTextFormat.Snippet,
             kind: CompletionItemKind.Keyword,
             label: "for",
+        };
+    }
+
+    private completeIf(): CompletionItem {
+        const regexp: RegExp = /^[ \t]*for[ \t]+(\w+)[ \t]+in/im;
+        let match: RegExpExecArray = regexp.exec(this.text);
+        let lastMatch: RegExpExecArray;
+
+        while (match) {
+            lastMatch = match;
+            match = regexp.exec(this.text);
+        }
+
+        let item: string = "item";
+
+        if (lastMatch) {
+            item = lastMatch[1];
+        }
+
+        return {
+            detail: "If",
+            insertText: `\nif \${1:${item} === "item"}\n  \${2:entity = @{\${3:${item}}}}\n  \${0}\nendif`,
+            insertTextFormat: InsertTextFormat.Snippet,
+            kind: CompletionItemKind.Keyword,
+            label: "if",
         };
     }
 
