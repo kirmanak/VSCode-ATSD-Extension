@@ -1,5 +1,5 @@
 import * as Levenshtein from "levenshtein";
-import { Diagnostic, DiagnosticSeverity, Location } from "vscode-languageserver";
+import { Diagnostic, DiagnosticSeverity, Range } from "vscode-languageserver";
 
 const DIAGNOSTIC_SOURCE: string = "Axibase Charts";
 
@@ -63,15 +63,9 @@ export const countCsvColumns: (line: string) => number = (line: string): number 
     return counter;
 };
 
-export const createDiagnostic: (location: Location, severity: DiagnosticSeverity, message: string) => Diagnostic =
-    (location: Location, severity: DiagnosticSeverity, message: string): Diagnostic => {
-        const diagnostic: Diagnostic = {
-            message, range: location.range,
-            severity, source: DIAGNOSTIC_SOURCE,
-        };
-
-        return diagnostic;
-    };
+export const createDiagnostic: (range: Range, severity: DiagnosticSeverity, message: string) => Diagnostic =
+    (range: Range, severity: DiagnosticSeverity, message: string): Diagnostic =>
+        Diagnostic.create(range, message, severity, undefined, DIAGNOSTIC_SOURCE);
 
 export const deleteComments: (text: string) => string = (text: string): string => {
     let content: string = text;

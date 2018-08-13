@@ -8,10 +8,7 @@ suite("Formatting indents tests", () => {
   width-units = 200
   height-units = 200`,
             [],
-            {
-                options: { insertSpaces: true, tabSize: 2 },
-                textDocument: { uri: Test.URI },
-            },
+            { insertSpaces: true, tabSize: 2 },
         ),
         new Test(
             "incorrect cfg section",
@@ -24,10 +21,7 @@ width-units = 200
                     start: { character: 0, line: 1 },
                 },
             }],
-            {
-                options: { insertSpaces: true, tabSize: 2 },
-                textDocument: { uri: Test.URI },
-            },
+            { insertSpaces: true, tabSize: 2 },
         ),
         new Test(
             "correct nested wgt section",
@@ -37,10 +31,7 @@ width-units = 200
   [widget]
     type = chart`,
             [],
-            {
-                options: { insertSpaces: true, tabSize: 2 },
-                textDocument: { uri: Test.URI },
-            },
+            { insertSpaces: true, tabSize: 2 },
         ),
         new Test(
             "incorrect nested wgt section",
@@ -55,10 +46,7 @@ width-units = 200
                     start: { character: 0, line: 4 },
                 },
             }],
-            {
-                options: { insertSpaces: true, tabSize: 2 },
-                textDocument: { uri: Test.URI },
-            },
+            { insertSpaces: true, tabSize: 2 },
         ),
         new Test(
             "correct nested series section",
@@ -70,10 +58,7 @@ width-units = 200
     [series]
       entity = server`,
             [],
-            {
-                options: { insertSpaces: true, tabSize: 2 },
-                textDocument: { uri: Test.URI },
-            },
+            { insertSpaces: true, tabSize: 2 },
         ),
         new Test(
             "incorrect nested series section",
@@ -90,10 +75,7 @@ width-units = 200
                     start: { character: 0, line: 5 },
                 },
             }],
-            {
-                options: { insertSpaces: true, tabSize: 2 },
-                textDocument: { uri: Test.URI },
-            },
+            { insertSpaces: true, tabSize: 2 },
         ),
         new Test(
             "Correct for loop",
@@ -107,10 +89,7 @@ width-units = 200
       entity = @{server}
     endfor`,
             [],
-            {
-                options: { insertSpaces: true, tabSize: 2 },
-                textDocument: { uri: Test.URI },
-            },
+            { insertSpaces: true, tabSize: 2 },
         ),
         new Test(
             "Incorrect for loop",
@@ -129,10 +108,7 @@ width-units = 200
                     start: { character: 0, line: 6 },
                 },
             }],
-            {
-                options: { insertSpaces: true, tabSize: 2 },
-                textDocument: { uri: Test.URI },
-            },
+            { insertSpaces: true, tabSize: 2 },
         ),
         new Test(
             "Incorrect nested if in for",
@@ -169,10 +145,7 @@ endfor`,
                         start: { character: 0, line: 12 },
                     },
                 }],
-            {
-                options: { insertSpaces: true, tabSize: 2 },
-                textDocument: { uri: Test.URI },
-            },
+            { insertSpaces: true, tabSize: 2 },
         ),
         new Test(
             "Incorrect formatting in the first for, correct in second",
@@ -214,10 +187,7 @@ endfor`,
                         start: { character: 0, line: 12 },
                     },
                 }],
-            {
-                options: { insertSpaces: true, tabSize: 2 },
-                textDocument: { uri: Test.URI },
-            },
+            { insertSpaces: true, tabSize: 2 },
         ),
         new Test(
             "A couple of correct groups",
@@ -244,10 +214,7 @@ endfor`,
       entity = vds
       metric = cpu_busy`,
             [],
-            {
-                options: { insertSpaces: true, tabSize: 2 },
-                textDocument: { uri: Test.URI },
-            },
+            { insertSpaces: true, tabSize: 2 },
         ),
         new Test(
             "Correct for after var declaration",
@@ -262,10 +229,7 @@ endfor`,
     metric = cpu_busy
   endfor`,
             [],
-            {
-                options: { insertSpaces: true, tabSize: 2 },
-                textDocument: { uri: Test.URI },
-            },
+            { insertSpaces: true, tabSize: 2 },
         ),
     ];
 

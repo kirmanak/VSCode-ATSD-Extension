@@ -53,21 +53,15 @@ endfor`,
             [
                 createDiagnostic(
                     {
-                        range: {
-                            end: { character: 10, line: 5 },
-                            start: { character: 4, line: 5 },
-                        },
-                        uri: Test.URI,
+                        end: { character: 10, line: 5 },
+                        start: { character: 4, line: 5 },
                     },
                     DiagnosticSeverity.Error, elseIfError,
                 ),
                 createDiagnostic(
                     {
-                        range: {
-                            end: { character: 9, line: 7 },
-                            start: { character: 4, line: 7 },
-                        },
-                        uri: Test.URI,
+                        end: { character: 9, line: 7 },
+                        start: { character: 4, line: 7 },
                     },
                     DiagnosticSeverity.Error, endIfError,
                 )],
@@ -86,21 +80,15 @@ endfor`,
             [
                 createDiagnostic(
                     {
-                        range: {
-                            end: { character: 8, line: 5 },
-                            start: { character: 4, line: 5 },
-                        },
-                        uri: Test.URI,
+                        end: { character: 8, line: 5 },
+                        start: { character: 4, line: 5 },
                     },
                     DiagnosticSeverity.Error, elseError,
                 ),
                 createDiagnostic(
                     {
-                        range: {
-                            end: { character: 9, line: 7 },
-                            start: { character: 4, line: 7 },
-                        },
-                        uri: Test.URI,
+                        end: { character: 9, line: 7 },
+                        start: { character: 4, line: 7 },
                     },
                     DiagnosticSeverity.Error, endIfError,
                 )],
@@ -119,21 +107,15 @@ endfor`,
             [
                 createDiagnostic(
                     {
-                        range: {
-                            end: { character: 32, line: 5 },
-                            start: { character: 28, line: 5 },
-                        },
-                        uri: Test.URI,
+                        end: { character: 32, line: 5 },
+                        start: { character: 28, line: 5 },
                     },
                     DiagnosticSeverity.Error, elseError,
                 ),
                 createDiagnostic(
                     {
-                        range: {
-                            end: { character: 9, line: 7 },
-                            start: { character: 4, line: 7 },
-                        },
-                        uri: Test.URI,
+                        end: { character: 9, line: 7 },
+                        start: { character: 4, line: 7 },
                     },
                     DiagnosticSeverity.Error, endIfError,
                 )],
@@ -153,21 +135,15 @@ endfor`,
             [
                 createDiagnostic(
                     {
-                        range: {
-                            end: { character: 6, line: 9 },
-                            start: { character: 0, line: 9 },
-                        },
-                        uri: Test.URI,
+                        end: { character: 6, line: 9 },
+                        start: { character: 0, line: 9 },
                     },
                     DiagnosticSeverity.Error, "for has finished before if",
                 ),
                 createDiagnostic(
                     {
-                        range: {
-                            end: { character: 6, line: 5 },
-                            start: { character: 4, line: 5 },
-                        },
-                        uri: Test.URI,
+                        end: { character: 6, line: 5 },
+                        start: { character: 4, line: 5 },
                     },
                     DiagnosticSeverity.Error, ifError,
                 )],

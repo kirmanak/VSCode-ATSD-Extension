@@ -1,4 +1,4 @@
-import { Diagnostic, DiagnosticSeverity, Range, TextDocument } from "vscode-languageserver";
+import { Diagnostic, DiagnosticSeverity, Range } from "vscode-languageserver";
 import { createDiagnostic, deleteComments } from "./util";
 
 import * as $ from "jquery";
@@ -32,17 +32,15 @@ export class JsDomCaller {
     }
 
     private currentLineNumber: number = 0;
-    private readonly document: TextDocument;
     private importCounter: number = 0;
     private readonly imports: string[] = [];
     private readonly lines: string[];
     private match: RegExpExecArray;
     private readonly statements: IStatement[] = [];
 
-    public constructor(document: TextDocument) {
-        this.document = document;
-        this.lines = deleteComments(document.getText())
-            .split("\n");
+    public constructor(text: string) {
+        this.lines = deleteComments(text)
+        .split("\n");
     }
 
     public validate(): Diagnostic[] {
@@ -67,7 +65,7 @@ export class JsDomCaller {
                 }
                 if (!isImported) {
                     result.push(createDiagnostic(
-                        { range: statement.range, uri: this.document.uri },
+                        statement.range,
                         DiagnosticSeverity.Warning, err.message,
                     ));
                 }

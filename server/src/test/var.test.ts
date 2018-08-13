@@ -39,11 +39,8 @@ endvar`,
 edvar`,
             [createDiagnostic(
                 {
-                    range: {
-                        end: { character: 3, line: 0 },
-                        start: { character: 0, line: 0 },
-                    },
-                    uri: Test.URI,
+                    end: { character: 3, line: 0 },
+                    start: { character: 0, line: 0 },
                 },
                 DiagnosticSeverity.Error, "var has no matching endvar",
             )],
@@ -57,11 +54,8 @@ edvar`,
 edvar`,
             [createDiagnostic(
                 {
-                    range: {
-                        end: { character: 3, line: 0 },
-                        start: { character: 0, line: 0 },
-                    },
-                    uri: Test.URI,
+                    end: { character: 3, line: 0 },
+                    start: { character: 0, line: 0 },
                 },
                 DiagnosticSeverity.Error, "var has no matching endvar",
             )],
@@ -75,11 +69,8 @@ edvar`,
 edvar`,
             [createDiagnostic(
                 {
-                    range: {
-                        end: { character: 3, line: 0 },
-                        start: { character: 0, line: 0 },
-                    },
-                    uri: Test.URI,
+                    end: { character: 3, line: 0 },
+                    start: { character: 0, line: 0 },
                 },
                 DiagnosticSeverity.Error, "var has no matching endvar",
             )],

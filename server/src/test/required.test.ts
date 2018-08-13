@@ -1,4 +1,4 @@
-import { DiagnosticSeverity, Location, Range } from "vscode-languageserver";
+import { DiagnosticSeverity, Range } from "vscode-languageserver";
 import { createDiagnostic } from "../util";
 import { Test } from "./test";
 
@@ -17,11 +17,8 @@ suite("Required settings for sections tests", () => {
    metric = hello`,
             [createDiagnostic(
                 {
-                    range: {
-                        end: { character: "[".length + "series".length, line: 0 },
-                        start: { character: "[".length, line: 0 },
-                    },
-                    uri: Test.URI,
+                    end: { character: "[".length + "series".length, line: 0 },
+                    start: { character: "[".length, line: 0 },
                 },
                 DiagnosticSeverity.Error, "entity is required",
             )],
@@ -82,11 +79,8 @@ suite("Required settings for sections tests", () => {
            metric = hello`,
             [createDiagnostic(
                 {
-                    range: {
-                        end: { character: "       [".length + "series".length, line: 8 },
-                        start: { character: "       [".length, line: 8 },
-                    },
-                    uri: Test.URI,
+                    end: { character: "       [".length + "series".length, line: 8 },
+                    start: { character: "       [".length, line: 8 },
                 },
                 DiagnosticSeverity.Error, "entity is required",
             )],
@@ -100,21 +94,15 @@ suite("Required settings for sections tests", () => {
             [
                 createDiagnostic(
                     {
-                        range: {
-                            end: { character: "[".length + "series".length, line: 0 },
-                            start: { character: "[".length, line: 0 },
-                        },
-                        uri: Test.URI,
+                        end: { character: "[".length + "series".length, line: 0 },
+                        start: { character: "[".length, line: 0 },
                     },
                     DiagnosticSeverity.Error, "entity is required",
                 ),
                 createDiagnostic(
                     {
-                        range: {
-                            end: { character: "[".length + "series".length, line: 2 },
-                            start: { character: "[".length, line: 2 },
-                        },
-                        uri: Test.URI,
+                        end: { character: "[".length + "series".length, line: 2 },
+                        start: { character: "[".length, line: 2 },
                     },
                     DiagnosticSeverity.Error, "metric is required",
                 )],
@@ -147,11 +135,8 @@ for server in servers
 endfor`,
             [createDiagnostic(
                 {
-                    range: {
-                        end: { character: "   [".length + "series".length, line: 2 },
-                        start: { character: "   [".length, line: 2 },
-                    },
-                    uri: Test.URI,
+                    end: { character: "   [".length + "series".length, line: 2 },
+                    start: { character: "   [".length, line: 2 },
                 },
                 DiagnosticSeverity.Error, "entity is required",
             )],
@@ -162,12 +147,9 @@ endfor`,
   entity = server
   table = cpu_busy`,
             [createDiagnostic(
-                Location.create(
-                    Test.URI,
-                    Range.create(
-                        0, "[".length,
-                        0, "[".length + "series".length,
-                    ),
+                Range.create(
+                    0, "[".length,
+                    0, "[".length + "series".length,
                 ),
                 DiagnosticSeverity.Error, "attribute is required",
             )],
@@ -178,12 +160,9 @@ endfor`,
   entity = server
   attribute = cpu_busy`,
             [createDiagnostic(
-                Location.create(
-                    Test.URI,
-                    Range.create(
-                        0, "[".length,
-                        0, "[".length + "series".length,
-                    ),
+                Range.create(
+                    0, "[".length,
+                    0, "[".length + "series".length,
                 ),
                 DiagnosticSeverity.Error, "table is required",
             )],

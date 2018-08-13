@@ -30,11 +30,8 @@ for server in servers
    do something`,
             [createDiagnostic(
                 {
-                    range: {
-                        end: { character: 3, line: 1 },
-                        start: { character: 0, line: 1 },
-                    },
-                    uri: Test.URI,
+                    end: { character: 3, line: 1 },
+                    start: { character: 0, line: 1 },
                 },
                 DiagnosticSeverity.Error, "for has no matching endfor",
             )],
@@ -49,21 +46,15 @@ for srv in servers
             [
                 createDiagnostic(
                     {
-                        range: {
-                            end: { character: 3, line: 1 },
-                            start: { character: 0, line: 1 },
-                        },
-                        uri: Test.URI,
+                        end: { character: 3, line: 1 },
+                        start: { character: 0, line: 1 },
                     },
                     DiagnosticSeverity.Error, "for has no matching endfor",
                 ),
                 createDiagnostic(
                     {
-                        range: {
-                            end: { character: 3, line: 3 },
-                            start: { character: 0, line: 3 },
-                        },
-                        uri: Test.URI,
+                        end: { character: 3, line: 3 },
+                        start: { character: 0, line: 3 },
                     },
                     DiagnosticSeverity.Error, "for has no matching endfor",
                 )],
@@ -78,11 +69,8 @@ for srv in servers
 endfor`,
             [createDiagnostic(
                 {
-                    range: {
-                        end: { character: 3, line: 1 },
-                        start: { character: 0, line: 1 },
-                    },
-                    uri: Test.URI,
+                    end: { character: 3, line: 1 },
+                    start: { character: 0, line: 1 },
                 },
                 DiagnosticSeverity.Error, "for has no matching endfor",
             )],

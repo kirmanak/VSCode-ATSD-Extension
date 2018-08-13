@@ -18,11 +18,8 @@ endscript`,
 endscrpt`,
             [createDiagnostic(
                 {
-                    range: {
-                        end: { character: 6, line: 0 },
-                        start: { character: 0, line: 0 },
-                    },
-                    uri: Test.URI,
+                    end: { character: 6, line: 0 },
+                    start: { character: 0, line: 0 },
                 },
                 DiagnosticSeverity.Error, errorMessage,
             )],
@@ -52,11 +49,8 @@ script
 endscrpt`,
             [createDiagnostic(
                 {
-                    range: {
-                        end: { character: 6, line: 0 },
-                        start: { character: 0, line: 0 },
-                    },
-                    uri: Test.URI,
+                    end: { character: 6, line: 0 },
+                    start: { character: 0, line: 0 },
                 },
                 DiagnosticSeverity.Error, errorMessage,
             )],
@@ -80,11 +74,8 @@ endscript`,
             "script = ",
             [createDiagnostic(
                 {
-                    range: {
-                        end: { character: 6, line: 0 },
-                        start: { character: 0, line: 0 },
-                    },
-                    uri: Test.URI,
+                    end: { character: 6, line: 0 },
+                    start: { character: 0, line: 0 },
                 },
                 DiagnosticSeverity.Error, errorMessage,
             )],

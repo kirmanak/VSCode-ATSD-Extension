@@ -25,11 +25,8 @@ endlist`,
 edlist`,
             [createDiagnostic(
                 {
-                    range: {
-                        end: { character: 4, line: 0 },
-                        start: { character: 0, line: 0 },
-                    },
-                    uri: Test.URI,
+                    end: { character: 4, line: 0 },
+                    start: { character: 0, line: 0 },
                 },
                 DiagnosticSeverity.Error, errorMessage,
             )],
@@ -45,11 +42,8 @@ list servers = vps,
 edlist`,
             [createDiagnostic(
                 {
-                    range: {
-                        end: { character: 4, line: 4 },
-                        start: { character: 0, line: 4 },
-                    },
-                    uri: Test.URI,
+                    end: { character: 4, line: 4 },
+                    start: { character: 0, line: 4 },
                 },
                 DiagnosticSeverity.Error, errorMessage,
             )],
@@ -61,11 +55,8 @@ edlist`,
 edlist`,
             [createDiagnostic(
                 {
-                    range: {
-                        end: { character: 15, line: 0 },
-                        start: { character: 11, line: 0 },
-                    },
-                    uri: Test.URI,
+                    end: { character: 15, line: 0 },
+                    start: { character: 11, line: 0 },
                 },
                 DiagnosticSeverity.Error, errorMessage,
             )],
@@ -81,11 +72,8 @@ to check correct range */
 edlist`,
             [createDiagnostic(
                 {
-                    range: {
-                        end: { character: 15, line: 4 },
-                        start: { character: 11, line: 4 },
-                    },
-                    uri: Test.URI,
+                    end: { character: 15, line: 4 },
+                    start: { character: 11, line: 4 },
                 },
                 DiagnosticSeverity.Error, errorMessage,
             )],
@@ -103,11 +91,8 @@ list servers3 = vps,
 endlist`,
             [createDiagnostic(
                 {
-                    range: {
-                        end: { character: 4, line: 3 },
-                        start: { character: 0, line: 3 },
-                    },
-                    uri: Test.URI,
+                    end: { character: 4, line: 3 },
+                    start: { character: 0, line: 3 },
                 },
                 DiagnosticSeverity.Error, errorMessage,
             )],
@@ -126,11 +111,8 @@ endlist`,
 edlist`,
             [createDiagnostic(
                 {
-                    range: {
-                        end: { character: 4, line: 0 },
-                        start: { character: 0, line: 0 },
-                    },
-                    uri: Test.URI,
+                    end: { character: 4, line: 0 },
+                    start: { character: 0, line: 0 },
                 },
                 DiagnosticSeverity.Error, errorMessage,
             )],

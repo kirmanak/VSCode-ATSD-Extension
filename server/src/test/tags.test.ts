@@ -15,11 +15,8 @@ suite("Warn about setting interpreted as a tag", () => {
 	startime = 30 minute`,
             [createDiagnostic(
                 {
-                    range: {
-                        end: { character: "	".length + "starttime".length, line: 1 },
-                        start: { character: "	".length, line: 1 },
-                    },
-                    uri: Test.URI,
+                    end: { character: "	".length + "starttime".length, line: 1 },
+                    start: { character: "	".length, line: 1 },
                 },
                 DiagnosticSeverity.Information, errorMessage("starttime"),
             )],
@@ -38,11 +35,8 @@ suite("Warn about setting interpreted as a tag", () => {
 	startime = 30 minute`,
             [createDiagnostic(
                 {
-                    range: {
-                        end: { character: "	".length + "stArt-time".length, line: 1 },
-                        start: { character: "	".length, line: 1 },
-                    },
-                    uri: Test.URI,
+                    end: { character: "	".length + "stArt-time".length, line: 1 },
+                    start: { character: "	".length, line: 1 },
                 },
                 DiagnosticSeverity.Information, errorMessage("start-time"),
             )],

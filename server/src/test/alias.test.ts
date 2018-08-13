@@ -28,11 +28,8 @@ suite("Incorrect dealias tests", () => {
   value = value('s2') * 2`,
             [createDiagnostic(
                 {
-                    range: {
-                        end: { character: "  value = value('".length + "s2".length, line: 7 },
-                        start: { character: "  value = value('".length, line: 7 },
-                    },
-                    uri: Test.URI,
+                    end: { character: "  value = value('".length + "s2".length, line: 7 },
+                    start: { character: "  value = value('".length, line: 7 },
                 },
                 DiagnosticSeverity.Error, errorMessage("s2", "s1"),
             )],
@@ -66,25 +63,19 @@ suite("Incorrect dealias tests", () => {
             [
                 createDiagnostic(
                     {
-                        range: {
-                            end: { character: "  value = value('".length + "s2".length, line: 7 },
-                            start: { character: "  value = value('".length, line: 7 },
-                        },
-                        uri: Test.URI,
+                        end: { character: "  value = value('".length + "s2".length, line: 7 },
+                        start: { character: "  value = value('".length, line: 7 },
                     },
                     DiagnosticSeverity.Error, errorMessage("s2", "s1"),
                 ),
                 createDiagnostic(
                     {
-                        range: {
-                            end: {
-                                character: "  value = value('".length + "s3".length, line: 11,
-                            },
-                            start: {
-                                character: "  value = value('".length, line: 11,
-                            },
+                        end: {
+                            character: "  value = value('".length + "s3".length, line: 11,
                         },
-                        uri: Test.URI,
+                        start: {
+                            character: "  value = value('".length, line: 11,
+                        },
                     },
                     DiagnosticSeverity.Error, errorMessage("s3", "s1"),
                 )],
@@ -129,15 +120,12 @@ suite("Incorrect dealias tests", () => {
   value = value('s2') * 2`,
             [createDiagnostic(
                 {
-                    range: {
-                        end: {
-                            character: "  value = value('".length + "s3".length, line: 11,
-                        },
-                        start: {
-                            character: "  value = value('".length, line: 11,
-                        },
+                    end: {
+                        character: "  value = value('".length + "s3".length, line: 11,
                     },
-                    uri: Test.URI,
+                    start: {
+                        character: "  value = value('".length, line: 11,
+                    },
                 },
                 DiagnosticSeverity.Error, errorMessage("s3", "s1"),
             )],

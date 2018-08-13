@@ -53,11 +53,8 @@ for ${secondVar} in servers
 endfor`,
             [createDiagnostic(
                 {
-                    range: {
-                        end: { character: "       entity = @{".length + firstVar.length, line: 4 },
-                        start: { character: "       entity = @{".length, line: 4 },
-                    },
-                    uri: Test.URI,
+                    end: { character: "       entity = @{".length + firstVar.length, line: 4 },
+                    start: { character: "       entity = @{".length, line: 4 },
                 },
                 DiagnosticSeverity.Error, errorMessage(firstVar, secondVar),
             )],
@@ -78,21 +75,15 @@ endfor`,
             [
                 createDiagnostic(
                     {
-                        range: {
-                            end: { character: "       entity = @{".length + firstVar.length, line: 4 },
-                            start: { character: "       entity = @{".length, line: 4 },
-                        },
-                        uri: Test.URI,
+                        end: { character: "       entity = @{".length + firstVar.length, line: 4 },
+                        start: { character: "       entity = @{".length, line: 4 },
                     },
                     DiagnosticSeverity.Error, errorMessage(firstVar, secondVar),
                 ),
                 createDiagnostic(
                     {
-                        range: {
-                            end: { character: "       entity = @{".length + secondVar.length, line: 9 },
-                            start: { character: "       entity = @{".length, line: 9 },
-                        },
-                        uri: Test.URI,
+                        end: { character: "       entity = @{".length + secondVar.length, line: 9 },
+                        start: { character: "       entity = @{".length, line: 9 },
                     },
                     DiagnosticSeverity.Error, errorMessage(secondVar, "servers"),
                 )],
@@ -112,11 +103,8 @@ for ${firstVar} in servers
 endfor`,
             [createDiagnostic(
                 {
-                    range: {
-                        end: { character: "       entity = @{".length + firstVar.length, line: 4 },
-                        start: { character: "       entity = @{".length, line: 4 },
-                    },
-                    uri: Test.URI,
+                    end: { character: "       entity = @{".length + firstVar.length, line: 4 },
+                    start: { character: "       entity = @{".length, line: 4 },
                 },
                 DiagnosticSeverity.Error, errorMessage(firstVar, secondVar),
             )],
@@ -157,11 +145,8 @@ for ${secondVar} in servers
 endfor`,
             [createDiagnostic(
                 {
-                    range: {
-                        end: { character: "           entity = @{".length + thirdVar.length, line: 8 },
-                        start: { character: "           entity = @{".length, line: 8 },
-                    },
-                    uri: Test.URI,
+                    end: { character: "           entity = @{".length + thirdVar.length, line: 8 },
+                    start: { character: "           entity = @{".length, line: 8 },
                 },
                 DiagnosticSeverity.Error, errorMessage(thirdVar, firstVar),
             )],
@@ -186,11 +171,8 @@ for ${firstVar} in servers
 endfor`,
             [createDiagnostic(
                 {
-                    range: {
-                        end: { character: "       entity = @{".length + secondVar.length, line: 4 },
-                        start: { character: "       entity = @{".length, line: 4 },
-                    },
-                    uri: Test.URI,
+                    end: { character: "       entity = @{".length + secondVar.length, line: 4 },
+                    start: { character: "       entity = @{".length, line: 4 },
                 },
                 DiagnosticSeverity.Error, errorMessage(secondVar, "servers"),
             )],
@@ -235,15 +217,12 @@ for ${secondVar} in servers
 endfor`,
             [createDiagnostic(
                 {
-                    range: {
-                        end: {
-                            character: `       entity = @{keepAfterLast(${secondVar}, 'v')}, @{`.length
-                                + firstVar.length,
-                            line: 4,
-                        },
-                        start: { character: `       entity = @{keepAfterLast(${secondVar}, 'v')}, @{`.length, line: 4 },
+                    end: {
+                        character: `       entity = @{keepAfterLast(${secondVar}, 'v')}, @{`.length
+                            + firstVar.length,
+                        line: 4,
                     },
-                    uri: Test.URI,
+                    start: { character: `       entity = @{keepAfterLast(${secondVar}, 'v')}, @{`.length, line: 4 },
                 },
                 DiagnosticSeverity.Error, errorMessage(firstVar, secondVar),
             )],

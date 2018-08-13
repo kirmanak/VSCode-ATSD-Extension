@@ -30,20 +30,14 @@ encsv`,
             [
                 createDiagnostic(
                     {
-                        range: {
-                            end: { character: 5, line: 3 },
-                            start: { character: 0, line: 3 },
-                        },
-                        uri: Test.URI,
+                        end: { character: 5, line: 3 },
+                        start: { character: 0, line: 3 },
                     },
                     DiagnosticSeverity.Error, "Expected 3 columns, but found 1",
                 ),
                 createDiagnostic(
                     {
-                        range: {
-                            end: { character: 3, line: 0 }, start: { character: 0, line: 0 },
-                        },
-                        uri: Test.URI,
+                        end: { character: 3, line: 0 }, start: { character: 0, line: 0 },
                     },
                     DiagnosticSeverity.Error, "csv has no matching endcsv",
                 )],
@@ -58,21 +52,15 @@ encsv`,
             [
                 createDiagnostic(
                     {
-                        range: {
-                            end: { character: 5, line: 4 },
-                            start: { character: 0, line: 4 },
-                        },
-                        uri: Test.URI,
+                        end: { character: 5, line: 4 },
+                        start: { character: 0, line: 4 },
                     },
                     DiagnosticSeverity.Error, "Expected 3 columns, but found 1",
                 ),
                 createDiagnostic(
                     {
-                        range: {
-                            end: { character: 3, line: 0 },
-                            start: { character: 0, line: 0 },
-                        },
-                        uri: Test.URI,
+                        end: { character: 3, line: 0 },
+                        start: { character: 0, line: 0 },
                     },
                     DiagnosticSeverity.Error, "csv has no matching endcsv",
                 )],
@@ -85,11 +73,8 @@ encsv`,
 endcsv`,
             [createDiagnostic(
                 {
-                    range: {
-                        end: { character: 18, line: 2 },
-                        start: { character: 0, line: 2 },
-                    },
-                    uri: Test.URI,
+                    end: { character: 18, line: 2 },
+                    start: { character: 0, line: 2 },
                 },
                 DiagnosticSeverity.Error, "Expected 3 columns, but found 4",
             )],

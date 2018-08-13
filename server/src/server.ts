@@ -96,8 +96,9 @@ documents.onDidChangeContent((change: TextDocumentChangeEvent) => {
 const validateTextDocument: (textDocument: TextDocument) => Promise<void> =
     async (textDocument: TextDocument): Promise<void> => {
         const settings: IServerSettings = await getDocumentSettings(textDocument.uri);
-        const validator: Validator = new Validator(textDocument);
-        const jsDomCaller: JsDomCaller = new JsDomCaller(textDocument);
+        const text: string = textDocument.getText();
+        const validator: Validator = new Validator(text);
+        const jsDomCaller: JsDomCaller = new JsDomCaller(text);
         const diagnostics: Diagnostic[] = validator.lineByLine();
 
         if (settings.validateFunctions) {
@@ -113,7 +114,7 @@ const validateTextDocument: (textDocument: TextDocument) => Promise<void> =
 
 connection.onDocumentFormatting((params: DocumentFormattingParams): TextEdit[] => {
     const document: TextDocument = documents.get(params.textDocument.uri);
-    const formatter: Formatter = new Formatter(document, params);
+    const formatter: Formatter = new Formatter(document.getText(), params.options);
 
     return formatter.lineByLine();
 });

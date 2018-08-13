@@ -1,4 +1,4 @@
-import { DocumentFormattingParams, TextDocument, TextEdit } from "vscode-languageserver";
+import { FormattingOptions, TextEdit } from "vscode-languageserver";
 import { FoundKeyword } from "./foundKeyword";
 
 export class Formatter {
@@ -12,14 +12,13 @@ export class Formatter {
     private lastLineNumber: number;
     private readonly lines: string[];
     private match: RegExpExecArray;
-    private readonly params: DocumentFormattingParams;
+    private readonly options: FormattingOptions;
     private previous: string;
 
-    public constructor(document: TextDocument, formattingParams: DocumentFormattingParams) {
-        if (!document || !formattingParams) { throw new Error("Invalid arguments"); }
-        this.params = formattingParams;
-        this.lines = document.getText()
-            .split("\n");
+    public constructor(text: string, formattingOptions: FormattingOptions) {
+        if (!text || !formattingOptions) { throw new Error("Invalid arguments"); }
+        this.options = formattingOptions;
+        this.lines = text.split("\n");
     }
 
     public lineByLine(): TextEdit[] {
@@ -85,8 +84,8 @@ export class Formatter {
     private decreaseIndent(): void {
         if (this.currentIndent.length === 0) { return; }
         let newLength: number = this.currentIndent.length;
-        if (this.params.options.insertSpaces) {
-            newLength -= this.params.options.tabSize;
+        if (this.options.insertSpaces) {
+            newLength -= this.options.tabSize;
         } else {
             newLength--;
         }
@@ -110,8 +109,8 @@ export class Formatter {
 
     private increaseIndent(): void {
         let addition: string = "\t";
-        if (this.params.options.insertSpaces) {
-            addition = Array(this.params.options.tabSize)
+        if (this.options.insertSpaces) {
+            addition = Array(this.options.tabSize)
                 .fill(" ")
                 .join("");
         }
