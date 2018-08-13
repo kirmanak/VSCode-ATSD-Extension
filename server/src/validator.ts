@@ -357,7 +357,7 @@ export class Validator {
                 this.result.push(createDiagnostic(
                     {
                         range: {
-                            end: { character: matching[0].length + "in".length, line: this.currentLineNumber },
+                            end: { character: matching[0].length + "  ".length, line: this.currentLineNumber },
                             start: { character: matching[0].length + 1, line: this.currentLineNumber },
                         },
                         uri: this.textDocument.uri,
