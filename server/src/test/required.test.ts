@@ -198,6 +198,13 @@ endfor`,
   value = value('srv')`,
             [],
         ),
+        new Test(
+            "Entities instead of entity",
+            `[series]
+  entities = server
+  metric = cpu_busy`,
+            [],
+        ),
     ];
 
     tests.forEach((test: Test) => { test.validationTest(); });
