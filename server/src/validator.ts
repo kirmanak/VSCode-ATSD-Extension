@@ -332,9 +332,13 @@ export class Validator {
         this.match = /(^\s*for\s+)(\w+)\s+in/m.exec(line);
         if (this.match) {
             const matching: RegExpExecArray = this.match;
-            this.match = /^(\s*for\s+\w+\s+in\s+)(?:Object\.keys\((\w+)\)|\w+)/im.exec(line);
+            this.match = /^(\s*for\s+\w+\s+in\s+)(?:Object\.keys\((\w+)\)|(\w+))/im.exec(line);
             if (this.match) {
-                const variable: string = this.match[Validator.CONTENT_POSITION];
+                let position: number = Validator.CONTENT_POSITION;
+                if (!this.match[position]) {
+                    position++;
+                }
+                const variable: string = this.match[position];
                 if (!isInMap(variable, this.variables)) {
                     const message: string = suggestionMessage(variable, mapToArray(this.variables));
                     this.result.push(createDiagnostic(
@@ -358,7 +362,7 @@ export class Validator {
                 this.result.push(createDiagnostic(
                     {
                         range: {
-                            end: { character: matching[0].length + "or".length, line: this.currentLineNumber },
+                            end: { character: matching[0].length + "in".length, line: this.currentLineNumber },
                             start: { character: matching[0].length + 1, line: this.currentLineNumber },
                         },
                         uri: this.textDocument.uri,
