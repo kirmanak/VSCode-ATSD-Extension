@@ -267,6 +267,21 @@ endfor`,
                 DiagnosticSeverity.Error, "pps is unknown. Suggestion: apps",
             )],
         ),
+        new Test(
+            "Index after collection name",
+            `var host = [
+  ["abc","/app",["dm-3","dm-2"]],
+  ["cde","/db",["dm-1","dm-0"]]
+]
+endvar
+for dm in host[2]
+  [series]
+    entity = @{host[0]}:LZ
+    table = KLZ_IO_Ext
+    attribute = Avg_svc_time
+endfor`,
+            [],
+        ),
     ];
 
     tests.forEach((test: Test) => { test.validationTest(); });

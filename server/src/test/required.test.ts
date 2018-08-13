@@ -1,4 +1,4 @@
-import { DiagnosticSeverity } from "vscode-languageserver";
+import { DiagnosticSeverity, Location, Range } from "vscode-languageserver";
 import { createDiagnostic } from "../util";
 import { Test } from "./test";
 
@@ -155,6 +155,48 @@ endfor`,
                 },
                 DiagnosticSeverity.Error, "entity is required",
             )],
+        ),
+        new Test(
+            "Table without attribute",
+            `[series]
+  entity = server
+  table = cpu_busy`,
+            [createDiagnostic(
+                Location.create(
+                    Test.URI,
+                    Range.create(
+                        0, "[".length,
+                        0, "[".length + "series".length,
+                    ),
+                ),
+                DiagnosticSeverity.Error, "attribute is required",
+            )],
+        ),
+        new Test(
+            "Attribute without table",
+            `[series]
+  entity = server
+  attribute = cpu_busy`,
+            [createDiagnostic(
+                Location.create(
+                    Test.URI,
+                    Range.create(
+                        0, "[".length,
+                        0, "[".length + "series".length,
+                    ),
+                ),
+                DiagnosticSeverity.Error, "table is required",
+            )],
+        ),
+        new Test(
+            "Derived series",
+            `[series]
+  entity = server
+  metric = cpu_busy
+  alias = srv
+[series]
+  value = value('srv')`,
+            [],
         ),
     ];
 

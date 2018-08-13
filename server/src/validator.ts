@@ -332,7 +332,7 @@ export class Validator {
         this.match = /(^\s*for\s+)(\w+)\s+in/m.exec(line);
         if (this.match) {
             const matching: RegExpExecArray = this.match;
-            this.match = /^([ \t]*for[ \t]+\w+[ \t]+in[ \t]+)(?:Object\.keys\((\w+)\)|(\w+))[ \t]*$/im.exec(line);
+            this.match = /^([ \t]*for[ \t]+\w+[ \t]+in[ \t]+)(?:Object\.keys\((\w+)\)|(\w+)).*$/im.exec(line);
             if (this.match) {
                 let position: number = Validator.CONTENT_POSITION;
                 const location: Location = Location.create(

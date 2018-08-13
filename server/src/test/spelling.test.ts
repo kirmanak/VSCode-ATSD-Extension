@@ -1,4 +1,4 @@
-import { DiagnosticSeverity } from "vscode-languageserver";
+import { DiagnosticSeverity, Location, Range } from "vscode-languageserver";
 import { createDiagnostic, errorMessage } from "../util";
 import { Test } from "./test";
 
@@ -103,6 +103,48 @@ suite("Spelling checks", () => {
                     uri: Test.URI,
                 },
                 DiagnosticSeverity.Error, errorMessage("startime", "starttime"),
+            )],
+        ),
+        new Test(
+            "Space after section name",
+            // tslint:disable-next-line:no-trailing-whitespace
+            `[widget] 
+type = chart`,
+            [],
+        ),
+        new Test(
+            "Space before section name",
+            ` [widget]
+type = chart`,
+            [],
+        ),
+        new Test(
+            "Placeholders section contains valid items  ",
+            `url-parameters = ?queryName=EVTNOT&id=\${id}&sd=\${sd}&ed=\${ed}
+[placeholders]
+  id = none
+  sd = 0
+  ed = 0`,
+            [],
+        ),
+        new Test(
+            "Placeholders section contains invalid items  ",
+            `url-parameters = ?queryName=EVTNOT&id=\${id}&sd=\${sd}&ed=\${ed}
+[placeholders]
+  id = none
+  ad = 0
+  ed = 0`,
+            [createDiagnostic(
+                Location.create(
+                    Test.URI,
+                    Range.create(
+                        // tslint:disable-next-line:no-magic-numbers
+                        3, "  ".length,
+                        // tslint:disable-next-line:no-magic-numbers
+                        3, "  ".length + "ad".length,
+                    ),
+                ),
+                DiagnosticSeverity.Error, errorMessage("ad", "add"),
             )],
         ),
     ];

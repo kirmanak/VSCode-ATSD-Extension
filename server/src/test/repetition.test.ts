@@ -354,6 +354,13 @@ for server in servers
 endfor`,
             [],
         ),
+        new Test(
+            "script can be multi-line",
+            `script =  var stylesheet = document.createElement("style");
+script = stylesheet.innerHTML = ".axi-calendarchart .axi-chart-series rect:not([fill]) {fill:red}";
+script = document.head.appendChild(stylesheet);`,
+            [],
+        ),
     ];
 
     tests.forEach((test: Test) => { test.validationTest(); });
