@@ -1,4 +1,4 @@
-import { DiagnosticSeverity } from "vscode-languageserver";
+import { DiagnosticSeverity, Range } from "vscode-languageserver";
 import { createDiagnostic, errorMessage } from "../util";
 import { Test } from "./test";
 
@@ -224,6 +224,47 @@ endfor`,
                     uri: Test.URI,
                 },
                 DiagnosticSeverity.Error, "Empty 'in' statement",
+            )],
+        ),
+        new Test(
+            "Correct Object.keys() after in keyword",
+            `var apps = {
+  "abc"	: {"Region": "ABC", "App": "app1"},
+  "cde"	: {"Region": "CDE", "App": "app2"}
+}
+endvar
+
+for agent in Object.keys(apps)
+  [series]
+    entity = @{agent}
+    metric = @{agent}
+endfor`,
+            [],
+        ),
+        new Test(
+            "Incorrect Object.keys() after in keyword",
+            `var apps = {
+  "abc"	: {"Region": "ABC", "App": "app1"},
+  "cde"	: {"Region": "CDE", "App": "app2"}
+}
+endvar
+
+for agent in Object.keys(pps)
+  [series]
+    entity = @{agent}
+    metric = @{agent}
+endfor`,
+            [createDiagnostic(
+                {
+                    range: Range.create(
+                        // tslint:disable-next-line:no-magic-numbers
+                        6, "for agent in Object.keys(".length,
+                        // tslint:disable-next-line:no-magic-numbers
+                        6, "for agent in Object.keys(".length + "pps".length,
+                    ),
+                    uri: Test.URI,
+                },
+                DiagnosticSeverity.Error, "pps is unknown. Suggestion: apps",
             )],
         ),
     ];
