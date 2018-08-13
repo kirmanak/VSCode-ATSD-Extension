@@ -378,7 +378,7 @@ export class Validator {
     private handleList(): void {
         const line: string = this.getCurrentLine();
         this.match = /(^\s*list\s+)(\w+)\s+=/.exec(line);
-        this.addToMap(this.variables, "listNames", DiagnosticSeverity.Warning);
+        this.addToMap(this.variables, "listNames", DiagnosticSeverity.Error);
         if (/(=|,)[ \t]*$/m.test(line)) {
             this.keywordsStack.push(this.foundKeyword);
         } else {
