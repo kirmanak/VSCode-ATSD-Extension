@@ -15,7 +15,8 @@ export class CompletionProvider {
 
     public getCompletionItems(): CompletionItem[] {
         return this.completeSettings()
-            .concat([this.completeFor(), this.completeIf()]);
+            .concat(this.completeIf())
+            .concat([this.completeFor()]);
     }
 
     private completeFor(): CompletionItem {
@@ -40,15 +41,18 @@ export class CompletionProvider {
 
         return {
             detail: "For Loop",
-            insertText:
-                `\nfor \${1:${item}} in \${2:${collection}}\n  \${3:entity = @{\${1:${item}}}}\n  \${0}\nendfor`,
+            insertText: `
+for \${1:${item}} in \${2:${collection}}
+  \${3:entity = @{\${1:${item}}}}
+  \${0}
+endfor`,
             insertTextFormat: InsertTextFormat.Snippet,
             kind: CompletionItemKind.Keyword,
             label: "for",
         };
     }
 
-    private completeIf(): CompletionItem {
+    private completeIf(): CompletionItem[] {
         const regexp: RegExp = /^[ \t]*for[ \t]+(\w+)[ \t]+in/im;
         let match: RegExpExecArray = regexp.exec(this.text);
         let lastMatch: RegExpExecArray;
@@ -64,13 +68,49 @@ export class CompletionProvider {
             item = lastMatch[1];
         }
 
-        return {
-            detail: "If",
-            insertText: `\nif \${1:${item} === "item"}\n  \${2:entity = @{\${3:${item}}}}\n  \${0}\nendif`,
-            insertTextFormat: InsertTextFormat.Snippet,
-            kind: CompletionItemKind.Keyword,
-            label: "if",
-        };
+        return [
+            {
+                detail: "if item equals text",
+                insertText: `
+if @{\${1:${item}}} \${2:==} \${3:"item1"}
+  \${4:entity} = \${5:"item2"}
+else
+  \${4:entity} = \${6:"item3"}
+endif
+\${0}`,
+                label: "if text",
+            },
+            {
+                detail: "if item equals number",
+                insertText: `
+if @{\${1:${item}}} \${2:==} \${3:5}
+  \${4:entity} = \${5:"item1"}
+else
+  \${4:entity} = \${6:"item2"}
+endif
+\${0}`,
+                label: "if number",
+            },
+            {
+                detail: "if item equals number else if",
+                insertText:
+                `
+if @{\${1:${item}}} \${2:==} \${3:5}
+  \${4:entity} = \${5:"item1"}
+elseif @{\${1:${item}}} \${6:==} \${7:6}
+  \${4:entity} = \${8:"item2"}
+else
+  \${4:entity} = \${9:"item3"}
+endif
+\${0}`,
+                label: "if elseif",
+            },
+        ].map((completion: CompletionItem): CompletionItem => {
+            completion.insertTextFormat = InsertTextFormat.Snippet;
+            completion.kind = CompletionItemKind.Keyword;
+
+            return completion;
+        });
     }
 
     private readonly completeSettings: () => CompletionItem[] = (): CompletionItem[] =>
