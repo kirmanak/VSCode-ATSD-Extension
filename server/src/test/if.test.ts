@@ -1,4 +1,5 @@
-import { DiagnosticSeverity } from "vscode-languageserver";
+/* tslint:disable:no-magic-numbers */
+import { DiagnosticSeverity, Position, Range } from "vscode-languageserver";
 import { createDiagnostic } from "../util";
 import { Test } from "./test";
 
@@ -52,17 +53,11 @@ for server in servers
 endfor`,
             [
                 createDiagnostic(
-                    {
-                        end: { character: 10, line: 5 },
-                        start: { character: 4, line: 5 },
-                    },
+                    Range.create(5, "    ".length, 5, "    ".length + "elseif".length),
                     DiagnosticSeverity.Error, elseIfError,
                 ),
                 createDiagnostic(
-                    {
-                        end: { character: 9, line: 7 },
-                        start: { character: 4, line: 7 },
-                    },
+                    Range.create(Position.create(7, "    ".length), Position.create(7, "    ".length + "endif".length)),
                     DiagnosticSeverity.Error, endIfError,
                 )],
         ),
@@ -79,17 +74,11 @@ for server in servers
 endfor`,
             [
                 createDiagnostic(
-                    {
-                        end: { character: 8, line: 5 },
-                        start: { character: 4, line: 5 },
-                    },
+                    Range.create(Position.create(5, "    ".length), Position.create(5, "    ".length + "else".length)),
                     DiagnosticSeverity.Error, elseError,
                 ),
                 createDiagnostic(
-                    {
-                        end: { character: 9, line: 7 },
-                        start: { character: 4, line: 7 },
-                    },
+                    Range.create(Position.create(7, "    ".length), Position.create(7, "    ".length + "endif".length)),
                     DiagnosticSeverity.Error, endIfError,
                 )],
         ),
@@ -106,17 +95,13 @@ for server in servers
 endfor`,
             [
                 createDiagnostic(
-                    {
-                        end: { character: 32, line: 5 },
-                        start: { character: 28, line: 5 },
-                    },
+                    Range.create(
+                        5, "    /* this is a comment */ ".length, 5, "    /* this is a comment */ else".length,
+                    ),
                     DiagnosticSeverity.Error, elseError,
                 ),
                 createDiagnostic(
-                    {
-                        end: { character: 9, line: 7 },
-                        start: { character: 4, line: 7 },
-                    },
+                    Range.create(Position.create(7, "    ".length), Position.create(7, "    ".length + "endif".length)),
                     DiagnosticSeverity.Error, endIfError,
                 )],
         ),
@@ -134,17 +119,11 @@ for server in servers
 endfor`,
             [
                 createDiagnostic(
-                    {
-                        end: { character: 6, line: 9 },
-                        start: { character: 0, line: 9 },
-                    },
+                    Range.create(Position.create(9, 0), Position.create(9, "endfor".length)),
                     DiagnosticSeverity.Error, "for has finished before if",
                 ),
                 createDiagnostic(
-                    {
-                        end: { character: 6, line: 5 },
-                        start: { character: 4, line: 5 },
-                    },
+                    Range.create(Position.create(5, "    ".length), Position.create(5, "    ".length + "if".length)),
                     DiagnosticSeverity.Error, ifError,
                 )],
         ),

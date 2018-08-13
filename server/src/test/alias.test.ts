@@ -1,4 +1,5 @@
-import { DiagnosticSeverity } from "vscode-languageserver";
+/* tslint:disable:no-magic-numbers */
+import { DiagnosticSeverity, Range } from "vscode-languageserver";
 import { createDiagnostic, errorMessage } from "../util";
 import { Test } from "./test";
 
@@ -27,10 +28,7 @@ suite("Incorrect dealias tests", () => {
   entity = srv
   value = value('s2') * 2`,
             [createDiagnostic(
-                {
-                    end: { character: "  value = value('".length + "s2".length, line: 7 },
-                    start: { character: "  value = value('".length, line: 7 },
-                },
+                Range.create(7, "  value = value('".length, 7, "  value = value('".length + "s2".length),
                 DiagnosticSeverity.Error, errorMessage("s2", "s1"),
             )],
         ),
@@ -62,21 +60,11 @@ suite("Incorrect dealias tests", () => {
   value = value('s3') * 2`,
             [
                 createDiagnostic(
-                    {
-                        end: { character: "  value = value('".length + "s2".length, line: 7 },
-                        start: { character: "  value = value('".length, line: 7 },
-                    },
+                    Range.create(7, "  value = value('".length, 7, "  value = value('".length + "s2".length),
                     DiagnosticSeverity.Error, errorMessage("s2", "s1"),
                 ),
                 createDiagnostic(
-                    {
-                        end: {
-                            character: "  value = value('".length + "s3".length, line: 11,
-                        },
-                        start: {
-                            character: "  value = value('".length, line: 11,
-                        },
-                    },
+                    Range.create(11, "  value = value('".length, 11, "  value = value('".length + "s3".length),
                     DiagnosticSeverity.Error, errorMessage("s3", "s1"),
                 )],
         ),
@@ -119,14 +107,7 @@ suite("Incorrect dealias tests", () => {
   entity = srv
   value = value('s2') * 2`,
             [createDiagnostic(
-                {
-                    end: {
-                        character: "  value = value('".length + "s3".length, line: 11,
-                    },
-                    start: {
-                        character: "  value = value('".length, line: 11,
-                    },
-                },
+                Range.create(11, "  value = value('".length, 11, "  value = value('".length + "s3".length),
                 DiagnosticSeverity.Error, errorMessage("s3", "s1"),
             )],
         ),

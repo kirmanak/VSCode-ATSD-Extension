@@ -1,4 +1,5 @@
-import { DiagnosticSeverity, Range } from "vscode-languageserver";
+/* tslint:disable:no-magic-numbers */
+import { DiagnosticSeverity, Position, Range } from "vscode-languageserver";
 import { createDiagnostic, errorMessage } from "../util";
 import { Test } from "./test";
 
@@ -11,10 +12,7 @@ suite("Spelling checks", () => {
 	starttime = 20 second
 	startime = 30 minute`,
             [createDiagnostic(
-                {
-                    end: { character: 9, line: 3 },
-                    start: { character: 1, line: 3 },
-                },
+                Range.create(Position.create(3, "	".length), Position.create(3, "	startime".length)),
                 DiagnosticSeverity.Error, errorMessage("startime", "starttime"),
             )],
         ),
@@ -23,10 +21,7 @@ suite("Spelling checks", () => {
             `[eries]
 	starttime = 20 second`,
             [createDiagnostic(
-                {
-                    end: { character: 6, line: 0 },
-                    start: { character: 1, line: 0 },
-                },
+                Range.create(Position.create(0, "[".length), Position.create(0, "[eries".length)),
                 DiagnosticSeverity.Error, errorMessage("eries", "series"),
             )],
         ),
@@ -35,10 +30,7 @@ suite("Spelling checks", () => {
             `[starttime]
 	starttime = 20 second`,
             [createDiagnostic(
-                {
-                    end: { character: 10, line: 0 },
-                    start: { character: 1, line: 0 },
-                },
+                Range.create(Position.create(0, "[".length), Position.create(0, "[starttime".length)),
                 DiagnosticSeverity.Error, errorMessage("starttime", "series"),
             )],
         ),
@@ -56,17 +48,11 @@ suite("Spelling checks", () => {
 	startime = 20 second`,
             [
                 createDiagnostic(
-                    {
-                        end: { character: "[".length + "starttime".length, line: 2 },
-                        start: { character: "[".length, line: 2 },
-                    },
+                    Range.create(Position.create(2, "[".length), Position.create(2, "[starttime".length)),
                     DiagnosticSeverity.Error, errorMessage("starttime", "series"),
                 ),
                 createDiagnostic(
-                    {
-                        end: { character: "	".length + "startime".length, line: 3 },
-                        start: { character: "	".length, line: 3 },
-                    },
+                    Range.create(Position.create(3, "	".length), Position.create(3, " ".length + "startime".length)),
                     DiagnosticSeverity.Error, errorMessage("startime", "starttime"),
                 )],
         ),
@@ -80,10 +66,7 @@ suite("Spelling checks", () => {
 
   startime = 20 second`,
             [createDiagnostic(
-                {
-                    end: { character: "  ".length + "startime".length, line: 6 },
-                    start: { character: "  ".length, line: 6 },
-                },
+                Range.create(Position.create(6, "  ".length), Position.create(6, "  ".length + "startime".length)),
                 DiagnosticSeverity.Error, errorMessage("startime", "starttime"),
             )],
         ),
@@ -117,12 +100,7 @@ type = chart`,
   ad = 0
   ed = 0`,
             [createDiagnostic(
-                Range.create(
-                    // tslint:disable-next-line:no-magic-numbers
-                    3, "  ".length,
-                    // tslint:disable-next-line:no-magic-numbers
-                    3, "  ".length + "ad".length,
-                ),
+                Range.create(Position.create(3, "  ".length), Position.create(3, "  ".length + "ad".length)),
                 DiagnosticSeverity.Error, errorMessage("ad", "add"),
             )],
         ),

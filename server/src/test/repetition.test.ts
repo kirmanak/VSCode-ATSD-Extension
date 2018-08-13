@@ -1,4 +1,5 @@
-import { DiagnosticSeverity } from "vscode-languageserver";
+/* tslint:disable:no-magic-numbers */
+import { DiagnosticSeverity, Position, Range } from "vscode-languageserver";
 import { createDiagnostic } from "../util";
 import { Test } from "./test";
 
@@ -9,10 +10,7 @@ suite("Repetition of variables or settings tests", () => {
             `list servers = 'srv1', 'srv2'
 var servers = 'srv1', 'srv2'`,
             [createDiagnostic(
-                {
-                    end: { character: "var ".length + "servers".length, line: 1 },
-                    start: { character: "var ".length, line: 1 },
-                },
+                Range.create(Position.create(1, "var ".length), Position.create(1, "var ".length + "servers".length)),
                 DiagnosticSeverity.Error, "servers is already defined",
             )],
         ),
@@ -22,10 +20,7 @@ var servers = 'srv1', 'srv2'`,
 for servers in servers
 endfor`,
             [createDiagnostic(
-                {
-                    end: { character: "for ".length + "servers".length, line: 1 },
-                    start: { character: "for ".length, line: 1 },
-                },
+                Range.create(Position.create(1, "for ".length), Position.create(1, "for ".length + "servers".length)),
                 DiagnosticSeverity.Error, "servers is already defined",
             )],
         ),
@@ -36,10 +31,7 @@ csv servers = vps, vds
   true, false
 endcsv`,
             [createDiagnostic(
-                {
-                    end: { character: "csv ".length + "servers".length, line: 1 },
-                    start: { character: "csv ".length, line: 1 },
-                },
+                Range.create(Position.create(1, "csv ".length), Position.create(1, "csv ".length + "servers".length)),
                 DiagnosticSeverity.Error, "servers is already defined",
             )],
         ),
@@ -50,10 +42,7 @@ endcsv`,
 endcsv
 list servers = 'srv1', 'srv2'`,
             [createDiagnostic(
-                {
-                    end: { character: "list ".length + "servers".length, line: 3 },
-                    start: { character: "list ".length, line: 3 },
-                },
+                Range.create(Position.create(3, "list ".length), Position.create(3, "list ".length + "servers".length)),
                 DiagnosticSeverity.Error, "servers is already defined",
             )],
         ),
@@ -72,10 +61,7 @@ var srv = ['srv1', 'srv2']`,
    entity = srv2
    metric = status`,
             [createDiagnostic(
-                {
-                    end: { character: "   ".length + "entity".length, line: 2 },
-                    start: { character: "   ".length, line: 2 },
-                },
+                Range.create(Position.create(2, "   ".length), Position.create(2, "   ".length + "entity".length)),
                 DiagnosticSeverity.Error, "entity is already defined",
             )],
         ),
@@ -87,10 +73,7 @@ var srv = ['srv1', 'srv2']`,
    entity = srv2
    metric = status`,
             [createDiagnostic(
-                {
-                    end: { character: "   ".length + "entity".length, line: 3 },
-                    start: { character: "   ".length, line: 3 },
-                },
+                Range.create(Position.create(3, "   ".length), Position.create(3, "   ".length + "entity".length)),
                 DiagnosticSeverity.Hint, "entity is already defined",
             )],
         ),
@@ -105,10 +88,7 @@ var srv = ['srv1', 'srv2']`,
    metric = temp
    alias = server`,
             [createDiagnostic(
-                {
-                    end: { character: "   alias = ".length + "server".length, line: 7 },
-                    start: { character: "   alias = ".length, line: 7 },
-                },
+                Range.create(Position.create(7, "   alias = ".length), Position.create(7, "   alias = server".length)),
                 DiagnosticSeverity.Error, "server is already defined",
             )],
         ),
@@ -153,17 +133,11 @@ for server in servers
 endfor`,
             [
                 createDiagnostic(
-                    {
-                        end: { character: "           ".length + "color".length, line: 7 },
-                        start: { character: "           ".length, line: 7 },
-                    },
+                    Range.create(7, "           ".length, 7, "           color".length),
                     DiagnosticSeverity.Error, "color is already defined",
                 ),
                 createDiagnostic(
-                    {
-                        end: { character: "           ".length + "color".length, line: 9 },
-                        start: { character: "           ".length, line: 9 },
-                    },
+                    Range.create(9, "           ".length, 9, "           color".length),
                     DiagnosticSeverity.Error, "color is already defined",
                 )],
         ),
@@ -184,17 +158,11 @@ for server in servers
 endfor`,
             [
                 createDiagnostic(
-                    {
-                        end: { character: "           ".length + "entity".length, line: 8 },
-                        start: { character: "           ".length, line: 8 },
-                    },
+                    Range.create(8, "           ".length, 8, "           entity".length),
                     DiagnosticSeverity.Hint, "entity is already defined",
                 ),
                 createDiagnostic(
-                    {
-                        end: { character: "           ".length + "entity".length, line: 10 },
-                        start: { character: "           ".length, line: 10 },
-                    },
+                    Range.create(10, "           ".length, 10, "           entity".length),
                     DiagnosticSeverity.Hint, "entity is already defined",
                 )],
         ),
@@ -213,10 +181,7 @@ for server in servers
        endif
 endfor`,
             [createDiagnostic(
-                {
-                    end: { character: "           ".length + "color".length, line: 7 },
-                    start: { character: "           ".length, line: 7 },
-                },
+                Range.create(7, "           ".length, 7, "           color".length),
                 DiagnosticSeverity.Error, "color is already defined",
             )],
         ),
@@ -235,10 +200,7 @@ for server in servers
        endif
 endfor`,
             [createDiagnostic(
-                {
-                    end: { character: "           ".length + "color".length, line: 9 },
-                    start: { character: "           ".length, line: 9 },
-                },
+                Range.create(9, "           ".length, 9, "           color".length),
                 DiagnosticSeverity.Error, "color is already defined",
             )],
         ),
@@ -259,10 +221,7 @@ for server in servers
        endif
 endfor`,
             [createDiagnostic(
-                {
-                    end: { character: "           ".length + "color".length, line: 11 },
-                    start: { character: "           ".length, line: 11 },
-                },
+                Range.create(11, "           ".length, 11, "           color".length),
                 DiagnosticSeverity.Error, "color is already defined",
             )],
         ),

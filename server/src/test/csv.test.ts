@@ -1,4 +1,5 @@
-import { DiagnosticSeverity } from "vscode-languageserver";
+/* tslint:disable:no-magic-numbers */
+import { DiagnosticSeverity, Position, Range } from "vscode-languageserver";
 import { createDiagnostic } from "../util";
 import { Test } from "./test";
 
@@ -29,18 +30,14 @@ endcsv`,
 encsv`,
             [
                 createDiagnostic(
-                    {
-                        end: { character: 5, line: 3 },
-                        start: { character: 0, line: 3 },
-                    },
+                    Range.create(Position.create(3, 0), Position.create(3, "encsv".length)),
                     DiagnosticSeverity.Error, "Expected 3 columns, but found 1",
                 ),
                 createDiagnostic(
-                    {
-                        end: { character: 3, line: 0 }, start: { character: 0, line: 0 },
-                    },
+                    Range.create(Position.create(0, 0), Position.create(0, "csv".length)),
                     DiagnosticSeverity.Error, "csv has no matching endcsv",
-                )],
+                ),
+            ],
         ),
         new Test(
             "Unclosed csv (header next line)",
@@ -51,19 +48,14 @@ encsv`,
 encsv`,
             [
                 createDiagnostic(
-                    {
-                        end: { character: 5, line: 4 },
-                        start: { character: 0, line: 4 },
-                    },
+                    Range.create(Position.create(4, 0), Position.create(4, "encsv".length)),
                     DiagnosticSeverity.Error, "Expected 3 columns, but found 1",
                 ),
                 createDiagnostic(
-                    {
-                        end: { character: 3, line: 0 },
-                        start: { character: 0, line: 0 },
-                    },
+                    Range.create(Position.create(0, 0), Position.create(0, "csv".length)),
                     DiagnosticSeverity.Error, "csv has no matching endcsv",
-                )],
+                ),
+            ],
         ),
         new Test(
             "Incorrect csv",
@@ -72,10 +64,7 @@ encsv`,
    USA, 63, 63, 63
 endcsv`,
             [createDiagnostic(
-                {
-                    end: { character: 18, line: 2 },
-                    start: { character: 0, line: 2 },
-                },
+                Range.create(Position.create(2, 0), Position.create(2, "   Russia, 65, 63\n".length)),
                 DiagnosticSeverity.Error, "Expected 3 columns, but found 4",
             )],
         ),

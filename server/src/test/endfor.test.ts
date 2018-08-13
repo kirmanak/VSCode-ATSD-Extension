@@ -1,4 +1,5 @@
-import { DiagnosticSeverity } from "vscode-languageserver";
+/* tslint:disable:no-magic-numbers */
+import { DiagnosticSeverity, Position, Range } from "vscode-languageserver";
 import { createDiagnostic } from "../util";
 import { Test } from "./test";
 
@@ -29,10 +30,7 @@ endfor`,
 for server in servers
    do something`,
             [createDiagnostic(
-                {
-                    end: { character: 3, line: 1 },
-                    start: { character: 0, line: 1 },
-                },
+                Range.create(Position.create(1, 0), Position.create(1, "for".length)),
                 DiagnosticSeverity.Error, "for has no matching endfor",
             )],
         ),
@@ -45,17 +43,11 @@ for srv in servers
    do something`,
             [
                 createDiagnostic(
-                    {
-                        end: { character: 3, line: 1 },
-                        start: { character: 0, line: 1 },
-                    },
+                    Range.create(Position.create(1, 0), Position.create(1, "for".length)),
                     DiagnosticSeverity.Error, "for has no matching endfor",
                 ),
                 createDiagnostic(
-                    {
-                        end: { character: 3, line: 3 },
-                        start: { character: 0, line: 3 },
-                    },
+                    Range.create(Position.create(3, 0), Position.create(3, "for".length)),
                     DiagnosticSeverity.Error, "for has no matching endfor",
                 )],
         ),
@@ -68,10 +60,7 @@ for srv in servers
    do something
 endfor`,
             [createDiagnostic(
-                {
-                    end: { character: 3, line: 1 },
-                    start: { character: 0, line: 1 },
-                },
+                Range.create(Position.create(1, 0), Position.create(1, "for".length)),
                 DiagnosticSeverity.Error, "for has no matching endfor",
             )],
         ),

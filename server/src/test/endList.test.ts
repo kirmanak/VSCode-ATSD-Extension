@@ -1,4 +1,5 @@
-import { DiagnosticSeverity } from "vscode-languageserver";
+/* tslint:disable:no-magic-numbers */
+import { DiagnosticSeverity, Position, Range } from "vscode-languageserver";
 import { createDiagnostic } from "../util";
 import { Test } from "./test";
 
@@ -24,10 +25,7 @@ endlist`,
 	vds
 edlist`,
             [createDiagnostic(
-                {
-                    end: { character: 4, line: 0 },
-                    start: { character: 0, line: 0 },
-                },
+                Range.create(Position.create(0, 0), Position.create(0, "list".length)),
                 DiagnosticSeverity.Error, errorMessage,
             )],
         ),
@@ -41,10 +39,7 @@ list servers = vps,
 	vds
 edlist`,
             [createDiagnostic(
-                {
-                    end: { character: 4, line: 4 },
-                    start: { character: 0, line: 4 },
-                },
+                Range.create(Position.create(4, 0), Position.create(4, "list".length)),
                 DiagnosticSeverity.Error, errorMessage,
             )],
         ),
@@ -54,10 +49,7 @@ edlist`,
 	vds
 edlist`,
             [createDiagnostic(
-                {
-                    end: { character: 15, line: 0 },
-                    start: { character: 11, line: 0 },
-                },
+                Range.create(Position.create(0, "/* test */ ".length), Position.create(0, "/* test */ list".length)),
                 DiagnosticSeverity.Error, errorMessage,
             )],
         ),
@@ -71,10 +63,7 @@ to check correct range */
 	vds
 edlist`,
             [createDiagnostic(
-                {
-                    end: { character: 15, line: 4 },
-                    start: { character: 11, line: 4 },
-                },
+                Range.create(Position.create(4, "/* test */ ".length), Position.create(4, "/* test */ list".length)),
                 DiagnosticSeverity.Error, errorMessage,
             )],
         ),
@@ -90,10 +79,7 @@ list servers3 = vps,
 	vds
 endlist`,
             [createDiagnostic(
-                {
-                    end: { character: 4, line: 3 },
-                    start: { character: 0, line: 3 },
-                },
+                Range.create(Position.create(3, 0), Position.create(3, "list".length)),
                 DiagnosticSeverity.Error, errorMessage,
             )],
         ),
@@ -110,10 +96,7 @@ endlist`,
 	,vds
 edlist`,
             [createDiagnostic(
-                {
-                    end: { character: 4, line: 0 },
-                    start: { character: 0, line: 0 },
-                },
+                Range.create(Position.create(0, 0), Position.create(0, "list".length)),
                 DiagnosticSeverity.Error, errorMessage,
             )],
         ),

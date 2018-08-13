@@ -1,4 +1,4 @@
-import { DiagnosticSeverity } from "vscode-languageserver";
+import { DiagnosticSeverity, Position, Range } from "vscode-languageserver";
 import { createDiagnostic } from "../util";
 import { Test } from "./test";
 
@@ -14,10 +14,7 @@ suite("Warn about setting interpreted as a tag", () => {
 	starttime = 20 second
 	startime = 30 minute`,
             [createDiagnostic(
-                {
-                    end: { character: "	".length + "starttime".length, line: 1 },
-                    start: { character: "	".length, line: 1 },
-                },
+                Range.create(Position.create(1, "	".length), Position.create(1, "	".length + "starttime".length)),
                 DiagnosticSeverity.Information, errorMessage("starttime"),
             )],
         ),
@@ -34,10 +31,7 @@ suite("Warn about setting interpreted as a tag", () => {
 	stArt-time = 20 second
 	startime = 30 minute`,
             [createDiagnostic(
-                {
-                    end: { character: "	".length + "stArt-time".length, line: 1 },
-                    start: { character: "	".length, line: 1 },
-                },
+                Range.create(Position.create(1, "	".length), Position.create(1, "	".length + "stArt-time".length)),
                 DiagnosticSeverity.Information, errorMessage("start-time"),
             )],
         ),

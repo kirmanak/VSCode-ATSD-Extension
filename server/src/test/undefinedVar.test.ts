@@ -218,8 +218,7 @@ endfor`,
             [createDiagnostic(
                 {
                     end: {
-                        character: `       entity = @{keepAfterLast(${secondVar}, 'v')}, @{`.length
-                            + firstVar.length,
+                        character: `       entity = @{keepAfterLast(${secondVar}, 'v')}, @{`.length + firstVar.length,
                         line: 4,
                     },
                     start: { character: `       entity = @{keepAfterLast(${secondVar}, 'v')}, @{`.length, line: 4 },

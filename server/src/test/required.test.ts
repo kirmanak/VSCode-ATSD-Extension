@@ -1,4 +1,5 @@
-import { DiagnosticSeverity, Range } from "vscode-languageserver";
+/* tslint:disable:no-magic-numbers */
+import { DiagnosticSeverity, Position, Range } from "vscode-languageserver";
 import { createDiagnostic } from "../util";
 import { Test } from "./test";
 
@@ -16,10 +17,7 @@ suite("Required settings for sections tests", () => {
             `[series]
    metric = hello`,
             [createDiagnostic(
-                {
-                    end: { character: "[".length + "series".length, line: 0 },
-                    start: { character: "[".length, line: 0 },
-                },
+                Range.create(Position.create(0, "[".length), Position.create(0, "[".length + "series".length)),
                 DiagnosticSeverity.Error, "entity is required",
             )],
         ),
@@ -78,10 +76,7 @@ suite("Required settings for sections tests", () => {
        [series]
            metric = hello`,
             [createDiagnostic(
-                {
-                    end: { character: "       [".length + "series".length, line: 8 },
-                    start: { character: "       [".length, line: 8 },
-                },
+                Range.create(Position.create(8, "       [".length), Position.create(8, "       [series".length)),
                 DiagnosticSeverity.Error, "entity is required",
             )],
         ),
@@ -93,17 +88,11 @@ suite("Required settings for sections tests", () => {
    entity = hello`,
             [
                 createDiagnostic(
-                    {
-                        end: { character: "[".length + "series".length, line: 0 },
-                        start: { character: "[".length, line: 0 },
-                    },
+                    Range.create(Position.create(0, "[".length), Position.create(0, "[".length + "series".length)),
                     DiagnosticSeverity.Error, "entity is required",
                 ),
                 createDiagnostic(
-                    {
-                        end: { character: "[".length + "series".length, line: 2 },
-                        start: { character: "[".length, line: 2 },
-                    },
+                    Range.create(Position.create(2, "[".length), Position.create(2, "[".length + "series".length)),
                     DiagnosticSeverity.Error, "metric is required",
                 )],
         ),
@@ -134,10 +123,7 @@ for server in servers
        endif
 endfor`,
             [createDiagnostic(
-                {
-                    end: { character: "   [".length + "series".length, line: 2 },
-                    start: { character: "   [".length, line: 2 },
-                },
+                Range.create(Position.create(2, "   [".length), Position.create(2, "   [".length + "series".length)),
                 DiagnosticSeverity.Error, "entity is required",
             )],
         ),
@@ -147,10 +133,7 @@ endfor`,
   entity = server
   table = cpu_busy`,
             [createDiagnostic(
-                Range.create(
-                    0, "[".length,
-                    0, "[".length + "series".length,
-                ),
+                Range.create(Position.create(0, "[".length), Position.create(0, "[".length + "series".length)),
                 DiagnosticSeverity.Error, "attribute is required",
             )],
         ),
@@ -160,10 +143,7 @@ endfor`,
   entity = server
   attribute = cpu_busy`,
             [createDiagnostic(
-                Range.create(
-                    0, "[".length,
-                    0, "[".length + "series".length,
-                ),
+                Range.create(Position.create(0, "[".length), Position.create(0, "[".length + "series".length)),
                 DiagnosticSeverity.Error, "table is required",
             )],
         ),
