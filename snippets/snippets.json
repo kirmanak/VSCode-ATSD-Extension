@@ -22,6 +22,21 @@
         ],
         "description": "If condition"
     },
+    "csv": {
+        "prefix": "csv",
+        "body": [
+            "csv ${1:cities} = ${2:name, region}",
+            "  ${3:Sunnyvale, CA}",
+            "  ${4:Cupertino, CA}",
+            "endcsv",
+            "",
+            "for ${5:city} in ${1:cities}",
+            "  entity = ${6:@{city.name}}",
+            "endfor",
+            "${0}"
+        ],
+        "description": "Csv and corresponding for"
+    },
     "chart-basic": {
         "prefix": "chart-basic",
         "body": [
