@@ -53,12 +53,16 @@ endfor`,
     }
 
     private completeIf(): CompletionItem[] {
-        const regexp: RegExp = /^[ \t]*for[ \t]+(\w+)[ \t]+in/im;
+        const regexp: RegExp = /^[ \t]*for[ \t]+(\w+)[ \t]+in/img;
+        const endFor: RegExp = /^[ \t]*endfor/img;
         let match: RegExpExecArray = regexp.exec(this.text);
         let lastMatch: RegExpExecArray;
 
         while (match) {
-            lastMatch = match;
+            const end: RegExpExecArray = endFor.exec(this.text);
+            if (!end || end.index < match.index) {
+                lastMatch = match;
+            }
             match = regexp.exec(this.text);
         }
 
@@ -94,7 +98,7 @@ endif
             {
                 detail: "if item equals number else if",
                 insertText:
-                `
+                    `
 if @{\${1:${item}}} \${2:==} \${3:5}
   \${4:entity} = \${5:"item1"}
 elseif @{\${1:${item}}} \${6:==} \${7:6}
