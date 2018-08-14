@@ -1,6 +1,10 @@
-import { Range } from "vscode-languageserver";
+import { Position, Range } from "vscode-languageserver";
 
 export class FoundKeyword {
+    public static create(keyword: string, range: Range): FoundKeyword {
+        return { keyword, range };
+    }
+
     public static isCloseAble(line: string): boolean {
         return /^[ \t]*(?:for|if|list|var|script|csv)\b/.test(line);
     }
@@ -22,13 +26,9 @@ export class FoundKeyword {
         if (match === null) { return undefined; }
         const keywordStart: number = match[1].length;
 
-        return {
-            keyword: match[this.KEYWORD_POSITION],
-            range: {
-                end: { character: keywordStart + match[this.KEYWORD_POSITION].length, line: i },
-                start: { character: keywordStart, line: i },
-            },
-        };
+        return FoundKeyword.create(match[this.KEYWORD_POSITION], Range.create(
+            Position.create(i, keywordStart), Position.create(i, keywordStart + match[this.KEYWORD_POSITION].length),
+        ));
     }
 
     private static readonly KEYWORD_POSITION: number = 2;

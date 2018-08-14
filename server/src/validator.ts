@@ -390,16 +390,10 @@ export class Validator {
         this.previousSection = this.currentSection;
         this.settings = [];
         this.ifSettings.clear();
-        this.currentSection = {
-            keyword: this.match[Validator.CONTENT_POSITION],
-            range: {
-                end: {
-                    character: this.match[1].length + this.match[Validator.CONTENT_POSITION].length,
-                    line: this.currentLineNumber,
-                },
-                start: { character: this.match[1].length, line: this.currentLineNumber },
-            },
-        };
+        this.currentSection = FoundKeyword.create(this.match[Validator.CONTENT_POSITION], Range.create(
+            this.currentLineNumber, this.match[1].length,
+            this.currentLineNumber, this.match[1].length + this.match[Validator.CONTENT_POSITION].length,
+        ));
         if (isInMap(this.currentSection.keyword, resources.parentSections)) {
             this.parentSettings.set(this.currentSection.keyword, []);
         }
@@ -415,15 +409,10 @@ export class Validator {
             this.match = /(^\s*value\s*=.*value\((['"]))(\w+)\2\).*$/.exec(line);
             const deAliasPosition: number = 3;
             if (this.match) {
-                this.deAliases.push({
-                    keyword: this.match[deAliasPosition], range: {
-                        end: {
-                            character: this.match[1].length + this.match[deAliasPosition].length,
-                            line: this.currentLineNumber,
-                        },
-                        start: { character: this.match[1].length, line: this.currentLineNumber },
-                    },
-                });
+                this.deAliases.push(FoundKeyword.create(this.match[deAliasPosition], Range.create(
+                    this.currentLineNumber, this.match[1].length,
+                    this.currentLineNumber, this.match[1].length + this.match[deAliasPosition].length,
+                )));
             }
 
             this.match = /(^\s*)([-\w]+)\s*=/.exec(this.getCurrentLine());
@@ -591,13 +580,14 @@ export class Validator {
                     if (!isInMap(variable, this.variables)) {
                         const position: number = startPosition + this.match.index;
                         const message: string = suggestionMessage(variable, mapToArray(this.variables));
-                        this.result.push(createDiagnostic(
-                            Range.create(
-                                Position.create(this.currentLineNumber, position),
-                                Position.create(this.currentLineNumber, position + variable.length),
-                            ),
-                            DiagnosticSeverity.Error, message,
-                        ));
+                        this.result.push(
+                            createDiagnostic(
+                                Range.create(
+                                    Position.create(this.currentLineNumber, position),
+                                    Position.create(this.currentLineNumber, position + variable.length),
+                                ),
+                                DiagnosticSeverity.Error, message,
+                            ));
                     }
                     this.match = varRegexp.exec(substr);
                 }

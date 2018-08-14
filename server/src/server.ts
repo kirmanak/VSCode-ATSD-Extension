@@ -113,8 +113,9 @@ const validateTextDocument: (textDocument: TextDocument) => Promise<void> =
     };
 
 connection.onDocumentFormatting((params: DocumentFormattingParams): TextEdit[] => {
-    const document: TextDocument = documents.get(params.textDocument.uri);
-    const formatter: Formatter = new Formatter(document.getText(), params.options);
+    const text: string = documents.get(params.textDocument.uri)
+        .getText();
+    const formatter: Formatter = new Formatter(text, params.options);
 
     return formatter.lineByLine();
 });
