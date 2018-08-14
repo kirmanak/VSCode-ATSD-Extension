@@ -1,6 +1,6 @@
 import { Diagnostic, DiagnosticSeverity, Position, Range } from "vscode-languageserver";
-import { FoundKeyword } from "./foundKeyword";
 import * as resources from "./resources";
+import { TextRange } from "./textRange";
 import {
     countCsvColumns, createDiagnostic, deleteComments, isAnyInArray, isInArray, isInMap, mapToArray, suggestionMessage,
 } from "./util";
@@ -10,16 +10,16 @@ export class Validator {
     private aliases: string[] = [];
     private csvColumns: number;
     private currentLineNumber: number = 0;
-    private currentSection: FoundKeyword;
-    private readonly deAliases: FoundKeyword[] = [];
-    private foundKeyword: FoundKeyword;
+    private currentSection: TextRange;
+    private readonly deAliases: TextRange[] = [];
+    private foundKeyword: TextRange;
     private readonly ifSettings: Map<string, string[]> = new Map<string, string[]>();
-    private readonly keywordsStack: FoundKeyword[] = [];
+    private readonly keywordsStack: TextRange[] = [];
     private lastCondition: string;
     private readonly lines: string[];
     private match: RegExpExecArray;
     private readonly parentSettings: Map<string, string[]> = new Map<string, string[]>();
-    private previousSection: FoundKeyword;
+    private previousSection: TextRange;
     private previousSettings: string[] = [];
     private requiredSettings: string[][] = [];
     private readonly result: Diagnostic[] = [];
@@ -37,19 +37,19 @@ export class Validator {
             const line: string = this.getCurrentLine();
 
             // Prepare regex to let 'g' key do its work
-            this.foundKeyword = FoundKeyword.parse(line, this.currentLineNumber);
+            this.foundKeyword = TextRange.parse(line, this.currentLineNumber);
 
-            if (this.areWeIn("script") && (!this.foundKeyword || this.foundKeyword.keyword !== "endscript")) {
+            if (this.areWeIn("script") && (!this.foundKeyword || this.foundKeyword.text !== "endscript")) {
                 continue;
             }
-            if (this.areWeIn("csv") && (!this.foundKeyword || this.foundKeyword.keyword !== "endcsv")) {
+            if (this.areWeIn("csv") && (!this.foundKeyword || this.foundKeyword.text !== "endcsv")) {
                 this.validateCsv();
             }
 
             this.eachLine();
 
             if (this.foundKeyword) {
-                if (/\b(if|for|csv)\b/i.test(this.foundKeyword.keyword)) {
+                if (/\b(if|for|csv)\b/i.test(this.foundKeyword.text)) {
                     this.keywordsStack.push(this.foundKeyword);
                 }
 
@@ -107,13 +107,13 @@ export class Validator {
     }
 
     private areWeIn(name: string): boolean {
-        return this.keywordsStack.find((item: FoundKeyword) => (item) ? item.keyword === name : false) !== undefined;
+        return this.keywordsStack.find((item: TextRange) => (item) ? item.text === name : false) !== undefined;
     }
 
     private checkAliases(): void {
-        this.deAliases.forEach((deAlias: FoundKeyword) => {
-            if (!isInArray(this.aliases, deAlias.keyword)) {
-                const message: string = suggestionMessage(deAlias.keyword, this.aliases);
+        this.deAliases.forEach((deAlias: TextRange) => {
+            if (!isInArray(this.aliases, deAlias.text)) {
+                const message: string = suggestionMessage(deAlias.text, this.aliases);
                 this.result.push(createDiagnostic(deAlias.range, DiagnosticSeverity.Error, message));
             }
         });
@@ -130,11 +130,11 @@ export class Validator {
         if (!this.areWeIn(expectedEnd)) {
             this.result.push(createDiagnostic(
                 this.foundKeyword.range, DiagnosticSeverity.Error,
-                `${this.foundKeyword.keyword} has no matching ${expectedEnd}`,
+                `${this.foundKeyword.text} has no matching ${expectedEnd}`,
             ));
         } else {
             const index: number =
-                this.keywordsStack.findIndex((keyword: FoundKeyword) => keyword.keyword === expectedEnd);
+                this.keywordsStack.findIndex((keyword: TextRange) => keyword.text === expectedEnd);
             this.keywordsStack.splice(index, 1);
             this.result.push(createDiagnostic(
                 this.foundKeyword.range, DiagnosticSeverity.Error,
@@ -161,7 +161,7 @@ export class Validator {
     private checkPreviousSection(): void {
         if (!this.currentSection) { return; }
         this.requiredSettings =
-            this.requiredSettings.concat(resources.requiredSectionSettingsMap.get(this.currentSection.keyword));
+            this.requiredSettings.concat(resources.requiredSectionSettingsMap.get(this.currentSection.text));
         if (this.requiredSettings.length !== 0) {
             const notFound: string[] = [];
             this.requiredSettings.forEach((options: string[]) => {
@@ -220,9 +220,9 @@ export class Validator {
             }
         } else { this.addToArray(this.settings, DiagnosticSeverity.Error); }
 
-        if (this.currentSection && isInMap(this.currentSection.keyword, resources.parentSections)) {
+        if (this.currentSection && isInMap(this.currentSection.text, resources.parentSections)) {
             if (isInMap(setting, resources.requiredSectionSettingsMap)) {
-                this.addToMap(this.parentSettings, this.currentSection.keyword, DiagnosticSeverity.Hint);
+                this.addToMap(this.parentSettings, this.currentSection.text, DiagnosticSeverity.Hint);
             }
         } else {
             if (isInMap(setting, this.parentSettings)) {
@@ -235,11 +235,11 @@ export class Validator {
     private diagnosticForLeftKeywords(): void {
         const length: number = this.keywordsStack.length;
         for (let i: number = 0; i < length; i++) {
-            const nestedConstruction: FoundKeyword = this.keywordsStack[i];
+            const nestedConstruction: TextRange = this.keywordsStack[i];
             if (!nestedConstruction) { continue; }
             this.result.push(createDiagnostic(
                 nestedConstruction.range, DiagnosticSeverity.Error,
-                `${nestedConstruction.keyword} has no matching end${nestedConstruction.keyword}`,
+                `${nestedConstruction.text} has no matching end${nestedConstruction.text}`,
             ));
         }
     }
@@ -248,7 +248,7 @@ export class Validator {
         this.checkFreemarker();
         const line: string = this.getCurrentLine();
         this.match = /(^[\t ]*\[)(\w+)\][\t ]*/.exec(line);
-        if (this.match || (/^\s*$/.test(line) && this.currentSection && this.currentSection.keyword === "tags")) {
+        if (this.match || (/^\s*$/.test(line) && this.currentSection && this.currentSection.text === "tags")) {
             this.handleSection();
         } else {
             this.match = /(^\s*)(\S+)\s*=\s*(.+)$/m.exec(line);
@@ -263,9 +263,9 @@ export class Validator {
     }
 
     private getLastKeyword(): string | undefined {
-        const stackHead: FoundKeyword = this.keywordsStack[this.keywordsStack.length - 1];
+        const stackHead: TextRange = this.keywordsStack[this.keywordsStack.length - 1];
 
-        return (stackHead) ? stackHead.keyword : undefined;
+        return (stackHead) ? stackHead.text : undefined;
     }
 
     private getLine(line: number): string | undefined {
@@ -291,10 +291,10 @@ export class Validator {
         this.setLastCondition();
         let message: string;
         if (!this.areWeIn("if")) {
-            message = `${this.foundKeyword.keyword} has no matching if`;
+            message = `${this.foundKeyword.text} has no matching if`;
         } else if (this.getLastKeyword() !== "if") {
             message =
-                `${this.foundKeyword.keyword} has started before ${this.getLastKeyword()} has finished`;
+                `${this.foundKeyword.text} has started before ${this.getLastKeyword()} has finished`;
         }
         if (message) {
             this.result.push(createDiagnostic(this.foundKeyword.range, DiagnosticSeverity.Error, message));
@@ -390,18 +390,18 @@ export class Validator {
         this.previousSection = this.currentSection;
         this.settings = [];
         this.ifSettings.clear();
-        this.currentSection = FoundKeyword.create(this.match[Validator.CONTENT_POSITION], Range.create(
+        this.currentSection = TextRange.create(this.match[Validator.CONTENT_POSITION], Range.create(
             this.currentLineNumber, this.match[1].length,
             this.currentLineNumber, this.match[1].length + this.match[Validator.CONTENT_POSITION].length,
         ));
-        if (isInMap(this.currentSection.keyword, resources.parentSections)) {
-            this.parentSettings.set(this.currentSection.keyword, []);
+        if (isInMap(this.currentSection.text, resources.parentSections)) {
+            this.parentSettings.set(this.currentSection.text, []);
         }
     }
 
     private handleSettings(): void {
         const line: string = this.getCurrentLine();
-        if (!this.currentSection || !/tags|keys/.test(this.currentSection.keyword)) {
+        if (!this.currentSection || !/tags|keys/.test(this.currentSection.text)) {
             // We are not in tags or keys section
             // Aliases
             this.match = /(^\s*alias\s*=\s*)(\w+)\s*$/m.exec(line);
@@ -409,7 +409,7 @@ export class Validator {
             this.match = /(^\s*value\s*=.*value\((['"]))(\w+)\2\).*$/.exec(line);
             const deAliasPosition: number = 3;
             if (this.match) {
-                this.deAliases.push(FoundKeyword.create(this.match[deAliasPosition], Range.create(
+                this.deAliases.push(TextRange.create(this.match[deAliasPosition], Range.create(
                     this.currentLineNumber, this.match[1].length,
                     this.currentLineNumber, this.match[1].length + this.match[deAliasPosition].length,
                 )));
@@ -467,7 +467,7 @@ export class Validator {
     }
 
     private spellingCheck(): void {
-        if (this.currentSection && /tags?|keys/.test(this.currentSection.keyword)) { return; }
+        if (this.currentSection && /tags?|keys/.test(this.currentSection.text)) { return; }
         const line: string = this.getCurrentLine();
 
         /* statements like `[section] variable = value` aren't supported */
@@ -483,7 +483,7 @@ export class Validator {
             } else if (cleared.startsWith("column")) {
                 return;
             }
-            if (this.currentSection && this.currentSection.keyword === "placeholders") {
+            if (this.currentSection && this.currentSection.text === "placeholders") {
                 dictionary = dictionary.concat(this.urlParameters);
             }
             if (!isInArray(dictionary, cleared)) {
@@ -501,14 +501,14 @@ export class Validator {
 
     private switchKeyword(): void {
         const line: string = this.getCurrentLine();
-        switch (this.foundKeyword.keyword) {
+        switch (this.foundKeyword.text) {
             case "endfor": this.handleEndFor();
             case "endif":
             case "endvar":
             case "endcsv":
             case "endlist":
             case "endscript": {
-                const expectedEnd: string = this.foundKeyword.keyword.substring("end".length);
+                const expectedEnd: string = this.foundKeyword.text.substring("end".length);
                 this.checkEnd(expectedEnd);
                 break;
             }
@@ -543,7 +543,7 @@ export class Validator {
                 this.handleScript();
                 break;
             }
-            default: throw new Error(`${this.foundKeyword.keyword} is not handled`);
+            default: throw new Error(`${this.foundKeyword.text} is not handled`);
         }
     }
 
