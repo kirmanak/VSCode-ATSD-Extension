@@ -11,7 +11,7 @@
 			"patterns": [
 				{
 					"name": "storage.type.section.axibase.charts",
-					"match": "\\[[a-z]+\\]"
+					"match": "^[ \t]*\\[[a-z]+\\]"
 				},
 				{
 					"name": "string.axibase.charts",
@@ -45,7 +45,7 @@
 					]
 				},
 				{
-					"begin": "(\\b(value|script|replace-?value|on-?series-?click)(?=[ \\t]*=))|options[ \\t]*=[ \\t]*javascript:",
+					"begin": "^[ \t]*((value|script|replace.?value|on.?(series.?)?click|alert(.?expression|.?row.?style))(?=[ \\t]*=))|options[ \\t]*=[ \\t]*javascript:",
 					"end": "\\n",
 					"name": "entity.name.tag.axibase.charts",
 					"patterns": [
@@ -56,10 +56,10 @@
 				},
 				{
 					"name": "entity.name.tag.axibase.charts",
-					"match": "\\b\\w[-\\w\\d_]+?(?=\\s*=)"
+					"match": "^[ \t]*\\w[-\\w\\d_]+?(?=\\s*=)"
 				},
 				{
-					"begin": "\\bvar[ \\t]*\\S+[ \\t]*(?=[ \\t]*=)",
+					"begin": "^[ \t]*var[ \\t]*\\S+[ \\t]*(?=[ \\t]*=)",
 					"end": "(?=\\n)",
 					"name": "keyword.control.axibase.charts",
 					"patterns": [
@@ -69,8 +69,8 @@
 					]
 				},
 				{
-					"begin": "\\bscript\\b",
-					"end": "\\bendscript\\b",
+					"begin": "^[ \t]*script\\b",
+					"end": "^[ \t]*endscript\\b",
 					"name": "keyword.control.axibase.charts",
 					"patterns": [
 						{
@@ -80,7 +80,7 @@
 				},
 				{
 					"name": "keyword.control.axibase.charts",
-					"match": "\\b(import|csv|endcsv|endvar|for|endfor|in|list|endlist|if|elseif|else|endif)\\b"
+					"match": "^[ \t]*(import|csv|endcsv|endvar|for|endfor|in|list|endlist|if|elseif|else|endif)\\b"
 				}
 			]
 		}
