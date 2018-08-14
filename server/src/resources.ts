@@ -6,7 +6,7 @@ requiredSectionSettingsMap.set("series", [
 requiredSectionSettingsMap.set("widget", [["type"]]);
 
 export const repeatAble: string[] = [
-    "onseriesclick", "script", "thresholds", "colors",
+    "onseriesclick", "script", "thresholds", "colors", "onclick", "alertexpression", "alertrowstyle",
 ];
 
 export const parentSections: Map<string, string[]> = new Map<string, string[]>();
