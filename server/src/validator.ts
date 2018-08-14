@@ -335,8 +335,8 @@ export class Validator {
             } else {
                 this.result.push(createDiagnostic(
                     Range.create(
-                        Position.create(this.currentLineNumber, matching[0].length + 1),
-                        Position.create(this.currentLineNumber, matching[0].length + "  ".length),
+                        Position.create(this.currentLineNumber, matching[0].length - "in".length),
+                        Position.create(this.currentLineNumber, matching[0].length),
                     ),
                     DiagnosticSeverity.Error, "Empty 'in' statement",
                 ));
