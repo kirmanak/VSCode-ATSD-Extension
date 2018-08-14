@@ -1,5 +1,7 @@
 import { Diagnostic, DiagnosticSeverity, Position, Range } from "vscode-languageserver";
-import * as resources from "./resources";
+import {
+    parentSections, possibleOptions, possibleSections, repeatAble, requiredSectionSettingsMap, requiredSubSections,
+} from "./resources";
 import { TextRange } from "./textRange";
 import {
     countCsvColumns, createDiagnostic, deleteComments, isAnyInArray, isInArray, isInMap, mapToArray, suggestionMessage,
@@ -21,6 +23,7 @@ export class Validator {
     private readonly parentSettings: Map<string, string[]> = new Map<string, string[]>();
     private previousSection: TextRange;
     private previousSettings: string[] = [];
+    private requiredSections: string[] = [];
     private requiredSettings: string[][] = [];
     private readonly result: Diagnostic[] = [];
     private settings: string[] = [];
@@ -59,7 +62,7 @@ export class Validator {
 
         this.checkAliases();
         this.diagnosticForLeftKeywords();
-        this.checkPreviousSection();
+        this.checkRequiredSettings();
 
         return this.result;
     }
@@ -77,7 +80,9 @@ export class Validator {
                 severity, `${variable} is already defined`,
             ));
         } else {
-            if (!result) { result = []; }
+            if (!result) {
+                result = [];
+            }
             result.push(variable);
         }
 
@@ -158,10 +163,53 @@ export class Validator {
         }
     }
 
-    private checkPreviousSection(): void {
-        if (!this.currentSection) { return; }
+    private checkRepetition(): void {
+        const setting: string = this.match[Validator.CONTENT_POSITION].replace(/[^a-z]/g, "");
+        const location: Range = Range.create(
+            this.currentLineNumber, this.match[1].length,
+            this.currentLineNumber, this.match[1].length + this.match[Validator.CONTENT_POSITION].length,
+        );
+        const message: string = `${this.match[Validator.CONTENT_POSITION]} is already defined`;
+
+        if (this.areWeIn("if")) {
+            let array: string[] = this.ifSettings.get(this.lastCondition);
+            array = this.addToArray(array, DiagnosticSeverity.Error);
+            this.ifSettings.set(this.lastCondition, array);
+            if (isInArray(this.settings, setting)) {
+                // The setting was defined before if
+                this.result.push(createDiagnostic(location, DiagnosticSeverity.Error, message));
+            }
+        } else { this.addToArray(this.settings, DiagnosticSeverity.Error); }
+
+        if (this.currentSection && isInMap(this.currentSection.text, parentSections)) {
+            if (isInMap(setting, requiredSectionSettingsMap)) {
+                this.addToMap(this.parentSettings, this.currentSection.text, DiagnosticSeverity.Hint);
+            }
+        } else {
+            if (isInMap(setting, this.parentSettings)) {
+                // The setting was defined before in a parent section
+                this.result.push(createDiagnostic(location, DiagnosticSeverity.Hint, message));
+            }
+        }
+    }
+
+    private checkRequiredSections(): void {
+        if (!this.currentSection || !this.previousSection) {
+            return;
+        }
+        const requiredSections: string[] = requiredSubSections.get(this.currentSection.text);
+        if (requiredSections) {
+            this.requiredSections = this.requiredSections.concat(requiredSections);
+        }
+
+    }
+
+    private checkRequiredSettings(): void {
+        if (!this.currentSection) {
+            return;
+        }
         this.requiredSettings =
-            this.requiredSettings.concat(resources.requiredSectionSettingsMap.get(this.currentSection.text));
+            this.requiredSettings.concat(requiredSectionSettingsMap.get(this.currentSection.text));
         if (this.requiredSettings.length !== 0) {
             const notFound: string[] = [];
             this.requiredSettings.forEach((options: string[]) => {
@@ -200,36 +248,6 @@ export class Validator {
             });
         }
         this.requiredSettings = [];
-    }
-
-    private checkRepetition(): void {
-        const setting: string = this.match[Validator.CONTENT_POSITION].replace(/[^a-z]/g, "");
-        const location: Range = Range.create(
-            this.currentLineNumber, this.match[1].length,
-            this.currentLineNumber, this.match[1].length + this.match[Validator.CONTENT_POSITION].length,
-        );
-        const message: string = `${this.match[Validator.CONTENT_POSITION]} is already defined`;
-
-        if (this.areWeIn("if")) {
-            let array: string[] = this.ifSettings.get(this.lastCondition);
-            array = this.addToArray(array, DiagnosticSeverity.Error);
-            this.ifSettings.set(this.lastCondition, array);
-            if (isInArray(this.settings, setting)) {
-                // The setting was defined before if
-                this.result.push(createDiagnostic(location, DiagnosticSeverity.Error, message));
-            }
-        } else { this.addToArray(this.settings, DiagnosticSeverity.Error); }
-
-        if (this.currentSection && isInMap(this.currentSection.text, resources.parentSections)) {
-            if (isInMap(setting, resources.requiredSectionSettingsMap)) {
-                this.addToMap(this.parentSettings, this.currentSection.text, DiagnosticSeverity.Hint);
-            }
-        } else {
-            if (isInMap(setting, this.parentSettings)) {
-                // The setting was defined before in a parent section
-                this.result.push(createDiagnostic(location, DiagnosticSeverity.Hint, message));
-            }
-        }
     }
 
     private diagnosticForLeftKeywords(): void {
@@ -376,7 +394,7 @@ export class Validator {
     }
 
     private handleSection(): void {
-        this.checkPreviousSection();
+        this.checkRequiredSettings();
         if (!this.match) {
             if (this.previousSection) {
                 this.currentSection = this.previousSection;
@@ -385,6 +403,7 @@ export class Validator {
 
             return;
         }
+        this.checkRequiredSections();
         if (/widget/i.test(this.match[Validator.CONTENT_POSITION])) { this.aliases = []; }
         this.previousSettings = this.settings;
         this.previousSection = this.currentSection;
@@ -394,7 +413,15 @@ export class Validator {
             this.currentLineNumber, this.match[1].length,
             this.currentLineNumber, this.match[1].length + this.match[Validator.CONTENT_POSITION].length,
         ));
-        if (isInMap(this.currentSection.text, resources.parentSections)) {
+        // Required sections
+        const index: number = this.requiredSections.findIndex((required: string): boolean =>
+            required === this.currentSection.text,
+        );
+        if (index > 0) {
+            this.requiredSections.splice(index, 1);
+        }
+
+        if (isInMap(this.currentSection.text, parentSections)) {
             this.parentSettings.set(this.currentSection.text, []);
         }
     }
@@ -423,11 +450,12 @@ export class Validator {
                 this.requiredSettings.push(["table"]);
             }
 
-            if (!isInArray(resources.repeatAble, setting)) {
+            if (!isInArray(repeatAble, setting)) {
                 this.checkRepetition();
             }
 
             if (setting === "urlparameters") {
+                this.requiredSections.push("placeholders");
                 this.urlParameters = [];
                 const regexp: RegExp = /{(.+?)}/g;
                 this.match = regexp.exec(line);
@@ -442,7 +470,7 @@ export class Validator {
             this.match = /(^[ \t]*)([-\w]+)[ \t]*=/.exec(line);
             const setting: string = this.match[Validator.CONTENT_POSITION].replace(/[^a-z]/g, "");
             const map: Map<string, string[]> = new Map<string, string[]>();
-            map.set("possibleOptions", resources.possibleOptions);
+            map.set("possibleOptions", possibleOptions);
             if (isInMap(setting, map)) {
                 this.result.push(createDiagnostic(
                     Range.create(
@@ -476,10 +504,10 @@ export class Validator {
             const indent: number = this.match[1].length;
             const word: string = this.match[Validator.CONTENT_POSITION];
             const cleared: string = word.replace(/[^a-z]/g, "");
-            let dictionary: string[] = resources.possibleOptions;
+            let dictionary: string[] = possibleOptions;
             const trimmed: string = this.match[0].trim();
             if (trimmed.endsWith("]")) {
-                dictionary = resources.possibleSections;
+                dictionary = possibleSections;
             } else if (cleared.startsWith("column")) {
                 return;
             }

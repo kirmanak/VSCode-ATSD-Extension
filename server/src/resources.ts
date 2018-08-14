@@ -1,13 +1,11 @@
 export const requiredSectionSettingsMap: Map<string, string[][]> = new Map<string, string[][]>();
-requiredSectionSettingsMap.set("series", [
-    ["entity", "value", "entities"],
-    ["metric", "table", "value", "attribute"],
-]);
+requiredSectionSettingsMap.set("series", [["entity", "value", "entities"], ["metric", "table", "value", "attribute"]]);
 requiredSectionSettingsMap.set("widget", [["type"]]);
 
-export const repeatAble: string[] = [
-    "onseriesclick", "script", "thresholds", "colors",
-];
+export const repeatAble: string[] = ["onseriesclick", "script", "thresholds", "colors"];
+
+export const requiredSubSections: Map<string, string[]> = new Map<string, string[]>();
+requiredSubSections.set("widget", ["series"]);
 
 export const parentSections: Map<string, string[]> = new Map<string, string[]>();
 parentSections.set("widget", ["group", "configuration"]);

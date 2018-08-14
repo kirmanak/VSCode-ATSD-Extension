@@ -164,6 +164,25 @@ endfor`,
   metric = cpu_busy`,
             [],
         ),
+        new Test(
+            "Widget without series section",
+            `[widget]
+  type = chart`,
+            [
+                createDiagnostic(
+                    Range.create(Position.create(0, 0), Position.create(0, 0)),
+                    DiagnosticSeverity.Error, "series section is required",
+                )],
+        ),
+        new Test(
+            "Correct widget with correct series section",
+            `[widget]
+  type = chart
+  [series]
+    entity = server
+    metric = cpu_busy`,
+            [],
+        ),
     ];
 
     tests.forEach((test: Test) => { test.validationTest(); });
