@@ -121,8 +121,10 @@ export class Formatter {
     private isNested(): boolean {
         return this.previous && ((this.current === "widget" && this.previous === "group") ||
             (this.current === "widget" && this.previous === "configuration") ||
+            (this.current === "column" && this.previous === "widget") ||
             (this.current === "node" && this.previous === "widget") ||
             (this.current === "link" && this.previous === "widget") ||
+            (this.current === "series" && this.previous === "column") ||
             (this.current === "series" && this.previous === "link") ||
             (this.current === "series" && this.previous === "widget") ||
             (this.current === "tags" && this.previous === "series"));
