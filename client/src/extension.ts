@@ -1,7 +1,8 @@
 import * as path from "path";
 
 import {
-    commands, Disposable, ExtensionContext, TextDocument, TextEditor, ViewColumn, WebviewPanel, window, workspace,
+    commands, Disposable, ExtensionContext, TextDocument, TextEditor, ViewColumn, WebviewPanel,
+    window, workspace,
 } from "vscode";
 
 import {
@@ -61,20 +62,42 @@ export const deactivate: () => Thenable<void> = (): Thenable<void> => {
 
 class PreviewShower {
     public readonly id: string = "axibasecharts.showPortal";
-    public showPreview: (editor: TextEditor) => void = (editor: TextEditor): void => {
+    public showPreview: (editor: TextEditor) => void = async (editor: TextEditor): Promise<void> => {
         const document: TextDocument = editor.document;
-        const url: string = workspace.getConfiguration()
+
+        let url: string = workspace.getConfiguration("axibaseCharts", document.uri)
             .get("axibaseCharts.url");
+        if (!url) {
+            url = await window.showInputBox(
+                { ignoreFocusOut: true, prompt: "Please, enter the ATSD url" },
+            );
+            if (!url) {
+                return;
+            }
+        }
+        let username: string = workspace.getConfiguration("axibaseCharts", document.uri)
+            .get("axibaseCharts.username");
+        let withCredentials: string = url;
+        if (!username) {
+            username = await window.showInputBox(
+                { ignoreFocusOut: true, prompt: "Please, enter the ATSD username" },
+            );
+        }
+        if (username) {
+            const password: string = await window.showInputBox(
+                { ignoreFocusOut: true, password: true, prompt: "Please, enter the ATSD password" },
+            );
+            if (!password) {
+                return;
+            }
+            withCredentials = addCredentials(url, username, password);
+        }
+
         const panel: WebviewPanel = window.createWebviewPanel("portal", "Portal", ViewColumn.Beside, {
-            enableScripts: true,
+            enableCommandUris: true, enableScripts: true, retainContextWhenHidden: true,
         });
         panel.title = `Preview ${previewName(document.fileName)}`;
-        if (url === null) {
-            panel.webview.html = errorWebview;
-
-            return;
-        }
-        const configuration: string = addUrl(replaceImports(document.getText(), url), url);
+        const configuration: string = addUrl(replaceImports(document.getText(), url), withCredentials);
         panel.webview.html = `<!DOCTYPE html>
 <html>
 
@@ -107,6 +130,7 @@ class PreviewShower {
 </body>
 
 </html>`;
+        console.log(panel.webview.html);
     }
 }
 
@@ -155,16 +179,21 @@ ${result.substr(match.index + match[0].length + 1)}`;
     return result;
 };
 
+const addCredentials: (url: string, username: string, password: string) => string =
+    (url: string, username: string, password: string): string => {
+        if (url === undefined) {
+            return url;
+        }
+        const match: RegExpExecArray = /https?:\/\//.exec(url);
+        if (match === null) {
+            return url;
+        }
+
+        return `${match[0]}${username}:${password}@${url.substr(match.index + match[0].length)}`;
+    };
+
 const previewName: (fullName: string) => string =
     (fullName: string): string => fullName.substr(fullName.lastIndexOf("/") + 1);
-
-const errorWebview: string = `< !DOCTYPE html >
-            <html>
-            <head><title>Error preview < /title></head >
-                <body>
-                To get preview specify the ATSD instance address in configuration "axibaseCharts.url"
-                    < /body>
-                    < /html>`;
 
 const deleteComments: (text: string) => string = (text: string): string => {
     let content: string = text;
