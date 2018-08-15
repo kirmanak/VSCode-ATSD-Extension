@@ -48,7 +48,13 @@
                     "scope": "resource",
                     "type": "string",
                     "default": null,
-                    "description": "What URL should be used to show the preview"
+                    "description": "What URL should be used to connect to the ATSD"
+                },
+                "axibaseCharts.username": {
+                    "scope": "resource",
+                    "type": "string",
+                    "default": null,
+                    "description": "What username should be used to connect to the ATSD"
                 }
             }
         },
