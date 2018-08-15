@@ -63,18 +63,19 @@ class PreviewShower {
     public readonly id: string = "axibasecharts.showPortal";
     public showPreview: (editor: TextEditor) => void = (editor: TextEditor): void => {
         const document: TextDocument = editor.document;
-        const url: string = findUrl(document.getText());
+        const url: string = workspace.getConfiguration()
+            .get("axibaseCharts.url");
         const panel: WebviewPanel = window.createWebviewPanel("portal", "Portal", ViewColumn.Beside, {
             enableScripts: true,
         });
         panel.title = `Preview ${previewName(document.fileName)}`;
-        if (url === undefined) {
+        if (url === null) {
             panel.webview.html = errorWebview;
 
             return;
         }
-        panel.webview.html =
-            `<!DOCTYPE html>
+        const configuration: string = addUrl(replaceImports(document.getText(), url), url);
+        panel.webview.html = `<!DOCTYPE html>
 <html>
 
 <head>
@@ -85,7 +86,7 @@ class PreviewShower {
     <script>
         if (typeof initializePortal === "function") {
             initializePortal(function (callback) {
-                var configText = ${JSON.stringify(replaceImports(document.getText()))};
+                var configText = ${JSON.stringify(configuration)};
                 if (typeof callback === "function") {
                     callback([configText, portalPlaceholders = getPortalPlaceholders()]) ;
                 }
@@ -109,13 +110,11 @@ class PreviewShower {
     }
 }
 
-const replaceImports: (text: string) => string = (text: string): string => {
-    let url: string = findUrl(text);
+const replaceImports: (text: string, url: string) => string = (text: string, url: string): string => {
     if (url === undefined) {
         return text;
-    } else {
-        url += "/portal/resource/scripts/";
     }
+    const address: string = (/\//.test(url)) ? `${url}/portal/resource/scripts/` : url;
     const regexp: RegExp = /(^\s*import\s+\S+\s*=\s*)(\S+)\s*$/mg;
     const urlPosition: number = 2;
     let modifiedText: string = text;
@@ -124,7 +123,7 @@ const replaceImports: (text: string) => string = (text: string): string => {
         const external: string = match[urlPosition];
         if (!/\//.test(external)) {
             modifiedText = modifiedText.substr(0, match.index + match[1].length) +
-                url + external + modifiedText.substr(match.index + match[0].length);
+                address + external + modifiedText.substr(match.index + match[0].length);
         }
         match = regexp.exec(modifiedText);
     }
@@ -132,23 +131,58 @@ const replaceImports: (text: string) => string = (text: string): string => {
     return modifiedText;
 };
 
-const findUrl: (text: string) => string | undefined = (text: string): string | undefined => {
-    const regexp: RegExp = /^\s*url\s*=\s*(\S+?(?=\/?\s*$))/m;
-    const match: RegExpExecArray = regexp.exec(text);
-    if (match) {
-        return `${match[1]}`;
-    } else {
-        return undefined;
+const addUrl: (text: string, url: string) => string = (text: string, url: string): string => {
+    if (url === undefined) {
+        return text;
     }
+    let result: string = text;
+    let withoutComments: string = deleteComments(text);
+    let match: RegExpExecArray = /^[ \t]*\[configuration\]/mi.exec(withoutComments);
+    if (match === null) {
+        match = /\S/.exec(withoutComments);
+        if (match === null) {
+            return text;
+        }
+        result =
+            `${result.substr(0, match.index - 1)}[configuration]\n  ${result.substr(match.index)}`;
+        withoutComments = deleteComments(result);
+        match = /^[ \t]*\[configuration\]/i.exec(withoutComments);
+    }
+    result =
+        `${result.substr(0, match.index + match[0].length + 1)}  url = ${url}
+${result.substr(match.index + match[0].length + 1)}`;
+
+    return result;
 };
 
 const previewName: (fullName: string) => string =
     (fullName: string): string => fullName.substr(fullName.lastIndexOf("/") + 1);
 
-const errorWebview: string = `<!DOCTYPE html>
-<html>
-    <head><title>Error preview</title></head>
-    <body>
-        To get preview specify the ATSD instance address via "url = {address}" setting in [configuration] section
-    </body>
-</html>`;
+const errorWebview: string = `< !DOCTYPE html >
+            <html>
+            <head><title>Error preview < /title></head >
+                <body>
+                To get preview specify the ATSD instance address in configuration "axibaseCharts.url"
+                    < /body>
+                    < /html>`;
+
+const deleteComments: (text: string) => string = (text: string): string => {
+    let content: string = text;
+    const multiLine: RegExp = /\/\*[\s\S]*?\*\//g;
+    const oneLine: RegExp = /^[ \t]*#.*/mg;
+    let i: RegExpExecArray = multiLine.exec(content);
+    if (!i) { i = oneLine.exec(content); }
+
+    while (i) {
+        let spaces: string = " ";
+        for (let j: number = 1; j < i[0].length; j++) { spaces += " "; }
+        const newLines: number = i[0].split("\n").length - 1;
+        for (let j: number = 0; j < newLines; j++) { spaces += "\n"; }
+        content = content.substring(0, i.index) + spaces +
+            content.substring(i.index + i[0].length);
+        i = multiLine.exec(content);
+        if (!i) { i = oneLine.exec(content); }
+    }
+
+    return content;
+};

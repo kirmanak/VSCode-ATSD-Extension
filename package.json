@@ -39,10 +39,16 @@
             "title": "Default configuration",
             "properties": {
                 "axibaseCharts.validateFunctions": {
-                    "scope": "application",
+                    "scope": "resource",
                     "type": "boolean",
                     "default": false,
                     "description": "Controls whether inline JS functions are validated or not."
+                },
+                "axibaseCharts.url": {
+                    "scope": "resource",
+                    "type": "string",
+                    "default": null,
+                    "description": "What URL should be used to show the preview"
                 }
             }
         },
@@ -78,11 +84,11 @@
             "category": "Axibase Charts"
         },
         "menus": {
-            "editor/context": [
+            "editor/title": [
                 {
                     "command": "axibasecharts.showPortal",
                     "when": "editorLangId == axibasecharts",
-                    "group": "modification"
+                    "group": "navigation"
                 }
             ]
         }
