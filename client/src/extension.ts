@@ -47,7 +47,6 @@ export const activate: (context: ExtensionContext) => void = (context: Extension
     const preview: PreviewShower = new PreviewShower();
     const disposable: Disposable = commands.registerTextEditorCommand(PreviewShower.ID, preview.showPreview, preview);
     context.subscriptions.push(disposable);
-
 };
 
 export const deactivate: () => Thenable<void> = (): Thenable<void> => {

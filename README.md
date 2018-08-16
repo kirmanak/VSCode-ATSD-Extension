@@ -78,6 +78,14 @@ To display the list of available completions (such as snippets or settings like 
   * If `true`, enables inline JS validation
   * The plugin executes JS which is written in `script = ... endscript`, `script =`, `value =`, `replace-value =` statements.
 
+* `axibaseCharts.url`
+  * Default is `null`
+  * The URL address of the target ATSD, which is used to show the preview of the portal
+
+* `axibaseCharts.username`
+  * Default is `null`
+  * The username of the ATSD user, which is used to connect to the ATSD to show the preview of the portal
+
 ## Bug-reports
 
 Attach VSCode and the plugin version to your bug-report:
@@ -99,6 +107,18 @@ Attach VSCode and the plugin version to your bug-report:
     ```
 
 ## Features
+
+### Show preview
+
+The plugin can show the preview of the portal right in the VSCode using the target ATSD. To see preview follow these instructions:
+
+* Open your portal configuration in `*.config` file (might contain unsaved changes).
+* Press `Show preview` button on title bar (right upper corner)
+* Enter the target ATSD URL if did not configure it in [User settings](#Configuration)
+* Enter the username of the target ATSD user if did not configure it in [User settings](#Configuration)
+
+  You can skip this step via `Esc` or `Enter` buttons if `api.guest.access.enabled` is `true` in `Server properties`.
+* Enter the password if entered the username previously.
 
 ### Syntax highlighting
 

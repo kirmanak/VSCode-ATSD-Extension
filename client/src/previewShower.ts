@@ -3,12 +3,11 @@ import * as hash from "object-hash";
 import { tmpdir } from "os";
 
 import {
-  commands, TextDocument, TextEditor, Uri, ViewColumn, window, workspace,
+  commands, TextDocument, TextEditor, Uri, ViewColumn, window, workspace, WorkspaceConfiguration,
 } from "vscode";
 
 export class PreviewShower {
   public static readonly ID: string = "axibasecharts.showPortal";
-  private fileName: string;
   private password: string;
   private text: string;
   private URL: string;
@@ -18,9 +17,10 @@ export class PreviewShower {
   public async showPreview(editor: TextEditor): Promise<void> {
     const document: TextDocument = editor.document;
     this.text = deleteComments(document.getText());
-    this.fileName = document.fileName;
-    this.URL = workspace.getConfiguration("axibaseCharts", document.uri)
-      .get("url");
+    const fileName: string = document.fileName;
+    const previewName: string = fileName.substr(fileName.lastIndexOf("/") + 1);
+    const configuration: WorkspaceConfiguration = workspace.getConfiguration("axibaseCharts", document.uri);
+    this.URL = configuration.get("url");
     if (!this.URL) {
       this.URL = await window.showInputBox({
         ignoreFocusOut: true, placeHolder: "http(s)://atsd_host:port",
@@ -33,18 +33,17 @@ export class PreviewShower {
     this.clearUrl();
     this.replaceImports();
 
-    this.username = workspace.getConfiguration("axibaseCharts", document.uri)
-      .get("username");
+    this.username = configuration.get("username");
     if (!this.username) {
       this.username = await window.showInputBox({
         ignoreFocusOut: true, placeHolder: "username",
-        prompt: "Press ESC/Enter if ATSD API is open for guests. Can be stored in 'axibaseCharts.username'",
+        prompt: "Specify only if API is closed for guests. Value can be stored in 'axibaseCharts.username'",
       });
     }
     if (this.username) {
       this.password = await window.showInputBox({
         ignoreFocusOut: true, password: true,
-        prompt: "Please, enter the password",
+        prompt: "Please, enter the password. Can not be stored",
       });
       if (this.password) {
         this.addCredentials();
@@ -56,11 +55,12 @@ export class PreviewShower {
     this.addUrl();
 
     const html: string = this.getHtml();
-    const tmpPath: string = `${tmpdir()}/portal-${hash(this.fileName)}`;
+    // Use random to support several previews for files with same name, but in different folders
+    const tmpPath: string = `${tmpdir()}/portal-${hash(fileName)}`;
     writeFile(tmpPath, html, { encoding: "utf8", flag: "w" }, () => {
       commands.executeCommand(
         "vscode.previewHtml", Uri.parse(`file://${tmpPath}`),
-        ViewColumn.Two, `Preview ${this.fileName}`);
+        ViewColumn.Two, `Preview ${previewName}`);
     });
   }
 
