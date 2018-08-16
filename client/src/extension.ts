@@ -1,17 +1,14 @@
 import * as fs from "fs";
+import * as hash from "object-hash";
 import * as os from "os";
 import * as path from "path";
-import * as vscode from "vscode";
-
-const hash = require("object-hash");
-import { commands, Disposable, ExtensionContext, TextDocument, TextEditor, workspace } from "vscode";
 
 import {
-    ForkOptions,
-    LanguageClient,
-    LanguageClientOptions,
-    ServerOptions,
-    TransportKind,
+    commands, Disposable, ExtensionContext, TextDocument, TextEditor, Uri, ViewColumn, window, workspace,
+} from "vscode";
+
+import {
+    ForkOptions, LanguageClient, LanguageClientOptions, ServerOptions, TransportKind,
 } from "vscode-languageclient";
 
 let client: LanguageClient;
@@ -21,7 +18,7 @@ export const activate: (context: ExtensionContext) => void = (context: Extension
     // The server is implemented in node
     const serverModule: string = context.asAbsolutePath(path.join("server", "out", "server.js"));
     // The debug options for the server
-    const debugOptions: ForkOptions = {execArgv: ["--nolazy", "--inspect=6009"]};
+    const debugOptions: ForkOptions = { execArgv: ["--nolazy", "--inspect=6009"] };
 
     const tabSize: number = 2;
     workspace.getConfiguration()
@@ -32,14 +29,14 @@ export const activate: (context: ExtensionContext) => void = (context: Extension
     // If the extension is launched in debug mode then the debug server options are used
     // Otherwise the run options are used
     const serverOptions: ServerOptions = {
-        debug: {module: serverModule, options: debugOptions, transport: TransportKind.ipc},
-        run: {module: serverModule, transport: TransportKind.ipc},
+        debug: { module: serverModule, options: debugOptions, transport: TransportKind.ipc },
+        run: { module: serverModule, transport: TransportKind.ipc },
     };
 
     // Options to control the language client
     const clientOptions: LanguageClientOptions = {
         // Register the server for plain text documents
-        documentSelector: [{language: "axibasecharts", scheme: "file"}],
+        documentSelector: [{ language: "axibasecharts", scheme: "file" }],
         synchronize: {
             // Notify the server about file changes to ".clientrc files contain in the workspace
             fileEvents: workspace.createFileSystemWatcher("**/.clientrc"),
@@ -52,7 +49,7 @@ export const activate: (context: ExtensionContext) => void = (context: Extension
     // Start the client. This will also launch the server
     client.start();
     const preview: PreviewShower = new PreviewShower();
-    const disposable: Disposable = commands.registerTextEditorCommand(preview.id, preview.showPreview, preview);
+    const disposable: Disposable = commands.registerTextEditorCommand(PreviewShower.ID, preview.showPreview, preview);
     context.subscriptions.push(disposable);
 
 };
@@ -66,51 +63,109 @@ export const deactivate: () => Thenable<void> = (): Thenable<void> => {
 };
 
 class PreviewShower {
+    public static readonly ID: string = "axibasecharts.showPortal";
+    private fileName: string;
+    private password: string;
+    private text: string;
+    private URL: string;
+    private username: string;
+    private withCredentials: string;
 
-    public readonly id: string = "axibasecharts.showPortal";
-
-    public showPreview: (editor: TextEditor) => void = (editor: TextEditor): void => {
-
+    public async showPreview(editor: TextEditor): Promise<void> {
         const document: TextDocument = editor.document;
-        const url: string = workspace.getConfiguration()
-            .get("axibaseCharts.url");
+        this.text = deleteComments(document.getText());
+        this.fileName = document.fileName;
+        this.URL = workspace.getConfiguration("axibaseCharts", document.uri)
+            .get("url");
+        if (!this.URL) {
+            this.URL = await window.showInputBox({
+                ignoreFocusOut: true, placeHolder: "http(s)://atsd_host:port",
+                prompt: "Can be stored permamently in 'axibaseCharts.url' setting",
+            });
+            if (!this.URL) {
+                return;
+            }
+        }
+        this.replaceImports();
 
-        const configuration: string = addUrl(replaceImports(document.getText(), url), url);
+        this.username = workspace.getConfiguration("axibaseCharts", document.uri)
+            .get("username");
+        if (!this.username) {
+            this.username = await window.showInputBox({
+                ignoreFocusOut: true, placeHolder: "username",
+                prompt: "Press ESC/Enter if ATSD API is open for guests. Can be stored in 'axibaseCharts.username'",
+            });
+        }
+        if (this.username) {
+            this.password = await window.showInputBox({
+                ignoreFocusOut: true, password: true,
+                prompt: "Please, enter the password",
+            });
+            if (this.password) {
+                this.addCredentials();
+            }
+        }
+        if (!this.username || !this.password) {
+            this.withCredentials = this.URL;
+        }
+        this.addUrl();
 
-        const html: string = this.getHtml(url.replace(new RegExp("/.*@"), "//"), configuration);
-        const tmpPath: string = `${os.tmpdir()}/portal-${hash(document.fileName)}`;
-        fs.writeFile(tmpPath, html, {encoding: "utf8", flag: "w"}, () => {
-            vscode.commands.executeCommand(
-                "vscode.previewHtml", vscode.Uri.parse(`file://${tmpPath}`),
-                vscode.ViewColumn.Two, `Preview ${document.fileName}`);
+        const html: string = this.getHtml();
+        const tmpPath: string = `${os.tmpdir()}/portal-${hash(this.fileName)}`;
+        fs.writeFile(tmpPath, html, { encoding: "utf8", flag: "w" }, () => {
+            commands.executeCommand(
+                "vscode.previewHtml", Uri.parse(`file://${tmpPath}`),
+                ViewColumn.Two, `Preview ${this.fileName}`);
         });
     }
 
-    private getHtml(url: string, configuration: string): string {
+    private addCredentials(): void {
+        const match: RegExpExecArray = /https?:\/\//i.exec(this.URL);
+        this.withCredentials = (match) ?
+            `${match[0]}${this.username}:${this.password}@${this.URL.substr(match.index + match[0].length)}` : this.URL;
+    }
+
+    private addUrl(): void {
+        let match: RegExpExecArray = /^[ \t]*\[configuration\]/mi.exec(this.text);
+        if (match === null) {
+            match = /\S/.exec(this.text);
+            if (match === null) {
+                return;
+            }
+            this.text =
+                `${this.text.substr(0, match.index - 1)}[configuration]\n  ${this.text.substr(match.index)}`;
+            match = /^[ \t]*\[configuration\]/i.exec(this.text);
+        }
+        this.text = `${this.text.substr(0, match.index + match[0].length + 1)}  url = ${this.withCredentials}
+${this.text.substr(match.index + match[0].length + 1)}`;
+    }
+
+    private getHtml(): string {
         return `<!DOCTYPE html>
 <html>
 
 <head>
     <link rel="stylesheet" type="text/css"
-        href="${url}/web/js/portal/jquery-ui-1.9.0.custom/css/smoothness/jquery-ui-1.9.1.custom.min.css">
-    <link rel="stylesheet" type="text/css" href="${url}/web/css/portal/charts.min.css">
-    <script type="text/javascript" src="${url}/web/js/portal/portal_init.js"></script>
+        href="${this.URL}/web/js/portal/jquery-ui-1.9.0.custom/css/smoothness/jquery-ui-1.9.1.custom.min.css">
+    <link rel="stylesheet" type="text/css" href="${this.URL}/web/css/portal/charts.min.css">
+    <script type="text/javascript" src="${this.URL}/web/js/portal/portal_init.js"></script>
     <script>
         if (typeof initializePortal === "function") {
             initializePortal(function (callback) {
-                var configText = ${JSON.stringify(configuration)};
+                var configText = ${JSON.stringify(this.text)};
                 if (typeof callback === "function") {
                     callback([configText, portalPlaceholders = getPortalPlaceholders()]) ;
                 }
             });
         }
     </script>
-    <script type="text/javascript" src="${url}/web/js/portal/jquery-ui-1.9.0.custom/js/jquery-1.8.2.min.js"></script>
     <script type="text/javascript"
-            src="${url}/web/js/portal/jquery-ui-1.9.0.custom/js/jquery-ui-1.9.0.custom.min.js"></script>
-    <script type="text/javascript" src="${url}/web/js/portal/d3.min.js"></script>
-    <script type="text/javascript" src="${url}/web/js/portal/highlight.pack.js"></script>
-    <script type="text/javascript" src="${url}/web/js/portal/charts.min.js"></script>
+        src="${this.URL}/web/js/portal/jquery-ui-1.9.0.custom/js/jquery-1.8.2.min.js"></script>
+    <script type="text/javascript"
+            src="${this.URL}/web/js/portal/jquery-ui-1.9.0.custom/js/jquery-ui-1.9.0.custom.min.js"></script>
+    <script type="text/javascript" src="${this.URL}/web/js/portal/d3.min.js"></script>
+    <script type="text/javascript" src="${this.URL}/web/js/portal/highlight.pack.js"></script>
+    <script type="text/javascript" src="${this.URL}/web/js/portal/charts.min.js"></script>
 </head>
 
 <body onload="onBodyLoad()">
@@ -120,52 +175,23 @@ class PreviewShower {
 
 </html>`;
     }
+
+    private replaceImports(): void {
+        const address: string = (/\//.test(this.URL)) ? `${this.URL}/portal/resource/scripts/` : this.URL;
+        const regexp: RegExp = /(^\s*import\s+\S+\s*=\s*)(\S+)\s*$/mg;
+        const urlPosition: number = 2;
+        let match: RegExpExecArray = regexp.exec(this.text);
+        while (match) {
+            const external: string = match[urlPosition];
+            if (!/\//.test(external)) {
+                this.text = this.text.substr(0, match.index + match[1].length) +
+                    address + external + this.text.substr(match.index + match[0].length);
+            }
+            match = regexp.exec(this.text);
+        }
+    }
 }
 
-const replaceImports: (text: string, url: string) => string = (text: string, url: string): string => {
-    if (url === undefined) {
-        return text;
-    }
-    const address: string = (/\//.test(url)) ? `${url}/portal/resource/scripts/` : url;
-    const regexp: RegExp = /(^\s*import\s+\S+\s*=\s*)(\S+)\s*$/mg;
-    const urlPosition: number = 2;
-    let modifiedText: string = text;
-    let match: RegExpExecArray = regexp.exec(modifiedText);
-    while (match) {
-        const external: string = match[urlPosition];
-        if (!/\//.test(external)) {
-            modifiedText = modifiedText.substr(0, match.index + match[1].length) +
-                address + external + modifiedText.substr(match.index + match[0].length);
-        }
-        match = regexp.exec(modifiedText);
-    }
-
-    return modifiedText;
-};
-
-const addUrl: (text: string, url: string) => string = (text: string, url: string): string => {
-    if (url === undefined) {
-        return text;
-    }
-    let result: string = text;
-    let withoutComments: string = deleteComments(text);
-    let match: RegExpExecArray = /^[ \t]*\[configuration\]/mi.exec(withoutComments);
-    if (match === null) {
-        match = /\S/.exec(withoutComments);
-        if (match === null) {
-            return text;
-        }
-        result =
-            `${result.substr(0, match.index - 1)}[configuration]\n  ${result.substr(match.index)}`;
-        withoutComments = deleteComments(result);
-        match = /^[ \t]*\[configuration\]/i.exec(withoutComments);
-    }
-    result =
-        `${result.substr(0, match.index + match[0].length + 1)}  url = ${url}
-${result.substr(match.index + match[0].length + 1)}`;
-
-    return result;
-};
 const deleteComments: (text: string) => string = (text: string): string => {
     let content: string = text;
     const multiLine: RegExp = /\/\*[\s\S]*?\*\//g;
