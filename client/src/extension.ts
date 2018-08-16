@@ -1,6 +1,6 @@
 import { join } from "path";
 import {
-    commands, Disposable, ExtensionContext, TextDocumentChangeEvent, ViewColumn, workspace, window,
+    commands, Disposable, ExtensionContext, TextDocumentChangeEvent, ViewColumn, window, workspace,
 } from "vscode";
 import {
     ForkOptions, LanguageClient, LanguageClientOptions, ServerOptions, TransportKind,
