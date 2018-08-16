@@ -1,33 +1,40 @@
-import { writeFile } from "fs";
-import * as hash from "object-hash";
-import { tmpdir } from "os";
-
 import {
-  commands, TextDocument, TextEditor, Uri, ViewColumn, window, workspace, WorkspaceConfiguration,
+  Event, EventEmitter, TextDocument, TextDocumentContentProvider, TextEditor,
+  Uri, window, workspace, WorkspaceConfiguration,
 } from "vscode";
 
-export class PreviewShower {
-  public static readonly ID: string = "axibasecharts.showPortal";
+export class AxibaseChartsProvider implements TextDocumentContentProvider {
+  private readonly onDidChangeEmitter: EventEmitter<Uri> = new EventEmitter<Uri>();
   private password: string;
+  private previewName: string;
   private text: string;
   private URL: string;
   private username: string;
   private withCredentials: string;
 
-  public async showPreview(editor: TextEditor): Promise<void> {
+  public get onDidChange(): Event<Uri> {
+    return this.onDidChangeEmitter.event;
+  }
+
+  public getPreviewName(): string {
+    return this.previewName;
+  }
+
+  public async provideTextDocumentContent(): Promise<string> {
+    const editor: TextEditor = window.activeTextEditor;
     const document: TextDocument = editor.document;
     this.text = deleteComments(document.getText());
     const fileName: string = document.fileName;
-    const previewName: string = fileName.substr(fileName.lastIndexOf("/") + 1);
+    this.previewName = `Preview ${fileName.substr(fileName.lastIndexOf("/") + 1)}`;
     const configuration: WorkspaceConfiguration = workspace.getConfiguration("axibaseCharts", document.uri);
     this.URL = configuration.get("url");
     if (!this.URL) {
       this.URL = await window.showInputBox({
         ignoreFocusOut: true, placeHolder: "http(s)://atsd_host:port",
-        prompt: "Can be stored permamently in 'axibaseCharts.url' setting",
+        prompt: "Can be stored permanently in 'axibaseCharts.url' setting",
       });
       if (!this.URL) {
-        return;
+        Promise.reject();
       }
     }
     this.clearUrl();
@@ -54,14 +61,12 @@ export class PreviewShower {
     }
     this.addUrl();
 
-    const html: string = this.getHtml();
-    // Use random to support several previews for files with same name, but in different folders
-    const tmpPath: string = `${tmpdir()}/portal-${hash(fileName)}`;
-    writeFile(tmpPath, html, { encoding: "utf8", flag: "w" }, () => {
-      commands.executeCommand(
-        "vscode.previewHtml", Uri.parse(`file://${tmpPath}`),
-        ViewColumn.Two, `Preview ${previewName}`);
-    });
+    return this.getHtml();
+
+  }
+
+  public update(uri: Uri): void {
+    this.onDidChangeEmitter.fire(uri);
   }
 
   private addCredentials(): void {
@@ -120,6 +125,7 @@ ${this.text.substr(match.index + match[0].length + 1)}`;
     <script type="text/javascript" src="${this.URL}/web/js/portal/d3.min.js"></script>
     <script type="text/javascript" src="${this.URL}/web/js/portal/highlight.pack.js"></script>
     <script type="text/javascript" src="${this.URL}/web/js/portal/charts.min.js"></script>
+    <title>${this.previewName}</title>
 </head>
 
 <body onload="onBodyLoad()">
@@ -144,6 +150,7 @@ ${this.text.substr(match.index + match[0].length + 1)}`;
       match = regexp.exec(this.text);
     }
   }
+
 }
 
 const deleteComments: (text: string) => string = (text: string): string => {

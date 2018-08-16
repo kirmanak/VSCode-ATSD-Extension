@@ -1,15 +1,15 @@
 import { join } from "path";
 import {
-    commands, Disposable, ExtensionContext, workspace,
+    commands, Disposable, ExtensionContext, ViewColumn, window, workspace,
 } from "vscode";
 import {
     ForkOptions, LanguageClient, LanguageClientOptions, ServerOptions, TransportKind,
 } from "vscode-languageclient";
-import { PreviewShower } from "./previewShower";
+import { AxibaseChartsProvider } from "./axibaseChartsProvider";
 
 let client: LanguageClient;
 
-export const activate: (context: ExtensionContext) => void = (context: ExtensionContext): void => {
+export const activate: (context: ExtensionContext) => void = async (context: ExtensionContext): Promise<void> => {
 
     // The server is implemented in node
     const serverModule: string = context.asAbsolutePath(join("server", "out", "server.js"));
@@ -44,9 +44,20 @@ export const activate: (context: ExtensionContext) => void = (context: Extension
 
     // Start the client. This will also launch the server
     client.start();
-    const preview: PreviewShower = new PreviewShower();
-    const disposable: Disposable = commands.registerTextEditorCommand(PreviewShower.ID, preview.showPreview, preview);
-    context.subscriptions.push(disposable);
+    const provider: AxibaseChartsProvider = new AxibaseChartsProvider();
+    const registration: Disposable = workspace.registerTextDocumentContentProvider("axibaseCharts", provider);
+    const disposable: Disposable = commands.registerCommand("axibasecharts.showPortal", () =>
+        commands
+            .executeCommand(
+                "vscode.previewHtml", "axibaseCharts://authority/axibaseCharts",
+                ViewColumn.Beside, provider.getPreviewName(),
+            )
+            .then(
+                () => { return; },
+                // tslint:disable-next-line:typedef
+                (reason) => { window.showErrorMessage(reason); },
+            ));
+    context.subscriptions.push(disposable, registration);
 };
 
 export const deactivate: () => Thenable<void> = (): Thenable<void> => {
