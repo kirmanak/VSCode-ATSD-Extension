@@ -50,11 +50,8 @@ export const activate: (context: ExtensionContext) => void = async (context: Ext
         const provider: AxibaseChartsProvider = new AxibaseChartsProvider();
         workspace.registerTextDocumentContentProvider("axibaseCharts", provider);
         workspace.onDidSaveTextDocument((document: TextDocument) => {
-            console.log("Did save");
             if (document.uri === window.activeTextEditor.document.uri) {
                 provider.update(Uri.parse(previewUri));
-            } else {
-                console.log("Do not equal");
             }
         });
         commands.executeCommand(

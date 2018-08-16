@@ -4,6 +4,7 @@ import {
 } from "vscode";
 
 export class AxibaseChartsProvider implements TextDocumentContentProvider {
+  private auth: boolean = true;
   private readonly editor: TextEditor;
   private readonly onDidChangeEmitter: EventEmitter<Uri>;
   private password: string;
@@ -19,8 +20,6 @@ export class AxibaseChartsProvider implements TextDocumentContentProvider {
   }
 
   public get onDidChange(): Event<Uri> {
-    console.log("Get didChange");
-
     return this.onDidChangeEmitter.event;
   }
 
@@ -29,7 +28,6 @@ export class AxibaseChartsProvider implements TextDocumentContentProvider {
   }
 
   public async provideTextDocumentContent(): Promise<string> {
-    console.log("Request html");
     const document: TextDocument = this.editor.document;
     if (document.languageId !== "axibasecharts") {
       window.showErrorMessage("Please, choose a right portal configuration");
@@ -57,7 +55,7 @@ export class AxibaseChartsProvider implements TextDocumentContentProvider {
     this.clearUrl();
     this.replaceImports();
 
-    if (!this.username) {
+    if (this.auth && !this.username) {
       this.username = configuration.get("username");
       if (!this.username) {
         this.username = await window.showInputBox({
@@ -76,19 +74,18 @@ export class AxibaseChartsProvider implements TextDocumentContentProvider {
       if (this.password) {
         this.addCredentials();
       }
+    } else {
+      this.auth = false;
     }
-    if (!this.username || !this.password) {
+    if (!this.auth) {
       this.withCredentials = this.URL;
     }
     this.addUrl();
-
-    console.log(this.getHtml());
 
     return this.getHtml();
   }
 
   public update(uri: Uri): void {
-    console.log("Update");
     this.onDidChangeEmitter.fire(uri);
   }
 
