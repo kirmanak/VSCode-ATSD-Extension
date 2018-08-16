@@ -1,6 +1,6 @@
 import { join } from "path";
 import {
-    commands, Disposable, ExtensionContext, TextDocument, Uri, ViewColumn, window, workspace,
+    commands, Disposable, ExtensionContext, TextDocument, Uri, ViewColumn, window, workspace, WorkspaceConfiguration,
 } from "vscode";
 import {
     ForkOptions, LanguageClient, LanguageClientOptions, ServerOptions, TransportKind,
@@ -17,10 +17,9 @@ export const activate: (context: ExtensionContext) => void = async (context: Ext
     const debugOptions: ForkOptions = { execArgv: ["--nolazy", "--inspect=6009"] };
 
     const tabSize: number = 2;
-    workspace.getConfiguration()
-        .update("editor.tabSize", tabSize);
-    workspace.getConfiguration()
-        .update("editor.insertSpaces", true);
+    const configuration: WorkspaceConfiguration = workspace.getConfiguration("editor");
+    configuration.update("tabSize", tabSize);
+    configuration.update("insertSpaces", true);
 
     // If the extension is launched in debug mode then the debug server options are used
     // Otherwise the run options are used
@@ -44,22 +43,21 @@ export const activate: (context: ExtensionContext) => void = async (context: Ext
 
     // Start the client. This will also launch the server
     client.start();
-
-    const disposable: Disposable = commands.registerCommand("axibasecharts.showPortal", () => {
-        const previewUri: string = "axibaseCharts://authority/axibaseCharts";
-        const provider: AxibaseChartsProvider = new AxibaseChartsProvider();
-        workspace.registerTextDocumentContentProvider("axibaseCharts", provider);
-        workspace.onDidSaveTextDocument((document: TextDocument) => {
-            if (document.uri === window.activeTextEditor.document.uri) {
-                provider.update(Uri.parse(previewUri));
-            }
-        });
-        commands.executeCommand(
-            "vscode.previewHtml", previewUri,
-            ViewColumn.Two, "Portal preview",
-        );
+    const previewUri: string = "axibaseCharts://authority/axibaseCharts";
+    const provider: AxibaseChartsProvider = new AxibaseChartsProvider();
+    const registration: Disposable = workspace.registerTextDocumentContentProvider("axibaseCharts", provider);
+    const saveListener: Disposable = workspace.onDidSaveTextDocument((document: TextDocument) => {
+        if (document.uri === window.activeTextEditor.document.uri) {
+            provider.update(Uri.parse(previewUri));
+        }
     });
-    context.subscriptions.push(disposable);
+    const changeListener: Disposable = window.onDidChangeActiveTextEditor(() => {
+        provider.update(Uri.parse(previewUri));
+    });
+    const disposable: Disposable = commands.registerCommand("axibasecharts.showPortal", () => {
+        commands.executeCommand("vscode.previewHtml", previewUri, ViewColumn.Two, "Portal");
+    });
+    context.subscriptions.push(disposable, registration, saveListener, changeListener);
 };
 
 export const deactivate: () => Thenable<void> = (): Thenable<void> => {

@@ -5,47 +5,39 @@ import {
 
 export class AxibaseChartsProvider implements TextDocumentContentProvider {
   private auth: boolean = true;
-  private readonly editor: TextEditor;
   private readonly onDidChangeEmitter: EventEmitter<Uri>;
   private password: string;
-  private previewName: string;
   private text: string;
-  private URL: string;
+  private url: string;
   private username: string;
   private withCredentials: string;
 
   public constructor() {
     this.onDidChangeEmitter = new EventEmitter<Uri>();
-    this.editor = window.activeTextEditor;
   }
 
   public get onDidChange(): Event<Uri> {
     return this.onDidChangeEmitter.event;
   }
 
-  public getPreviewName(): string {
-    return this.previewName;
-  }
-
   public async provideTextDocumentContent(): Promise<string> {
-    const document: TextDocument = this.editor.document;
+    const editor: TextEditor = window.activeTextEditor;
+    const document: TextDocument = editor.document;
     if (document.languageId !== "axibasecharts") {
       window.showErrorMessage("Please, choose a right portal configuration");
 
       return Promise.reject();
     }
     this.text = deleteComments(document.getText());
-    const fileName: string = document.fileName;
-    this.previewName = `Preview ${fileName.substr(fileName.lastIndexOf("/") + 1)}`;
     const configuration: WorkspaceConfiguration = workspace.getConfiguration("axibaseCharts", document.uri);
-    if (!this.URL) {
-      this.URL = configuration.get("url");
-      if (!this.URL) {
-        this.URL = await window.showInputBox({
+    if (!this.url) {
+      this.url = configuration.get("url");
+      if (!this.url) {
+        this.url = await window.showInputBox({
           ignoreFocusOut: true, placeHolder: "http(s)://atsd_host:port",
           prompt: "Can be stored permanently in 'axibaseCharts.url' setting",
         });
-        if (!this.URL) {
+        if (!this.url) {
           window.showInformationMessage("You did not specify an URL address");
 
           return Promise.reject();
@@ -78,7 +70,7 @@ export class AxibaseChartsProvider implements TextDocumentContentProvider {
       this.auth = false;
     }
     if (!this.auth) {
-      this.withCredentials = this.URL;
+      this.withCredentials = this.url;
     }
     this.addUrl();
 
@@ -90,9 +82,9 @@ export class AxibaseChartsProvider implements TextDocumentContentProvider {
   }
 
   private addCredentials(): void {
-    const match: RegExpExecArray = /https?:\/\//i.exec(this.URL);
+    const match: RegExpExecArray = /https?:\/\//i.exec(this.url);
     this.withCredentials = (match) ?
-      `${match[0]}${this.username}:${this.password}@${this.URL.substr(match.index + match[0].length)}` : this.URL;
+      `${match[0]}${this.username}:${this.password}@${this.url.substr(match.index + match[0].length)}` : this.url;
   }
 
   private addUrl(): void {
@@ -111,11 +103,11 @@ ${this.text.substr(match.index + match[0].length + 1)}`;
   }
 
   private clearUrl(): void {
-    this.URL = this.URL.trim()
+    this.url = this.url.trim()
       .toLowerCase();
-    const match: RegExpExecArray = /\/+$/.exec(this.URL);
+    const match: RegExpExecArray = /\/+$/.exec(this.url);
     if (match) {
-      this.URL = this.URL.substr(0, match.index);
+      this.url = this.url.substr(0, match.index);
     }
   }
 
@@ -125,9 +117,9 @@ ${this.text.substr(match.index + match[0].length + 1)}`;
 
 <head>
     <link rel="stylesheet" type="text/css"
-        href="${this.URL}/web/js/portal/jquery-ui-1.9.0.custom/css/smoothness/jquery-ui-1.9.1.custom.min.css">
-    <link rel="stylesheet" type="text/css" href="${this.URL}/web/css/portal/charts.min.css">
-    <script type="text/javascript" src="${this.URL}/web/js/portal/portal_init.js"></script>
+        href="${this.url}/web/js/portal/jquery-ui-1.9.0.custom/css/smoothness/jquery-ui-1.9.1.custom.min.css">
+    <link rel="stylesheet" type="text/css" href="${this.url}/web/css/portal/charts.min.css">
+    <script type="text/javascript" src="${this.url}/web/js/portal/portal_init.js"></script>
     <script>
         if (typeof initializePortal === "function") {
             initializePortal(function (callback) {
@@ -139,13 +131,12 @@ ${this.text.substr(match.index + match[0].length + 1)}`;
         }
     </script>
     <script type="text/javascript"
-        src="${this.URL}/web/js/portal/jquery-ui-1.9.0.custom/js/jquery-1.8.2.min.js"></script>
+        src="${this.url}/web/js/portal/jquery-ui-1.9.0.custom/js/jquery-1.8.2.min.js"></script>
     <script type="text/javascript"
-            src="${this.URL}/web/js/portal/jquery-ui-1.9.0.custom/js/jquery-ui-1.9.0.custom.min.js"></script>
-    <script type="text/javascript" src="${this.URL}/web/js/portal/d3.min.js"></script>
-    <script type="text/javascript" src="${this.URL}/web/js/portal/highlight.pack.js"></script>
-    <script type="text/javascript" src="${this.URL}/web/js/portal/charts.min.js"></script>
-    <title>${this.previewName}</title>
+            src="${this.url}/web/js/portal/jquery-ui-1.9.0.custom/js/jquery-ui-1.9.0.custom.min.js"></script>
+    <script type="text/javascript" src="${this.url}/web/js/portal/d3.min.js"></script>
+    <script type="text/javascript" src="${this.url}/web/js/portal/highlight.pack.js"></script>
+    <script type="text/javascript" src="${this.url}/web/js/portal/charts.min.js"></script>
 </head>
 
 <body onload="onBodyLoad()">
@@ -157,7 +148,7 @@ ${this.text.substr(match.index + match[0].length + 1)}`;
   }
 
   private replaceImports(): void {
-    const address: string = (/\//.test(this.URL)) ? `${this.URL}/portal/resource/scripts/` : this.URL;
+    const address: string = (/\//.test(this.url)) ? `${this.url}/portal/resource/scripts/` : this.url;
     const regexp: RegExp = /(^\s*import\s+\S+\s*=\s*)(\S+)\s*$/mg;
     const urlPosition: number = 2;
     let match: RegExpExecArray = regexp.exec(this.text);
