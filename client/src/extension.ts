@@ -1,6 +1,6 @@
 import { join } from "path";
 import {
-    commands, Disposable, ExtensionContext, ViewColumn, window, workspace,
+    commands, Disposable, ExtensionContext, TextDocumentChangeEvent, ViewColumn, workspace, window,
 } from "vscode";
 import {
     ForkOptions, LanguageClient, LanguageClientOptions, ServerOptions, TransportKind,
@@ -54,9 +54,14 @@ export const activate: (context: ExtensionContext) => void = async (context: Ext
             )
             .then(
                 () => { return; },
-                // tslint:disable-next-line:typedef
-                (reason) => { window.showErrorMessage(reason); },
-            ));
+                () => { return; },
+            ),
+    );
+    workspace.onDidChangeTextDocument((e: TextDocumentChangeEvent) => {
+        if (e.document === window.activeTextEditor.document) {
+            provider.update(e.document.uri);
+        }
+    });
     context.subscriptions.push(disposable, registration);
 };
 

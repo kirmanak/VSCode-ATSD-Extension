@@ -22,6 +22,17 @@ export class AxibaseChartsProvider implements TextDocumentContentProvider {
 
   public async provideTextDocumentContent(): Promise<string> {
     const editor: TextEditor = window.activeTextEditor;
+    if (!editor) {
+      window.showErrorMessage("Please, click on target config tab");
+
+      return Promise.reject();
+    }
+
+    if (editor.document.languageId !== "axibasecharts") {
+      window.showErrorMessage("Please, choose a right portal configuration");
+
+      return Promise.reject();
+    }
     const document: TextDocument = editor.document;
     this.text = deleteComments(document.getText());
     const fileName: string = document.fileName;
@@ -34,7 +45,9 @@ export class AxibaseChartsProvider implements TextDocumentContentProvider {
         prompt: "Can be stored permanently in 'axibaseCharts.url' setting",
       });
       if (!this.URL) {
-        Promise.reject();
+        window.showInformationMessage("You did not specify URL address");
+
+        return Promise.reject();
       }
     }
     this.clearUrl();
@@ -62,7 +75,6 @@ export class AxibaseChartsProvider implements TextDocumentContentProvider {
     this.addUrl();
 
     return this.getHtml();
-
   }
 
   public update(uri: Uri): void {
