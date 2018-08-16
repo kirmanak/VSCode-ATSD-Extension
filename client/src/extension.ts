@@ -86,6 +86,7 @@ class PreviewShower {
                 return;
             }
         }
+        this.clearUrl();
         this.replaceImports();
 
         this.username = workspace.getConfiguration("axibaseCharts", document.uri)
@@ -138,6 +139,15 @@ class PreviewShower {
         }
         this.text = `${this.text.substr(0, match.index + match[0].length + 1)}  url = ${this.withCredentials}
 ${this.text.substr(match.index + match[0].length + 1)}`;
+    }
+
+    private clearUrl(): void {
+        this.URL = this.URL.trim()
+            .toLowerCase();
+        const match: RegExpExecArray = /\/+$/.exec(this.URL);
+        if (match) {
+            this.URL = this.URL.substr(0, match.index);
+        }
     }
 
     private getHtml(): string {
