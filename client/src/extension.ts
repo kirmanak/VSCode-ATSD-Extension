@@ -1,6 +1,6 @@
 import { join } from "path";
 import {
-    commands, Disposable, ExtensionContext, TextDocument, ViewColumn, window, workspace,
+    commands, Disposable, ExtensionContext, TextDocument, Uri, ViewColumn, window, workspace,
 } from "vscode";
 import {
     ForkOptions, LanguageClient, LanguageClientOptions, ServerOptions, TransportKind,
@@ -44,23 +44,25 @@ export const activate: (context: ExtensionContext) => void = async (context: Ext
 
     // Start the client. This will also launch the server
     client.start();
-    const provider: AxibaseChartsProvider = new AxibaseChartsProvider();
-    workspace.onDidSaveTextDocument((document: TextDocument) => {
-        console.log("Did save");
-        if (document.uri === window.activeTextEditor.document.uri) {
-            provider.update(document.uri);
-        } else {
-            console.log("Do not equal");
-        }
-    });
-    const registration: Disposable = workspace.registerTextDocumentContentProvider("axibaseCharts", provider);
-    const disposable: Disposable = commands.registerCommand("axibasecharts.showPortal", () => commands
-        .executeCommand(
-            "vscode.previewHtml", "axibaseCharts://authority/axibaseCharts",
+
+    const disposable: Disposable = commands.registerCommand("axibasecharts.showPortal", () => {
+        const previewUri: string = "axibaseCharts://authority/axibaseCharts";
+        const provider: AxibaseChartsProvider = new AxibaseChartsProvider();
+        workspace.registerTextDocumentContentProvider("axibaseCharts", provider);
+        workspace.onDidSaveTextDocument((document: TextDocument) => {
+            console.log("Did save");
+            if (document.uri === window.activeTextEditor.document.uri) {
+                provider.update(Uri.parse(previewUri));
+            } else {
+                console.log("Do not equal");
+            }
+        });
+        commands.executeCommand(
+            "vscode.previewHtml", previewUri,
             ViewColumn.Two, "Portal preview",
-        ),
-    );
-    context.subscriptions.push(disposable, registration);
+        );
+    });
+    context.subscriptions.push(disposable);
 };
 
 export const deactivate: () => Thenable<void> = (): Thenable<void> => {

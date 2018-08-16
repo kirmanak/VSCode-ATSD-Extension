@@ -4,13 +4,19 @@ import {
 } from "vscode";
 
 export class AxibaseChartsProvider implements TextDocumentContentProvider {
-  private readonly onDidChangeEmitter: EventEmitter<Uri> = new EventEmitter<Uri>();
+  private readonly editor: TextEditor;
+  private readonly onDidChangeEmitter: EventEmitter<Uri>;
   private password: string;
   private previewName: string;
   private text: string;
   private URL: string;
   private username: string;
   private withCredentials: string;
+
+  public constructor() {
+    this.onDidChangeEmitter = new EventEmitter<Uri>();
+    this.editor = window.activeTextEditor;
+  }
 
   public get onDidChange(): Event<Uri> {
     console.log("Get didChange");
@@ -24,19 +30,12 @@ export class AxibaseChartsProvider implements TextDocumentContentProvider {
 
   public async provideTextDocumentContent(): Promise<string> {
     console.log("Request html");
-    const editor: TextEditor = window.activeTextEditor;
-    if (!editor) {
-      window.showErrorMessage("Please, click on target config tab");
-
-      return Promise.reject();
-    }
-
-    if (editor.document.languageId !== "axibasecharts") {
+    const document: TextDocument = this.editor.document;
+    if (document.languageId !== "axibasecharts") {
       window.showErrorMessage("Please, choose a right portal configuration");
 
       return Promise.reject();
     }
-    const document: TextDocument = editor.document;
     this.text = deleteComments(document.getText());
     const fileName: string = document.fileName;
     this.previewName = `Preview ${fileName.substr(fileName.lastIndexOf("/") + 1)}`;
