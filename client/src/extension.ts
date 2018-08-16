@@ -1,6 +1,6 @@
 import { join } from "path";
 import {
-    commands, Disposable, ExtensionContext, TextDocumentChangeEvent, ViewColumn, window, workspace,
+    commands, Disposable, ExtensionContext, TextDocument, ViewColumn, window, workspace,
 } from "vscode";
 import {
     ForkOptions, LanguageClient, LanguageClientOptions, ServerOptions, TransportKind,
@@ -45,23 +45,21 @@ export const activate: (context: ExtensionContext) => void = async (context: Ext
     // Start the client. This will also launch the server
     client.start();
     const provider: AxibaseChartsProvider = new AxibaseChartsProvider();
-    const registration: Disposable = workspace.registerTextDocumentContentProvider("axibaseCharts", provider);
-    const disposable: Disposable = commands.registerCommand("axibasecharts.showPortal", () =>
-        commands
-            .executeCommand(
-                "vscode.previewHtml", "axibaseCharts://authority/axibaseCharts",
-                ViewColumn.Beside, provider.getPreviewName(),
-            )
-            .then(
-                () => { return; },
-                () => { return; },
-            ),
-    );
-    workspace.onDidChangeTextDocument((e: TextDocumentChangeEvent) => {
-        if (e.document === window.activeTextEditor.document) {
-            provider.update(e.document.uri);
+    workspace.onDidSaveTextDocument((document: TextDocument) => {
+        console.log("Did save");
+        if (document.uri === window.activeTextEditor.document.uri) {
+            provider.update(document.uri);
+        } else {
+            console.log("Do not equal");
         }
     });
+    const registration: Disposable = workspace.registerTextDocumentContentProvider("axibaseCharts", provider);
+    const disposable: Disposable = commands.registerCommand("axibasecharts.showPortal", () => commands
+        .executeCommand(
+            "vscode.previewHtml", "axibaseCharts://authority/axibaseCharts",
+            ViewColumn.Two, "Portal preview",
+        ),
+    );
     context.subscriptions.push(disposable, registration);
 };
 

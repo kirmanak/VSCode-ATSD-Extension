@@ -13,6 +13,8 @@ export class AxibaseChartsProvider implements TextDocumentContentProvider {
   private withCredentials: string;
 
   public get onDidChange(): Event<Uri> {
+    console.log("Get didChange");
+
     return this.onDidChangeEmitter.event;
   }
 
@@ -21,6 +23,7 @@ export class AxibaseChartsProvider implements TextDocumentContentProvider {
   }
 
   public async provideTextDocumentContent(): Promise<string> {
+    console.log("Request html");
     const editor: TextEditor = window.activeTextEditor;
     if (!editor) {
       window.showErrorMessage("Please, click on target config tab");
@@ -38,33 +41,39 @@ export class AxibaseChartsProvider implements TextDocumentContentProvider {
     const fileName: string = document.fileName;
     this.previewName = `Preview ${fileName.substr(fileName.lastIndexOf("/") + 1)}`;
     const configuration: WorkspaceConfiguration = workspace.getConfiguration("axibaseCharts", document.uri);
-    this.URL = configuration.get("url");
     if (!this.URL) {
-      this.URL = await window.showInputBox({
-        ignoreFocusOut: true, placeHolder: "http(s)://atsd_host:port",
-        prompt: "Can be stored permanently in 'axibaseCharts.url' setting",
-      });
+      this.URL = configuration.get("url");
       if (!this.URL) {
-        window.showInformationMessage("You did not specify URL address");
+        this.URL = await window.showInputBox({
+          ignoreFocusOut: true, placeHolder: "http(s)://atsd_host:port",
+          prompt: "Can be stored permanently in 'axibaseCharts.url' setting",
+        });
+        if (!this.URL) {
+          window.showInformationMessage("You did not specify an URL address");
 
-        return Promise.reject();
+          return Promise.reject();
+        }
       }
     }
     this.clearUrl();
     this.replaceImports();
 
-    this.username = configuration.get("username");
     if (!this.username) {
-      this.username = await window.showInputBox({
-        ignoreFocusOut: true, placeHolder: "username",
-        prompt: "Specify only if API is closed for guests. Value can be stored in 'axibaseCharts.username'",
-      });
+      this.username = configuration.get("username");
+      if (!this.username) {
+        this.username = await window.showInputBox({
+          ignoreFocusOut: true, placeHolder: "username",
+          prompt: "Specify only if API is closed for guests. Value can be stored in 'axibaseCharts.username'",
+        });
+      }
     }
     if (this.username) {
-      this.password = await window.showInputBox({
-        ignoreFocusOut: true, password: true,
-        prompt: "Please, enter the password. Can not be stored",
-      });
+      if (!this.password) {
+        this.password = await window.showInputBox({
+          ignoreFocusOut: true, password: true,
+          prompt: "Please, enter the password. Can not be stored",
+        });
+      }
       if (this.password) {
         this.addCredentials();
       }
@@ -74,10 +83,13 @@ export class AxibaseChartsProvider implements TextDocumentContentProvider {
     }
     this.addUrl();
 
+    console.log(this.getHtml());
+
     return this.getHtml();
   }
 
   public update(uri: Uri): void {
+    console.log("Update");
     this.onDidChangeEmitter.fire(uri);
   }
 
@@ -120,7 +132,7 @@ ${this.text.substr(match.index + match[0].length + 1)}`;
         href="${this.URL}/web/js/portal/jquery-ui-1.9.0.custom/css/smoothness/jquery-ui-1.9.1.custom.min.css">
     <link rel="stylesheet" type="text/css" href="${this.URL}/web/css/portal/charts.min.css">
     <script type="text/javascript" src="${this.URL}/web/js/portal/portal_init.js"></script>
-    <script>
+    <script id="myscript">
         if (typeof initializePortal === "function") {
             initializePortal(function (callback) {
                 var configText = ${JSON.stringify(this.text)};
@@ -144,6 +156,12 @@ ${this.text.substr(match.index + match[0].length + 1)}`;
     <div class="portalView"></div>
     <div id="dialog"></div>
 </body>
+
+<script>
+var targetNode = document.getElementById("myscript");
+var observer = new MutationObserver(onBodyLoad);
+observer.observe(targetNode, { attributes: true, childlist: true, subtree: true});
+</script>
 
 </html>`;
   }
