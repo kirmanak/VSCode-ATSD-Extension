@@ -64,7 +64,7 @@ export class AxibaseChartsProvider implements TextDocumentContentProvider {
         });
       }
     }
-    if (this.username) {
+    if (this.username && this.auth) {
       if (!this.password) {
         this.password = await window.showInputBox({
           ignoreFocusOut: true, password: true,
@@ -128,7 +128,7 @@ ${this.text.substr(match.index + match[0].length + 1)}`;
         href="${this.URL}/web/js/portal/jquery-ui-1.9.0.custom/css/smoothness/jquery-ui-1.9.1.custom.min.css">
     <link rel="stylesheet" type="text/css" href="${this.URL}/web/css/portal/charts.min.css">
     <script type="text/javascript" src="${this.URL}/web/js/portal/portal_init.js"></script>
-    <script id="myscript">
+    <script>
         if (typeof initializePortal === "function") {
             initializePortal(function (callback) {
                 var configText = ${JSON.stringify(this.text)};
@@ -152,12 +152,6 @@ ${this.text.substr(match.index + match[0].length + 1)}`;
     <div class="portalView"></div>
     <div id="dialog"></div>
 </body>
-
-<script>
-var targetNode = document.getElementById("myscript");
-var observer = new MutationObserver(onBodyLoad);
-observer.observe(targetNode, { attributes: true, childlist: true, subtree: true});
-</script>
 
 </html>`;
   }
