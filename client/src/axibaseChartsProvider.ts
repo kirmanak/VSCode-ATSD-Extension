@@ -25,8 +25,6 @@ export class AxibaseChartsProvider implements TextDocumentContentProvider {
   public async provideTextDocumentContent(): Promise<string> {
     const editor: TextEditor = window.activeTextEditor;
     if (!editor) {
-      window.showErrorMessage("Please, click on portal configuration editor and try again");
-
       return Promise.reject();
     }
     const document: TextDocument = editor.document;
