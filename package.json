@@ -5,8 +5,7 @@
     "version": "0.0.1",
     "license": "Apache-2.0",
     "icon": "./images/icon.png",
-    "badges": [
-        {
+    "badges": [{
             "description": "Codacy",
             "href": "https://app.codacy.com/app/kirmanak/Axibase-Charts-Syntax?utm_source=github.com&utm_medium=referral&utm_content=kirmanak/Axibase-Charts-Syntax&utm_campaign=badger",
             "url": "https://api.codacy.com/project/badge/Grade/733f4b159db44cff920edc92721d0e38"
@@ -49,48 +48,46 @@
                     "type": "string",
                     "default": null,
                     "description": "What URL should be used to show the preview"
+                },
+                "axibaseCharts.username": {
+                    "scope": "resource",
+                    "type": "string",
+                    "default": null,
+                    "description": "What username should be used to show the preview"
                 }
             }
         },
-        "languages": [
-            {
-                "id": "axibasecharts",
-                "aliases": [
-                    "Axibase Charts",
-                    "axibasecharts"
-                ],
-                "extensions": [
-                    ".config"
-                ],
-                "configuration": "./language-configuration.json"
-            }
-        ],
-        "grammars": [
-            {
-                "language": "axibasecharts",
-                "scopeName": "source.axibase.charts",
-                "path": "./syntaxes/axibasecharts.tmLanguage.json"
-            }
-        ],
-        "snippets": [
-            {
-                "language": "axibasecharts",
-                "path": "./snippets/snippets.json"
-            }
-        ],
+        "languages": [{
+            "id": "axibasecharts",
+            "aliases": [
+                "Axibase Charts",
+                "axibasecharts"
+            ],
+            "extensions": [
+                ".config"
+            ],
+            "configuration": "./language-configuration.json"
+        }],
+        "grammars": [{
+            "language": "axibasecharts",
+            "scopeName": "source.axibase.charts",
+            "path": "./syntaxes/axibasecharts.tmLanguage.json"
+        }],
+        "snippets": [{
+            "language": "axibasecharts",
+            "path": "./snippets/snippets.json"
+        }],
         "commands": {
             "command": "axibasecharts.showPortal",
             "title": "Show preview",
             "category": "Axibase Charts"
         },
         "menus": {
-            "editor/title": [
-                {
-                    "command": "axibasecharts.showPortal",
-                    "when": "editorLangId == axibasecharts",
-                    "group": "navigation"
-                }
-            ]
+            "editor/title": [{
+                "command": "axibasecharts.showPortal",
+                "when": "editorLangId == axibasecharts",
+                "group": "navigation"
+            }]
         }
     },
     "main": "./client/out/extension",
