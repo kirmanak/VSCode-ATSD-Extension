@@ -78,7 +78,9 @@ export const possibleOptions: string[] = [
     "tagsdropdowns", "tagsdropdownsstyle", "tension", "threshold", "thresholds", "ticks", "ticksright", "tickstime",
     "timeoffset", "timespan", "timezone", "title", "tooltip", "topaxis", "topunits", "totalsize", "totalvalue",
     "transpose", "type", "unscale", "update", "updateinterval", "updatetimespan", "url", "urllegendticks",
-    "urlparameters", "value", "verticalgrid", "widgetsperrow", "width", "widthunits", "zoomsvg",
+    "urlparameters", "value", "verticalgrid", "widgetsperrow", "width", "widthunits", "zoomsvg", "smooth",
+    "smoothorder", "smoothcount", "smoothinterval", "smoothminimumcount", "smoothgeneratenans", "smoothfactor",
+    "smoothrange",
 ];
 
 export const possibleSections: string[] = [
