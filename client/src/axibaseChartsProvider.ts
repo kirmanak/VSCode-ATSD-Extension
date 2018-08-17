@@ -1,23 +1,25 @@
+import { ClientRequest, IncomingMessage, OutgoingMessage, request as http, RequestOptions } from "http";
+import { request as https } from "https";
+import { URL } from "url";
 import {
   Event, EventEmitter, TextDocument, TextDocumentContentProvider, TextEditor,
   Uri, window, workspace, WorkspaceConfiguration,
 } from "vscode";
 
 export class AxibaseChartsProvider implements TextDocumentContentProvider {
+
+  public get onDidChange(): Event<Uri> {
+    return this.onDidChangeEmitter.event;
+  }
   private auth: boolean = true;
+  private cookie: string;
   private readonly onDidChangeEmitter: EventEmitter<Uri>;
-  private password: string;
   private text: string;
   private url: string;
-  private username: string;
   private withCredentials: string;
 
   public constructor() {
     this.onDidChangeEmitter = new EventEmitter<Uri>();
-  }
-
-  public get onDidChange(): Event<Uri> {
-    return this.onDidChangeEmitter.event;
   }
 
   public async provideTextDocumentContent(): Promise<string> {
@@ -29,8 +31,6 @@ export class AxibaseChartsProvider implements TextDocumentContentProvider {
     }
     const document: TextDocument = editor.document;
     if (document.languageId !== "axibasecharts") {
-      window.showErrorMessage("Please, choose a right portal configuration");
-
       return Promise.reject();
     }
     this.text = deleteComments(document.getText());
@@ -52,44 +52,43 @@ export class AxibaseChartsProvider implements TextDocumentContentProvider {
     this.clearUrl();
     this.replaceImports();
 
-    if (this.auth && !this.username) {
-      this.username = configuration.get("username");
-      if (!this.username) {
-        this.username = await window.showInputBox({
+    if (this.auth && !this.cookie) {
+      let username: string = configuration.get("username");
+      if (!username) {
+        username = await window.showInputBox({
           ignoreFocusOut: true, placeHolder: "username",
           prompt: "Specify only if API is closed for guests. Value can be stored in 'axibaseCharts.username'",
         });
       }
-    }
-    if (this.username && this.auth) {
-      if (!this.password) {
-        this.password = await window.showInputBox({
+      let password: string;
+      if (username) {
+        password = await window.showInputBox({
           ignoreFocusOut: true, password: true,
           prompt: "Please, enter the password. Can not be stored",
         });
       }
-      if (this.password) {
-        this.addCredentials();
+      if (password && username) {
+        try {
+          [this.withCredentials, this.cookie] = await this.performRequest(username, password);
+        } catch (err) {
+          return Promise.reject(err);
+        } finally {
+          username = undefined;
+          password = undefined;
+        }
+      } else {
+        this.auth = false;
+        this.withCredentials = this.url;
       }
-    } else {
-      this.auth = false;
-    }
-    if (!this.auth) {
-      this.withCredentials = this.url;
     }
     this.addUrl();
+    const html: string = this.getHtml();
 
-    return this.getHtml();
+    return html;
   }
 
   public update(uri: Uri): void {
     this.onDidChangeEmitter.fire(uri);
-  }
-
-  private addCredentials(): void {
-    const match: RegExpExecArray = /https?:\/\//i.exec(this.url);
-    this.withCredentials = (match) ?
-      `${match[0]}${this.username}:${this.password}@${this.url.substr(match.index + match[0].length)}` : this.url;
   }
 
   private addUrl(): void {
@@ -145,11 +144,50 @@ ${this.text.substr(match.index + match[0].length + 1)}`;
 </head>
 
 <body onload="onBodyLoad()">
+<script>
+document.cookie = "${this.cookie}";
+</script>
     <div class="portalView"></div>
     <div id="dialog"></div>
 </body>
 
 </html>`;
+  }
+
+  private async performRequest(username: string, password: string): Promise<[string, string]> {
+    const url: URL = new URL(this.url);
+    const data: string = `login=true&atsd_user=${username}&atsd_pwd=${password}&commit=Login`;
+    const options: RequestOptions = {
+      headers: {
+        "Content-Length": data.length,
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      hostname: url.hostname,
+      method: "POST",
+      path: "/login-processing",
+      port: url.port,
+      protocol: url.protocol,
+    };
+    const request: (options: RequestOptions | string | URL, callback?: (res: IncomingMessage) => void)
+      => ClientRequest = (url.protocol === "https:") ? https : http;
+
+    return new Promise<[string, string]>(
+      (resolve: (value: [string, string]) => void, reject: (reason: Error) => void): void => {
+        const outgoing: OutgoingMessage = request(options, (res: IncomingMessage) => {
+          res.on("error", reject);
+          const expectedStatusCode: number = 302;
+          if (res.statusCode !== expectedStatusCode) {
+            reject(new Error(`HTTP response code: ${res.statusCode}`));
+          }
+          const location: string = res.headers.location;
+          const cookie: string = res.headers["set-cookie"].join(";");
+
+          resolve([location, cookie]);
+        });
+        outgoing.on("error", reject);
+        outgoing.write(data);
+        outgoing.end();
+      });
   }
 
   private replaceImports(): void {
