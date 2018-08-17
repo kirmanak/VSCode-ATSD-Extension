@@ -121,6 +121,12 @@ ${this.text.substr(match.index + match[0].length + 1)}`;
     <link rel="stylesheet" type="text/css"
         href="${this.url}/web/js/portal/jquery-ui-1.9.0.custom/css/smoothness/jquery-ui-1.9.1.custom.min.css">
     <link rel="stylesheet" type="text/css" href="${this.url}/web/css/portal/charts.min.css">
+    <style>
+      .portalPage body {
+        padding: 0;
+        background: var(--vscode-editor-background);
+      }
+    </style>
     <script type="text/javascript" src="${this.url}/web/js/portal/portal_init.js"></script>
     <script>
         if (typeof initializePortal === "function") {
