@@ -11,7 +11,7 @@ export class Validator {
     private csvColumns: number;
     private currentLineNumber: number = 0;
     private currentSection: TextRange;
-    private readonly deAliases: TextRange[] = [];
+    private deAliases: TextRange[] = [];
     private foundKeyword: TextRange;
     private readonly ifSettings: Map<string, string[]> = new Map<string, string[]>();
     private readonly keywordsStack: TextRange[] = [];
@@ -252,7 +252,9 @@ export class Validator {
             this.handleSection();
         } else {
             this.match = /(^\s*)(\S+)\s*=\s*(.+)$/m.exec(line);
-            if (this.match) { this.handleSettings(); }
+            if (this.match) {
+                this.handleSettings();
+            }
         }
         this.match = /(^[\t ]*\[)(\w+)\][\t ]*/m.exec(line);
         this.spellingCheck();
@@ -385,7 +387,11 @@ export class Validator {
 
             return;
         }
-        if (/widget/i.test(this.match[Validator.CONTENT_POSITION])) { this.aliases = []; }
+        if (/widget/i.test(this.match[Validator.CONTENT_POSITION])) {
+            this.checkAliases();
+            this.deAliases = [];
+            this.aliases = [];
+        }
         this.previousSettings = this.settings;
         this.previousSection = this.currentSection;
         this.settings = [];
@@ -404,18 +410,22 @@ export class Validator {
         if (!this.currentSection || !/tags|keys/.test(this.currentSection.text)) {
             // We are not in tags or keys section
             // Aliases
-            this.match = /(^\s*alias\s*=\s*)(\w+)\s*$/m.exec(line);
-            if (this.match) { this.addToArray(this.aliases, DiagnosticSeverity.Error); }
-            this.match = /(^\s*value\s*=.*value\((['"]))(\w+)\2\).*$/.exec(line);
-            const deAliasPosition: number = 3;
+            this.match = /(^\s*alias\s*=\s*)(\S+)\s*$/m.exec(line);
             if (this.match) {
+                this.addToArray(this.aliases, DiagnosticSeverity.Error);
+            }
+            let regexp: RegExp = /value\((['"])(\S+)\1\)/g;
+            const deAliasPosition: number = 2;
+            this.match = regexp.exec(line);
+            while (this.match) {
                 this.deAliases.push(TextRange.create(this.match[deAliasPosition], Range.create(
-                    this.currentLineNumber, this.match[1].length,
-                    this.currentLineNumber, this.match[1].length + this.match[deAliasPosition].length,
+                    this.currentLineNumber, this.match.index + "value('".length,
+                    this.currentLineNumber, this.match.index + "value('".length + this.match[deAliasPosition].length,
                 )));
+                this.match = regexp.exec(line);
             }
 
-            this.match = /(^\s*)([-\w]+)\s*=/.exec(this.getCurrentLine());
+            this.match = /(^\s*)([-\w]+)\s*=/.exec(line);
             const setting: string = this.match[Validator.CONTENT_POSITION].replace(/[^a-z]/g, "");
             if (setting === "table") {
                 this.requiredSettings.push(["attribute"]);
@@ -429,7 +439,7 @@ export class Validator {
 
             if (setting === "urlparameters") {
                 this.urlParameters = [];
-                const regexp: RegExp = /{(.+?)}/g;
+                regexp = /{(.+?)}/g;
                 this.match = regexp.exec(line);
                 while (this.match) {
                     const cleared: string = this.match[1].replace(/[^a-z]/g, "");
