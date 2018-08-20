@@ -120,8 +120,49 @@ suite("Incorrect dealias tests", () => {
 [series]
   metric = temp
   entity = srv
-  value = value('src'), \n`,
+  value = value('src')`,
             [],
+        ),
+        new Test(
+            "Derived series, indents are used, correct alias and dealias",
+            `[series]
+  metric = temp
+  entity = srv
+  alias = src
+[series]
+  metric = temp
+  entity = srv
+  alias = free
+[series]
+  metric = temp
+  entity = srv
+  value = value('src') - value('free')
+[series]
+  metric = temp
+  entity = srv`,
+            [],
+        ),
+        new Test(
+            "Derived series, indents are used, correct alias and incorrect dealias",
+            `[series]
+  metric = temp
+  entity = srv
+  alias = src
+[series]
+  metric = temp
+  entity = srv
+  alias = free
+[series]
+  metric = temp
+  entity = srv
+  value = value('sc') - value('free')
+[series]
+  metric = temp
+  entity = srv`,
+            [createDiagnostic(
+                Range.create(11, "  value = value('".length, 11, "  value = value('".length + "sc".length),
+                DiagnosticSeverity.Error, errorMessage("sc", "src"),
+            )],
         ),
     ];
 
