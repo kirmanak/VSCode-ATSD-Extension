@@ -68,7 +68,15 @@ export class AxibaseChartsProvider implements TextDocumentContentProvider {
       if (password && username) {
         try {
           [this.withCredentials, this.cookie] = await this.performRequest(username, password);
+          if (new URL(this.withCredentials).pathname.includes("login")) {
+            const errorMessage: string = "Credentials are incorrect";
+            window.showErrorMessage(errorMessage);
+
+            return Promise.reject(errorMessage);
+          }
         } catch (err) {
+          window.showErrorMessage(err);
+
           return Promise.reject(err);
         } finally {
           username = undefined;
