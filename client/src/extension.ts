@@ -32,6 +32,7 @@ export const activate: (context: ExtensionContext) => void = async (context: Ext
     const clientOptions: LanguageClientOptions = {
         // Register the server for plain text documents
         documentSelector: [{ language: "axibasecharts", scheme: "file" }],
+        outputChannelName: "Axibase Charts",
         synchronize: {
             // Notify the server about file changes to ".clientrc files contain in the workspace
             fileEvents: workspace.createFileSystemWatcher("**/.clientrc"),
