@@ -1,0 +1,5016 @@
+﻿{
+    "$schema": "./dictionary.schema.json",
+    "settings": [
+        {
+            "displayName": "add-meta",
+            "type": "boolean",
+            "section": "configuration",
+            "example": true,
+            "defaultValue": false
+        },
+        {
+            "displayName": "ahead-time-span",
+            "type": "string",
+            "section": "widget",
+            "widget": "chart",
+            "example": "80%"
+        },
+        {
+            "displayName": "alert-expression",
+            "type": "string",
+            "section": "widget",
+            "example": "value > 5",
+            "script": {
+                "fields": [
+                    {
+                        "name": "metric",
+                        "type": "string"
+                    },
+                    {
+                        "name": "entity",
+                        "type": "string"
+                    },
+                    {
+                        "name": "tags",
+                        "type": "array"
+                    },
+                    {
+                        "name": "value",
+                        "type": "number"
+                    },
+                    {
+                        "name": "previous",
+                        "type": "number"
+                    },
+                    {
+                        "name": "movavg",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "count",
+                                "type": "number"
+                            },
+                            {
+                                "name": "minCount",
+                                "type": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "detail",
+                        "type": "function"
+                    },
+                    {
+                        "name": "forecast",
+                        "type": "function"
+                    },
+                    {
+                        "name": "forecast_deviation",
+                        "type": "function"
+                    },
+                    {
+                        "name": "lower_confidence",
+                        "type": "function"
+                    },
+                    {
+                        "name": "upper_confidence",
+                        "type": "function"
+                    },
+                    {
+                        "name": "percentile",
+                        "type": "function"
+                    },
+                    {
+                        "name": "max",
+                        "type": "function"
+                    },
+                    {
+                        "name": "min",
+                        "type": "function"
+                    },
+                    {
+                        "name": "avg",
+                        "type": "function"
+                    },
+                    {
+                        "name": "sum",
+                        "type": "function"
+                    },
+                    {
+                        "name": "delta",
+                        "type": "function"
+                    },
+                    {
+                        "name": "counter",
+                        "type": "function"
+                    },
+                    {
+                        "name": "last",
+                        "type": "function"
+                    },
+                    {
+                        "name": "first",
+                        "type": "function"
+                    },
+                    {
+                        "name": "min_value_time",
+                        "type": "function"
+                    },
+                    {
+                        "name": "max_value_time",
+                        "type": "function"
+                    },
+                    {
+                        "name": "count",
+                        "type": "function"
+                    },
+                    {
+                        "name": "threshold_count",
+                        "type": "function"
+                    },
+                    {
+                        "name": "threshold_percent",
+                        "type": "function"
+                    },
+                    {
+                        "name": "threshold_duration",
+                        "type": "function"
+                    },
+                    {
+                        "name": "time",
+                        "type": "function"
+                    },
+                    {
+                        "name": "bottom",
+                        "type": "function"
+                    },
+                    {
+                        "name": "top",
+                        "type": "function"
+                    },
+                    {
+                        "name": "meta",
+                        "type": "function"
+                    },
+                    {
+                        "name": "entityTag",
+                        "type": "function"
+                    },
+                    {
+                        "name": "metricTag",
+                        "type": "function"
+                    },
+                    {
+                        "name": "median",
+                        "type": "function"
+                    },
+                    {
+                        "name": "average",
+                        "type": "function"
+                    },
+                    {
+                        "name": "minimum",
+                        "type": "function"
+                    },
+                    {
+                        "name": "maximum",
+                        "type": "function"
+                    },
+                    {
+                        "name": "series",
+                        "type": "array"
+                    }
+                ],
+                "returnValue": "boolean"
+            }
+        },
+        {
+            "displayName": "alert-row-style",
+            "type": "string",
+            "example": "background-color: red"
+        },
+        {
+            "displayName": "alert-style",
+            "type": "string",
+            "section": "link",
+            "example": "stroke: red; stroke-width: 2",
+            "script": {
+                "returnValue": "string",
+                "fields": [
+                    {
+                        "name": "alert",
+                        "type": "number"
+                    }
+                ]
+            }
+        },
+        {
+            "displayName": "alias",
+            "type": "string",
+            "section": "series",
+            "example": "s1"
+        },
+        {
+            "displayName": "align",
+            "type": "enum",
+            "section": "widget",
+            "example": "END_TIME",
+            "defaultValue": "CALENDAR",
+            "enum": [
+                "END_TIME",
+                "START_TIME",
+                "CALENDAR",
+                "FIRST_VALUE_TIME"
+            ]
+        },
+        {
+            "displayName": "arcs",
+            "type": "boolean",
+            "section": "widget",
+            "widget": "graph",
+            "defaultValue": true,
+            "example": false
+        },
+        {
+            "displayName": "arrow-length",
+            "type": "number",
+            "section": "widget",
+            "widget": "gauge",
+            "example": "0.3",
+            "maxValue": 1,
+            "minValue": 0
+        },
+        {
+            "displayName": "arrows",
+            "type": "boolean",
+            "section": "widget",
+            "widget": "graph",
+            "defaultValue": false,
+            "example": true
+        },
+        {
+            "displayName": "attribute",
+            "section": "series",
+            "type": "string",
+            "example": "my_attribute",
+            "excludes": [
+                "metric"
+            ]
+        },
+        {
+            "displayName": "audio-alert",
+            "type": "string",
+            "section": "series",
+            "example": "(alert > 0.5) ? '/portal/resource/alarm.ogg' : '/portal/resource/klaxon.ogg'",
+            "script": {
+                "fields": [
+                    {
+                        "name": "alert",
+                        "type": "number"
+                    }
+                ],
+                "returnValue": "string"
+            }
+        },
+        {
+            "displayName": "audio-onload",
+            "type": "boolean",
+            "section": "widget",
+            "defaultValue": false,
+            "example": true
+        },
+        {
+            "displayName": "author",
+            "type": "string",
+            "example": "my_name"
+        },
+        {
+            "displayName": "auto-height",
+            "type": "boolean",
+            "section": "widget",
+            "defaultValue": false,
+            "example": true
+        },
+        {
+            "displayName": "auto-padding",
+            "type": "boolean",
+            "section": "widget",
+            "widget": "graph",
+            "defaultValue": true,
+            "example": false
+        },
+        {
+            "displayName": "auto-period",
+            "type": "boolean",
+            "section": "widget",
+            "widget": "chart",
+            "defaultValue": true,
+            "example": false
+        },
+        {
+            "displayName": "auto-scale",
+            "type": "boolean",
+            "section": "widget",
+            "widget": "chart",
+            "defaultValue": false,
+            "example": true
+        },
+        {
+            "displayName": "axis",
+            "type": "enum",
+            "defaultValue": "left",
+            "section": "widget",
+            "example": "right",
+            "enum": [
+                "right",
+                "left"
+            ]
+        },
+        {
+            "displayName": "axis-title",
+            "type": "string",
+            "section": "widget",
+            "example": "CPU Utilization in %"
+        },
+        {
+            "displayName": "axis-title-left",
+            "type": "string",
+            "section": "widget",
+            "example": "CPU Utilization in %"
+        },
+        {
+            "displayName": "axis-title-right",
+            "type": "string",
+            "section": "widget",
+            "example": "CPU Utilization in %"
+        },
+        {
+            "displayName": "bar-count",
+            "type": "integer",
+            "section": "widget",
+            "widget": "histogram",
+            "example": 20
+        },
+        {
+            "displayName": "batch-size",
+            "type": "integer",
+            "section": "widget",
+            "example": 1,
+            "defaultValue": 8
+        },
+        {
+            "displayName": "batch-update",
+            "type": "boolean",
+            "example": true,
+            "section": "widget",
+            "defaultValue": false
+        },
+        {
+            "displayName": "border-width",
+            "type": "number",
+            "example": 0.3,
+            "section": "widget",
+            "widget": "gauge"
+        },
+        {
+            "displayName": "bottom-axis",
+            "type": "enum",
+            "defaultValue": "values",
+            "section": "widget",
+            "widget": "histogram",
+            "example": "none",
+            "enum": [
+                "none",
+                "percentiles",
+                "values"
+            ]
+        },
+        {
+            "displayName": "bundle",
+            "section": "widget",
+            "widget": "graph",
+            "type": "boolean",
+            "example": false,
+            "defaultValue": true
+        },
+        {
+            "displayName": "bundled",
+            "section": "widget",
+            "widget": "graph",
+            "type": "boolean",
+            "example": false,
+            "defaultValue": true
+        },
+        {
+            "displayName": "buttons",
+            "type": "enum",
+            "section": "widget",
+            "example": "menu",
+            "enum": [
+                "menu",
+                "update"
+            ]
+        },
+        {
+            "displayName": "cache",
+            "type": "boolean",
+            "example": true,
+            "defaultValue": false,
+            "section": "widget"
+        },
+        {
+            "displayName": "capitalize",
+            "type": "boolean",
+            "example": false,
+            "defaultValue": true,
+            "section": "widget"
+        },
+        {
+            "displayName": "caption",
+            "type": "string",
+            "example": "KPI",
+            "section": "widget"
+        },
+        {
+            "displayName": "caption-style",
+            "type": "string",
+            "example": "color: silver",
+            "section": "widget"
+        },
+        {
+            "displayName": "case",
+            "type": "enum",
+            "enum": [
+                "upper",
+                "lower"
+            ],
+            "example": "upper",
+            "section": "widget",
+            "widget": "property"
+        },
+        {
+            "displayName": "centralize-columns",
+            "type": "boolean",
+            "example": true,
+            "defaultValue": false,
+            "section": "widget"
+        },
+        {
+            "displayName": "centralize-ticks",
+            "type": "boolean",
+            "example": true,
+            "defaultValue": false,
+            "section": "widget"
+        },
+        {
+            "displayName": "change-field",
+            "type": "string",
+            "example": "series.entity",
+            "section": "dropdown"
+        },
+        {
+            "displayName": "circle",
+            "type": "boolean",
+            "example": true,
+            "defaultValue": false,
+            "section": "widget",
+            "widget": "text"
+        },
+        {
+            "displayName": "class",
+            "type": "enum",
+            "example": "terminal",
+            "enum": [
+                "terminal"
+            ],
+            "section": "widget"
+        },
+        {
+            "displayName": "collapsible",
+            "type": "boolean",
+            "example": false,
+            "defaultValue": true,
+            "section": "widget"
+        },
+        {
+            "displayName": "color",
+            "type": "string",
+            "example": "orange",
+            "section": "series",
+            "excludes": [
+                "colors",
+                "color-range"
+            ]
+        },
+        {
+            "displayName": "color-range",
+            "type": "enum",
+            "example": "black",
+            "excludes": [
+                "colors",
+                "color"
+            ],
+            "enum": [
+                "blue",
+                "red",
+                "black"
+            ]
+        },
+        {
+            "displayName": "colors",
+            "type": "string",
+            "example": "green",
+            "section": "widget",
+            "excludes": [
+                "color-range",
+                "color"
+            ]
+        },
+        {
+            "displayName": "context-height",
+            "type": "integer",
+            "example": 50,
+            "defaultValue": 0
+        },
+        {
+            "displayName": "context-path",
+            "type": "string",
+            "example": "/hbs",
+            "defaultValue": "/api/v1",
+            "section": "configuration"
+        },
+        {
+            "displayName": "counter",
+            "type": "boolean",
+            "example": true,
+            "defaultValue": false,
+            "section": "series"
+        },
+        {
+            "displayName": "counter-position",
+            "type": "enum",
+            "example": "none",
+            "section": "widget",
+            "widget": "gauge",
+            "enum": [
+                "none",
+                "top",
+                "bottom"
+            ]
+        },
+        {
+            "displayName": "current-period-style",
+            "type": "string",
+            "example": "fill-opacity: 0; stroke-width: 2; stroke-dasharray: 5, 2, 1, 2",
+            "section": "widget",
+            "widget": "chart"
+        },
+        {
+            "displayName": "data",
+            "type": "boolean",
+            "example": true,
+            "defaultValue": false,
+            "section": "widget",
+            "widget": "graph"
+        },
+        {
+            "displayName": "data-type",
+            "type": "enum",
+            "example": "forecast",
+            "enum": [
+                "history",
+                "forecast",
+                "forecast_deviation",
+                "lower_confidence",
+                "upper_confidence"
+            ],
+            "section": "widget"
+        },
+        {
+            "displayName": "day-format",
+            "type": "string",
+            "example": "%y/%m/%d",
+            "section": "widget"
+        },
+        {
+            "displayName": "default-color",
+            "type": "string",
+            "example": "magenta",
+            "section": "series"
+        },
+        {
+            "displayName": "default-size",
+            "type": "number",
+            "example": 2,
+            "defaultValue": 1,
+            "section": "widget",
+            "widget": "treemap"
+        },
+        {
+            "displayName": "depth",
+            "type": "integer",
+            "example": 3,
+            "section": "widget",
+            "widget": "graph"
+        },
+        {
+            "displayName": "description",
+            "type": "string",
+            "example": "My configuration"
+        },
+        {
+            "displayName": "dialog-maximize",
+            "type": "boolean",
+            "example": false,
+            "defaultValue": true,
+            "section": "widget"
+        },
+        {
+            "displayName": "disable-alert",
+            "type": "boolean",
+            "example": true,
+            "defaultValue": false,
+            "section": "widget",
+            "widget": "page"
+        },
+        {
+            "displayName": "disconnect-count",
+            "type": "integer",
+            "example": 50,
+            "section": "widget",
+            "widget": "chart"
+        },
+        {
+            "displayName": "disconnected-node-display",
+            "type": "boolean",
+            "example": false,
+            "defaultValue": true,
+            "section": "widget",
+            "widget": "graph"
+        },
+        {
+            "displayName": "disconnect-interval",
+            "type": "interval",
+            "example": "1 minute",
+            "section": "widget",
+            "widget": "chart"
+        },
+        {
+            "displayName": "disconnect-value",
+            "type": "integer",
+            "example": 0,
+            "section": "widget",
+            "widget": "chart"
+        },
+        {
+            "displayName": "display",
+            "type": "string",
+            "example": "value > top(3)",
+            "section": "series",
+            "script": {
+                "returnValue": "boolean",
+                "fields": [
+                    {
+                        "name": "metric",
+                        "type": "string"
+                    },
+                    {
+                        "name": "entity",
+                        "type": "string"
+                    },
+                    {
+                        "name": "tags",
+                        "type": "array"
+                    },
+                    {
+                        "name": "value",
+                        "type": "number"
+                    },
+                    {
+                        "name": "previous",
+                        "type": "number"
+                    },
+                    {
+                        "name": "movavg",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "count",
+                                "type": "number"
+                            },
+                            {
+                                "name": "minCount",
+                                "type": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "detail",
+                        "type": "function"
+                    },
+                    {
+                        "name": "forecast",
+                        "type": "function"
+                    },
+                    {
+                        "name": "forecast_deviation",
+                        "type": "function"
+                    },
+                    {
+                        "name": "lower_confidence",
+                        "type": "function"
+                    },
+                    {
+                        "name": "upper_confidence",
+                        "type": "function"
+                    },
+                    {
+                        "name": "percentile",
+                        "type": "function"
+                    },
+                    {
+                        "name": "max",
+                        "type": "function"
+                    },
+                    {
+                        "name": "min",
+                        "type": "function"
+                    },
+                    {
+                        "name": "avg",
+                        "type": "function"
+                    },
+                    {
+                        "name": "sum",
+                        "type": "function"
+                    },
+                    {
+                        "name": "delta",
+                        "type": "function"
+                    },
+                    {
+                        "name": "counter",
+                        "type": "function"
+                    },
+                    {
+                        "name": "last",
+                        "type": "function"
+                    },
+                    {
+                        "name": "first",
+                        "type": "function"
+                    },
+                    {
+                        "name": "min_value_time",
+                        "type": "function"
+                    },
+                    {
+                        "name": "max_value_time",
+                        "type": "function"
+                    },
+                    {
+                        "name": "count",
+                        "type": "function"
+                    },
+                    {
+                        "name": "threshold_count",
+                        "type": "function"
+                    },
+                    {
+                        "name": "threshold_percent",
+                        "type": "function"
+                    },
+                    {
+                        "name": "threshold_duration",
+                        "type": "function"
+                    },
+                    {
+                        "name": "time",
+                        "type": "function"
+                    },
+                    {
+                        "name": "bottom",
+                        "type": "function"
+                    },
+                    {
+                        "name": "top",
+                        "type": "function"
+                    },
+                    {
+                        "name": "meta",
+                        "type": "function"
+                    },
+                    {
+                        "name": "entityTag",
+                        "type": "function"
+                    },
+                    {
+                        "name": "metricTag",
+                        "type": "function"
+                    },
+                    {
+                        "name": "median",
+                        "type": "function"
+                    },
+                    {
+                        "name": "average",
+                        "type": "function"
+                    },
+                    {
+                        "name": "minimum",
+                        "type": "function"
+                    },
+                    {
+                        "name": "maximum",
+                        "type": "function"
+                    },
+                    {
+                        "name": "series",
+                        "type": "array"
+                    }
+                ]
+            }
+        },
+        {
+            "displayName": "display-date",
+            "type": "boolean",
+            "example": true,
+            "defaultValue": false,
+            "section": "widget",
+            "widget": "chart"
+        },
+        {
+            "displayName": "display-in-legend",
+            "type": "boolean",
+            "example": false,
+            "section": "series"
+        },
+        {
+            "displayName": "display-labels",
+            "type": "boolean",
+            "example": false,
+            "defaultValue": true,
+            "section": "widget",
+            "widget": "treemap"
+        },
+        {
+            "displayName": "display-other",
+            "type": "boolean",
+            "example": false,
+            "defaultValue": true,
+            "section": "widget",
+            "widget": "pie"
+        },
+        {
+            "displayName": "display-panels",
+            "type": "enum",
+            "example": "true",
+            "defaultValue": "hover",
+            "section": "widget",
+            "enum": [
+                "true",
+                "false",
+                "hover"
+            ]
+        },
+        {
+            "displayName": "display-tags",
+            "type": "string",
+            "example": "mount_point",
+            "defaultValue": false,
+            "section": "widget"
+        },
+        {
+            "displayName": "display-ticks",
+            "type": "boolean",
+            "example": false,
+            "defaultValue": true,
+            "widget": "gauge",
+            "section": "widget"
+        },
+        {
+            "displayName": "display-tip",
+            "type": "boolean",
+            "example": true,
+            "widget": "gauge",
+            "section": "widget"
+        },
+        {
+            "displayName": "display-total",
+            "type": "boolean",
+            "example": false,
+            "defaultValue": true,
+            "widget": "treemap",
+            "section": "widget"
+        },
+        {
+            "displayName": "display-values",
+            "type": "boolean",
+            "example": false,
+            "defaultValue": true,
+            "section": "widget",
+            "widget": "bar"
+        },
+        {
+            "displayName": "downsample",
+            "type": "boolean",
+            "example": true,
+            "defaultValue": false,
+            "section": "widget"
+        },
+        {
+            "displayName": "downsample-algorithm",
+            "type": "enum",
+            "example": "DETAIL",
+            "section": "widget",
+            "enum": [
+                "DETAIL",
+                "INTERPOLATE"
+            ]
+        },
+        {
+            "displayName": "downsample-difference",
+            "type": "number",
+            "example": 4,
+            "minValue": 0,
+            "section": "widget",
+            "excludes": [
+                "downsample-ratio"
+            ]
+        },
+        {
+            "displayName": "downsample-ratio",
+            "type": "number",
+            "example": 2,
+            "minValue": 1,
+            "section": "widget",
+            "excludes": [
+                "downsample-difference"
+            ]
+        },
+        {
+            "displayName": "downsample-gap",
+            "type": "interval",
+            "example": "10 minute",
+            "section": "widget"
+        },
+        {
+            "displayName": "downsample-order",
+            "type": "integer",
+            "example": 5,
+            "minValue": 0,
+            "section": "widget"
+        },
+        {
+            "displayName": "duration",
+            "type": "integer",
+            "example": 2000,
+            "defaultValue": 1000,
+            "widget": "graph",
+            "section": "widget"
+        },
+        {
+            "displayName": "effects",
+            "type": "boolean",
+            "example": false,
+            "defaultValue": true,
+            "widget": "graph",
+            "section": "widget"
+        },
+        {
+            "displayName": "empty-refresh-interval",
+            "type": "interval",
+            "example": "5 minute",
+            "section": "series"
+        },
+        {
+            "displayName": "empty-threshold",
+            "type": "interval",
+            "example": "5 minute",
+            "section": "series"
+        },
+        {
+            "displayName": "enabled",
+            "type": "string",
+            "example": false,
+            "section": "widget",
+            "script": {
+                "returnValue": "boolean",
+                "fields": [
+                    {
+                        "name": "metric",
+                        "type": "string"
+                    },
+                    {
+                        "name": "entity",
+                        "type": "string"
+                    },
+                    {
+                        "name": "tags",
+                        "type": "array"
+                    },
+                    {
+                        "name": "value",
+                        "type": "number"
+                    },
+                    {
+                        "name": "previous",
+                        "type": "number"
+                    },
+                    {
+                        "name": "movavg",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "count",
+                                "type": "number"
+                            },
+                            {
+                                "name": "minCount",
+                                "type": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "detail",
+                        "type": "function"
+                    },
+                    {
+                        "name": "forecast",
+                        "type": "function"
+                    },
+                    {
+                        "name": "forecast_deviation",
+                        "type": "function"
+                    },
+                    {
+                        "name": "lower_confidence",
+                        "type": "function"
+                    },
+                    {
+                        "name": "upper_confidence",
+                        "type": "function"
+                    },
+                    {
+                        "name": "percentile",
+                        "type": "function"
+                    },
+                    {
+                        "name": "max",
+                        "type": "function"
+                    },
+                    {
+                        "name": "min",
+                        "type": "function"
+                    },
+                    {
+                        "name": "avg",
+                        "type": "function"
+                    },
+                    {
+                        "name": "sum",
+                        "type": "function"
+                    },
+                    {
+                        "name": "delta",
+                        "type": "function"
+                    },
+                    {
+                        "name": "counter",
+                        "type": "function"
+                    },
+                    {
+                        "name": "last",
+                        "type": "function"
+                    },
+                    {
+                        "name": "first",
+                        "type": "function"
+                    },
+                    {
+                        "name": "min_value_time",
+                        "type": "function"
+                    },
+                    {
+                        "name": "max_value_time",
+                        "type": "function"
+                    },
+                    {
+                        "name": "count",
+                        "type": "function"
+                    },
+                    {
+                        "name": "threshold_count",
+                        "type": "function"
+                    },
+                    {
+                        "name": "threshold_percent",
+                        "type": "function"
+                    },
+                    {
+                        "name": "threshold_duration",
+                        "type": "function"
+                    },
+                    {
+                        "name": "time",
+                        "type": "function"
+                    },
+                    {
+                        "name": "bottom",
+                        "type": "function"
+                    },
+                    {
+                        "name": "top",
+                        "type": "function"
+                    },
+                    {
+                        "name": "meta",
+                        "type": "function"
+                    },
+                    {
+                        "name": "entityTag",
+                        "type": "function"
+                    },
+                    {
+                        "name": "metricTag",
+                        "type": "function"
+                    },
+                    {
+                        "name": "median",
+                        "type": "function"
+                    },
+                    {
+                        "name": "average",
+                        "type": "function"
+                    },
+                    {
+                        "name": "minimum",
+                        "type": "function"
+                    },
+                    {
+                        "name": "maximum",
+                        "type": "function"
+                    },
+                    {
+                        "name": "series",
+                        "type": "array"
+                    }
+                ]
+            }
+        },
+        {
+            "displayName": "end-time",
+            "type": "date",
+            "example": "previous_working_day"
+        },
+        {
+            "displayName": "end-working-minutes",
+            "type": "integer",
+            "example": 60,
+            "defaultValue": 1440,
+            "section": "series",
+            "minValue": 0
+        },
+        {
+            "displayName": "entities",
+            "type": "string",
+            "example": "nurswgvml111, nurswgvml00*",
+            "section": "series",
+            "excludes": [
+                "entity",
+                "entity-expression",
+                "entity-group",
+                "entity-label"
+            ]
+        },
+        {
+            "displayName": "entity",
+            "type": "string",
+            "example": "nurswgvml*",
+            "section": "series",
+            "excludes": [
+                "entities",
+                "entity-expression",
+                "entity-group"
+            ]
+        },
+        {
+            "displayName": "entity-expression",
+            "type": "string",
+            "example": "tags.app = 'ATSD'",
+            "section": "series",
+            "excludes": [
+                "entities",
+                "entity",
+                "entity-group"
+            ]
+        },
+        {
+            "displayName": "entity-group",
+            "type": "string",
+            "example": "nmob-sub-group",
+            "section": "series",
+            "excludes": [
+                "entities",
+                "entity",
+                "entity-expression"
+            ]
+        },
+        {
+            "displayName": "entity-label",
+            "type": "string",
+            "example": "srv007",
+            "section": "widget"
+        },
+        {
+            "displayName": "error-refresh-interval",
+            "type": "interval",
+            "example": "30 minute",
+            "section": "series"
+        },
+        {
+            "displayName": "exact-match",
+            "type": "boolean",
+            "example": true,
+            "section": "series"
+        },
+        {
+            "displayName": "expand",
+            "type": "boolean",
+            "example": true,
+            "section": "series",
+            "widget": "pie"
+        },
+        {
+            "displayName": "expand-panels",
+            "type": "enum",
+            "example": "all",
+            "defaultValue": "hover",
+            "enum": [
+                "all",
+                "hover",
+                "true",
+                "false"
+            ],
+            "section": "widget"
+        },
+        {
+            "displayName": "expand-tags",
+            "type": "boolean",
+            "example": true,
+            "section": "widget",
+            "widget": "property"
+        },
+        {
+            "displayName": "expire-time-span",
+            "type": "interval",
+            "example": "10 day",
+            "section": "widget",
+            "widget": "table"
+        },
+        {
+            "displayName": "fill-value",
+            "type": "boolean",
+            "example": false,
+            "defaultValue": true,
+            "section": "series",
+            "widget": "chart"
+        },
+        {
+            "displayName": "filter-range",
+            "type": "boolean",
+            "example": true,
+            "defaultValue": false,
+            "section": "series"
+        },
+        {
+            "displayName": "fit-svg",
+            "type": "boolean",
+            "example": true,
+            "section": "widget",
+            "widget": "page"
+        },
+        {
+            "displayName": "font-scale",
+            "type": "number",
+            "example": 0.7,
+            "defaultValue": 0.5,
+            "minValue": 0,
+            "maxValue": 1,
+            "section": "widget"
+        },
+        {
+            "displayName": "font-size",
+            "type": "integer",
+            "example": 42,
+            "section": "widget",
+            "widget": "treemap"
+        },
+        {
+            "displayName": "forecast-name",
+            "type": "string",
+            "example": "hw5",
+            "section": "series"
+        },
+        {
+            "displayName": "forecast-style",
+            "type": "string",
+            "example": "stroke: magenta;",
+            "section": "widget",
+            "widget": "chart"
+        },
+        {
+            "displayName": "format",
+            "type": "string",
+            "example": "kilobytes",
+            "section": "widget",
+            "script": {
+                "returnValue": "string",
+                "fields": [
+                    {
+                        "name": "value",
+                        "type": "integer"
+                    },
+                    {
+                        "name": "numeric",
+                        "type": "function"
+                    },
+                    {
+                        "name": "decimal",
+                        "type": "function"
+                    },
+                    {
+                        "name": "round",
+                        "type": "function"
+                    },
+                    {
+                        "name": "fixed",
+                        "type": "function"
+                    },
+                    {
+                        "name": "binary",
+                        "type": "function"
+                    },
+                    {
+                        "name": "currency",
+                        "type": "function"
+                    },
+                    {
+                        "name": "percent",
+                        "type": "function"
+                    },
+                    {
+                        "name": "fraction",
+                        "type": "function"
+                    },
+                    {
+                        "name": "iso",
+                        "type": "function"
+                    },
+                    {
+                        "name": "json",
+                        "type": "function"
+                    }
+                ]
+            }
+        },
+        {
+            "displayName": "format-axis",
+            "type": "string",
+            "example": "Math.round(value * 10)/10 + \"%\"",
+            "section": "widget",
+            "widget": "gauge",
+            "script": {
+                "returnValue": "string",
+                "fields": [
+                    {
+                        "name": "value",
+                        "type": "integer"
+                    },
+                    {
+                        "name": "numeric",
+                        "type": "function"
+                    },
+                    {
+                        "name": "decimal",
+                        "type": "function"
+                    },
+                    {
+                        "name": "round",
+                        "type": "function"
+                    },
+                    {
+                        "name": "fixed",
+                        "type": "function"
+                    },
+                    {
+                        "name": "binary",
+                        "type": "function"
+                    },
+                    {
+                        "name": "currency",
+                        "type": "function"
+                    },
+                    {
+                        "name": "percent",
+                        "type": "function"
+                    },
+                    {
+                        "name": "fraction",
+                        "type": "function"
+                    },
+                    {
+                        "name": "iso",
+                        "type": "function"
+                    },
+                    {
+                        "name": "json",
+                        "type": "function"
+                    }
+                ]
+            }
+        },
+        {
+            "displayName": "format-counter",
+            "type": "string",
+            "example": "d3.format(\"0.3f\")",
+            "section": "widget",
+            "widget": "gauge",
+            "script": {
+                "returnValue": "string",
+                "fields": [
+                    {
+                        "name": "value",
+                        "type": "integer"
+                    },
+                    {
+                        "name": "numeric",
+                        "type": "function"
+                    },
+                    {
+                        "name": "decimal",
+                        "type": "function"
+                    },
+                    {
+                        "name": "round",
+                        "type": "function"
+                    },
+                    {
+                        "name": "fixed",
+                        "type": "function"
+                    },
+                    {
+                        "name": "binary",
+                        "type": "function"
+                    },
+                    {
+                        "name": "currency",
+                        "type": "function"
+                    },
+                    {
+                        "name": "percent",
+                        "type": "function"
+                    },
+                    {
+                        "name": "fraction",
+                        "type": "function"
+                    },
+                    {
+                        "name": "iso",
+                        "type": "function"
+                    },
+                    {
+                        "name": "json",
+                        "type": "function"
+                    }
+                ]
+            }
+        },
+        {
+            "displayName": "format-headers",
+            "type": "boolean",
+            "example": true,
+            "section": "column",
+            "widget": "property"
+        },
+        {
+            "displayName": "format-numbers",
+            "type": "boolean",
+            "example": false,
+            "section": "column",
+            "widget": "property"
+        },
+        {
+            "displayName": "format-size",
+            "type": "string",
+            "example": "kilobytes",
+            "section": "widget",
+            "widget": "treemap",
+            "script": {
+                "returnValue": "string",
+                "fields": [
+                    {
+                        "name": "value",
+                        "type": "integer"
+                    },
+                    {
+                        "name": "numeric",
+                        "type": "function"
+                    },
+                    {
+                        "name": "decimal",
+                        "type": "function"
+                    },
+                    {
+                        "name": "round",
+                        "type": "function"
+                    },
+                    {
+                        "name": "fixed",
+                        "type": "function"
+                    },
+                    {
+                        "name": "binary",
+                        "type": "function"
+                    },
+                    {
+                        "name": "currency",
+                        "type": "function"
+                    },
+                    {
+                        "name": "percent",
+                        "type": "function"
+                    },
+                    {
+                        "name": "fraction",
+                        "type": "function"
+                    },
+                    {
+                        "name": "iso",
+                        "type": "function"
+                    },
+                    {
+                        "name": "json",
+                        "type": "function"
+                    }
+                ]
+            }
+        },
+        {
+            "displayName": "format-tip",
+            "type": "string",
+            "example": "d3.format(\"0.1f\")",
+            "section": "widget",
+            "widget": "gauge",
+            "script": {
+                "returnValue": "string",
+                "fields": [
+                    {
+                        "name": "value",
+                        "type": "integer"
+                    },
+                    {
+                        "name": "numeric",
+                        "type": "function"
+                    },
+                    {
+                        "name": "decimal",
+                        "type": "function"
+                    },
+                    {
+                        "name": "round",
+                        "type": "function"
+                    },
+                    {
+                        "name": "fixed",
+                        "type": "function"
+                    },
+                    {
+                        "name": "binary",
+                        "type": "function"
+                    },
+                    {
+                        "name": "currency",
+                        "type": "function"
+                    },
+                    {
+                        "name": "percent",
+                        "type": "function"
+                    },
+                    {
+                        "name": "fraction",
+                        "type": "function"
+                    },
+                    {
+                        "name": "iso",
+                        "type": "function"
+                    },
+                    {
+                        "name": "json",
+                        "type": "function"
+                    }
+                ]
+            }
+        },
+        {
+            "displayName": "frequency",
+            "type": "interval",
+            "example": "30 minute",
+            "section": "series"
+        },
+        {
+            "displayName": "gradient-count",
+            "type": "string",
+            "example": "5, 2, 1",
+            "section": "widget"
+        },
+        {
+            "displayName": "gradient-intensity",
+            "type": "string",
+            "example": "-25%/75%",
+            "section": "widget",
+            "widget": "gauge"
+        },
+        {
+            "displayName": "group-first",
+            "type": "boolean",
+            "example": false,
+            "section": "series"
+        },
+        {
+            "displayName": "group-interpolate",
+            "type": "enum",
+            "section": "series",
+            "example": "LINEAR",
+            "defaultValue": "NONE",
+            "enum": [
+                "LINEAR",
+                "PREVIOUS",
+                "NONE",
+                "NEXT",
+                "VALUE\\(\\d+\\)"
+            ]
+        },
+        {
+            "displayName": "group-interpolate-extend",
+            "type": "boolean",
+            "example": true,
+            "section": "series"
+        },
+        {
+            "displayName": "group-keys",
+            "type": "string",
+            "example": "entity, type",
+            "section": "series"
+        },
+        {
+            "displayName": "group-label",
+            "type": "string",
+            "example": "Tables",
+            "widget": "bar",
+            "section": "series"
+        },
+        {
+            "displayName": "group-period",
+            "type": "interval",
+            "section": "series",
+            "example": "1 month"
+        },
+        {
+            "displayName": "group-statistic",
+            "type": "enum",
+            "example": "sum",
+            "section": "series",
+            "enum": [
+                "count",
+                "min",
+                "max",
+                "sum",
+                "avg",
+                "percentile_\\d+",
+                "median",
+                "standard_deviation",
+                "first",
+                "last",
+                "delta",
+                "counter",
+                "wtavg",
+                "wavg",
+                "min_value_time",
+                "max_value_time",
+                "threshold_count",
+                "threshold_duration",
+                "threshold_percent"
+            ]
+        },
+        {
+            "displayName": "header-style",
+            "type": "string",
+            "example": "background-color: steelblue",
+            "section": "widget"
+        },
+        {
+            "displayName": "height-units",
+            "type": "number",
+            "minValue": 0,
+            "example": 2,
+            "section": "configuration",
+            "defaultValue": 4
+        },
+        {
+            "displayName": "hidden",
+            "type": "boolean",
+            "example": true,
+            "section": "series",
+            "defaultValue": false
+        },
+        {
+            "displayName": "hide-column",
+            "type": "string",
+            "example": "value <= 0 \\| column.key.indexOf('paging') == 0",
+            "multiLine": true,
+            "section": "widget",
+            "widget": "property",
+            "script": {
+                "returnValue": "boolean",
+                "fields": [
+                    {
+                        "name": "value",
+                        "type": "string"
+                    },
+                    {
+                        "name": "alert",
+                        "type": "number"
+                    },
+                    {
+                        "name": "row",
+                        "type": "object"
+                    },
+                    {
+                        "name": "column",
+                        "type": "object"
+                    },
+                    {
+                        "name": "widget",
+                        "type": "function"
+                    },
+                    {
+                        "name": "el",
+                        "type": "array"
+                    },
+                    {
+                        "name": "rowEl",
+                        "type": "array"
+                    },
+                    {
+                        "name": "td",
+                        "type": "boolean"
+                    },
+                    {
+                        "name": "filter",
+                        "type": "function"
+                    },
+                    {
+                        "name": "dialog",
+                        "type": "function"
+                    },
+                    {
+                        "name": "series",
+                        "type": "function"
+                    }
+                ]
+            }
+        },
+        {
+            "displayName": "hide-empty-columns",
+            "type": "boolean",
+            "example": true,
+            "defaultValue": false,
+            "widget": "bar",
+            "section": "widget"
+        },
+        {
+            "displayName": "hide-empty-series",
+            "type": "boolean",
+            "example": false,
+            "defaultValue": true,
+            "widget": "table",
+            "section": "widget"
+        },
+        {
+            "displayName": "hide-if-empty",
+            "type": "boolean",
+            "example": true,
+            "widget": "table",
+            "section": "series"
+        },
+        {
+            "displayName": "horizontal",
+            "type": "boolean",
+            "example": true,
+            "defaultValue": false,
+            "widget": "bar",
+            "section": "widget"
+        },
+        {
+            "displayName": "horizontal-grid",
+            "type": "boolean",
+            "example": false,
+            "defaultValue": true,
+            "widget": "chart",
+            "section": "widget"
+        },
+        {
+            "displayName": "hour-format",
+            "type": "string",
+            "example": "%I %p"
+        },
+        {
+            "displayName": "icon",
+            "type": "string",
+            "example": "value > 1 ? 'exclamation-sign' : 'ok'",
+            "script": {
+                "returnValue": "string",
+                "fields": [
+                    {
+                        "name": "value",
+                        "type": "number"
+                    }
+                ]
+            }
+        },
+        {
+            "displayName": "icon-alert-expression",
+            "type": "string",
+            "example": "value('s1') > 10",
+            "widget": "pie",
+            "section": "series",
+            "script": {
+                "returnValue": "boolean",
+                "fields": [
+                    {
+                        "name": "value",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "required": true,
+                                "type": "string"
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "displayName": "icon-alert-style",
+            "type": "string",
+            "example": "return alert > 12000 ? 'fill: red' : 'fill:green';",
+            "script": {
+                "returnValue": "string",
+                "fields": [
+                    {
+                        "name": "alert",
+                        "type": "number"
+                    }
+                ]
+            }
+        },
+        {
+            "displayName": "icon-color",
+            "type": "string",
+            "example": "green",
+            "section": "series",
+            "widget": "text"
+        },
+        {
+            "displayName": "icon-position",
+            "type": "enum",
+            "example": "bottom",
+            "section": "widget",
+            "widget": "text",
+            "enum": [
+                "bottom",
+                "right",
+                "left",
+                "top"
+            ]
+        },
+        {
+            "displayName": "icon-size",
+            "type": "enum",
+            "example": "auto",
+            "section": "widget",
+            "widget": "text",
+            "enum": [
+                "auto"
+            ]
+        },
+        {
+            "displayName": "id",
+            "type": "string",
+            "example": "queue_1",
+            "widget": "graph"
+        },
+        {
+            "displayName": "interpolate",
+            "type": "enum",
+            "example": "LINEAR",
+            "defaultValue": "NONE",
+            "section": "series",
+            "enum": [
+                "LINEAR",
+                "PREVIOUS",
+                "NONE",
+                "NEXT",
+                "VALUE\\(\\d+\\)"
+            ]
+        },
+        {
+            "displayName": "interpolate-boundary",
+            "type": "enum",
+            "section": "series",
+            "example": "INNER",
+            "enum": [
+                "INNER",
+                "OUTER"
+            ]
+        },
+        {
+            "displayName": "interpolate-extend",
+            "type": "boolean",
+            "example": true,
+            "section": "series"
+        },
+        {
+            "displayName": "interpolate-fill",
+            "type": "enum",
+            "example": "true",
+            "section": "series",
+            "enum": [
+                "true",
+                "false",
+                "\\d+"
+            ]
+        },
+        {
+            "displayName": "interpolate-function",
+            "type": "enum",
+            "example": "LINEAR",
+            "section": "series",
+            "enum": [
+                "LINEAR",
+                "AUTO",
+                "PREVIOS"
+            ]
+        },
+        {
+            "displayName": "interpolate-period",
+            "type": "interval",
+            "example": "1 minute",
+            "section": "series"
+        },
+        {
+            "displayName": "interval-format",
+            "type": "string",
+            "example": "%H:%M"
+        },
+        {
+            "displayName": "join",
+            "type": "enum",
+            "section": "widget",
+            "widget": "property",
+            "example": "true",
+            "enum": [
+                "true",
+                "false",
+                "entity"
+            ]
+        },
+        {
+            "displayName": "key",
+            "type": "string",
+            "example": "%cpu",
+            "section": "column"
+        },
+        {
+            "displayName": "key-tag-expression",
+            "type": "string",
+            "example": "tags.docker-host = 'nurswghbs001'",
+            "section": "property",
+            "widget": "property"
+        },
+        {
+            "displayName": "label",
+            "type": "string",
+            "example": "CPU Busy - nurswgvml007",
+            "section": "series"
+        },
+        {
+            "displayName": "label-format",
+            "type": "string",
+            "example": "tagName",
+            "section": "widget"
+        },
+        {
+            "displayName": "last",
+            "type": "boolean",
+            "example": true,
+            "defaultValue": false,
+            "section": "property",
+            "widget": "property"
+        },
+        {
+            "displayName": "last-marker",
+            "type": "boolean",
+            "example": false,
+            "defaultValue": true,
+            "widget": "chart",
+            "section": "widget"
+        },
+        {
+            "displayName": "last-value-label",
+            "type": "string",
+            "example": "none",
+            "defaultValue": "right",
+            "widget": "chart",
+            "section": "widget"
+        },
+        {
+            "displayName": "layout",
+            "type": "enum",
+            "example": "rectangle",
+            "section": "widget",
+            "widget": "graph",
+            "defaultValue": "circle",
+            "enum": [
+                "rectangle",
+                "circle"
+            ]
+        },
+        {
+            "displayName": "left-axis",
+            "type": "enum",
+            "example": "fraction",
+            "defaultValue": "frequency",
+            "widget": "histogram",
+            "section": "widget",
+            "enum": [
+                "none",
+                "density",
+                "fraction",
+                "frequency"
+            ]
+        },
+        {
+            "displayName": "left-units",
+            "type": "number",
+            "example": 1,
+            "section": "widget",
+            "minValue": 0
+        },
+        {
+            "displayName": "legend-last-value",
+            "type": "boolean",
+            "example": false,
+            "defaultValue": true,
+            "widget": "chart",
+            "section": "widget"
+        },
+        {
+            "displayName": "legend-position",
+            "type": "string",
+            "example": "left",
+            "section": "widget"
+        },
+        {
+            "displayName": "legend-ticks",
+            "type": "boolean",
+            "example": true,
+            "section": "widget"
+        },
+        {
+            "displayName": "legend-value",
+            "type": "boolean",
+            "example": true,
+            "section": "widget"
+        },
+        {
+            "displayName": "limit",
+            "type": "integer",
+            "example": 1000,
+            "section": "widget"
+        },
+        {
+            "displayName": "linear-zoom",
+            "widget": "graph",
+            "section": "widget",
+            "type": "boolean",
+            "example": true
+        },
+        {
+            "displayName": "link-alert-expression",
+            "widget": "graph",
+            "type": "string",
+            "section": "series",
+            "example": "value('s1') > 10",
+            "script": {
+                "returnValue": "boolean",
+                "fields": [
+                    {
+                        "name": "value",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "required": true,
+                                "type": "string"
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "displayName": "link-alert-style",
+            "section": "series",
+            "type": "string",
+            "widget": "graph",
+            "example": "if (alert > 99) return 'stroke-width:3px';",
+            "script": {
+                "returnValue": "string",
+                "fields": [
+                    {
+                        "name": "alert",
+                        "type": "number"
+                    }
+                ]
+            }
+        },
+        {
+            "displayName": "link-animate",
+            "type": "boolean",
+            "example": true,
+            "defaultValue": false,
+            "widget": "graph",
+            "section": "widget"
+        },
+        {
+            "displayName": "link-color-range",
+            "type": "string",
+            "example": "silver, steelblue, orange",
+            "widget": "graph",
+            "section": "widget"
+        },
+        {
+            "displayName": "link-colors",
+            "type": "string",
+            "example": "blue, green, orange, red",
+            "widget": "graph",
+            "section": "widget"
+        },
+        {
+            "displayName": "link-data",
+            "widget": "graph",
+            "section": "widget",
+            "type": "boolean",
+            "example": true
+        },
+        {
+            "displayName": "link-labels",
+            "type": "boolean",
+            "example": true,
+            "widget": "graph",
+            "section": "widget"
+        },
+        {
+            "displayName": "link-label-zoom-threshold",
+            "type": "number",
+            "example": 1,
+            "defaultValue": 0,
+            "widget": "graph",
+            "section": "widget"
+        },
+        {
+            "displayName": "links",
+            "widget": "graph",
+            "section": "series",
+            "type": "string",
+            "example": "alpha.queue - beta.queue"
+        },
+        {
+            "displayName": "link-thresholds",
+            "type": "string",
+            "example": "Math.max(0.1, percentile(50)), percentile(95)",
+            "script": {
+                "returnValue": "string",
+                "fields": [
+                    {
+                        "name": "percentile",
+                        "type": "function"
+                    },
+                    {
+                        "name": "max",
+                        "type": "function"
+                    },
+                    {
+                        "name": "min",
+                        "type": "function"
+                    },
+                    {
+                        "name": "avg",
+                        "type": "function"
+                    },
+                    {
+                        "name": "sum",
+                        "type": "function"
+                    }
+                ]
+            }
+        },
+        {
+            "displayName": "link-value",
+            "widget": "graph",
+            "section": "series",
+            "type": "string",
+            "example": null,
+            "script": {
+                "returnValue": "number",
+                "fields": [
+                    {
+                        "name": "metric",
+                        "type": "string"
+                    },
+                    {
+                        "name": "entity",
+                        "type": "string"
+                    },
+                    {
+                        "name": "tags",
+                        "type": "array"
+                    },
+                    {
+                        "name": "value",
+                        "type": "number"
+                    },
+                    {
+                        "name": "previous",
+                        "type": "number"
+                    },
+                    {
+                        "name": "movavg",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "count",
+                                "type": "number"
+                            },
+                            {
+                                "name": "minCount",
+                                "type": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "detail",
+                        "type": "function"
+                    },
+                    {
+                        "name": "forecast",
+                        "type": "function"
+                    },
+                    {
+                        "name": "forecast_deviation",
+                        "type": "function"
+                    },
+                    {
+                        "name": "lower_confidence",
+                        "type": "function"
+                    },
+                    {
+                        "name": "upper_confidence",
+                        "type": "function"
+                    },
+                    {
+                        "name": "percentile",
+                        "type": "function"
+                    },
+                    {
+                        "name": "max",
+                        "type": "function"
+                    },
+                    {
+                        "name": "min",
+                        "type": "function"
+                    },
+                    {
+                        "name": "avg",
+                        "type": "function"
+                    },
+                    {
+                        "name": "sum",
+                        "type": "function"
+                    },
+                    {
+                        "name": "delta",
+                        "type": "function"
+                    },
+                    {
+                        "name": "counter",
+                        "type": "function"
+                    },
+                    {
+                        "name": "last",
+                        "type": "function"
+                    },
+                    {
+                        "name": "first",
+                        "type": "function"
+                    },
+                    {
+                        "name": "min_value_time",
+                        "type": "function"
+                    },
+                    {
+                        "name": "max_value_time",
+                        "type": "function"
+                    },
+                    {
+                        "name": "count",
+                        "type": "function"
+                    },
+                    {
+                        "name": "threshold_count",
+                        "type": "function"
+                    },
+                    {
+                        "name": "threshold_percent",
+                        "type": "function"
+                    },
+                    {
+                        "name": "threshold_duration",
+                        "type": "function"
+                    },
+                    {
+                        "name": "time",
+                        "type": "function"
+                    },
+                    {
+                        "name": "bottom",
+                        "type": "function"
+                    },
+                    {
+                        "name": "top",
+                        "type": "function"
+                    },
+                    {
+                        "name": "meta",
+                        "type": "function"
+                    },
+                    {
+                        "name": "entityTag",
+                        "type": "function"
+                    },
+                    {
+                        "name": "metricTag",
+                        "type": "function"
+                    },
+                    {
+                        "name": "median",
+                        "type": "function"
+                    },
+                    {
+                        "name": "average",
+                        "type": "function"
+                    },
+                    {
+                        "name": "minimum",
+                        "type": "function"
+                    },
+                    {
+                        "name": "maximum",
+                        "type": "function"
+                    },
+                    {
+                        "name": "series",
+                        "type": "array"
+                    }
+                ]
+            }
+        },
+        {
+            "displayName": "link-width-order",
+            "type": "enum",
+            "example": "top",
+            "widget": "graph",
+            "section": "widget",
+            "defaultValue": "undefined",
+            "enum": [
+                "top",
+                "botton",
+                "undefined"
+            ]
+        },
+        {
+            "displayName": "link-widths",
+            "widget": "graph",
+            "section": "widget",
+            "type": "string",
+            "example": "1, 1, 2, 3"
+        },
+        {
+            "displayName": "load-future-data",
+            "type": "boolean",
+            "example": true,
+            "widget": "chart",
+            "section": "series"
+        },
+        {
+            "displayName": "marker-format",
+            "type": "string",
+            "example": "metric:entity",
+            "widget": "pie",
+            "section": "series"
+        },
+        {
+            "displayName": "markers",
+            "type": "boolean",
+            "example": false,
+            "defaultValue": true,
+            "section": "widget"
+        },
+        {
+            "displayName": "max-font-size",
+            "type": "integer",
+            "example": 14,
+            "defaultValue": 100
+        },
+        {
+            "displayName": "maximum",
+            "type": "number",
+            "example": 42,
+            "section": "series"
+        },
+        {
+            "displayName": "max-range",
+            "type": "number",
+            "example": 40,
+            "section": "widget"
+        },
+        {
+            "displayName": "max-range-force",
+            "type": "number",
+            "example": 100,
+            "section": "widget"
+        },
+        {
+            "displayName": "max-range-right",
+            "type": "number",
+            "example": 500000,
+            "section": "widget"
+        },
+        {
+            "displayName": "max-range-right-force",
+            "type": "number",
+            "example": 100,
+            "section": "widget"
+        },
+        {
+            "displayName": "max-ring-width",
+            "widget": "graph",
+            "section": "widget",
+            "type": "number",
+            "defaultValue": 0.5,
+            "example": 0.6
+        },
+        {
+            "displayName": "max-threshold",
+            "section": "series",
+            "type": "number",
+            "example": 60
+        },
+        {
+            "displayName": "menu",
+            "type": "enum",
+            "example": "update",
+            "section": "widget",
+            "enum": [
+                "update"
+            ]
+        },
+        {
+            "displayName": "merge-columns",
+            "type": "string",
+            "example": "entity, tags",
+            "section": "widget"
+        },
+        {
+            "displayName": "merge-fields",
+            "section": "series",
+            "type": "string",
+            "example": "mount_point"
+        },
+        {
+            "displayName": "method-path",
+            "section": "configuration",
+            "type": "enum",
+            "example": "/messages/query",
+            "defaultValue": "/series/query",
+            "enum": [
+                "/alerts/query",
+                "/series/query",
+                "/messages/query",
+                "/properties/query"
+            ]
+        },
+        {
+            "displayName": "metric",
+            "type": "string",
+            "example": "cpu_busy",
+            "section": "series",
+            "excludes": [
+                "attribute",
+                "table"
+            ]
+        },
+        {
+            "displayName": "metric-label",
+            "widget": "bar",
+            "section": "widget",
+            "type": "string",
+            "example": "CPU Busy, %"
+        },
+        {
+            "displayName": "min-caption-size",
+            "widget": "pie",
+            "section": "widget",
+            "type": "integer",
+            "example": 42
+        },
+        {
+            "displayName": "min-font-size",
+            "type": "integer",
+            "example": 10
+        },
+        {
+            "displayName": "minimum",
+            "section": "series",
+            "defaultValue": 0,
+            "type": "number",
+            "example": 42
+        },
+        {
+            "displayName": "minor-ticks",
+            "type": "integer",
+            "example": 4,
+            "widget": "gauge",
+            "section": "widget"
+        },
+        {
+            "displayName": "min-range",
+            "section": "widget",
+            "type": "number",
+            "example": 10
+        },
+        {
+            "displayName": "min-range-force",
+            "section": "widget",
+            "type": "number",
+            "example": 0
+        },
+        {
+            "displayName": "min-range-right",
+            "section": "widget",
+            "type": "number",
+            "example": 250000
+        },
+        {
+            "displayName": "min-range-right-force",
+            "section": "widget",
+            "type": "number",
+            "example": 0
+        },
+        {
+            "displayName": "min-ring-width",
+            "minValue": 0,
+            "defaultValue": 0.3,
+            "type": "number",
+            "example": 0.4,
+            "widget": "graph",
+            "section": "widget"
+        },
+        {
+            "displayName": "min-severity",
+            "type": "string",
+            "widget": "console",
+            "section": "widget",
+            "example": "3"
+        },
+        {
+            "displayName": "min-threshold",
+            "defaultValue": 0,
+            "type": "number",
+            "section": "series",
+            "example": 10
+        },
+        {
+            "displayName": "mode",
+            "type": "enum",
+            "example": "column",
+            "section": "series",
+            "enum": [
+                "non-hierarchy",
+                "hierarchy",
+                "column",
+                "range",
+                "stack",
+                "column-stack",
+                "sleek",
+                "half",
+                "default",
+                "row",
+                "pie",
+                "ring",
+                "auto"
+            ],
+            "multiLine": true
+        },
+        {
+            "displayName": "moving-average",
+            "type": "boolean",
+            "widget": "chart",
+            "section": "widget",
+            "example": true
+        },
+        {
+            "displayName": "multiple-column",
+            "type": "boolean",
+            "defaultValue": false,
+            "widget": "bar",
+            "section": "column",
+            "example": true
+        },
+        {
+            "displayName": "multiple-series",
+            "type": "boolean",
+            "example": true
+        },
+        {
+            "displayName": "negative-style",
+            "type": "string",
+            "example": "fill: red",
+            "widget": "chart",
+            "section": "widget"
+        },
+        {
+            "displayName": "node-alert-expression",
+            "type": "string",
+            "example": "value > 5",
+            "script": {
+                "fields": [
+                    {
+                        "name": "metric",
+                        "type": "string"
+                    },
+                    {
+                        "name": "entity",
+                        "type": "string"
+                    },
+                    {
+                        "name": "tags",
+                        "type": "array"
+                    },
+                    {
+                        "name": "value",
+                        "type": "number"
+                    },
+                    {
+                        "name": "previous",
+                        "type": "number"
+                    },
+                    {
+                        "name": "movavg",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "count",
+                                "type": "number"
+                            },
+                            {
+                                "name": "minCount",
+                                "type": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "detail",
+                        "type": "function"
+                    },
+                    {
+                        "name": "forecast",
+                        "type": "function"
+                    },
+                    {
+                        "name": "forecast_deviation",
+                        "type": "function"
+                    },
+                    {
+                        "name": "lower_confidence",
+                        "type": "function"
+                    },
+                    {
+                        "name": "upper_confidence",
+                        "type": "function"
+                    },
+                    {
+                        "name": "percentile",
+                        "type": "function"
+                    },
+                    {
+                        "name": "max",
+                        "type": "function"
+                    },
+                    {
+                        "name": "min",
+                        "type": "function"
+                    },
+                    {
+                        "name": "avg",
+                        "type": "function"
+                    },
+                    {
+                        "name": "sum",
+                        "type": "function"
+                    },
+                    {
+                        "name": "delta",
+                        "type": "function"
+                    },
+                    {
+                        "name": "counter",
+                        "type": "function"
+                    },
+                    {
+                        "name": "last",
+                        "type": "function"
+                    },
+                    {
+                        "name": "first",
+                        "type": "function"
+                    },
+                    {
+                        "name": "min_value_time",
+                        "type": "function"
+                    },
+                    {
+                        "name": "max_value_time",
+                        "type": "function"
+                    },
+                    {
+                        "name": "count",
+                        "type": "function"
+                    },
+                    {
+                        "name": "threshold_count",
+                        "type": "function"
+                    },
+                    {
+                        "name": "threshold_percent",
+                        "type": "function"
+                    },
+                    {
+                        "name": "threshold_duration",
+                        "type": "function"
+                    },
+                    {
+                        "name": "time",
+                        "type": "function"
+                    },
+                    {
+                        "name": "bottom",
+                        "type": "function"
+                    },
+                    {
+                        "name": "top",
+                        "type": "function"
+                    },
+                    {
+                        "name": "meta",
+                        "type": "function"
+                    },
+                    {
+                        "name": "entityTag",
+                        "type": "function"
+                    },
+                    {
+                        "name": "metricTag",
+                        "type": "function"
+                    },
+                    {
+                        "name": "median",
+                        "type": "function"
+                    },
+                    {
+                        "name": "average",
+                        "type": "function"
+                    },
+                    {
+                        "name": "minimum",
+                        "type": "function"
+                    },
+                    {
+                        "name": "maximum",
+                        "type": "function"
+                    },
+                    {
+                        "name": "series",
+                        "type": "array"
+                    }
+                ],
+                "returnValue": "boolean"
+            }
+        },
+        {
+            "displayName": "node-alert-style",
+            "widget": "graph",
+            "type": "string",
+            "example": "if (alert > 99) return 'fill:red';",
+            "script": {
+                "returnValue": "string",
+                "fields": [
+                    {
+                        "name": "alert",
+                        "type": "number"
+                    }
+                ]
+            }
+        },
+        {
+            "displayName": "node-collapse",
+            "widget": "graph",
+            "section": "widget",
+            "type": "boolean",
+            "example": false,
+            "defaultValue": true
+        },
+        {
+            "displayName": "node-colors",
+            "widget": "graph",
+            "section": "widget",
+            "type": "string",
+            "example": "red, orange, whitesmoke, limegreen, green"
+        },
+        {
+            "displayName": "node-connect",
+            "widget": "graph",
+            "section": "widget",
+            "type": "boolean",
+            "example": false,
+            "defaultValue": true
+        },
+        {
+            "displayName": "node-data",
+            "widget": "graph",
+            "section": "widget",
+            "type": "boolean",
+            "example": true
+        },
+        {
+            "displayName": "node-labels",
+            "widget": "graph",
+            "section": "widget",
+            "type": "boolean",
+            "example": true
+        },
+        {
+            "displayName": "node-label-zoom-threshold",
+            "widget": "graph",
+            "section": "widget",
+            "type": "number",
+            "example": 2
+        },
+        {
+            "displayName": "node-radius",
+            "type": "integer",
+            "defaultValue": 5,
+            "widget": "graph",
+            "section": "widget",
+            "example": 20
+        },
+        {
+            "displayName": "node-radiuses",
+            "widget": "graph",
+            "section": "widget",
+            "type": "string",
+            "example": null
+        },
+        {
+            "displayName": "nodes",
+            "widget": "graph",
+            "type": "string",
+            "example": "queue_1-queue_2"
+        },
+        {
+            "displayName": "node-thresholds",
+            "widget": "graph",
+            "section": "widget",
+            "type": "string",
+            "example": "min(), 0, max()",
+            "script": {
+                "returnValue": "string",
+                "fields": [
+                    {
+                        "name": "percentile",
+                        "type": "function"
+                    },
+                    {
+                        "name": "max",
+                        "type": "function"
+                    },
+                    {
+                        "name": "min",
+                        "type": "function"
+                    },
+                    {
+                        "name": "avg",
+                        "type": "function"
+                    },
+                    {
+                        "name": "sum",
+                        "type": "function"
+                    }
+                ]
+            }
+        },
+        {
+            "displayName": "node-value",
+            "widget": "graph",
+            "section": "series",
+            "type": "string",
+            "example": null,
+            "script": {
+                "returnValue": "number",
+                "fields": [
+                    {
+                        "name": "metric",
+                        "type": "string"
+                    },
+                    {
+                        "name": "entity",
+                        "type": "string"
+                    },
+                    {
+                        "name": "tags",
+                        "type": "array"
+                    },
+                    {
+                        "name": "value",
+                        "type": "number"
+                    },
+                    {
+                        "name": "previous",
+                        "type": "number"
+                    },
+                    {
+                        "name": "movavg",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "count",
+                                "type": "number"
+                            },
+                            {
+                                "name": "minCount",
+                                "type": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "detail",
+                        "type": "function"
+                    },
+                    {
+                        "name": "forecast",
+                        "type": "function"
+                    },
+                    {
+                        "name": "forecast_deviation",
+                        "type": "function"
+                    },
+                    {
+                        "name": "lower_confidence",
+                        "type": "function"
+                    },
+                    {
+                        "name": "upper_confidence",
+                        "type": "function"
+                    },
+                    {
+                        "name": "percentile",
+                        "type": "function"
+                    },
+                    {
+                        "name": "max",
+                        "type": "function"
+                    },
+                    {
+                        "name": "min",
+                        "type": "function"
+                    },
+                    {
+                        "name": "avg",
+                        "type": "function"
+                    },
+                    {
+                        "name": "sum",
+                        "type": "function"
+                    },
+                    {
+                        "name": "delta",
+                        "type": "function"
+                    },
+                    {
+                        "name": "counter",
+                        "type": "function"
+                    },
+                    {
+                        "name": "last",
+                        "type": "function"
+                    },
+                    {
+                        "name": "first",
+                        "type": "function"
+                    },
+                    {
+                        "name": "min_value_time",
+                        "type": "function"
+                    },
+                    {
+                        "name": "max_value_time",
+                        "type": "function"
+                    },
+                    {
+                        "name": "count",
+                        "type": "function"
+                    },
+                    {
+                        "name": "threshold_count",
+                        "type": "function"
+                    },
+                    {
+                        "name": "threshold_percent",
+                        "type": "function"
+                    },
+                    {
+                        "name": "threshold_duration",
+                        "type": "function"
+                    },
+                    {
+                        "name": "time",
+                        "type": "function"
+                    },
+                    {
+                        "name": "bottom",
+                        "type": "function"
+                    },
+                    {
+                        "name": "top",
+                        "type": "function"
+                    },
+                    {
+                        "name": "meta",
+                        "type": "function"
+                    },
+                    {
+                        "name": "entityTag",
+                        "type": "function"
+                    },
+                    {
+                        "name": "metricTag",
+                        "type": "function"
+                    },
+                    {
+                        "name": "median",
+                        "type": "function"
+                    },
+                    {
+                        "name": "average",
+                        "type": "function"
+                    },
+                    {
+                        "name": "minimum",
+                        "type": "function"
+                    },
+                    {
+                        "name": "maximum",
+                        "type": "function"
+                    },
+                    {
+                        "name": "series",
+                        "type": "array"
+                    }
+                ]
+            }
+        },
+        {
+            "displayName": "offset",
+            "type": "integer",
+            "widget": "property",
+            "section": "property",
+            "example": 5000
+        },
+        {
+            "displayName": "offset-bottom",
+            "section": "configuration",
+            "type": "integer",
+            "example": 50
+        },
+        {
+            "displayName": "offset-left",
+            "section": "configuration",
+            "type": "integer",
+            "example": 50
+        },
+        {
+            "displayName": "offset-right",
+            "section": "configuration",
+            "type": "integer",
+            "example": 50
+        },
+        {
+            "displayName": "offset-top",
+            "section": "configuration",
+            "type": "integer",
+            "example": 50
+        },
+        {
+            "displayName": "on-change",
+            "section": "dropdown",
+            "type": "string",
+            "multiLine": true,
+            "example": "widget.post.queries[0].type = this.value; widget.reload();",
+            "script": {
+                "returnValue": "void",
+                "fields": [
+                    {
+                        "name": "widget",
+                        "type": "object"
+                    }
+                ]
+            }
+        },
+        {
+            "displayName": "on-click",
+            "section": "column",
+            "type": "string",
+            "example": "dialog({ series: [s], disconnectValue: 0 })",
+            "multiLine": true,
+            "script": {
+                "returnValue": "void",
+                "fields": [
+                    {
+                        "name": "value",
+                        "type": "string"
+                    },
+                    {
+                        "name": "alert",
+                        "type": "number"
+                    },
+                    {
+                        "name": "row",
+                        "type": "object"
+                    },
+                    {
+                        "name": "column",
+                        "type": "object"
+                    },
+                    {
+                        "name": "widget",
+                        "type": "function"
+                    },
+                    {
+                        "name": "el",
+                        "type": "array"
+                    },
+                    {
+                        "name": "rowEl",
+                        "type": "array"
+                    },
+                    {
+                        "name": "td",
+                        "type": "boolean"
+                    },
+                    {
+                        "name": "filter",
+                        "type": "function"
+                    },
+                    {
+                        "name": "dialog",
+                        "type": "function"
+                    },
+                    {
+                        "name": "series",
+                        "type": "function"
+                    }
+                ]
+            }
+        },
+        {
+            "displayName": "on-series-click",
+            "type": "string",
+            "multiLine": true,
+            "example": "callDialog({ type: 'page', url: 'http://www.axibase.com/' })",
+            "script": {
+                "returnValue": "void",
+                "fields": [
+                    {
+                        "name": "series",
+                        "type": "object"
+                    },
+                    {
+                        "name": "widget"
+                    },
+                    {
+                        "name": "config",
+                        "type": "object"
+                    },
+                    {
+                        "name": "interval",
+                        "type": "object"
+                    }
+                ]
+            }
+        },
+        {
+            "displayName": "on-series-double-click",
+            "multiLine": true,
+            "type": "string",
+            "example": "''",
+            "script": {
+                "returnValue": "void",
+                "fields": [
+                    {
+                        "name": "series",
+                        "type": "object"
+                    },
+                    {
+                        "name": "widget"
+                    },
+                    {
+                        "name": "config",
+                        "type": "object"
+                    },
+                    {
+                        "name": "interval",
+                        "type": "object"
+                    }
+                ]
+            }
+        },
+        {
+            "displayName": "options",
+            "multiLine": true,
+            "section": "dropdown",
+            "type": "string",
+            "example": "javascript: requestMetricsSeriesValues(\"entity\")"
+        },
+        {
+            "displayName": "padding",
+            "widget": "graph",
+            "section": "widget",
+            "type": "string",
+            "example": "1px"
+        },
+        {
+            "displayName": "palette",
+            "type": null,
+            "example": null
+        },
+        {
+            "displayName": "palette-ticks",
+            "section": "widget",
+            "type": "boolean",
+            "example": true,
+            "defaultValue": false
+        },
+        {
+            "displayName": "parent",
+            "widget": "graph",
+            "section": "node",
+            "type": "string",
+            "example": "manager_1"
+        },
+        {
+            "displayName": "path",
+            "section": "configuration",
+            "type": "string",
+            "example": null
+        },
+        {
+            "displayName": "percentile-markers",
+            "defaultValue": "none",
+            "type": "enum",
+            "example": "all",
+            "widget": "box",
+            "section": "widget",
+            "enum": [
+                "all",
+                "none",
+                "top",
+                "bottom"
+            ]
+        },
+        {
+            "displayName": "percentiles",
+            "type": "string",
+            "example": "10%/90%"
+        },
+        {
+            "displayName": "period",
+            "type": "interval",
+            "example": "15 minute",
+            "section": "series"
+        },
+        {
+            "displayName": "periods",
+            "section": "configuration",
+            "type": "string",
+            "example": "20 minute, 4 hour"
+        },
+        {
+            "displayName": "pin-radius",
+            "widget": "gauge",
+            "section": "widget",
+            "type": "number",
+            "example": 0.2,
+            "minValue": 0,
+            "maxValue": 1
+        },
+        {
+            "displayName": "pointer-position",
+            "widget": "chart",
+            "section": "widget",
+            "type": "string",
+            "example": "right",
+            "defaultValue": "false"
+        },
+        {
+            "displayName": "position",
+            "section": "column",
+            "type": "string",
+            "example": "first"
+        },
+        {
+            "displayName": "primary-key",
+            "widget": "console",
+            "section": "widget",
+            "type": "string",
+            "defaultValue": "id",
+            "example": "id"
+        },
+        {
+            "displayName": "principal",
+            "type": "string",
+            "example": null
+        },
+        {
+            "displayName": "range-merge",
+            "type": "boolean",
+            "section": "widget",
+            "example": true,
+            "defaultValue": false
+        },
+        {
+            "displayName": "range-offset",
+            "widget": "histogram",
+            "section": "widget",
+            "type": "number",
+            "example": 50
+        },
+        {
+            "displayName": "range-select-end",
+            "widget": "histogram",
+            "type": "string",
+            "section": "widget",
+            "example": "alert(min + ',' + max)",
+            "script": {
+                "returnValue": "void",
+                "fields": [
+                    {
+                        "name": "min",
+                        "type": "number"
+                    },
+                    {
+                        "name": "max",
+                        "type": "number"
+                    }
+                ]
+            }
+        },
+        {
+            "displayName": "range-select-start",
+            "widget": "histogram",
+            "type": "string",
+            "section": "widget",
+            "example": "alert(min + ',' + max)",
+            "script": {
+                "returnValue": "void",
+                "fields": [
+                    {
+                        "name": "min",
+                        "type": "number"
+                    },
+                    {
+                        "name": "max",
+                        "type": "number"
+                    }
+                ]
+            }
+        },
+        {
+            "displayName": "rate",
+            "type": "interval",
+            "example": "15 second",
+            "section": "series"
+        },
+        {
+            "displayName": "rate-counter",
+            "type": "boolean",
+            "example": true,
+            "section": "series"
+        },
+        {
+            "displayName": "ratio",
+            "type": "number",
+            "example": 0.2,
+            "widget": "treemap",
+            "section": "widget"
+        },
+        {
+            "displayName": "refresh-interval",
+            "type": "integer",
+            "example": 120,
+            "section": "series"
+        },
+        {
+            "displayName": "replace-underscore",
+            "section": "widget",
+            "type": "boolean",
+            "example": true,
+            "defaultValue": false
+        },
+        {
+            "displayName": "replace-value",
+            "type": "string",
+            "example": "value < 50 ? null : value",
+            "section": "series",
+            "script": {
+                "returnValue": "number",
+                "fields": [
+                    {
+                        "name": "value",
+                        "type": "number"
+                    },
+                    {
+                        "name": "time",
+                        "type": "integer"
+                    },
+                    {
+                        "name": "previousValue",
+                        "type": "number"
+                    },
+                    {
+                        "name": "previousTime",
+                        "type": "integer"
+                    }
+                ]
+            }
+        },
+        {
+            "displayName": "responsive",
+            "section": "widget",
+            "type": "boolean",
+            "example": true,
+            "defaultValue": false
+        },
+        {
+            "displayName": "retain-time-span",
+            "widget": "chart",
+            "section": "widget",
+            "type": "boolean",
+            "example": false,
+            "defaultValue": true
+        },
+        {
+            "displayName": "retry-refresh-interval",
+            "type": "interval",
+            "example": "5 minute",
+            "section": "series"
+        },
+        {
+            "displayName": "right-axis",
+            "type": "enum",
+            "example": "density",
+            "defaultValue": "none",
+            "widget": "histogram",
+            "section": "widget",
+            "enum": [
+                "density",
+                "none",
+                "fraction",
+                "frequency"
+            ]
+        },
+        {
+            "displayName": "ring-width",
+            "widget": "gauge",
+            "type": "number",
+            "minValue": 0,
+            "maxValue": 1,
+            "section": "widget",
+            "example": 0.2
+        },
+        {
+            "displayName": "rotate-legend-ticks",
+            "section": "widget",
+            "type": "boolean",
+            "defaultValue": false,
+            "example": true
+        },
+        {
+            "displayName": "rotate-palette-ticks",
+            "type": "boolean",
+            "section": "widget",
+            "example": false,
+            "defaultValue": true
+        },
+        {
+            "displayName": "rotate-ticks",
+            "type": "string",
+            "example": "45",
+            "section": "widget",
+            "defaultValue": "90"
+        },
+        {
+            "displayName": "row-alert-style",
+            "type": "string",
+            "example": "background-color: orange",
+            "section": "column",
+            "script": {
+                "returnValue": "string",
+                "fields": [
+                    {
+                        "name": "alert",
+                        "type": "number"
+                    }
+                ]
+            }
+        },
+        {
+            "displayName": "row-style",
+            "type": "string",
+            "section": "column",
+            "example": "value > 1 ? 'background: orange' : null",
+            "script": {
+                "returnValue": "string",
+                "fields": [
+                    {
+                        "name": "value",
+                        "type": "string"
+                    },
+                    {
+                        "name": "alert",
+                        "type": "number"
+                    },
+                    {
+                        "name": "row",
+                        "type": "object"
+                    },
+                    {
+                        "name": "column",
+                        "type": "object"
+                    },
+                    {
+                        "name": "widget",
+                        "type": "function"
+                    },
+                    {
+                        "name": "el",
+                        "type": "array"
+                    },
+                    {
+                        "name": "rowEl",
+                        "type": "array"
+                    },
+                    {
+                        "name": "td",
+                        "type": "boolean"
+                    },
+                    {
+                        "name": "filter",
+                        "type": "function"
+                    },
+                    {
+                        "name": "dialog",
+                        "type": "function"
+                    },
+                    {
+                        "name": "series",
+                        "type": "function"
+                    }
+                ]
+            }
+        },
+        {
+            "displayName": "rule",
+            "type": "string",
+            "example": "cpu_busy_prod",
+            "widget": "console",
+            "section": "widget"
+        },
+        {
+            "displayName": "scale",
+            "type": "number",
+            "example": 1.5,
+            "section": "widget"
+        },
+        {
+            "displayName": "scale-x",
+            "type": "number",
+            "example": 0.7,
+            "section": "widget"
+        },
+        {
+            "displayName": "scale-y",
+            "type": "number",
+            "example": 0.7,
+            "section": "widget"
+        },
+        {
+            "displayName": "script",
+            "type": "string",
+            "example": "console.log(widget.config)",
+            "multiLine": true,
+            "script": {
+                "returnValue": "void",
+                "fields": [
+                    {
+                        "name": "widget",
+                        "type": "object"
+                    },
+                    {
+                        "name": "config",
+                        "type": "object"
+                    }
+                ]
+            }
+        },
+        {
+            "displayName": "selector-mode",
+            "section": "widget",
+            "widget": "pie",
+            "type": "enum",
+            "example": "highlight",
+            "enum": [
+                "highlight",
+                "expand"
+            ]
+        },
+        {
+            "displayName": "series-labels",
+            "widget": "pie",
+            "section": "series",
+            "type": "enum",
+            "example": "inside",
+            "defaultValue": "none",
+            "enum": [
+                "inside",
+                "outside",
+                "connected",
+                "auto",
+                "none"
+            ]
+        },
+        {
+            "displayName": "series-limit",
+            "type": "integer",
+            "section": "series",
+            "example": 10
+        },
+        {
+            "displayName": "series-type",
+            "widget": "chart",
+            "type": "string",
+            "section": "series",
+            "example": "s3"
+        },
+        {
+            "displayName": "series-value",
+            "type": "string",
+            "example": "avg()",
+            "section": "column",
+            "script": {
+                "returnValue": "number",
+                "fields": [
+                    {
+                        "name": "metric",
+                        "type": "string"
+                    },
+                    {
+                        "name": "entity",
+                        "type": "string"
+                    },
+                    {
+                        "name": "tags",
+                        "type": "array"
+                    },
+                    {
+                        "name": "value",
+                        "type": "number"
+                    },
+                    {
+                        "name": "previous",
+                        "type": "number"
+                    },
+                    {
+                        "name": "movavg",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "count",
+                                "type": "number"
+                            },
+                            {
+                                "name": "minCount",
+                                "type": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "detail",
+                        "type": "function"
+                    },
+                    {
+                        "name": "forecast",
+                        "type": "function"
+                    },
+                    {
+                        "name": "forecast_deviation",
+                        "type": "function"
+                    },
+                    {
+                        "name": "lower_confidence",
+                        "type": "function"
+                    },
+                    {
+                        "name": "upper_confidence",
+                        "type": "function"
+                    },
+                    {
+                        "name": "percentile",
+                        "type": "function"
+                    },
+                    {
+                        "name": "max",
+                        "type": "function"
+                    },
+                    {
+                        "name": "min",
+                        "type": "function"
+                    },
+                    {
+                        "name": "avg",
+                        "type": "function"
+                    },
+                    {
+                        "name": "sum",
+                        "type": "function"
+                    },
+                    {
+                        "name": "delta",
+                        "type": "function"
+                    },
+                    {
+                        "name": "counter",
+                        "type": "function"
+                    },
+                    {
+                        "name": "last",
+                        "type": "function"
+                    },
+                    {
+                        "name": "first",
+                        "type": "function"
+                    },
+                    {
+                        "name": "min_value_time",
+                        "type": "function"
+                    },
+                    {
+                        "name": "max_value_time",
+                        "type": "function"
+                    },
+                    {
+                        "name": "count",
+                        "type": "function"
+                    },
+                    {
+                        "name": "threshold_count",
+                        "type": "function"
+                    },
+                    {
+                        "name": "threshold_percent",
+                        "type": "function"
+                    },
+                    {
+                        "name": "threshold_duration",
+                        "type": "function"
+                    },
+                    {
+                        "name": "time",
+                        "type": "function"
+                    },
+                    {
+                        "name": "bottom",
+                        "type": "function"
+                    },
+                    {
+                        "name": "top",
+                        "type": "function"
+                    },
+                    {
+                        "name": "meta",
+                        "type": "function"
+                    },
+                    {
+                        "name": "entityTag",
+                        "type": "function"
+                    },
+                    {
+                        "name": "metricTag",
+                        "type": "function"
+                    },
+                    {
+                        "name": "median",
+                        "type": "function"
+                    },
+                    {
+                        "name": "average",
+                        "type": "function"
+                    },
+                    {
+                        "name": "minimum",
+                        "type": "function"
+                    },
+                    {
+                        "name": "maximum",
+                        "type": "function"
+                    },
+                    {
+                        "name": "series",
+                        "type": "array"
+                    }
+                ]
+            }
+        },
+        {
+            "displayName": "server-aggregate",
+            "type": "boolean",
+            "example": true,
+            "section": "series"
+        },
+        {
+            "displayName": "severity",
+            "type": "integer",
+            "widget": "console",
+            "section": "widget",
+            "example": 6,
+            "minValue": 0,
+            "maxValue": 7
+        },
+        {
+            "displayName": "severity-style",
+            "type": "enum",
+            "example": "row",
+            "widget": "console",
+            "section": "widget",
+            "enum": [
+                "row",
+                "column"
+            ]
+        },
+        {
+            "displayName": "show-tag-names",
+            "type": "boolean",
+            "example": true,
+            "section": "widget",
+            "defaultValue": false
+        },
+        {
+            "displayName": "size",
+            "type": "string",
+            "defaultValue": "1",
+            "example": "3",
+            "widget": "treemap",
+            "script": {
+                "returnValue": "number",
+                "fields": [
+                    {
+                        "name": "metric",
+                        "type": "string"
+                    },
+                    {
+                        "name": "entity",
+                        "type": "string"
+                    },
+                    {
+                        "name": "tags",
+                        "type": "array"
+                    },
+                    {
+                        "name": "value",
+                        "type": "number"
+                    },
+                    {
+                        "name": "previous",
+                        "type": "number"
+                    },
+                    {
+                        "name": "movavg",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "count",
+                                "type": "number"
+                            },
+                            {
+                                "name": "minCount",
+                                "type": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "detail",
+                        "type": "function"
+                    },
+                    {
+                        "name": "forecast",
+                        "type": "function"
+                    },
+                    {
+                        "name": "forecast_deviation",
+                        "type": "function"
+                    },
+                    {
+                        "name": "lower_confidence",
+                        "type": "function"
+                    },
+                    {
+                        "name": "upper_confidence",
+                        "type": "function"
+                    },
+                    {
+                        "name": "percentile",
+                        "type": "function"
+                    },
+                    {
+                        "name": "max",
+                        "type": "function"
+                    },
+                    {
+                        "name": "min",
+                        "type": "function"
+                    },
+                    {
+                        "name": "avg",
+                        "type": "function"
+                    },
+                    {
+                        "name": "sum",
+                        "type": "function"
+                    },
+                    {
+                        "name": "delta",
+                        "type": "function"
+                    },
+                    {
+                        "name": "counter",
+                        "type": "function"
+                    },
+                    {
+                        "name": "last",
+                        "type": "function"
+                    },
+                    {
+                        "name": "first",
+                        "type": "function"
+                    },
+                    {
+                        "name": "min_value_time",
+                        "type": "function"
+                    },
+                    {
+                        "name": "max_value_time",
+                        "type": "function"
+                    },
+                    {
+                        "name": "count",
+                        "type": "function"
+                    },
+                    {
+                        "name": "threshold_count",
+                        "type": "function"
+                    },
+                    {
+                        "name": "threshold_percent",
+                        "type": "function"
+                    },
+                    {
+                        "name": "threshold_duration",
+                        "type": "function"
+                    },
+                    {
+                        "name": "time",
+                        "type": "function"
+                    },
+                    {
+                        "name": "bottom",
+                        "type": "function"
+                    },
+                    {
+                        "name": "top",
+                        "type": "function"
+                    },
+                    {
+                        "name": "meta",
+                        "type": "function"
+                    },
+                    {
+                        "name": "entityTag",
+                        "type": "function"
+                    },
+                    {
+                        "name": "metricTag",
+                        "type": "function"
+                    },
+                    {
+                        "name": "median",
+                        "type": "function"
+                    },
+                    {
+                        "name": "average",
+                        "type": "function"
+                    },
+                    {
+                        "name": "minimum",
+                        "type": "function"
+                    },
+                    {
+                        "name": "maximum",
+                        "type": "function"
+                    },
+                    {
+                        "name": "series",
+                        "type": "array"
+                    }
+                ]
+            }
+        },
+        {
+            "displayName": "size-name",
+            "type": "string",
+            "example": "sum",
+            "widget": "treemap",
+            "section": "widget"
+        },
+        {
+            "displayName": "smooth",
+            "type": "enum",
+            "section": "series",
+            "example": "AVG",
+            "enum": [
+                "AVG",
+                "EMA",
+                "WAVG",
+                "WTAVG"
+            ]
+        },
+        {
+            "displayName": "smooth-count",
+            "type": "integer",
+            "example": 50,
+            "minValue": 0,
+            "section": "series"
+        },
+        {
+            "displayName": "smooth-factor",
+            "type": "number",
+            "section": "series",
+            "example": 0.5,
+            "minValue": 0,
+            "maxValue": 1
+        },
+        {
+            "displayName": "smooth-incomplete-value",
+            "type": "string",
+            "defaultValue": "null",
+            "example": "NaN"
+        },
+        {
+            "displayName": "smooth-interval",
+            "type": "interval",
+            "example": "15 minute",
+            "section": "series"
+        },
+        {
+            "displayName": "smooth-minimum-count",
+            "type": "integer",
+            "section": "series",
+            "example": 10
+        },
+        {
+            "displayName": "smooth-range",
+            "type": "integer",
+            "section": "series",
+            "example": 60000
+        },
+        {
+            "displayName": "sort",
+            "section": "widget",
+            "type": "string",
+            "example": "metric, value desc"
+        },
+        {
+            "displayName": "source",
+            "widget": "console",
+            "section": "widget",
+            "type": "enum",
+            "defaultValue": "alert",
+            "example": "message",
+            "enum": [
+                "message",
+                "alert"
+            ]
+        },
+        {
+            "displayName": "stack",
+            "widget": "bar",
+            "type": "boolean",
+            "section": "widget",
+            "example": false,
+            "defaultValue": true
+        },
+        {
+            "displayName": "start-time",
+            "type": "date",
+            "example": "2017-04-01T10:15:00Z"
+        },
+        {
+            "displayName": "start-working-minutes",
+            "section": "series",
+            "type": "integer",
+            "defaultValue": 0,
+            "minValue": 0,
+            "example": 10
+        },
+        {
+            "displayName": "statistic",
+            "type": "enum",
+            "example": "avg",
+            "section": "series",
+            "enum": [
+                "count",
+                "min",
+                "max",
+                "sum",
+                "avg",
+                "percentile_\\d+",
+                "median",
+                "standard_deviation",
+                "first",
+                "last",
+                "delta",
+                "counter",
+                "wtavg",
+                "wavg",
+                "min_value_time",
+                "max_value_time",
+                "threshold_count",
+                "threshold_duration",
+                "threshold_percent"
+            ]
+        },
+        {
+            "displayName": "statistics",
+            "type": "enum",
+            "example": "last",
+            "section": "series",
+            "enum": [
+                "count",
+                "min",
+                "max",
+                "sum",
+                "avg",
+                "percentile_\\d+",
+                "median",
+                "standard_deviation",
+                "first",
+                "last",
+                "delta",
+                "counter",
+                "wtavg",
+                "wavg",
+                "min_value_time",
+                "max_value_time",
+                "threshold_count",
+                "threshold_duration",
+                "threshold_percent"
+            ]
+        },
+        {
+            "displayName": "step-line",
+            "widget": "chart",
+            "section": "series",
+            "type": "boolean",
+            "example": true
+        },
+        {
+            "displayName": "style",
+            "type": "string",
+            "example": "stroke-width: 4; color: green"
+        },
+        {
+            "displayName": "summarize-period",
+            "type": "interval",
+            "example": "1 hour"
+        },
+        {
+            "displayName": "summarize-statistic",
+            "type": "enum",
+            "example": "percentile_75",
+            "enum": [
+                "avg",
+                "max",
+                "min",
+                "sum",
+                "count",
+                "percentile_99",
+                "percentile_95",
+                "percentile_90",
+                "percentile_75",
+                "percentile_50",
+                "median"
+            ]
+        },
+        {
+            "displayName": "table",
+            "type": "string",
+            "example": "klz_disk",
+            "section": "series",
+            "excludes": [
+                "metric"
+            ]
+        },
+        {
+            "displayName": "table-header-style",
+            "section": "widget",
+            "type": "string",
+            "example": "display: none"
+        },
+        {
+            "displayName": "tag-expression",
+            "type": "string",
+            "section": "series",
+            "example": "tags.file_system NOT LIKE '/m*'"
+        },
+        {
+            "displayName": "tag-offset",
+            "type": "integer",
+            "widget": "property",
+            "section": "property",
+            "example": 15000
+        },
+        {
+            "displayName": "tags-dropdowns",
+            "section": "widget",
+            "type": "boolean",
+            "example": true
+        },
+        {
+            "displayName": "tags-dropdowns-style",
+            "type": "string",
+            "section": "widget",
+            "example": "max-width: 150px"
+        },
+        {
+            "displayName": "tension",
+            "widget": "graph",
+            "type": "number",
+            "minValue": 0,
+            "maxValue": 1,
+            "defaultValue": 0.9,
+            "example": 0.8
+        },
+        {
+            "displayName": "thresholds",
+            "type": "string",
+            "example": "0, 50, 90, 100",
+            "section": "series",
+            "script": {
+                "returnValue": "number",
+                "fields": [
+                    {
+                        "name": "metric",
+                        "type": "string"
+                    },
+                    {
+                        "name": "entity",
+                        "type": "string"
+                    },
+                    {
+                        "name": "tags",
+                        "type": "array"
+                    },
+                    {
+                        "name": "value",
+                        "type": "number"
+                    },
+                    {
+                        "name": "previous",
+                        "type": "number"
+                    },
+                    {
+                        "name": "movavg",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "count",
+                                "type": "number"
+                            },
+                            {
+                                "name": "minCount",
+                                "type": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "detail",
+                        "type": "function"
+                    },
+                    {
+                        "name": "forecast",
+                        "type": "function"
+                    },
+                    {
+                        "name": "forecast_deviation",
+                        "type": "function"
+                    },
+                    {
+                        "name": "lower_confidence",
+                        "type": "function"
+                    },
+                    {
+                        "name": "upper_confidence",
+                        "type": "function"
+                    },
+                    {
+                        "name": "percentile",
+                        "type": "function"
+                    },
+                    {
+                        "name": "max",
+                        "type": "function"
+                    },
+                    {
+                        "name": "min",
+                        "type": "function"
+                    },
+                    {
+                        "name": "avg",
+                        "type": "function"
+                    },
+                    {
+                        "name": "sum",
+                        "type": "function"
+                    },
+                    {
+                        "name": "delta",
+                        "type": "function"
+                    },
+                    {
+                        "name": "counter",
+                        "type": "function"
+                    },
+                    {
+                        "name": "last",
+                        "type": "function"
+                    },
+                    {
+                        "name": "first",
+                        "type": "function"
+                    },
+                    {
+                        "name": "min_value_time",
+                        "type": "function"
+                    },
+                    {
+                        "name": "max_value_time",
+                        "type": "function"
+                    },
+                    {
+                        "name": "count",
+                        "type": "function"
+                    },
+                    {
+                        "name": "threshold_count",
+                        "type": "function"
+                    },
+                    {
+                        "name": "threshold_percent",
+                        "type": "function"
+                    },
+                    {
+                        "name": "threshold_duration",
+                        "type": "function"
+                    },
+                    {
+                        "name": "time",
+                        "type": "function"
+                    },
+                    {
+                        "name": "bottom",
+                        "type": "function"
+                    },
+                    {
+                        "name": "top",
+                        "type": "function"
+                    },
+                    {
+                        "name": "meta",
+                        "type": "function"
+                    },
+                    {
+                        "name": "entityTag",
+                        "type": "function"
+                    },
+                    {
+                        "name": "metricTag",
+                        "type": "function"
+                    },
+                    {
+                        "name": "median",
+                        "type": "function"
+                    },
+                    {
+                        "name": "average",
+                        "type": "function"
+                    },
+                    {
+                        "name": "minimum",
+                        "type": "function"
+                    },
+                    {
+                        "name": "maximum",
+                        "type": "function"
+                    },
+                    {
+                        "name": "series",
+                        "type": "array"
+                    }
+                ]
+            }
+        },
+        {
+            "displayName": "ticks",
+            "type": "integer",
+            "section": "widget",
+            "example": 10,
+            "defaultValue": 5
+        },
+        {
+            "displayName": "ticks-right",
+            "type": "integer",
+            "section": "widget",
+            "example": 10,
+            "defaultValue": 5
+        },
+        {
+            "displayName": "ticks-time",
+            "type": "integer",
+            "section": "widget",
+            "example": 20,
+            "defaultValue": 10
+        },
+        {
+            "displayName": "time-offset",
+            "type": "interval",
+            "example": "-200 day",
+            "widget": "chart",
+            "section": "series"
+        },
+        {
+            "displayName": "timespan",
+            "section": "widget",
+            "type": "interval",
+            "example": "5 minute"
+        },
+        {
+            "displayName": "time-zone",
+            "type": "string",
+            "section": "widget",
+            "example": "UTC"
+        },
+        {
+            "displayName": "title",
+            "type": "string",
+            "example": "My portal"
+        },
+        {
+            "displayName": "tooltip",
+            "type": "string",
+            "example": "NURSWGVML007"
+        },
+        {
+            "displayName": "top-axis",
+            "widget": "histogram",
+            "section": "widget",
+            "type": "enum",
+            "example": "percentiles",
+            "defaultValue": "none",
+            "enum": [
+                "percentiles",
+                "none",
+                "values"
+            ]
+        },
+        {
+            "displayName": "top-units",
+            "type": "integer",
+            "section": "widget",
+            "example": 1
+        },
+        {
+            "displayName": "total-size",
+            "widget": "treemap",
+            "section": "widget",
+            "type": "integer",
+            "example": 70
+        },
+        {
+            "displayName": "total-value",
+            "widget": "pie",
+            "section": "widget",
+            "type": "string",
+            "example": "value('007-root') + value('006-root')",
+            "script": {
+                "returnValue": "number",
+                "fields": [
+                    {
+                        "name": "metric",
+                        "type": "string"
+                    },
+                    {
+                        "name": "entity",
+                        "type": "string"
+                    },
+                    {
+                        "name": "tags",
+                        "type": "array"
+                    },
+                    {
+                        "name": "value",
+                        "type": "number"
+                    },
+                    {
+                        "name": "previous",
+                        "type": "number"
+                    },
+                    {
+                        "name": "movavg",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "count",
+                                "type": "number"
+                            },
+                            {
+                                "name": "minCount",
+                                "type": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "detail",
+                        "type": "function"
+                    },
+                    {
+                        "name": "forecast",
+                        "type": "function"
+                    },
+                    {
+                        "name": "forecast_deviation",
+                        "type": "function"
+                    },
+                    {
+                        "name": "lower_confidence",
+                        "type": "function"
+                    },
+                    {
+                        "name": "upper_confidence",
+                        "type": "function"
+                    },
+                    {
+                        "name": "percentile",
+                        "type": "function"
+                    },
+                    {
+                        "name": "max",
+                        "type": "function"
+                    },
+                    {
+                        "name": "min",
+                        "type": "function"
+                    },
+                    {
+                        "name": "avg",
+                        "type": "function"
+                    },
+                    {
+                        "name": "sum",
+                        "type": "function"
+                    },
+                    {
+                        "name": "delta",
+                        "type": "function"
+                    },
+                    {
+                        "name": "counter",
+                        "type": "function"
+                    },
+                    {
+                        "name": "last",
+                        "type": "function"
+                    },
+                    {
+                        "name": "first",
+                        "type": "function"
+                    },
+                    {
+                        "name": "min_value_time",
+                        "type": "function"
+                    },
+                    {
+                        "name": "max_value_time",
+                        "type": "function"
+                    },
+                    {
+                        "name": "count",
+                        "type": "function"
+                    },
+                    {
+                        "name": "threshold_count",
+                        "type": "function"
+                    },
+                    {
+                        "name": "threshold_percent",
+                        "type": "function"
+                    },
+                    {
+                        "name": "threshold_duration",
+                        "type": "function"
+                    },
+                    {
+                        "name": "time",
+                        "type": "function"
+                    },
+                    {
+                        "name": "bottom",
+                        "type": "function"
+                    },
+                    {
+                        "name": "top",
+                        "type": "function"
+                    },
+                    {
+                        "name": "meta",
+                        "type": "function"
+                    },
+                    {
+                        "name": "entityTag",
+                        "type": "function"
+                    },
+                    {
+                        "name": "metricTag",
+                        "type": "function"
+                    },
+                    {
+                        "name": "median",
+                        "type": "function"
+                    },
+                    {
+                        "name": "average",
+                        "type": "function"
+                    },
+                    {
+                        "name": "minimum",
+                        "type": "function"
+                    },
+                    {
+                        "name": "maximum",
+                        "type": "function"
+                    },
+                    {
+                        "name": "series",
+                        "type": "array"
+                    }
+                ]
+            }
+        },
+        {
+            "displayName": "transpose",
+            "type": "boolean",
+            "section": "widget",
+            "example": true,
+            "defaultValue": false
+        },
+        {
+            "displayName": "type",
+            "type": "string",
+            "example": "chart"
+        },
+        {
+            "displayName": "unscale",
+            "defaultValue": ".event",
+            "type": "string",
+            "section": "widget",
+            "widget": "page",
+            "example": ".event, .location"
+        },
+        {
+            "displayName": "update-interval",
+            "section": "widget",
+            "type": "interval",
+            "defaultValue": "1 minute",
+            "example": "5 minute"
+        },
+        {
+            "displayName": "url",
+            "type": "string",
+            "section": "widget",
+            "example": "http://atsd_hostname:port"
+        },
+        {
+            "displayName": "url-parameters",
+            "type": "string",
+            "section": "widget",
+            "example": "db=12&adapter=7"
+        },
+        {
+            "displayName": "value",
+            "type": "string",
+            "example": "min('s1', '10 minute')",
+            "section": "series",
+            "script": {
+                "returnValue": "number",
+                "fields": [
+                    {
+                        "name": "metric",
+                        "type": "string"
+                    },
+                    {
+                        "name": "entity",
+                        "type": "string"
+                    },
+                    {
+                        "name": "tags",
+                        "type": "array"
+                    },
+                    {
+                        "name": "value",
+                        "type": "number"
+                    },
+                    {
+                        "name": "previous",
+                        "type": "number"
+                    },
+                    {
+                        "name": "movavg",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "count",
+                                "type": "number"
+                            },
+                            {
+                                "name": "minCount",
+                                "type": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "detail",
+                        "type": "function"
+                    },
+                    {
+                        "name": "forecast",
+                        "type": "function"
+                    },
+                    {
+                        "name": "forecast_deviation",
+                        "type": "function"
+                    },
+                    {
+                        "name": "lower_confidence",
+                        "type": "function"
+                    },
+                    {
+                        "name": "upper_confidence",
+                        "type": "function"
+                    },
+                    {
+                        "name": "percentile",
+                        "type": "function"
+                    },
+                    {
+                        "name": "max",
+                        "type": "function"
+                    },
+                    {
+                        "name": "min",
+                        "type": "function"
+                    },
+                    {
+                        "name": "avg",
+                        "type": "function"
+                    },
+                    {
+                        "name": "sum",
+                        "type": "function"
+                    },
+                    {
+                        "name": "delta",
+                        "type": "function"
+                    },
+                    {
+                        "name": "counter",
+                        "type": "function"
+                    },
+                    {
+                        "name": "last",
+                        "type": "function"
+                    },
+                    {
+                        "name": "first",
+                        "type": "function"
+                    },
+                    {
+                        "name": "min_value_time",
+                        "type": "function"
+                    },
+                    {
+                        "name": "max_value_time",
+                        "type": "function"
+                    },
+                    {
+                        "name": "count",
+                        "type": "function"
+                    },
+                    {
+                        "name": "threshold_count",
+                        "type": "function"
+                    },
+                    {
+                        "name": "threshold_percent",
+                        "type": "function"
+                    },
+                    {
+                        "name": "threshold_duration",
+                        "type": "function"
+                    },
+                    {
+                        "name": "time",
+                        "type": "function"
+                    },
+                    {
+                        "name": "bottom",
+                        "type": "function"
+                    },
+                    {
+                        "name": "top",
+                        "type": "function"
+                    },
+                    {
+                        "name": "meta",
+                        "type": "function"
+                    },
+                    {
+                        "name": "entityTag",
+                        "type": "function"
+                    },
+                    {
+                        "name": "metricTag",
+                        "type": "function"
+                    },
+                    {
+                        "name": "median",
+                        "type": "function"
+                    },
+                    {
+                        "name": "average",
+                        "type": "function"
+                    },
+                    {
+                        "name": "minimum",
+                        "type": "function"
+                    },
+                    {
+                        "name": "maximum",
+                        "type": "function"
+                    },
+                    {
+                        "name": "series",
+                        "type": "array"
+                    }
+                ]
+            }
+        },
+        {
+            "displayName": "vertical-grid",
+            "section": "widget",
+            "type": "string",
+            "example": "none"
+        },
+        {
+            "displayName": "widgets-per-row",
+            "type": "integer",
+            "section": "configuration",
+            "example": 3
+        },
+        {
+            "displayName": "width",
+            "widget": "graph",
+            "section": "widget",
+            "type": "string",
+            "example": "40%"
+        },
+        {
+            "displayName": "width-units",
+            "type": "number",
+            "minValue": 0,
+            "example": 2,
+            "defaultValue": 6
+        },
+        {
+            "displayName": "zoom-svg",
+            "widget": "page",
+            "section": "widget",
+            "type": "number",
+            "minValue": 0,
+            "example": 1.2
+        }
+    ]
+}

@@ -1,7 +1,8 @@
 import {
     CompletionItem, CompletionItemKind, InsertTextFormat, Position, TextDocument,
 } from "vscode-languageserver";
-import { possibleOptions } from "./resources";
+import { settings } from "./resources";
+import { Setting } from "./setting";
 import { deleteComments, deleteScripts } from "./util";
 
 export class CompletionProvider {
@@ -38,18 +39,17 @@ export class CompletionProvider {
                 item = collection.substr(0, collection.lastIndexOf("s"));
             }
         }
-
-        return {
-            detail: "For Loop",
-            insertText: `
+        const completion: CompletionItem = CompletionItem.create("for");
+        completion.insertText = `
 for \${1:${item}} in \${2:${collection}}
   \${3:entity = @{\${1:${item}}}}
   \${0}
-endfor`,
-            insertTextFormat: InsertTextFormat.Snippet,
-            kind: CompletionItemKind.Keyword,
-            label: "for",
-        };
+endfor`;
+        completion.detail = "For loop";
+        completion.kind = CompletionItemKind.Keyword;
+        completion.insertTextFormat = InsertTextFormat.Snippet;
+
+        return completion;
     }
 
     private completeIf(): CompletionItem[] {
@@ -71,34 +71,29 @@ endfor`,
         if (lastMatch) {
             item = lastMatch[1];
         }
-
-        return [
-            {
-                detail: "if item equals text",
-                insertText: `
+        const ifString: CompletionItem = CompletionItem.create("if string");
+        ifString.detail = "if item equals text";
+        ifString.insertText = `
 if @{\${1:${item}}} \${2:==} \${3:"item1"}
   \${4:entity} = \${5:"item2"}
 else
   \${4:entity} = \${6:"item3"}
 endif
-\${0}`,
-                label: "if text",
-            },
-            {
-                detail: "if item equals number",
-                insertText: `
+\${0}`;
+
+        const ifNumber: CompletionItem = CompletionItem.create("if number");
+        ifNumber.insertText = `
 if @{\${1:${item}}} \${2:==} \${3:5}
   \${4:entity} = \${5:"item1"}
 else
   \${4:entity} = \${6:"item2"}
 endif
-\${0}`,
-                label: "if number",
-            },
-            {
-                detail: "if item equals number else if",
-                insertText:
-                    `
+\${0}`;
+        ifNumber.detail = "if item equals number";
+
+        const ifElseIf: CompletionItem = CompletionItem.create("if else if");
+        ifElseIf.detail = "if item equals number else if";
+        ifElseIf.insertText = `
 if @{\${1:${item}}} \${2:==} \${3:5}
   \${4:entity} = \${5:"item1"}
 elseif @{\${1:${item}}} \${6:==} \${7:6}
@@ -106,10 +101,9 @@ elseif @{\${1:${item}}} \${6:==} \${7:6}
 else
   \${4:entity} = \${9:"item3"}
 endif
-\${0}`,
-                label: "if elseif",
-            },
-        ].map((completion: CompletionItem): CompletionItem => {
+\${0}`;
+
+        return [ifString, ifNumber, ifElseIf].map((completion: CompletionItem): CompletionItem => {
             completion.insertTextFormat = InsertTextFormat.Snippet;
             completion.kind = CompletionItemKind.Keyword;
 
@@ -118,10 +112,12 @@ endif
     }
 
     private readonly completeSettings: () => CompletionItem[] = (): CompletionItem[] =>
-        possibleOptions.map((setting: string): CompletionItem => ({
-            insertText: `${setting} = \${0}`,
-            insertTextFormat: InsertTextFormat.Snippet,
-            kind: CompletionItemKind.Constant,
-            label: setting,
-        }))
+        settings.map((setting: Setting): CompletionItem => {
+            const item: CompletionItem = CompletionItem.create(setting.displayName);
+            item.insertText = `${setting.displayName} = \${1:${setting.example}}\n\${0}`;
+            item.insertTextFormat = InsertTextFormat.Snippet;
+            item.kind = CompletionItemKind.Field;
+
+            return item;
+        })
 }

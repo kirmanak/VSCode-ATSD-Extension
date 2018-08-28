@@ -1,8 +1,9 @@
 import { Diagnostic, DiagnosticSeverity, Position, Range } from "vscode-languageserver";
-import * as resources from "./resources";
+import { displayNames, parentSections, possibleSections, requiredSectionSettingsMap } from "./resources";
+import { Setting } from "./setting";
 import { TextRange } from "./textRange";
 import {
-    countCsvColumns, createDiagnostic, deleteComments, isAnyInArray, isInArray, isInMap, mapToArray, suggestionMessage,
+    countCsvColumns, createDiagnostic, deleteComments, getSetting, isAnyInArray, isInMap, mapToArray, suggestionMessage,
 } from "./util";
 
 export class Validator {
@@ -11,19 +12,19 @@ export class Validator {
     private csvColumns: number;
     private currentLineNumber: number = 0;
     private currentSection: TextRange;
+    private currentSettings: Setting[] = [];
     private deAliases: TextRange[] = [];
     private foundKeyword: TextRange;
-    private readonly ifSettings: Map<string, string[]> = new Map<string, string[]>();
+    private readonly ifSettings: Map<string, Setting[]> = new Map<string, Setting[]>();
     private readonly keywordsStack: TextRange[] = [];
     private lastCondition: string;
     private readonly lines: string[];
     private match: RegExpExecArray;
-    private readonly parentSettings: Map<string, string[]> = new Map<string, string[]>();
+    private readonly parentSettings: Map<string, Setting[]> = new Map<string, Setting[]>();
     private previousSection: TextRange;
-    private previousSettings: string[] = [];
-    private requiredSettings: string[][] = [];
+    private previousSettings: Setting[] = [];
+    private requiredSettings: Setting[][] = [];
     private readonly result: Diagnostic[] = [];
-    private settings: string[] = [];
     private urlParameters: string[];
     private readonly variables: Map<string, string[]> = new Map<string, string[]>();
 
@@ -64,11 +65,68 @@ export class Validator {
         return this.result;
     }
 
-    private addToArray(array: string[], severity: DiagnosticSeverity): string[] {
+    private addToSettingArray(array: Setting[], severity: DiagnosticSeverity): Setting[] {
+        let result: Setting[] = array;
+        if (!this.match) {
+            return result;
+        }
+        const name: string = this.match[Validator.CONTENT_POSITION];
+        const variable: Setting = getSetting(name);
+        if (!variable) {
+            return result;
+        }
+        if (array && array.includes(variable)) {
+            this.result.push(createDiagnostic(
+                Range.create(
+                    Position.create(this.currentLineNumber, this.match[1].length),
+                    Position.create(this.currentLineNumber, this.match[1].length + name.length),
+                ),
+                severity, `${name} is already defined`,
+            ));
+        } else {
+            if (!result) { result = []; }
+            result.push(variable);
+        }
+
+        return result;
+    }
+
+    private addToSettingMap(map: Map<string, Setting[]>, key: string,
+                            severity: DiagnosticSeverity): Map<string, Setting[]> {
+        if (!map || !key || !severity || !this.match) {
+            return map;
+        }
+        const name: string = this.match[Validator.CONTENT_POSITION];
+        const setting: Setting = getSetting(name);
+        if (!setting) {
+            return map;
+        }
+        if (isInMap(setting, map)) {
+            const startPosition: number = this.match.index + this.match[1].length;
+            this.result.push(createDiagnostic(
+                Range.create(
+                    Position.create(this.currentLineNumber, startPosition),
+                    Position.create(this.currentLineNumber, startPosition + name.length),
+                ),
+                severity, `${name} is already defined`,
+            ));
+        } else {
+            let array: Setting[] = map.get(key);
+            if (!array) {
+                array = [];
+            }
+            array.push(setting);
+            map.set(key, array);
+        }
+
+        return map;
+    }
+
+    private addToStringArray(array: string[], severity: DiagnosticSeverity): string[] {
         let result: string[] = array;
         if (!this.match) { return result; }
         const variable: string = this.match[Validator.CONTENT_POSITION];
-        if (isInArray(array, variable)) {
+        if (array && array.includes(variable)) {
             this.result.push(createDiagnostic(
                 Range.create(
                     Position.create(this.currentLineNumber, this.match[1].length),
@@ -84,7 +142,8 @@ export class Validator {
         return result;
     }
 
-    private addToMap(map: Map<string, string[]>, key: string, severity: DiagnosticSeverity): Map<string, string[]> {
+    private addToStringMap(map: Map<string, string[]>, key: string,
+                           severity: DiagnosticSeverity): Map<string, string[]> {
         if (!map || !key || !severity || !this.match) { return map; }
         const variable: string = this.match[Validator.CONTENT_POSITION];
         if (isInMap(variable, map)) {
@@ -112,7 +171,7 @@ export class Validator {
 
     private checkAliases(): void {
         this.deAliases.forEach((deAlias: TextRange) => {
-            if (!isInArray(this.aliases, deAlias.text)) {
+            if (!this.aliases || !this.aliases.includes(deAlias.text)) {
                 const message: string = suggestionMessage(deAlias.text, this.aliases);
                 this.result.push(createDiagnostic(deAlias.range, DiagnosticSeverity.Error, message));
             }
@@ -161,38 +220,41 @@ export class Validator {
     private checkPreviousSection(): void {
         if (!this.currentSection) { return; }
         this.requiredSettings =
-            this.requiredSettings.concat(resources.requiredSectionSettingsMap.get(this.currentSection.text));
+            this.requiredSettings.concat(requiredSectionSettingsMap.get(this.currentSection.text));
         if (this.requiredSettings.length !== 0) {
             const notFound: string[] = [];
-            this.requiredSettings.forEach((options: string[]) => {
-                if (isAnyInArray(options, this.settings)) {
-                    return;
-                }
-                for (const array of this.parentSettings.values()) {
-                    // Trying to find in this section parents
-                    if (isAnyInArray(options, array)) {
+            this.requiredSettings
+                .filter((options: Setting[]): boolean => options !== undefined && options !== null)
+                .forEach((options: Setting[]): void => {
+                    const displayName: string = options[0].displayName;
+                    if (isAnyInArray(options, this.currentSettings)) {
                         return;
                     }
-                }
-                if (this.ifSettings && this.ifSettings.size !== 0) {
-                    for (const array of this.ifSettings.values()) {
-                        // Trying to find in each one of if-elseif-else... statement
-                        if (!isAnyInArray(options, array)) {
-                            notFound.push(options[0]);
-
+                    for (const array of this.parentSettings.values()) {
+                        // Trying to find in this section parents
+                        if (isAnyInArray(options, array)) {
                             return;
                         }
                     }
-                    let ifCounter: number = 0;
-                    let elseCounter: number = 0;
-                    for (const statement of this.ifSettings.keys()) {
-                        if (/\bif\b/.test(statement)) {
-                            ifCounter++;
-                        } else if (/\belse\b/.test(statement)) { elseCounter++; }
-                    }
-                    if (ifCounter !== elseCounter) { notFound.push(options[0]); }
-                } else { notFound.push(options[0]); }
-            });
+                    if (this.ifSettings && this.ifSettings.size !== 0) {
+                        for (const array of this.ifSettings.values()) {
+                            // Trying to find in each one of if-elseif-else... statement
+                            if (!isAnyInArray(options, array)) {
+                                notFound.push(displayName);
+
+                                return;
+                            }
+                        }
+                        let ifCounter: number = 0;
+                        let elseCounter: number = 0;
+                        for (const statement of this.ifSettings.keys()) {
+                            if (/\bif\b/.test(statement)) {
+                                ifCounter++;
+                            } else if (/\belse\b/.test(statement)) { elseCounter++; }
+                        }
+                        if (ifCounter !== elseCounter) { notFound.push(displayName); }
+                    } else { notFound.push(displayName); }
+                });
             notFound.forEach((option: string) => {
                 this.result.push(createDiagnostic(
                     this.currentSection.range, DiagnosticSeverity.Error, `${option} is required`,
@@ -202,8 +264,7 @@ export class Validator {
         this.requiredSettings = [];
     }
 
-    private checkRepetition(): void {
-        const setting: string = this.match[Validator.CONTENT_POSITION].replace(/[^a-z]/g, "");
+    private checkRepetition(setting: Setting): void {
         const location: Range = Range.create(
             this.currentLineNumber, this.match[1].length,
             this.currentLineNumber, this.match[1].length + this.match[Validator.CONTENT_POSITION].length,
@@ -211,18 +272,18 @@ export class Validator {
         const message: string = `${this.match[Validator.CONTENT_POSITION]} is already defined`;
 
         if (this.areWeIn("if")) {
-            let array: string[] = this.ifSettings.get(this.lastCondition);
-            array = this.addToArray(array, DiagnosticSeverity.Error);
+            let array: Setting[] = this.ifSettings.get(this.lastCondition);
+            array = this.addToSettingArray(array, DiagnosticSeverity.Error);
             this.ifSettings.set(this.lastCondition, array);
-            if (isInArray(this.settings, setting)) {
+            if (this.currentSettings && this.currentSettings.includes(setting)) {
                 // The setting was defined before if
                 this.result.push(createDiagnostic(location, DiagnosticSeverity.Error, message));
             }
-        } else { this.addToArray(this.settings, DiagnosticSeverity.Error); }
+        } else { this.addToSettingArray(this.currentSettings, DiagnosticSeverity.Error); }
 
-        if (this.currentSection && isInMap(this.currentSection.text, resources.parentSections)) {
-            if (isInMap(setting, resources.requiredSectionSettingsMap)) {
-                this.addToMap(this.parentSettings, this.currentSection.text, DiagnosticSeverity.Hint);
+        if (this.currentSection && isInMap(this.currentSection.text, parentSections)) {
+            if (isInMap(setting, requiredSectionSettingsMap)) {
+                this.addToSettingMap(this.parentSettings, this.currentSection.text, DiagnosticSeverity.Hint);
             }
         } else {
             if (isInMap(setting, this.parentSettings)) {
@@ -249,15 +310,19 @@ export class Validator {
         const line: string = this.getCurrentLine();
         this.match = /(^[\t ]*\[)(\w+)\][\t ]*/.exec(line);
         if (this.match || (/^\s*$/.test(line) && this.currentSection && this.currentSection.text === "tags")) {
+            if (this.match) {
+                this.spellingCheck();
+            }
             this.handleSection();
         } else {
-            this.match = /(^\s*)(\S+)\s*=\s*(.+)$/m.exec(line);
+            this.match = /(^\s*)(.+?)\s*=\s*(.+?)\s*$/m.exec(line);
             if (this.match) {
                 this.handleSettings();
+                if (this.areWeIn("for")) {
+                    this.validateFor();
+                }
             }
         }
-        this.match = /(^[\t ]*\[)(\w+)\][\t ]*/m.exec(line);
-        this.spellingCheck();
     }
 
     private getCurrentLine(): string | undefined {
@@ -274,6 +339,34 @@ export class Validator {
         return (line < this.lines.length) ? this.lines[line].toLowerCase() : undefined;
     }
 
+    private getSettingCheck(name: string): Setting | undefined {
+        const setting: Setting = getSetting(name);
+        if (!setting) {
+            if (TextRange.KEYWORD_REGEXP.test(name)) {
+                return undefined;
+            }
+            let dictionary: string[] = displayNames;
+            if (this.currentSection && this.currentSection.text === "placeholders") {
+                dictionary = displayNames.concat(this.urlParameters);
+                if (this.urlParameters && this.urlParameters.includes(name)) {
+                    return undefined;
+                }
+            }
+            const message: string = suggestionMessage(name, dictionary);
+            this.result.push(createDiagnostic(
+                Range.create(
+                    this.currentLineNumber, this.match[1].length,
+                    this.currentLineNumber, this.match[1].length + name.length,
+                ),
+                DiagnosticSeverity.Error, message,
+            ));
+
+            return undefined;
+        }
+
+        return setting;
+    }
+
     private handleCsv(): void {
         const line: string = this.getCurrentLine();
         let header: string;
@@ -285,7 +378,7 @@ export class Validator {
             }
         } else { header = line.substring(/=/.exec(line).index + 1); }
         this.match = /(^[ \t]*csv[ \t]+)(\w+)[ \t]*=/m.exec(line);
-        this.addToMap(this.variables, "csvNames", DiagnosticSeverity.Error);
+        this.addToStringMap(this.variables, "csvNames", DiagnosticSeverity.Error);
         this.csvColumns = countCsvColumns(header);
     }
 
@@ -344,14 +437,14 @@ export class Validator {
                 ));
             }
             this.match = matching;
-            this.addToMap(this.variables, "forVariables", DiagnosticSeverity.Error);
+            this.addToStringMap(this.variables, "forVariables", DiagnosticSeverity.Error);
         }
     }
 
     private handleList(): void {
         const line: string = this.getCurrentLine();
         this.match = /(^\s*list\s+)(\w+)\s+=/.exec(line);
-        this.addToMap(this.variables, "listNames", DiagnosticSeverity.Error);
+        this.addToStringMap(this.variables, "listNames", DiagnosticSeverity.Error);
         if (/(=|,)[ \t]*$/m.test(line)) {
             this.keywordsStack.push(this.foundKeyword);
         } else {
@@ -382,7 +475,7 @@ export class Validator {
         if (!this.match) {
             if (this.previousSection) {
                 this.currentSection = this.previousSection;
-                this.settings = this.previousSettings;
+                this.currentSettings = this.previousSettings;
             }
 
             return;
@@ -392,15 +485,15 @@ export class Validator {
             this.deAliases = [];
             this.aliases = [];
         }
-        this.previousSettings = this.settings;
+        this.previousSettings = this.currentSettings;
         this.previousSection = this.currentSection;
-        this.settings = [];
+        this.currentSettings = [];
         this.ifSettings.clear();
         this.currentSection = TextRange.create(this.match[Validator.CONTENT_POSITION], Range.create(
             this.currentLineNumber, this.match[1].length,
             this.currentLineNumber, this.match[1].length + this.match[Validator.CONTENT_POSITION].length,
         ));
-        if (isInMap(this.currentSection.text, resources.parentSections)) {
+        if (isInMap(this.currentSection.text, parentSections)) {
             this.parentSettings.set(this.currentSection.text, []);
         }
     }
@@ -409,11 +502,42 @@ export class Validator {
         const line: string = this.getCurrentLine();
         if (!this.currentSection || !/tags|keys/.test(this.currentSection.text)) {
             // We are not in tags or keys section
-            // Aliases
-            this.match = /(^\s*alias\s*=\s*)(\S+)\s*$/m.exec(line);
-            if (this.match) {
-                this.addToArray(this.aliases, DiagnosticSeverity.Error);
+            const name: string = this.match[Validator.CONTENT_POSITION];
+            const setting: Setting = this.getSettingCheck(name);
+            if (!setting) {
+                return;
             }
+
+            if (setting.name === "table") {
+                this.requiredSettings.push([getSetting("attribute")]);
+            } else if (setting.name === "attribute") {
+                this.requiredSettings.push([getSetting("table")]);
+            }
+
+            if (!setting.multiLine) {
+                this.checkRepetition(setting);
+            }
+
+            this.typeCheck(setting);
+            this.currentSettings.forEach((item: Setting): void => {
+                if (setting.excludes.includes(item.displayName)) {
+                    const range: Range = Range.create(
+                        this.currentLineNumber, this.match[1].length,
+                        this.currentLineNumber, this.match[1].length + this.match[Validator.CONTENT_POSITION].length,
+                    );
+                    this.result.push(createDiagnostic(
+                        range, DiagnosticSeverity.Error,
+                        `${setting.displayName} can not be specified simultaneously with ${item.displayName}`,
+                    ));
+                }
+            });
+
+            // Aliases
+            if (setting.name === "alias") {
+                this.match = /(^\s*alias\s*=\s*)(\S+)\s*$/m.exec(line);
+                this.addToStringArray(this.aliases, DiagnosticSeverity.Error);
+            }
+            // Dealiases
             let regexp: RegExp = /value\((['"])(\S+)\1\)/g;
             const deAliasPosition: number = 2;
             this.match = regexp.exec(line);
@@ -425,19 +549,7 @@ export class Validator {
                 this.match = regexp.exec(line);
             }
 
-            this.match = /(^\s*)([-\w]+)\s*=/.exec(line);
-            const setting: string = this.match[Validator.CONTENT_POSITION].replace(/[^a-z]/g, "");
-            if (setting === "table") {
-                this.requiredSettings.push(["attribute"]);
-            } else if (setting === "attribute") {
-                this.requiredSettings.push(["table"]);
-            }
-
-            if (!isInArray(resources.repeatAble, setting)) {
-                this.checkRepetition();
-            }
-
-            if (setting === "urlparameters") {
+            if (setting.name === "urlparameters") {
                 this.urlParameters = [];
                 regexp = /{(.+?)}/g;
                 this.match = regexp.exec(line);
@@ -450,10 +562,8 @@ export class Validator {
         } else if (/(^[ \t]*)([-\w]+)[ \t]*=/.test(line)) {
             // We are in tags/keys section
             this.match = /(^[ \t]*)([-\w]+)[ \t]*=/.exec(line);
-            const setting: string = this.match[Validator.CONTENT_POSITION].replace(/[^a-z]/g, "");
-            const map: Map<string, string[]> = new Map<string, string[]>();
-            map.set("possibleOptions", resources.possibleOptions);
-            if (isInMap(setting, map)) {
+            const setting: Setting = getSetting(this.match[Validator.CONTENT_POSITION]);
+            if (setting) {
                 this.result.push(createDiagnostic(
                     Range.create(
                         Position.create(this.currentLineNumber, this.match[1].length),
@@ -468,8 +578,6 @@ export class Validator {
                 ));
             }
         }
-
-        this.validateFor();
     }
 
     private setLastCondition(): void {
@@ -477,35 +585,18 @@ export class Validator {
     }
 
     private spellingCheck(): void {
-        if (this.currentSection && /tags?|keys/.test(this.currentSection.text)) { return; }
-        const line: string = this.getCurrentLine();
-
-        /* statements like `[section] variable = value` aren't supported */
-        if (!this.match) { this.match = /^(['" \t]*)([-\w]+)['" \t]*=/m.exec(line); }
-        if (this.match) {
-            const indent: number = this.match[1].length;
-            const word: string = this.match[Validator.CONTENT_POSITION];
-            const cleared: string = word.replace(/[^a-z]/g, "");
-            let dictionary: string[] = resources.possibleOptions;
-            const trimmed: string = this.match[0].trim();
-            if (trimmed.endsWith("]")) {
-                dictionary = resources.possibleSections;
-            } else if (cleared.startsWith("column")) {
-                return;
-            }
-            if (this.currentSection && this.currentSection.text === "placeholders") {
-                dictionary = dictionary.concat(this.urlParameters);
-            }
-            if (!isInArray(dictionary, cleared)) {
-                const message: string = suggestionMessage(word, dictionary);
-                this.result.push(createDiagnostic(
-                    Range.create(
-                        Position.create(this.currentLineNumber, indent),
-                        Position.create(this.currentLineNumber, indent + word.length),
-                    ),
-                    DiagnosticSeverity.Error, message,
-                ));
-            }
+        const indent: number = this.match[1].length;
+        const word: string = this.match[Validator.CONTENT_POSITION];
+        const dictionary: string[] = possibleSections;
+        if (!dictionary || !dictionary.includes(word)) {
+            const message: string = suggestionMessage(word, dictionary);
+            this.result.push(createDiagnostic(
+                Range.create(
+                    Position.create(this.currentLineNumber, indent),
+                    Position.create(this.currentLineNumber, indent + word.length),
+                ),
+                DiagnosticSeverity.Error, message,
+            ));
         }
     }
 
@@ -534,7 +625,7 @@ export class Validator {
             case "var": {
                 if (/=\s*(\[|\{)(|.*,)\s*$/m.test(line)) { this.keywordsStack.push(this.foundKeyword); }
                 this.match = /(var\s*)(\w+)\s*=/.exec(line);
-                this.addToMap(this.variables, "varNames", DiagnosticSeverity.Error);
+                this.addToStringMap(this.variables, "varNames", DiagnosticSeverity.Error);
                 break;
             }
             case "list": {
@@ -553,8 +644,71 @@ export class Validator {
                 this.handleScript();
                 break;
             }
+            case "import": break;
             default: throw new Error(`${this.foundKeyword.text} is not handled`);
         }
+    }
+
+    private typeCheck(setting: Setting): void {
+        const valuePosition: number = 3;
+        switch (setting.type) {
+            // tslint:disable-next-line:no-null-keyword
+            case null:
+            case undefined:
+            case "string": return;
+            case "number": {
+                if (/^(?:\-|\+)?(?:\.\d+|\d+(?:\.\d+)?)$/.test(this.match[valuePosition])) {
+                    return;
+                }
+                break;
+            }
+            case "integer": {
+                if (/^(?:\-|\+)?\d+$/.test(this.match[valuePosition])) {
+                    return;
+                }
+                break;
+            }
+            case "boolean": {
+                if (/^(?:false|no|null|none|0|off|true|yes|on|1)$/.test(this.match[valuePosition])) {
+                    return;
+                }
+                break;
+            }
+            case "enum": {
+                const index: number = setting.enum.findIndex((option: string): boolean =>
+                    new RegExp(`^${option}$`, "i").test(this.match[valuePosition]),
+                );
+                if (index >= 0) {
+                    return;
+                }
+                this.result.push(createDiagnostic(
+                    Range.create(
+                        this.currentLineNumber, this.match[1].length,
+                        this.currentLineNumber, this.match[1].length + this.match[Validator.CONTENT_POSITION].length,
+                    ),
+                    DiagnosticSeverity.Error,
+                    `${this.match[Validator.CONTENT_POSITION]} must be one of ${setting.enum.join()}`,
+                ));
+
+                return;
+            }
+            case "interval": {
+                return;
+            }
+            case "date": {
+                return;
+            }
+            default: {
+                throw new Error(`${setting.type} is not handled`);
+            }
+        }
+        this.result.push(createDiagnostic(
+            Range.create(
+                this.currentLineNumber, this.match[1].length,
+                this.currentLineNumber, this.match[1].length + this.match[Validator.CONTENT_POSITION].length,
+            ),
+            DiagnosticSeverity.Error, `${this.match[Validator.CONTENT_POSITION]} type is ${setting.type}`,
+        ));
     }
 
     private validateCsv(): void {
@@ -573,36 +727,34 @@ export class Validator {
 
     private validateFor(): void {
         const line: string = this.getCurrentLine();
-        if (this.areWeIn("for")) {
-            const atRegexp: RegExp = /@{.+?}/g;
-            this.match = atRegexp.exec(line);
+        const atRegexp: RegExp = /@{.+?}/g;
+        this.match = atRegexp.exec(line);
+        while (this.match) {
+            const substr: string = this.match[0];
+            const startPosition: number = this.match.index;
+            const varRegexp: RegExp = /[a-zA-Z_]\w*(?!\w*["\('])/g;
+            this.match = varRegexp.exec(substr);
             while (this.match) {
-                const substr: string = this.match[0];
-                const startPosition: number = this.match.index;
-                const varRegexp: RegExp = /[a-zA-Z_]\w*(?!\w*["\('])/g;
-                this.match = varRegexp.exec(substr);
-                while (this.match) {
-                    if (substr.charAt(this.match.index - 1) === ".") {
-                        this.match = varRegexp.exec(substr);
-                        continue;
-                    }
-                    const variable: string = this.match[0];
-                    if (!isInMap(variable, this.variables)) {
-                        const position: number = startPosition + this.match.index;
-                        const message: string = suggestionMessage(variable, mapToArray(this.variables));
-                        this.result.push(
-                            createDiagnostic(
-                                Range.create(
-                                    Position.create(this.currentLineNumber, position),
-                                    Position.create(this.currentLineNumber, position + variable.length),
-                                ),
-                                DiagnosticSeverity.Error, message,
-                            ));
-                    }
+                if (substr.charAt(this.match.index - 1) === ".") {
                     this.match = varRegexp.exec(substr);
+                    continue;
                 }
-                this.match = atRegexp.exec(line);
+                const variable: string = this.match[0];
+                if (!isInMap(variable, this.variables)) {
+                    const position: number = startPosition + this.match.index;
+                    const message: string = suggestionMessage(variable, mapToArray(this.variables));
+                    this.result.push(
+                        createDiagnostic(
+                            Range.create(
+                                Position.create(this.currentLineNumber, position),
+                                Position.create(this.currentLineNumber, position + variable.length),
+                            ),
+                            DiagnosticSeverity.Error, message,
+                        ));
+                }
+                this.match = varRegexp.exec(substr);
             }
+            this.match = atRegexp.exec(line);
         }
     }
 }

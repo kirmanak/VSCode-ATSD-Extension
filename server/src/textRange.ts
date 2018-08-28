@@ -1,6 +1,8 @@
 import { Position, Range } from "vscode-languageserver";
 
 export class TextRange {
+    public static readonly KEYWORD_REGEXP: RegExp =
+        /^([ \t]*)(import|endvar|endcsv|endfor|elseif|endif|endscript|endlist|script|else|if|list|for|csv|var)\b/i;
     public static create(text: string, range: Range): TextRange {
         return { range, text };
     }
@@ -22,7 +24,7 @@ export class TextRange {
     }
 
     public static parse(line: string, i: number): TextRange | undefined {
-        const match: RegExpExecArray = TextRange.regexp.exec(line);
+        const match: RegExpExecArray = TextRange.KEYWORD_REGEXP.exec(line);
         if (match === null) { return undefined; }
         const keywordStart: number = match[1].length;
 
@@ -32,8 +34,6 @@ export class TextRange {
     }
 
     private static readonly KEYWORD_POSITION: number = 2;
-    private static readonly regexp: RegExp =
-        /^([ \t]*)(endvar|endcsv|endfor|elseif|endif|endscript|endlist|script|else|if|list|for|csv|var)\b/i;
 
     public readonly range: Range;
     public readonly text: string;

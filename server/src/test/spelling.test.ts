@@ -9,12 +9,14 @@ suite("Spelling checks", () => {
             "starttime",
             `[configuration]
 	start-time = 15 second
-	starttime = 20 second
 	startime = 30 minute`,
-            [createDiagnostic(
-                Range.create(Position.create(3, "	".length), Position.create(3, "	startime".length)),
-                DiagnosticSeverity.Error, errorMessage("startime", "starttime"),
-            )],
+            [
+                createDiagnostic(
+                    Range.create(Position.create(2, "	".length), Position.create(2, "	startime".length)),
+                    DiagnosticSeverity.Error, errorMessage("startime", "start-time"),
+                ),
+
+            ],
         ),
         new Test(
             "section eries",
@@ -53,7 +55,7 @@ suite("Spelling checks", () => {
                 ),
                 createDiagnostic(
                     Range.create(Position.create(3, "	".length), Position.create(3, " ".length + "startime".length)),
-                    DiagnosticSeverity.Error, errorMessage("startime", "starttime"),
+                    DiagnosticSeverity.Error, errorMessage("startime", "start-time"),
                 )],
         ),
         new Test(
@@ -67,7 +69,7 @@ suite("Spelling checks", () => {
   startime = 20 second`,
             [createDiagnostic(
                 Range.create(Position.create(6, "  ".length), Position.create(6, "  ".length + "startime".length)),
-                DiagnosticSeverity.Error, errorMessage("startime", "starttime"),
+                DiagnosticSeverity.Error, errorMessage("startime", "start-time"),
             )],
         ),
         new Test(
@@ -101,7 +103,7 @@ type = chart`,
   ed = 0`,
             [createDiagnostic(
                 Range.create(Position.create(3, "  ".length), Position.create(3, "  ".length + "ad".length)),
-                DiagnosticSeverity.Error, errorMessage("ad", "add"),
+                DiagnosticSeverity.Error, errorMessage("ad", "id"),
             )],
         ),
     ];

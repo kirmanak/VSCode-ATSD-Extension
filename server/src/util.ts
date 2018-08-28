@@ -1,18 +1,24 @@
 import * as Levenshtein from "levenshtein";
 import { Diagnostic, DiagnosticSeverity, Range } from "vscode-languageserver";
+import { settings } from "./resources";
+import { Setting } from "./setting";
 
 const DIAGNOSTIC_SOURCE: string = "Axibase Charts";
 
-export const isInMap: (value: string, map: Map<string, string[]> | Map<string, string[][]>) => boolean =
-    (value: string, map: Map<string, string[]> | Map<string, string[][]>): boolean => {
+export const isInMap: <T>(value: T, map: Map<string, T[]> | Map<string, T[][]>) => boolean =
+    <T>(value: T, map: Map<string, T[]> | Map<string, T[][]>): boolean => {
         if (!value || !map) { return false; }
         for (const array of map.values()) {
             for (const item of array) {
-                if (typeof item === "string") {
-                    if (item === value) { return true; }
-                } else {
+                if (Array.isArray(item)) {
                     for (const word of item) {
-                        if (word === value) { return true; }
+                        if (word === value) {
+                            return true;
+                        }
+                    }
+                } else {
+                    if (item === value) {
+                        return true;
                     }
                 }
             }
@@ -20,6 +26,19 @@ export const isInMap: (value: string, map: Map<string, string[]> | Map<string, s
 
         return false;
     };
+
+export const isAnyInArray: <T>(target: T[], array: T[]) => boolean = <T>(target: T[], array: T[]): boolean => {
+    if (!array) {
+        return false;
+    }
+    for (const item of target) {
+        if (array.includes(item)) {
+            return true;
+        }
+    }
+
+    return false;
+};
 
 export const mapToArray: (map: Map<string, string[]>) => string[] =
     (map: Map<string, string[]>): string[] => {
@@ -47,13 +66,12 @@ export const suggestionMessage: (word: string, dictionary: string[]) => string =
         return errorMessage(word, suggestion);
     };
 
-export const isAnyInArray: (toCheck: string[], array: string[]) => boolean =
-    (toCheck: string[], array: string[]): boolean =>
-        !toCheck || (toCheck.find((item: string) => this.isInArray(array, item)) !== undefined);
+export const getSetting: (name: string) => Setting | undefined = (name: string): Setting | undefined => {
+    const clearedName: string = name.toLowerCase()
+        .replace(/[^a-z]/g, "");
 
-export const isInArray: (array: string[], value: string) => boolean =
-    (array: string[], value: string): boolean =>
-        array && array.find((item: string) => value === item) !== undefined;
+    return settings.find((setting: Setting): boolean => setting.name === clearedName);
+};
 
 export const countCsvColumns: (line: string) => number = (line: string): number => {
     const regex: RegExp = /(['"]).+\1|[^, \t]+/g;
