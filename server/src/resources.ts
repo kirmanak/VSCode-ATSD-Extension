@@ -5,10 +5,15 @@ import { Setting } from "./setting";
 export const settings: Setting[] = JSON.parse(readFileSync(join(__dirname, "dictionary.json"), "UTF-8")
     .trim()).settings
     .filter((setting: Setting): boolean => setting !== undefined && setting !== null)
+    .filter((setting: Setting): boolean => setting.example !== undefined && setting.example !== null)
+    .filter((setting: Setting): boolean => setting.displayName !== undefined && setting.displayName !== null)
+    .filter((setting: Setting): boolean => setting.type !== undefined && setting.type !== null)
     .map((setting: Setting) =>
-        new Setting(setting.displayName, setting.type, setting.example, setting.defaultValue, setting.enum,
-                    setting.multiLine, setting.maxValue, setting.minValue, setting.section, setting.script,
-                    setting.description, setting.excludes),
+        new Setting(
+            setting.displayName, setting.type, setting.example, setting.defaultValue, setting.enum,
+            setting.multiLine, setting.maxValue, setting.minValue, setting.section, setting.script,
+            setting.description, setting.excludes,
+        ),
     );
 
 export const displayNames: string[] = settings.map((setting: Setting): string => setting.displayName);
