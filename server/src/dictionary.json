@@ -32,15 +32,27 @@
                     },
                     {
                         "name": "tags",
-                        "type": "array"
+                        "type": "object"
                     },
                     {
                         "name": "value",
-                        "type": "number"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            }
+                        ]
                     },
                     {
                         "name": "previous",
-                        "type": "number"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            }
+                        ]
                     },
                     {
                         "name": "movavg",
@@ -48,11 +60,13 @@
                         "args": [
                             {
                                 "name": "alias",
-                                "type": "string"
+                                "type": "string",
+                                "required": true
                             },
                             {
                                 "name": "count",
-                                "type": "number"
+                                "type": "number",
+                                "required": true
                             },
                             {
                                 "name": "minCount",
@@ -62,123 +76,338 @@
                     },
                     {
                         "name": "detail",
-                        "type": "function"
+                        "type": null
                     },
                     {
                         "name": "forecast",
-                        "type": "function"
+                        "type": null
                     },
                     {
                         "name": "forecast_deviation",
-                        "type": "function"
+                        "type": null
                     },
                     {
                         "name": "lower_confidence",
-                        "type": "function"
+                        "type": null
                     },
                     {
                         "name": "upper_confidence",
-                        "type": "function"
+                        "type": null
                     },
                     {
                         "name": "percentile",
-                        "type": "function"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "percentage",
+                                "type": "number",
+                                "required": true
+                            }
+                        ]
                     },
                     {
                         "name": "max",
-                        "type": "function"
-                    },
-                    {
-                        "name": "min",
-                        "type": "function"
-                    },
-                    {
-                        "name": "avg",
-                        "type": "function"
-                    },
-                    {
-                        "name": "sum",
-                        "type": "function"
-                    },
-                    {
-                        "name": "delta",
-                        "type": "function"
-                    },
-                    {
-                        "name": "counter",
-                        "type": "function"
-                    },
-                    {
-                        "name": "last",
-                        "type": "function"
-                    },
-                    {
-                        "name": "first",
-                        "type": "function"
-                    },
-                    {
-                        "name": "min_value_time",
-                        "type": "function"
-                    },
-                    {
-                        "name": "max_value_time",
-                        "type": "function"
-                    },
-                    {
-                        "name": "count",
-                        "type": "function"
-                    },
-                    {
-                        "name": "threshold_count",
-                        "type": "function"
-                    },
-                    {
-                        "name": "threshold_percent",
-                        "type": "function"
-                    },
-                    {
-                        "name": "threshold_duration",
-                        "type": "function"
-                    },
-                    {
-                        "name": "time",
-                        "type": "function"
-                    },
-                    {
-                        "name": "bottom",
-                        "type": "function"
-                    },
-                    {
-                        "name": "top",
-                        "type": "function"
-                    },
-                    {
-                        "name": "meta",
-                        "type": "function"
-                    },
-                    {
-                        "name": "entityTag",
-                        "type": "function"
-                    },
-                    {
-                        "name": "metricTag",
-                        "type": "function"
-                    },
-                    {
-                        "name": "median",
-                        "type": "function"
-                    },
-                    {
-                        "name": "average",
-                        "type": "function"
-                    },
-                    {
-                        "name": "minimum",
-                        "type": "function"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "count",
+                                "type": "number"
+                            }
+                        ]
                     },
                     {
                         "name": "maximum",
-                        "type": "function"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "count",
+                                "type": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "min",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "count",
+                                "type": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "minimum",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "count",
+                                "type": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "avg",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "average",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "sum",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "delta",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "counter",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "last",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "first",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "min_value_time",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "max_value_time",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "count",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "threshold_count",
+                        "type": null
+                    },
+                    {
+                        "name": "threshold_percent",
+                        "type": null
+                    },
+                    {
+                        "name": "threshold_duration",
+                        "type": null
+                    },
+                    {
+                        "name": "time",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "bottom",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "rank",
+                                "type": "integer",
+                                "required": true
+                            },
+                            {
+                                "name": "getValue",
+                                "type": "function"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "top",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "rank",
+                                "type": "integer",
+                                "required": true
+                            },
+                            {
+                                "name": "getValue",
+                                "type": "function"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "meta",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "entityTag",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string",
+                                "required": true
+                            },
+                            {
+                                "name": "tagName",
+                                "type": "string",
+                                "required": true
+                            }
+                        ]
+                    },
+                    {
+                        "name": "metricTag",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string",
+                                "required": true
+                            },
+                            {
+                                "name": "tagName",
+                                "type": "string",
+                                "required": true
+                            }
+                        ]
+                    },
+                    {
+                        "name": "median",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
                     },
                     {
                         "name": "series",
@@ -684,15 +913,27 @@
                     },
                     {
                         "name": "tags",
-                        "type": "array"
+                        "type": "object"
                     },
                     {
                         "name": "value",
-                        "type": "number"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            }
+                        ]
                     },
                     {
                         "name": "previous",
-                        "type": "number"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            }
+                        ]
                     },
                     {
                         "name": "movavg",
@@ -700,11 +941,13 @@
                         "args": [
                             {
                                 "name": "alias",
-                                "type": "string"
+                                "type": "string",
+                                "required": true
                             },
                             {
                                 "name": "count",
-                                "type": "number"
+                                "type": "number",
+                                "required": true
                             },
                             {
                                 "name": "minCount",
@@ -714,123 +957,338 @@
                     },
                     {
                         "name": "detail",
-                        "type": "function"
+                        "type": null
                     },
                     {
                         "name": "forecast",
-                        "type": "function"
+                        "type": null
                     },
                     {
                         "name": "forecast_deviation",
-                        "type": "function"
+                        "type": null
                     },
                     {
                         "name": "lower_confidence",
-                        "type": "function"
+                        "type": null
                     },
                     {
                         "name": "upper_confidence",
-                        "type": "function"
+                        "type": null
                     },
                     {
                         "name": "percentile",
-                        "type": "function"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "percentage",
+                                "type": "number",
+                                "required": true
+                            }
+                        ]
                     },
                     {
                         "name": "max",
-                        "type": "function"
-                    },
-                    {
-                        "name": "min",
-                        "type": "function"
-                    },
-                    {
-                        "name": "avg",
-                        "type": "function"
-                    },
-                    {
-                        "name": "sum",
-                        "type": "function"
-                    },
-                    {
-                        "name": "delta",
-                        "type": "function"
-                    },
-                    {
-                        "name": "counter",
-                        "type": "function"
-                    },
-                    {
-                        "name": "last",
-                        "type": "function"
-                    },
-                    {
-                        "name": "first",
-                        "type": "function"
-                    },
-                    {
-                        "name": "min_value_time",
-                        "type": "function"
-                    },
-                    {
-                        "name": "max_value_time",
-                        "type": "function"
-                    },
-                    {
-                        "name": "count",
-                        "type": "function"
-                    },
-                    {
-                        "name": "threshold_count",
-                        "type": "function"
-                    },
-                    {
-                        "name": "threshold_percent",
-                        "type": "function"
-                    },
-                    {
-                        "name": "threshold_duration",
-                        "type": "function"
-                    },
-                    {
-                        "name": "time",
-                        "type": "function"
-                    },
-                    {
-                        "name": "bottom",
-                        "type": "function"
-                    },
-                    {
-                        "name": "top",
-                        "type": "function"
-                    },
-                    {
-                        "name": "meta",
-                        "type": "function"
-                    },
-                    {
-                        "name": "entityTag",
-                        "type": "function"
-                    },
-                    {
-                        "name": "metricTag",
-                        "type": "function"
-                    },
-                    {
-                        "name": "median",
-                        "type": "function"
-                    },
-                    {
-                        "name": "average",
-                        "type": "function"
-                    },
-                    {
-                        "name": "minimum",
-                        "type": "function"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "count",
+                                "type": "number"
+                            }
+                        ]
                     },
                     {
                         "name": "maximum",
-                        "type": "function"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "count",
+                                "type": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "min",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "count",
+                                "type": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "minimum",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "count",
+                                "type": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "avg",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "average",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "sum",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "delta",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "counter",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "last",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "first",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "min_value_time",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "max_value_time",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "count",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "threshold_count",
+                        "type": null
+                    },
+                    {
+                        "name": "threshold_percent",
+                        "type": null
+                    },
+                    {
+                        "name": "threshold_duration",
+                        "type": null
+                    },
+                    {
+                        "name": "time",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "bottom",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "rank",
+                                "type": "integer",
+                                "required": true
+                            },
+                            {
+                                "name": "getValue",
+                                "type": "function"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "top",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "rank",
+                                "type": "integer",
+                                "required": true
+                            },
+                            {
+                                "name": "getValue",
+                                "type": "function"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "meta",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "entityTag",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string",
+                                "required": true
+                            },
+                            {
+                                "name": "tagName",
+                                "type": "string",
+                                "required": true
+                            }
+                        ]
+                    },
+                    {
+                        "name": "metricTag",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string",
+                                "required": true
+                            },
+                            {
+                                "name": "tagName",
+                                "type": "string",
+                                "required": true
+                            }
+                        ]
+                    },
+                    {
+                        "name": "median",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
                     },
                     {
                         "name": "series",
@@ -1015,15 +1473,27 @@
                     },
                     {
                         "name": "tags",
-                        "type": "array"
+                        "type": "object"
                     },
                     {
                         "name": "value",
-                        "type": "number"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            }
+                        ]
                     },
                     {
                         "name": "previous",
-                        "type": "number"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            }
+                        ]
                     },
                     {
                         "name": "movavg",
@@ -1031,11 +1501,13 @@
                         "args": [
                             {
                                 "name": "alias",
-                                "type": "string"
+                                "type": "string",
+                                "required": true
                             },
                             {
                                 "name": "count",
-                                "type": "number"
+                                "type": "number",
+                                "required": true
                             },
                             {
                                 "name": "minCount",
@@ -1045,123 +1517,338 @@
                     },
                     {
                         "name": "detail",
-                        "type": "function"
+                        "type": null
                     },
                     {
                         "name": "forecast",
-                        "type": "function"
+                        "type": null
                     },
                     {
                         "name": "forecast_deviation",
-                        "type": "function"
+                        "type": null
                     },
                     {
                         "name": "lower_confidence",
-                        "type": "function"
+                        "type": null
                     },
                     {
                         "name": "upper_confidence",
-                        "type": "function"
+                        "type": null
                     },
                     {
                         "name": "percentile",
-                        "type": "function"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "percentage",
+                                "type": "number",
+                                "required": true
+                            }
+                        ]
                     },
                     {
                         "name": "max",
-                        "type": "function"
-                    },
-                    {
-                        "name": "min",
-                        "type": "function"
-                    },
-                    {
-                        "name": "avg",
-                        "type": "function"
-                    },
-                    {
-                        "name": "sum",
-                        "type": "function"
-                    },
-                    {
-                        "name": "delta",
-                        "type": "function"
-                    },
-                    {
-                        "name": "counter",
-                        "type": "function"
-                    },
-                    {
-                        "name": "last",
-                        "type": "function"
-                    },
-                    {
-                        "name": "first",
-                        "type": "function"
-                    },
-                    {
-                        "name": "min_value_time",
-                        "type": "function"
-                    },
-                    {
-                        "name": "max_value_time",
-                        "type": "function"
-                    },
-                    {
-                        "name": "count",
-                        "type": "function"
-                    },
-                    {
-                        "name": "threshold_count",
-                        "type": "function"
-                    },
-                    {
-                        "name": "threshold_percent",
-                        "type": "function"
-                    },
-                    {
-                        "name": "threshold_duration",
-                        "type": "function"
-                    },
-                    {
-                        "name": "time",
-                        "type": "function"
-                    },
-                    {
-                        "name": "bottom",
-                        "type": "function"
-                    },
-                    {
-                        "name": "top",
-                        "type": "function"
-                    },
-                    {
-                        "name": "meta",
-                        "type": "function"
-                    },
-                    {
-                        "name": "entityTag",
-                        "type": "function"
-                    },
-                    {
-                        "name": "metricTag",
-                        "type": "function"
-                    },
-                    {
-                        "name": "median",
-                        "type": "function"
-                    },
-                    {
-                        "name": "average",
-                        "type": "function"
-                    },
-                    {
-                        "name": "minimum",
-                        "type": "function"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "count",
+                                "type": "number"
+                            }
+                        ]
                     },
                     {
                         "name": "maximum",
-                        "type": "function"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "count",
+                                "type": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "min",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "count",
+                                "type": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "minimum",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "count",
+                                "type": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "avg",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "average",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "sum",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "delta",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "counter",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "last",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "first",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "min_value_time",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "max_value_time",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "count",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "threshold_count",
+                        "type": null
+                    },
+                    {
+                        "name": "threshold_percent",
+                        "type": null
+                    },
+                    {
+                        "name": "threshold_duration",
+                        "type": null
+                    },
+                    {
+                        "name": "time",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "bottom",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "rank",
+                                "type": "integer",
+                                "required": true
+                            },
+                            {
+                                "name": "getValue",
+                                "type": "function"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "top",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "rank",
+                                "type": "integer",
+                                "required": true
+                            },
+                            {
+                                "name": "getValue",
+                                "type": "function"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "meta",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "entityTag",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string",
+                                "required": true
+                            },
+                            {
+                                "name": "tagName",
+                                "type": "string",
+                                "required": true
+                            }
+                        ]
+                    },
+                    {
+                        "name": "metricTag",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string",
+                                "required": true
+                            },
+                            {
+                                "name": "tagName",
+                                "type": "string",
+                                "required": true
+                            }
+                        ]
+                    },
+                    {
+                        "name": "median",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
                     },
                     {
                         "name": "series",
@@ -2259,15 +2946,27 @@
                     },
                     {
                         "name": "tags",
-                        "type": "array"
+                        "type": "object"
                     },
                     {
                         "name": "value",
-                        "type": "number"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            }
+                        ]
                     },
                     {
                         "name": "previous",
-                        "type": "number"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            }
+                        ]
                     },
                     {
                         "name": "movavg",
@@ -2275,11 +2974,13 @@
                         "args": [
                             {
                                 "name": "alias",
-                                "type": "string"
+                                "type": "string",
+                                "required": true
                             },
                             {
                                 "name": "count",
-                                "type": "number"
+                                "type": "number",
+                                "required": true
                             },
                             {
                                 "name": "minCount",
@@ -2289,123 +2990,338 @@
                     },
                     {
                         "name": "detail",
-                        "type": "function"
+                        "type": null
                     },
                     {
                         "name": "forecast",
-                        "type": "function"
+                        "type": null
                     },
                     {
                         "name": "forecast_deviation",
-                        "type": "function"
+                        "type": null
                     },
                     {
                         "name": "lower_confidence",
-                        "type": "function"
+                        "type": null
                     },
                     {
                         "name": "upper_confidence",
-                        "type": "function"
+                        "type": null
                     },
                     {
                         "name": "percentile",
-                        "type": "function"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "percentage",
+                                "type": "number",
+                                "required": true
+                            }
+                        ]
                     },
                     {
                         "name": "max",
-                        "type": "function"
-                    },
-                    {
-                        "name": "min",
-                        "type": "function"
-                    },
-                    {
-                        "name": "avg",
-                        "type": "function"
-                    },
-                    {
-                        "name": "sum",
-                        "type": "function"
-                    },
-                    {
-                        "name": "delta",
-                        "type": "function"
-                    },
-                    {
-                        "name": "counter",
-                        "type": "function"
-                    },
-                    {
-                        "name": "last",
-                        "type": "function"
-                    },
-                    {
-                        "name": "first",
-                        "type": "function"
-                    },
-                    {
-                        "name": "min_value_time",
-                        "type": "function"
-                    },
-                    {
-                        "name": "max_value_time",
-                        "type": "function"
-                    },
-                    {
-                        "name": "count",
-                        "type": "function"
-                    },
-                    {
-                        "name": "threshold_count",
-                        "type": "function"
-                    },
-                    {
-                        "name": "threshold_percent",
-                        "type": "function"
-                    },
-                    {
-                        "name": "threshold_duration",
-                        "type": "function"
-                    },
-                    {
-                        "name": "time",
-                        "type": "function"
-                    },
-                    {
-                        "name": "bottom",
-                        "type": "function"
-                    },
-                    {
-                        "name": "top",
-                        "type": "function"
-                    },
-                    {
-                        "name": "meta",
-                        "type": "function"
-                    },
-                    {
-                        "name": "entityTag",
-                        "type": "function"
-                    },
-                    {
-                        "name": "metricTag",
-                        "type": "function"
-                    },
-                    {
-                        "name": "median",
-                        "type": "function"
-                    },
-                    {
-                        "name": "average",
-                        "type": "function"
-                    },
-                    {
-                        "name": "minimum",
-                        "type": "function"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "count",
+                                "type": "number"
+                            }
+                        ]
                     },
                     {
                         "name": "maximum",
-                        "type": "function"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "count",
+                                "type": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "min",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "count",
+                                "type": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "minimum",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "count",
+                                "type": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "avg",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "average",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "sum",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "delta",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "counter",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "last",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "first",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "min_value_time",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "max_value_time",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "count",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "threshold_count",
+                        "type": null
+                    },
+                    {
+                        "name": "threshold_percent",
+                        "type": null
+                    },
+                    {
+                        "name": "threshold_duration",
+                        "type": null
+                    },
+                    {
+                        "name": "time",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "bottom",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "rank",
+                                "type": "integer",
+                                "required": true
+                            },
+                            {
+                                "name": "getValue",
+                                "type": "function"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "top",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "rank",
+                                "type": "integer",
+                                "required": true
+                            },
+                            {
+                                "name": "getValue",
+                                "type": "function"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "meta",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "entityTag",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string",
+                                "required": true
+                            },
+                            {
+                                "name": "tagName",
+                                "type": "string",
+                                "required": true
+                            }
+                        ]
+                    },
+                    {
+                        "name": "metricTag",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string",
+                                "required": true
+                            },
+                            {
+                                "name": "tagName",
+                                "type": "string",
+                                "required": true
+                            }
+                        ]
+                    },
+                    {
+                        "name": "median",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
                     },
                     {
                         "name": "series",
@@ -2694,15 +3610,27 @@
                     },
                     {
                         "name": "tags",
-                        "type": "array"
+                        "type": "object"
                     },
                     {
                         "name": "value",
-                        "type": "number"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            }
+                        ]
                     },
                     {
                         "name": "previous",
-                        "type": "number"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            }
+                        ]
                     },
                     {
                         "name": "movavg",
@@ -2710,11 +3638,13 @@
                         "args": [
                             {
                                 "name": "alias",
-                                "type": "string"
+                                "type": "string",
+                                "required": true
                             },
                             {
                                 "name": "count",
-                                "type": "number"
+                                "type": "number",
+                                "required": true
                             },
                             {
                                 "name": "minCount",
@@ -2724,123 +3654,338 @@
                     },
                     {
                         "name": "detail",
-                        "type": "function"
+                        "type": null
                     },
                     {
                         "name": "forecast",
-                        "type": "function"
+                        "type": null
                     },
                     {
                         "name": "forecast_deviation",
-                        "type": "function"
+                        "type": null
                     },
                     {
                         "name": "lower_confidence",
-                        "type": "function"
+                        "type": null
                     },
                     {
                         "name": "upper_confidence",
-                        "type": "function"
+                        "type": null
                     },
                     {
                         "name": "percentile",
-                        "type": "function"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "percentage",
+                                "type": "number",
+                                "required": true
+                            }
+                        ]
                     },
                     {
                         "name": "max",
-                        "type": "function"
-                    },
-                    {
-                        "name": "min",
-                        "type": "function"
-                    },
-                    {
-                        "name": "avg",
-                        "type": "function"
-                    },
-                    {
-                        "name": "sum",
-                        "type": "function"
-                    },
-                    {
-                        "name": "delta",
-                        "type": "function"
-                    },
-                    {
-                        "name": "counter",
-                        "type": "function"
-                    },
-                    {
-                        "name": "last",
-                        "type": "function"
-                    },
-                    {
-                        "name": "first",
-                        "type": "function"
-                    },
-                    {
-                        "name": "min_value_time",
-                        "type": "function"
-                    },
-                    {
-                        "name": "max_value_time",
-                        "type": "function"
-                    },
-                    {
-                        "name": "count",
-                        "type": "function"
-                    },
-                    {
-                        "name": "threshold_count",
-                        "type": "function"
-                    },
-                    {
-                        "name": "threshold_percent",
-                        "type": "function"
-                    },
-                    {
-                        "name": "threshold_duration",
-                        "type": "function"
-                    },
-                    {
-                        "name": "time",
-                        "type": "function"
-                    },
-                    {
-                        "name": "bottom",
-                        "type": "function"
-                    },
-                    {
-                        "name": "top",
-                        "type": "function"
-                    },
-                    {
-                        "name": "meta",
-                        "type": "function"
-                    },
-                    {
-                        "name": "entityTag",
-                        "type": "function"
-                    },
-                    {
-                        "name": "metricTag",
-                        "type": "function"
-                    },
-                    {
-                        "name": "median",
-                        "type": "function"
-                    },
-                    {
-                        "name": "average",
-                        "type": "function"
-                    },
-                    {
-                        "name": "minimum",
-                        "type": "function"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "count",
+                                "type": "number"
+                            }
+                        ]
                     },
                     {
                         "name": "maximum",
-                        "type": "function"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "count",
+                                "type": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "min",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "count",
+                                "type": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "minimum",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "count",
+                                "type": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "avg",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "average",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "sum",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "delta",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "counter",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "last",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "first",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "min_value_time",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "max_value_time",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "count",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "threshold_count",
+                        "type": null
+                    },
+                    {
+                        "name": "threshold_percent",
+                        "type": null
+                    },
+                    {
+                        "name": "threshold_duration",
+                        "type": null
+                    },
+                    {
+                        "name": "time",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "bottom",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "rank",
+                                "type": "integer",
+                                "required": true
+                            },
+                            {
+                                "name": "getValue",
+                                "type": "function"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "top",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "rank",
+                                "type": "integer",
+                                "required": true
+                            },
+                            {
+                                "name": "getValue",
+                                "type": "function"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "meta",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "entityTag",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string",
+                                "required": true
+                            },
+                            {
+                                "name": "tagName",
+                                "type": "string",
+                                "required": true
+                            }
+                        ]
+                    },
+                    {
+                        "name": "metricTag",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string",
+                                "required": true
+                            },
+                            {
+                                "name": "tagName",
+                                "type": "string",
+                                "required": true
+                            }
+                        ]
+                    },
+                    {
+                        "name": "median",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
                     },
                     {
                         "name": "series",
@@ -2981,15 +4126,27 @@
                     },
                     {
                         "name": "tags",
-                        "type": "array"
+                        "type": "object"
                     },
                     {
                         "name": "value",
-                        "type": "number"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            }
+                        ]
                     },
                     {
                         "name": "previous",
-                        "type": "number"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            }
+                        ]
                     },
                     {
                         "name": "movavg",
@@ -2997,11 +4154,13 @@
                         "args": [
                             {
                                 "name": "alias",
-                                "type": "string"
+                                "type": "string",
+                                "required": true
                             },
                             {
                                 "name": "count",
-                                "type": "number"
+                                "type": "number",
+                                "required": true
                             },
                             {
                                 "name": "minCount",
@@ -3011,123 +4170,338 @@
                     },
                     {
                         "name": "detail",
-                        "type": "function"
+                        "type": null
                     },
                     {
                         "name": "forecast",
-                        "type": "function"
+                        "type": null
                     },
                     {
                         "name": "forecast_deviation",
-                        "type": "function"
+                        "type": null
                     },
                     {
                         "name": "lower_confidence",
-                        "type": "function"
+                        "type": null
                     },
                     {
                         "name": "upper_confidence",
-                        "type": "function"
+                        "type": null
                     },
                     {
                         "name": "percentile",
-                        "type": "function"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "percentage",
+                                "type": "number",
+                                "required": true
+                            }
+                        ]
                     },
                     {
                         "name": "max",
-                        "type": "function"
-                    },
-                    {
-                        "name": "min",
-                        "type": "function"
-                    },
-                    {
-                        "name": "avg",
-                        "type": "function"
-                    },
-                    {
-                        "name": "sum",
-                        "type": "function"
-                    },
-                    {
-                        "name": "delta",
-                        "type": "function"
-                    },
-                    {
-                        "name": "counter",
-                        "type": "function"
-                    },
-                    {
-                        "name": "last",
-                        "type": "function"
-                    },
-                    {
-                        "name": "first",
-                        "type": "function"
-                    },
-                    {
-                        "name": "min_value_time",
-                        "type": "function"
-                    },
-                    {
-                        "name": "max_value_time",
-                        "type": "function"
-                    },
-                    {
-                        "name": "count",
-                        "type": "function"
-                    },
-                    {
-                        "name": "threshold_count",
-                        "type": "function"
-                    },
-                    {
-                        "name": "threshold_percent",
-                        "type": "function"
-                    },
-                    {
-                        "name": "threshold_duration",
-                        "type": "function"
-                    },
-                    {
-                        "name": "time",
-                        "type": "function"
-                    },
-                    {
-                        "name": "bottom",
-                        "type": "function"
-                    },
-                    {
-                        "name": "top",
-                        "type": "function"
-                    },
-                    {
-                        "name": "meta",
-                        "type": "function"
-                    },
-                    {
-                        "name": "entityTag",
-                        "type": "function"
-                    },
-                    {
-                        "name": "metricTag",
-                        "type": "function"
-                    },
-                    {
-                        "name": "median",
-                        "type": "function"
-                    },
-                    {
-                        "name": "average",
-                        "type": "function"
-                    },
-                    {
-                        "name": "minimum",
-                        "type": "function"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "count",
+                                "type": "number"
+                            }
+                        ]
                     },
                     {
                         "name": "maximum",
-                        "type": "function"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "count",
+                                "type": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "min",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "count",
+                                "type": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "minimum",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "count",
+                                "type": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "avg",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "average",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "sum",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "delta",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "counter",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "last",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "first",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "min_value_time",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "max_value_time",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "count",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "threshold_count",
+                        "type": null
+                    },
+                    {
+                        "name": "threshold_percent",
+                        "type": null
+                    },
+                    {
+                        "name": "threshold_duration",
+                        "type": null
+                    },
+                    {
+                        "name": "time",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "bottom",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "rank",
+                                "type": "integer",
+                                "required": true
+                            },
+                            {
+                                "name": "getValue",
+                                "type": "function"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "top",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "rank",
+                                "type": "integer",
+                                "required": true
+                            },
+                            {
+                                "name": "getValue",
+                                "type": "function"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "meta",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "entityTag",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string",
+                                "required": true
+                            },
+                            {
+                                "name": "tagName",
+                                "type": "string",
+                                "required": true
+                            }
+                        ]
+                    },
+                    {
+                        "name": "metricTag",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string",
+                                "required": true
+                            },
+                            {
+                                "name": "tagName",
+                                "type": "string",
+                                "required": true
+                            }
+                        ]
+                    },
+                    {
+                        "name": "median",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
                     },
                     {
                         "name": "series",
@@ -3746,15 +5120,27 @@
                     },
                     {
                         "name": "tags",
-                        "type": "array"
+                        "type": "object"
                     },
                     {
                         "name": "value",
-                        "type": "number"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            }
+                        ]
                     },
                     {
                         "name": "previous",
-                        "type": "number"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            }
+                        ]
                     },
                     {
                         "name": "movavg",
@@ -3762,11 +5148,13 @@
                         "args": [
                             {
                                 "name": "alias",
-                                "type": "string"
+                                "type": "string",
+                                "required": true
                             },
                             {
                                 "name": "count",
-                                "type": "number"
+                                "type": "number",
+                                "required": true
                             },
                             {
                                 "name": "minCount",
@@ -3776,123 +5164,338 @@
                     },
                     {
                         "name": "detail",
-                        "type": "function"
+                        "type": null
                     },
                     {
                         "name": "forecast",
-                        "type": "function"
+                        "type": null
                     },
                     {
                         "name": "forecast_deviation",
-                        "type": "function"
+                        "type": null
                     },
                     {
                         "name": "lower_confidence",
-                        "type": "function"
+                        "type": null
                     },
                     {
                         "name": "upper_confidence",
-                        "type": "function"
+                        "type": null
                     },
                     {
                         "name": "percentile",
-                        "type": "function"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "percentage",
+                                "type": "number",
+                                "required": true
+                            }
+                        ]
                     },
                     {
                         "name": "max",
-                        "type": "function"
-                    },
-                    {
-                        "name": "min",
-                        "type": "function"
-                    },
-                    {
-                        "name": "avg",
-                        "type": "function"
-                    },
-                    {
-                        "name": "sum",
-                        "type": "function"
-                    },
-                    {
-                        "name": "delta",
-                        "type": "function"
-                    },
-                    {
-                        "name": "counter",
-                        "type": "function"
-                    },
-                    {
-                        "name": "last",
-                        "type": "function"
-                    },
-                    {
-                        "name": "first",
-                        "type": "function"
-                    },
-                    {
-                        "name": "min_value_time",
-                        "type": "function"
-                    },
-                    {
-                        "name": "max_value_time",
-                        "type": "function"
-                    },
-                    {
-                        "name": "count",
-                        "type": "function"
-                    },
-                    {
-                        "name": "threshold_count",
-                        "type": "function"
-                    },
-                    {
-                        "name": "threshold_percent",
-                        "type": "function"
-                    },
-                    {
-                        "name": "threshold_duration",
-                        "type": "function"
-                    },
-                    {
-                        "name": "time",
-                        "type": "function"
-                    },
-                    {
-                        "name": "bottom",
-                        "type": "function"
-                    },
-                    {
-                        "name": "top",
-                        "type": "function"
-                    },
-                    {
-                        "name": "meta",
-                        "type": "function"
-                    },
-                    {
-                        "name": "entityTag",
-                        "type": "function"
-                    },
-                    {
-                        "name": "metricTag",
-                        "type": "function"
-                    },
-                    {
-                        "name": "median",
-                        "type": "function"
-                    },
-                    {
-                        "name": "average",
-                        "type": "function"
-                    },
-                    {
-                        "name": "minimum",
-                        "type": "function"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "count",
+                                "type": "number"
+                            }
+                        ]
                     },
                     {
                         "name": "maximum",
-                        "type": "function"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "count",
+                                "type": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "min",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "count",
+                                "type": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "minimum",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "count",
+                                "type": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "avg",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "average",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "sum",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "delta",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "counter",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "last",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "first",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "min_value_time",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "max_value_time",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "count",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "threshold_count",
+                        "type": null
+                    },
+                    {
+                        "name": "threshold_percent",
+                        "type": null
+                    },
+                    {
+                        "name": "threshold_duration",
+                        "type": null
+                    },
+                    {
+                        "name": "time",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "bottom",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "rank",
+                                "type": "integer",
+                                "required": true
+                            },
+                            {
+                                "name": "getValue",
+                                "type": "function"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "top",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "rank",
+                                "type": "integer",
+                                "required": true
+                            },
+                            {
+                                "name": "getValue",
+                                "type": "function"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "meta",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "entityTag",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string",
+                                "required": true
+                            },
+                            {
+                                "name": "tagName",
+                                "type": "string",
+                                "required": true
+                            }
+                        ]
+                    },
+                    {
+                        "name": "metricTag",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string",
+                                "required": true
+                            },
+                            {
+                                "name": "tagName",
+                                "type": "string",
+                                "required": true
+                            }
+                        ]
+                    },
+                    {
+                        "name": "median",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
                     },
                     {
                         "name": "series",
@@ -3953,15 +5556,27 @@
                     },
                     {
                         "name": "tags",
-                        "type": "array"
+                        "type": "object"
                     },
                     {
                         "name": "value",
-                        "type": "number"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            }
+                        ]
                     },
                     {
                         "name": "previous",
-                        "type": "number"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            }
+                        ]
                     },
                     {
                         "name": "movavg",
@@ -3969,11 +5584,13 @@
                         "args": [
                             {
                                 "name": "alias",
-                                "type": "string"
+                                "type": "string",
+                                "required": true
                             },
                             {
                                 "name": "count",
-                                "type": "number"
+                                "type": "number",
+                                "required": true
                             },
                             {
                                 "name": "minCount",
@@ -3983,123 +5600,338 @@
                     },
                     {
                         "name": "detail",
-                        "type": "function"
+                        "type": null
                     },
                     {
                         "name": "forecast",
-                        "type": "function"
+                        "type": null
                     },
                     {
                         "name": "forecast_deviation",
-                        "type": "function"
+                        "type": null
                     },
                     {
                         "name": "lower_confidence",
-                        "type": "function"
+                        "type": null
                     },
                     {
                         "name": "upper_confidence",
-                        "type": "function"
+                        "type": null
                     },
                     {
                         "name": "percentile",
-                        "type": "function"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "percentage",
+                                "type": "number",
+                                "required": true
+                            }
+                        ]
                     },
                     {
                         "name": "max",
-                        "type": "function"
-                    },
-                    {
-                        "name": "min",
-                        "type": "function"
-                    },
-                    {
-                        "name": "avg",
-                        "type": "function"
-                    },
-                    {
-                        "name": "sum",
-                        "type": "function"
-                    },
-                    {
-                        "name": "delta",
-                        "type": "function"
-                    },
-                    {
-                        "name": "counter",
-                        "type": "function"
-                    },
-                    {
-                        "name": "last",
-                        "type": "function"
-                    },
-                    {
-                        "name": "first",
-                        "type": "function"
-                    },
-                    {
-                        "name": "min_value_time",
-                        "type": "function"
-                    },
-                    {
-                        "name": "max_value_time",
-                        "type": "function"
-                    },
-                    {
-                        "name": "count",
-                        "type": "function"
-                    },
-                    {
-                        "name": "threshold_count",
-                        "type": "function"
-                    },
-                    {
-                        "name": "threshold_percent",
-                        "type": "function"
-                    },
-                    {
-                        "name": "threshold_duration",
-                        "type": "function"
-                    },
-                    {
-                        "name": "time",
-                        "type": "function"
-                    },
-                    {
-                        "name": "bottom",
-                        "type": "function"
-                    },
-                    {
-                        "name": "top",
-                        "type": "function"
-                    },
-                    {
-                        "name": "meta",
-                        "type": "function"
-                    },
-                    {
-                        "name": "entityTag",
-                        "type": "function"
-                    },
-                    {
-                        "name": "metricTag",
-                        "type": "function"
-                    },
-                    {
-                        "name": "median",
-                        "type": "function"
-                    },
-                    {
-                        "name": "average",
-                        "type": "function"
-                    },
-                    {
-                        "name": "minimum",
-                        "type": "function"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "count",
+                                "type": "number"
+                            }
+                        ]
                     },
                     {
                         "name": "maximum",
-                        "type": "function"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "count",
+                                "type": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "min",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "count",
+                                "type": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "minimum",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "count",
+                                "type": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "avg",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "average",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "sum",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "delta",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "counter",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "last",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "first",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "min_value_time",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "max_value_time",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "count",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "threshold_count",
+                        "type": null
+                    },
+                    {
+                        "name": "threshold_percent",
+                        "type": null
+                    },
+                    {
+                        "name": "threshold_duration",
+                        "type": null
+                    },
+                    {
+                        "name": "time",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "bottom",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "rank",
+                                "type": "integer",
+                                "required": true
+                            },
+                            {
+                                "name": "getValue",
+                                "type": "function"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "top",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "rank",
+                                "type": "integer",
+                                "required": true
+                            },
+                            {
+                                "name": "getValue",
+                                "type": "function"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "meta",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "entityTag",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string",
+                                "required": true
+                            },
+                            {
+                                "name": "tagName",
+                                "type": "string",
+                                "required": true
+                            }
+                        ]
+                    },
+                    {
+                        "name": "metricTag",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string",
+                                "required": true
+                            },
+                            {
+                                "name": "tagName",
+                                "type": "string",
+                                "required": true
+                            }
+                        ]
+                    },
+                    {
+                        "name": "median",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
                     },
                     {
                         "name": "series",
@@ -4361,15 +6193,27 @@
                     },
                     {
                         "name": "tags",
-                        "type": "array"
+                        "type": "object"
                     },
                     {
                         "name": "value",
-                        "type": "number"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            }
+                        ]
                     },
                     {
                         "name": "previous",
-                        "type": "number"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            }
+                        ]
                     },
                     {
                         "name": "movavg",
@@ -4377,11 +6221,13 @@
                         "args": [
                             {
                                 "name": "alias",
-                                "type": "string"
+                                "type": "string",
+                                "required": true
                             },
                             {
                                 "name": "count",
-                                "type": "number"
+                                "type": "number",
+                                "required": true
                             },
                             {
                                 "name": "minCount",
@@ -4391,123 +6237,338 @@
                     },
                     {
                         "name": "detail",
-                        "type": "function"
+                        "type": null
                     },
                     {
                         "name": "forecast",
-                        "type": "function"
+                        "type": null
                     },
                     {
                         "name": "forecast_deviation",
-                        "type": "function"
+                        "type": null
                     },
                     {
                         "name": "lower_confidence",
-                        "type": "function"
+                        "type": null
                     },
                     {
                         "name": "upper_confidence",
-                        "type": "function"
+                        "type": null
                     },
                     {
                         "name": "percentile",
-                        "type": "function"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "percentage",
+                                "type": "number",
+                                "required": true
+                            }
+                        ]
                     },
                     {
                         "name": "max",
-                        "type": "function"
-                    },
-                    {
-                        "name": "min",
-                        "type": "function"
-                    },
-                    {
-                        "name": "avg",
-                        "type": "function"
-                    },
-                    {
-                        "name": "sum",
-                        "type": "function"
-                    },
-                    {
-                        "name": "delta",
-                        "type": "function"
-                    },
-                    {
-                        "name": "counter",
-                        "type": "function"
-                    },
-                    {
-                        "name": "last",
-                        "type": "function"
-                    },
-                    {
-                        "name": "first",
-                        "type": "function"
-                    },
-                    {
-                        "name": "min_value_time",
-                        "type": "function"
-                    },
-                    {
-                        "name": "max_value_time",
-                        "type": "function"
-                    },
-                    {
-                        "name": "count",
-                        "type": "function"
-                    },
-                    {
-                        "name": "threshold_count",
-                        "type": "function"
-                    },
-                    {
-                        "name": "threshold_percent",
-                        "type": "function"
-                    },
-                    {
-                        "name": "threshold_duration",
-                        "type": "function"
-                    },
-                    {
-                        "name": "time",
-                        "type": "function"
-                    },
-                    {
-                        "name": "bottom",
-                        "type": "function"
-                    },
-                    {
-                        "name": "top",
-                        "type": "function"
-                    },
-                    {
-                        "name": "meta",
-                        "type": "function"
-                    },
-                    {
-                        "name": "entityTag",
-                        "type": "function"
-                    },
-                    {
-                        "name": "metricTag",
-                        "type": "function"
-                    },
-                    {
-                        "name": "median",
-                        "type": "function"
-                    },
-                    {
-                        "name": "average",
-                        "type": "function"
-                    },
-                    {
-                        "name": "minimum",
-                        "type": "function"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "count",
+                                "type": "number"
+                            }
+                        ]
                     },
                     {
                         "name": "maximum",
-                        "type": "function"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "count",
+                                "type": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "min",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "count",
+                                "type": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "minimum",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "count",
+                                "type": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "avg",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "average",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "sum",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "delta",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "counter",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "last",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "first",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "min_value_time",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "max_value_time",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "count",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "threshold_count",
+                        "type": null
+                    },
+                    {
+                        "name": "threshold_percent",
+                        "type": null
+                    },
+                    {
+                        "name": "threshold_duration",
+                        "type": null
+                    },
+                    {
+                        "name": "time",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "bottom",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "rank",
+                                "type": "integer",
+                                "required": true
+                            },
+                            {
+                                "name": "getValue",
+                                "type": "function"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "top",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "rank",
+                                "type": "integer",
+                                "required": true
+                            },
+                            {
+                                "name": "getValue",
+                                "type": "function"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "meta",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "entityTag",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string",
+                                "required": true
+                            },
+                            {
+                                "name": "tagName",
+                                "type": "string",
+                                "required": true
+                            }
+                        ]
+                    },
+                    {
+                        "name": "metricTag",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string",
+                                "required": true
+                            },
+                            {
+                                "name": "tagName",
+                                "type": "string",
+                                "required": true
+                            }
+                        ]
+                    },
+                    {
+                        "name": "median",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
                     },
                     {
                         "name": "series",
@@ -4612,15 +6673,27 @@
                     },
                     {
                         "name": "tags",
-                        "type": "array"
+                        "type": "object"
                     },
                     {
                         "name": "value",
-                        "type": "number"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            }
+                        ]
                     },
                     {
                         "name": "previous",
-                        "type": "number"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            }
+                        ]
                     },
                     {
                         "name": "movavg",
@@ -4628,11 +6701,13 @@
                         "args": [
                             {
                                 "name": "alias",
-                                "type": "string"
+                                "type": "string",
+                                "required": true
                             },
                             {
                                 "name": "count",
-                                "type": "number"
+                                "type": "number",
+                                "required": true
                             },
                             {
                                 "name": "minCount",
@@ -4642,123 +6717,338 @@
                     },
                     {
                         "name": "detail",
-                        "type": "function"
+                        "type": null
                     },
                     {
                         "name": "forecast",
-                        "type": "function"
+                        "type": null
                     },
                     {
                         "name": "forecast_deviation",
-                        "type": "function"
+                        "type": null
                     },
                     {
                         "name": "lower_confidence",
-                        "type": "function"
+                        "type": null
                     },
                     {
                         "name": "upper_confidence",
-                        "type": "function"
+                        "type": null
                     },
                     {
                         "name": "percentile",
-                        "type": "function"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "percentage",
+                                "type": "number",
+                                "required": true
+                            }
+                        ]
                     },
                     {
                         "name": "max",
-                        "type": "function"
-                    },
-                    {
-                        "name": "min",
-                        "type": "function"
-                    },
-                    {
-                        "name": "avg",
-                        "type": "function"
-                    },
-                    {
-                        "name": "sum",
-                        "type": "function"
-                    },
-                    {
-                        "name": "delta",
-                        "type": "function"
-                    },
-                    {
-                        "name": "counter",
-                        "type": "function"
-                    },
-                    {
-                        "name": "last",
-                        "type": "function"
-                    },
-                    {
-                        "name": "first",
-                        "type": "function"
-                    },
-                    {
-                        "name": "min_value_time",
-                        "type": "function"
-                    },
-                    {
-                        "name": "max_value_time",
-                        "type": "function"
-                    },
-                    {
-                        "name": "count",
-                        "type": "function"
-                    },
-                    {
-                        "name": "threshold_count",
-                        "type": "function"
-                    },
-                    {
-                        "name": "threshold_percent",
-                        "type": "function"
-                    },
-                    {
-                        "name": "threshold_duration",
-                        "type": "function"
-                    },
-                    {
-                        "name": "time",
-                        "type": "function"
-                    },
-                    {
-                        "name": "bottom",
-                        "type": "function"
-                    },
-                    {
-                        "name": "top",
-                        "type": "function"
-                    },
-                    {
-                        "name": "meta",
-                        "type": "function"
-                    },
-                    {
-                        "name": "entityTag",
-                        "type": "function"
-                    },
-                    {
-                        "name": "metricTag",
-                        "type": "function"
-                    },
-                    {
-                        "name": "median",
-                        "type": "function"
-                    },
-                    {
-                        "name": "average",
-                        "type": "function"
-                    },
-                    {
-                        "name": "minimum",
-                        "type": "function"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "count",
+                                "type": "number"
+                            }
+                        ]
                     },
                     {
                         "name": "maximum",
-                        "type": "function"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "count",
+                                "type": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "min",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "count",
+                                "type": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "minimum",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "count",
+                                "type": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "avg",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "average",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "sum",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "delta",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "counter",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "last",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "first",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "min_value_time",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "max_value_time",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "count",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "threshold_count",
+                        "type": null
+                    },
+                    {
+                        "name": "threshold_percent",
+                        "type": null
+                    },
+                    {
+                        "name": "threshold_duration",
+                        "type": null
+                    },
+                    {
+                        "name": "time",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "bottom",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "rank",
+                                "type": "integer",
+                                "required": true
+                            },
+                            {
+                                "name": "getValue",
+                                "type": "function"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "top",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "rank",
+                                "type": "integer",
+                                "required": true
+                            },
+                            {
+                                "name": "getValue",
+                                "type": "function"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "meta",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "entityTag",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string",
+                                "required": true
+                            },
+                            {
+                                "name": "tagName",
+                                "type": "string",
+                                "required": true
+                            }
+                        ]
+                    },
+                    {
+                        "name": "metricTag",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string",
+                                "required": true
+                            },
+                            {
+                                "name": "tagName",
+                                "type": "string",
+                                "required": true
+                            }
+                        ]
+                    },
+                    {
+                        "name": "median",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
                     },
                     {
                         "name": "series",
@@ -4824,15 +7114,27 @@
                     },
                     {
                         "name": "tags",
-                        "type": "array"
+                        "type": "object"
                     },
                     {
                         "name": "value",
-                        "type": "number"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            }
+                        ]
                     },
                     {
                         "name": "previous",
-                        "type": "number"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            }
+                        ]
                     },
                     {
                         "name": "movavg",
@@ -4840,11 +7142,13 @@
                         "args": [
                             {
                                 "name": "alias",
-                                "type": "string"
+                                "type": "string",
+                                "required": true
                             },
                             {
                                 "name": "count",
-                                "type": "number"
+                                "type": "number",
+                                "required": true
                             },
                             {
                                 "name": "minCount",
@@ -4854,123 +7158,338 @@
                     },
                     {
                         "name": "detail",
-                        "type": "function"
+                        "type": null
                     },
                     {
                         "name": "forecast",
-                        "type": "function"
+                        "type": null
                     },
                     {
                         "name": "forecast_deviation",
-                        "type": "function"
+                        "type": null
                     },
                     {
                         "name": "lower_confidence",
-                        "type": "function"
+                        "type": null
                     },
                     {
                         "name": "upper_confidence",
-                        "type": "function"
+                        "type": null
                     },
                     {
                         "name": "percentile",
-                        "type": "function"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "percentage",
+                                "type": "number",
+                                "required": true
+                            }
+                        ]
                     },
                     {
                         "name": "max",
-                        "type": "function"
-                    },
-                    {
-                        "name": "min",
-                        "type": "function"
-                    },
-                    {
-                        "name": "avg",
-                        "type": "function"
-                    },
-                    {
-                        "name": "sum",
-                        "type": "function"
-                    },
-                    {
-                        "name": "delta",
-                        "type": "function"
-                    },
-                    {
-                        "name": "counter",
-                        "type": "function"
-                    },
-                    {
-                        "name": "last",
-                        "type": "function"
-                    },
-                    {
-                        "name": "first",
-                        "type": "function"
-                    },
-                    {
-                        "name": "min_value_time",
-                        "type": "function"
-                    },
-                    {
-                        "name": "max_value_time",
-                        "type": "function"
-                    },
-                    {
-                        "name": "count",
-                        "type": "function"
-                    },
-                    {
-                        "name": "threshold_count",
-                        "type": "function"
-                    },
-                    {
-                        "name": "threshold_percent",
-                        "type": "function"
-                    },
-                    {
-                        "name": "threshold_duration",
-                        "type": "function"
-                    },
-                    {
-                        "name": "time",
-                        "type": "function"
-                    },
-                    {
-                        "name": "bottom",
-                        "type": "function"
-                    },
-                    {
-                        "name": "top",
-                        "type": "function"
-                    },
-                    {
-                        "name": "meta",
-                        "type": "function"
-                    },
-                    {
-                        "name": "entityTag",
-                        "type": "function"
-                    },
-                    {
-                        "name": "metricTag",
-                        "type": "function"
-                    },
-                    {
-                        "name": "median",
-                        "type": "function"
-                    },
-                    {
-                        "name": "average",
-                        "type": "function"
-                    },
-                    {
-                        "name": "minimum",
-                        "type": "function"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "count",
+                                "type": "number"
+                            }
+                        ]
                     },
                     {
                         "name": "maximum",
-                        "type": "function"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "count",
+                                "type": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "min",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "count",
+                                "type": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "minimum",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "count",
+                                "type": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "avg",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "average",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "sum",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "delta",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "counter",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "last",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "first",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "min_value_time",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "max_value_time",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "count",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "threshold_count",
+                        "type": null
+                    },
+                    {
+                        "name": "threshold_percent",
+                        "type": null
+                    },
+                    {
+                        "name": "threshold_duration",
+                        "type": null
+                    },
+                    {
+                        "name": "time",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "bottom",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "rank",
+                                "type": "integer",
+                                "required": true
+                            },
+                            {
+                                "name": "getValue",
+                                "type": "function"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "top",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "rank",
+                                "type": "integer",
+                                "required": true
+                            },
+                            {
+                                "name": "getValue",
+                                "type": "function"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "meta",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "entityTag",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string",
+                                "required": true
+                            },
+                            {
+                                "name": "tagName",
+                                "type": "string",
+                                "required": true
+                            }
+                        ]
+                    },
+                    {
+                        "name": "metricTag",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string",
+                                "required": true
+                            },
+                            {
+                                "name": "tagName",
+                                "type": "string",
+                                "required": true
+                            }
+                        ]
+                    },
+                    {
+                        "name": "median",
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            },
+                            {
+                                "name": "period",
+                                "type": "interval"
+                            }
+                        ]
                     },
                     {
                         "name": "series",
