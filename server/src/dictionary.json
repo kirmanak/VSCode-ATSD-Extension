@@ -3328,7 +3328,7 @@
             "displayName": "path",
             "section": "configuration",
             "type": "string",
-            "example": null
+            "example": "/messages/query"
         },
         {
             "displayName": "percentile-markers",
@@ -4548,6 +4548,7 @@
             "displayName": "timespan",
             "section": "widget",
             "type": "interval",
+            "defaultValue": "1 hour",
             "example": "5 minute"
         },
         {

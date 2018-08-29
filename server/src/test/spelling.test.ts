@@ -8,8 +8,8 @@ suite("Spelling checks", () => {
         new Test(
             "starttime",
             `[configuration]
-	start-time = 15 second
-	startime = 30 minute`,
+	start-time = 2018
+	startime = 2018`,
             [
                 createDiagnostic(
                     Range.create(Position.create(2, "	".length), Position.create(2, "	startime".length)),
@@ -21,7 +21,7 @@ suite("Spelling checks", () => {
         new Test(
             "section eries",
             `[eries]
-	starttime = 20 second`,
+	starttime = 2018`,
             [createDiagnostic(
                 Range.create(Position.create(0, "[".length), Position.create(0, "[eries".length)),
                 DiagnosticSeverity.Error, errorMessage("eries", "series"),
@@ -30,7 +30,7 @@ suite("Spelling checks", () => {
         new Test(
             "section starttime",
             `[starttime]
-	starttime = 20 second`,
+	starttime = 2018`,
             [createDiagnostic(
                 Range.create(Position.create(0, "[".length), Position.create(0, "[starttime".length)),
                 DiagnosticSeverity.Error, errorMessage("starttime", "series"),
@@ -39,15 +39,15 @@ suite("Spelling checks", () => {
         new Test(
             "tags ignored",
             `[tags]
-	startime = 20 second`,
+	startime = 2018`,
             [],
         ),
         new Test(
             "tags ignoring finished with new section",
             `[tags]
-	startime = 20 second
+	startime = 2018
 [starttime]
-	startime = 20 second`,
+	startime = 2018`,
             [
                 createDiagnostic(
                     Range.create(Position.create(2, "[".length), Position.create(2, "[starttime".length)),
@@ -64,9 +64,9 @@ suite("Spelling checks", () => {
   entity = server
   metric = cpu_busy
   [tags]
-    startime = 20 second
+    startime = 2018
 
-  startime = 20 second`,
+  startime = 2018`,
             [createDiagnostic(
                 Range.create(Position.create(6, "  ".length), Position.create(6, "  ".length + "startime".length)),
                 DiagnosticSeverity.Error, errorMessage("startime", "start-time"),

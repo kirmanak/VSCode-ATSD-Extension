@@ -1,9 +1,13 @@
 import { Diagnostic, DiagnosticSeverity, Position, Range } from "vscode-languageserver";
-import { displayNames, parentSections, possibleSections, requiredSectionSettingsMap } from "./resources";
+import {
+    booleanRegExp, displayNames, integerRegExp, intervalRegExp,
+    numberRegExp, parentSections, possibleSections, requiredSectionSettingsMap,
+} from "./resources";
 import { Setting } from "./setting";
 import { TextRange } from "./textRange";
 import {
-    countCsvColumns, createDiagnostic, deleteComments, getSetting, isAnyInArray, isInMap, mapToArray, suggestionMessage,
+    countCsvColumns, createDiagnostic, deleteComments, getSetting, isAnyInArray, isDate,
+    isInMap, mapToArray, suggestionMessage,
 } from "./util";
 
 export class Validator {
@@ -651,52 +655,56 @@ export class Validator {
 
     private typeCheck(setting: Setting): void {
         const valuePosition: number = 3;
+        const settingValue: string = this.match[valuePosition];
         switch (setting.type) {
             // tslint:disable-next-line:no-null-keyword
             case null:
-            case undefined:
-            case "string": return;
+            case undefined: return;
+            case "string": {
+                if (this.match[valuePosition].length !== 0) {
+                    return;
+                }
+                break;
+            }
             case "number": {
-                if (/^(?:\-|\+)?(?:\.\d+|\d+(?:\.\d+)?)$/.test(this.match[valuePosition])) {
+                if (numberRegExp.test(settingValue)) {
                     return;
                 }
                 break;
             }
             case "integer": {
-                if (/^(?:\-|\+)?\d+$/.test(this.match[valuePosition])) {
+                if (integerRegExp.test(settingValue)) {
                     return;
                 }
                 break;
             }
             case "boolean": {
-                if (/^(?:false|no|null|none|0|off|true|yes|on|1)$/.test(this.match[valuePosition])) {
+                if (booleanRegExp.test(settingValue)) {
                     return;
                 }
                 break;
             }
             case "enum": {
                 const index: number = setting.enum.findIndex((option: string): boolean =>
-                    new RegExp(`^${option}$`, "i").test(this.match[valuePosition]),
+                    new RegExp(`^${option}$`, "i").test(settingValue),
                 );
                 if (index >= 0) {
                     return;
                 }
-                this.result.push(createDiagnostic(
-                    Range.create(
-                        this.currentLineNumber, this.match[1].length,
-                        this.currentLineNumber, this.match[1].length + this.match[Validator.CONTENT_POSITION].length,
-                    ),
-                    DiagnosticSeverity.Error,
-                    `${this.match[Validator.CONTENT_POSITION]} must be one of ${setting.enum.join()}`,
-                ));
 
-                return;
+                break;
             }
             case "interval": {
-                return;
+                if (intervalRegExp.test(settingValue)) {
+                    return;
+                }
+                break;
             }
             case "date": {
-                return;
+                if (isDate(settingValue)) {
+                    return;
+                }
+                break;
             }
             default: {
                 throw new Error(`${setting.type} is not handled`);
@@ -707,7 +715,9 @@ export class Validator {
                 this.currentLineNumber, this.match[1].length,
                 this.currentLineNumber, this.match[1].length + this.match[Validator.CONTENT_POSITION].length,
             ),
-            DiagnosticSeverity.Error, `${this.match[Validator.CONTENT_POSITION]} type is ${setting.type}`,
+            DiagnosticSeverity.Error, (setting.type === "enum") ?
+                `${settingValue} must be one of ${setting.enum.join(", ")}` :
+                `${this.match[Validator.CONTENT_POSITION]} type is ${setting.type}`,
         ));
     }
 

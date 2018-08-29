@@ -1,6 +1,6 @@
 import * as Levenshtein from "levenshtein";
 import { Diagnostic, DiagnosticSeverity, Range } from "vscode-languageserver";
-import { settings } from "./resources";
+import { calendarRegExp, localDateRegExp, settings, zonedDateRegExp } from "./resources";
 import { Setting } from "./setting";
 
 const DIAGNOSTIC_SOURCE: string = "Axibase Charts";
@@ -115,3 +115,6 @@ export const deleteScripts: (text: string) => string = (text: string): string =>
 
     return text.replace(multiLine, "script\nendscript");
 };
+
+export const isDate: (text: string) => boolean = (text: string): boolean =>
+    calendarRegExp.test(text) || localDateRegExp.test(text) || zonedDateRegExp.test(text);
