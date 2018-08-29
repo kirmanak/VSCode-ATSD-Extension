@@ -2028,7 +2028,13 @@
                 "fields": [
                     {
                         "name": "value",
-                        "type": "integer"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            }
+                        ]
                     },
                     {
                         "name": "numeric",
@@ -2084,7 +2090,13 @@
                 "fields": [
                     {
                         "name": "value",
-                        "type": "integer"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            }
+                        ]
                     },
                     {
                         "name": "numeric",
@@ -2140,7 +2152,13 @@
                 "fields": [
                     {
                         "name": "value",
-                        "type": "integer"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            }
+                        ]
                     },
                     {
                         "name": "numeric",
@@ -2210,7 +2228,13 @@
                 "fields": [
                     {
                         "name": "value",
-                        "type": "integer"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            }
+                        ]
                     },
                     {
                         "name": "numeric",
@@ -2266,7 +2290,13 @@
                 "fields": [
                     {
                         "name": "value",
-                        "type": "integer"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "alias",
+                                "type": "string"
+                            }
+                        ]
                     },
                     {
                         "name": "numeric",
