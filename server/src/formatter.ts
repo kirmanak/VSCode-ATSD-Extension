@@ -22,21 +22,24 @@ export class Formatter {
     }
 
     public lineByLine(): TextEdit[] {
-        for (; this.currentLine < this.lines.length; this.currentLine++) {
-            const line: string = this.getCurrentLine();
+        this.lines.forEach((line: string, index: number) => {
+            this.currentLine = index;
             if (this.isSection() || this.isEmpty()) {
                 if (this.isSection()) {
                     this.calculateIndent();
                     this.checkIndent();
                     this.increaseIndent();
                 }
-                continue;
+
+                return;
             }
             if (TextRange.isClosing(line)) {
                 const stackHead: string = this.keywordsLevels.pop();
-                if (stackHead !== undefined) {
+                if (stackHead) {
                     this.setIndent(stackHead);
-                    if (TextRange.isNotCloseAble(line)) { this.keywordsLevels.push(stackHead); }
+                    if (TextRange.isNotCloseAble(line)) {
+                        this.keywordsLevels.push(stackHead);
+                    }
                 }
             }
             this.checkIndent();
@@ -45,9 +48,11 @@ export class Formatter {
                     this.current = undefined;
                     this.keywordsLevels.push(this.currentIndent);
                 }
-                if (TextRange.isIncreasingIndent(line)) { this.increaseIndent(); }
+                if (TextRange.isIncreasingIndent(line)) {
+                    this.increaseIndent();
+                }
             }
-        }
+        });
 
         return this.edits;
     }

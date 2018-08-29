@@ -7,14 +7,14 @@ const DIAGNOSTIC_SOURCE: string = "Axibase Charts";
 
 export const isInMap: <T>(value: T, map: Map<string, T[]> | Map<string, T[][]>) => boolean =
     <T>(value: T, map: Map<string, T[]> | Map<string, T[][]>): boolean => {
-        if (!value || !map) { return false; }
+        if (!value || !map) {
+            return false;
+        }
         for (const array of map.values()) {
             for (const item of array) {
                 if (Array.isArray(item)) {
-                    for (const word of item) {
-                        if (word === value) {
-                            return true;
-                        }
+                    if (item.includes(value)) {
+                        return true;
                     }
                 } else {
                     if (item === value) {
@@ -43,7 +43,9 @@ export const isAnyInArray: <T>(target: T[], array: T[]) => boolean = <T>(target:
 export const mapToArray: (map: Map<string, string[]>) => string[] =
     (map: Map<string, string[]>): string[] => {
         const array: string[] = [];
-        if (!map) { return array; }
+        if (!map) {
+            return array;
+        }
         map.forEach((arr: string[]) => arr.forEach((item: string) => array.push(item)));
 
         return array;
@@ -51,17 +53,19 @@ export const mapToArray: (map: Map<string, string[]>) => string[] =
 
 export const suggestionMessage: (word: string, dictionary: string[]) => string =
     (word: string, dictionary: string[]): string => {
-        if (!word || !dictionary) { return undefined; }
+        if (!word || !dictionary) {
+            return undefined;
+        }
         let suggestion: string;
         let min: number = Number.MAX_VALUE;
-        dictionary.forEach((value: string) => {
-            if (value === undefined) { return; }
-            const distance: number = new Levenshtein(value, word).distance;
-            if (distance < min) {
-                min = distance;
-                suggestion = value;
-            }
-        });
+        dictionary.filter((value: string): boolean => value !== undefined && value !== null)
+            .forEach((value: string) => {
+                const distance: number = new Levenshtein(value, word).distance;
+                if (distance < min) {
+                    min = distance;
+                    suggestion = value;
+                }
+            });
 
         return errorMessage(word, suggestion);
     };
@@ -76,7 +80,9 @@ export const getSetting: (name: string) => Setting | undefined = (name: string):
 export const countCsvColumns: (line: string) => number = (line: string): number => {
     const regex: RegExp = /(['"]).+\1|[^, \t]+/g;
     let counter: number = 0;
-    while (regex.exec(line)) { counter++; }
+    while (regex.exec(line)) {
+        counter++;
+    }
 
     return counter;
 };
@@ -89,18 +95,25 @@ export const deleteComments: (text: string) => string = (text: string): string =
     let content: string = text;
     const multiLine: RegExp = /\/\*[\s\S]*?\*\//g;
     const oneLine: RegExp = /^[ \t]*#.*/mg;
-    let i: RegExpExecArray = multiLine.exec(content);
-    if (!i) { i = oneLine.exec(content); }
+    let match: RegExpExecArray = multiLine.exec(content);
+    if (!match) {
+        match = oneLine.exec(content);
+    }
 
-    while (i) {
-        let spaces: string = " ";
-        for (let j: number = 1; j < i[0].length; j++) { spaces += " "; }
-        const newLines: number = i[0].split("\n").length - 1;
-        for (let j: number = 0; j < newLines; j++) { spaces += "\n"; }
-        content = content.substring(0, i.index) + spaces +
-            content.substring(i.index + i[0].length);
-        i = multiLine.exec(content);
-        if (!i) { i = oneLine.exec(content); }
+    while (match) {
+        const newLines: number = match[0].split("\n").length - 1;
+        const spaces: string = Array(match[0].length)
+            .fill(" ")
+            .concat(
+                Array(newLines)
+                    .fill("\n"),
+            )
+            .join("");
+        content = `${content.substr(0, match.index)}${spaces}${content.substr(match.index + match[0].length)}`;
+        match = multiLine.exec(content);
+        if (!match) {
+            match = oneLine.exec(content);
+        }
     }
 
     return content;
@@ -110,11 +123,8 @@ export const errorMessage: (found: string, suggestion: string) => string =
     (found: string, suggestion: string): string =>
         (suggestion === undefined) ? `${found} is unknown.` : `${found} is unknown. Suggestion: ${suggestion}`;
 
-export const deleteScripts: (text: string) => string = (text: string): string => {
-    const multiLine: RegExp = /\bscript\b([\s\S]+?)\bendscript\b/g;
-
-    return text.replace(multiLine, "script\nendscript");
-};
+export const deleteScripts: (text: string) => string = (text: string): string =>
+    text.replace(/\bscript\b([\s\S]+?)\bendscript\b/g, "script\nendscript");
 
 export const isDate: (text: string) => boolean = (text: string): boolean =>
     calendarRegExp.test(text) || localDateRegExp.test(text) || zonedDateRegExp.test(text);

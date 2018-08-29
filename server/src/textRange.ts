@@ -25,7 +25,9 @@ export class TextRange {
 
     public static parse(line: string, i: number): TextRange | undefined {
         const match: RegExpExecArray = TextRange.KEYWORD_REGEXP.exec(line);
-        if (match === null) { return undefined; }
+        if (match === null) {
+            return undefined;
+        }
         const keywordStart: number = match[1].length;
 
         return TextRange.create(match[this.KEYWORD_POSITION], Range.create(
