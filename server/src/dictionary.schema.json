@@ -112,7 +112,7 @@
                             "type": "string",
                             "description": "The type of this argument",
                             "enum": [
-                              "array", "boolean", "integer", "number", "object", "string"
+                              "array", "boolean", "integer", "number", "function", "string", "interval", "date", "object"
                             ]
                           },
                           "name": {
@@ -120,7 +120,7 @@
                             "type": "string"
                           },
                           "required": {
-                            "description": "[Optional] Is this argument required to call the function or not. Default is true",
+                            "description": "[Optional] Is this argument required to call the function or not. Default is false",
                             "type": "boolean"
                           }
                         },
