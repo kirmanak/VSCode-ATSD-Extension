@@ -1,8 +1,6 @@
 import {
     CompletionItem, CompletionItemKind, InsertTextFormat, Position, TextDocument,
 } from "vscode-languageserver";
-import { settings } from "./resources";
-import { Setting } from "./setting";
 import { deleteComments, deleteScripts } from "./util";
 
 export class CompletionProvider {
@@ -15,9 +13,8 @@ export class CompletionProvider {
     }
 
     public getCompletionItems(): CompletionItem[] {
-        return this.completeSettings()
-            .concat(this.completeIf())
-            .concat([this.completeFor()]);
+        return [this.completeFor()]
+            .concat(this.completeIf());
     }
 
     private completeFor(): CompletionItem {
@@ -110,14 +107,4 @@ endif
             return completion;
         });
     }
-
-    private readonly completeSettings: () => CompletionItem[] = (): CompletionItem[] =>
-        settings.map((setting: Setting): CompletionItem => {
-            const item: CompletionItem = CompletionItem.create(setting.displayName);
-            item.insertText = `${setting.displayName} = \${1:${setting.example}}\n\${0}`;
-            item.insertTextFormat = InsertTextFormat.Snippet;
-            item.kind = CompletionItemKind.Field;
-
-            return item;
-        })
 }
