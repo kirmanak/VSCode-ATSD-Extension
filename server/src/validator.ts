@@ -72,6 +72,18 @@ export class Validator {
     }
 
     /**
+     * Adds all current section setting to parent
+     * if they're required by a section
+     */
+    private addCurrentToParentSettings(): void {
+        if (this.currentSection) {
+            for (const setting of this.currentSettings) {
+                this.addToSettingMap(this.currentSection.text, setting);
+            }
+        }
+    }
+
+    /**
      * Adds a setting based on this.match to array
      * or creates a new diagnostic if setting is already present
      * @param array the target array
@@ -106,31 +118,18 @@ export class Validator {
      * @param key the key, which value will contain the setting
      * @returns the map regardless was it modified or not
      */
-    private addToSettingMap(map: Map<string, Setting[]>, key: string): Map<string, Setting[]> {
-        const name: string = this.match[Validator.CONTENT_POSITION];
-        const setting: Setting = getSetting(name);
+    private addToSettingMap(key: string, setting: Setting): void {
         if (!setting) {
-            return map;
+            return;
         }
-        if (isInMap(setting, map)) {
-            const startPosition: number = this.match.index + this.match[1].length;
-            this.result.push(createDiagnostic(
-                Range.create(
-                    Position.create(this.currentLineNumber, startPosition),
-                    Position.create(this.currentLineNumber, startPosition + name.length),
-                ),
-                DiagnosticSeverity.Hint, `${name} is already defined`,
-            ));
-        } else {
-            let array: Setting[] = map.get(key);
+        if (!isInMap(setting, this.parentSettings)) {
+            let array: Setting[] = this.parentSettings.get(key);
             if (!array) {
                 array = [];
             }
             array.push(setting);
-            map.set(key, array);
+            this.parentSettings.set(key, array);
         }
-
-        return map;
     }
 
     /**
@@ -359,15 +358,9 @@ export class Validator {
             this.addToSettingArray(this.currentSettings);
         }
 
-        if (this.currentSection && isInMap(this.currentSection.text, parentSections)) {
-            if (isInMap(setting, requiredSectionSettingsMap)) {
-                this.addToSettingMap(this.parentSettings, this.currentSection.text);
-            }
-        } else {
-            if (isInMap(setting, this.parentSettings)) {
-                // The setting was defined before in a parent section
-                this.result.push(createDiagnostic(location, DiagnosticSeverity.Hint, message));
-            }
+        if (isInMap(setting, this.parentSettings)) {
+            // The setting was defined before in a parent section
+            this.result.push(createDiagnostic(location, DiagnosticSeverity.Hint, message));
         }
     }
 
@@ -638,6 +631,7 @@ export class Validator {
      */
     private handleSection(): void {
         this.checkPreviousSection();
+        this.addCurrentToParentSettings();
         if (!this.match) {
             if (this.previousSection) {
                 this.currentSection = this.previousSection;
@@ -659,6 +653,7 @@ export class Validator {
             this.currentLineNumber, this.match[1].length,
             this.currentLineNumber, this.match[1].length + this.match[Validator.CONTENT_POSITION].length,
         ));
+
         if (isInMap(this.currentSection.text, parentSections)) {
             this.parentSettings.set(this.currentSection.text, []);
         }
