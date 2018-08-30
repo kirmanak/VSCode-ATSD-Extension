@@ -3,11 +3,14 @@
     "rules": {
         "no-inferrable-types": false,
         "no-implicit-dependencies": [true, "dev"],
-        "comment-format": false
+        "comment-format": false,
+        "no-magic-numbers": false
     },
     "jsRules": {
         "max-line-length": {
-            "options": [120]
+            "options": [
+                120
+            ]
         }
     }
 }

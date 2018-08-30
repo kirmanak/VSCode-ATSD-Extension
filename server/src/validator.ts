@@ -12,7 +12,6 @@ import {
 } from "./util";
 
 export class Validator {
-    private static readonly CONTENT_POSITION: number = 2;
     private aliases: string[] = [];
     private csvColumns: number;
     private currentLineNumber: number = 0;
@@ -92,7 +91,7 @@ export class Validator {
      */
     private addToSettingArray(array: Setting[]): Setting[] {
         const result: Setting[] = (array) ? array : [];
-        const name: string = this.match[Validator.CONTENT_POSITION];
+        const name: string = this.match[2];
         const variable: Setting = getSetting(name);
         if (!variable) {
             return result;
@@ -144,7 +143,7 @@ export class Validator {
         if (!this.match) {
             return result;
         }
-        const variable: string = this.match[Validator.CONTENT_POSITION];
+        const variable: string = this.match[2];
         if (array && array.includes(variable)) {
             this.result.push(createDiagnostic(
                 Range.create(
@@ -171,7 +170,7 @@ export class Validator {
      */
     private addToStringMap(map: Map<string, string[]>, key: string): Map<string, string[]> {
         if (!map || !key || !this.match) { return map; }
-        const variable: string = this.match[Validator.CONTENT_POSITION];
+        const variable: string = this.match[2];
         if (isInMap(variable, map)) {
             const startPosition: number = this.match.index + this.match[1].length;
             this.result.push(createDiagnostic(
@@ -256,7 +255,7 @@ export class Validator {
             if (setting.excludes.includes(item.displayName)) {
                 const range: Range = Range.create(
                     this.currentLineNumber, this.match[1].length,
-                    this.currentLineNumber, this.match[1].length + this.match[Validator.CONTENT_POSITION].length,
+                    this.currentLineNumber, this.match[1].length + this.match[2].length,
                 );
                 this.result.push(createDiagnostic(
                     range, DiagnosticSeverity.Error,
@@ -343,9 +342,9 @@ export class Validator {
     private checkRepetition(setting: Setting): void {
         const location: Range = Range.create(
             this.currentLineNumber, this.match[1].length,
-            this.currentLineNumber, this.match[1].length + this.match[Validator.CONTENT_POSITION].length,
+            this.currentLineNumber, this.match[1].length + this.match[2].length,
         );
-        const message: string = `${this.match[Validator.CONTENT_POSITION]} is already defined`;
+        const message: string = `${this.match[2]} is already defined`;
 
         if (this.areWeIn("if")) {
             let array: Setting[] = this.ifSettings.get(this.lastCondition);
@@ -412,12 +411,16 @@ export class Validator {
             }
             this.handleSection();
         } else {
-            this.match = /(^\s*)(.+?)\s*=\s*(.+?)\s*$/m.exec(line);
+            this.match = /(^\s*)([a-z].*?[a-z])\s*=\s*(.+?)\s*$/.exec(line);
             if (this.match) {
                 this.handleSettings();
                 if (this.areWeIn("for")) {
                     this.validateFor();
                 }
+            }
+            this.match = /(^\s*)<#(?:assign|list\s+(\w+)\s+as)\s+(\w+)/i.exec(line);
+            if (this.match) {
+                this.handleFreemarker();
             }
         }
     }
@@ -575,7 +578,7 @@ export class Validator {
             const matching: RegExpExecArray = this.match;
             this.match = /^([ \t]*for[ \t]+\w+[ \t]+in[ \t]+)(?:Object\.keys\((\w+)\)|(\w+)).*$/im.exec(line);
             if (this.match) {
-                let position: number = Validator.CONTENT_POSITION;
+                let position: number = 2;
                 const range: Range = Range.create(
                     this.currentLineNumber, this.match[1].length,
                     this.currentLineNumber, this.match[1].length,
@@ -604,6 +607,34 @@ export class Validator {
             this.match = matching;
             this.addToStringMap(this.variables, "forVariables");
         }
+    }
+
+    /**
+     * Adds new variables to the corresponding map,
+     * Checks if a variable is used before the definition
+     */
+    private handleFreemarker(): void {
+        // Initialize
+        const line: string = this.getCurrentLine();
+        if (!this.variables.get("freemarker")) {
+            this.variables.set("freemarker", []);
+        }
+        const freeMarkerVariables: string[] = this.variables.get("freemarker");
+
+        // Handle undefined variable used in <#list _here_ as
+        const listVariable: string | undefined = this.match[2];
+        if (listVariable && !freeMarkerVariables.includes(listVariable)) {
+            this.result.push(createDiagnostic(
+                Range.create(
+                    this.currentLineNumber, line.indexOf(listVariable),
+                    this.currentLineNumber, line.indexOf(listVariable) + listVariable.length,
+                ),
+                DiagnosticSeverity.Error, suggestionMessage(listVariable, freeMarkerVariables),
+            ));
+        }
+
+        this.match = /(^\s*<#(?:assign|list\s+\w+\s+as)\s+)(\w+)/i.exec(line);
+        this.addToStringMap(this.variables, "freemarker");
     }
 
     /**
@@ -660,7 +691,7 @@ export class Validator {
 
             return;
         }
-        if (/widget/i.test(this.match[Validator.CONTENT_POSITION])) {
+        if (/widget/i.test(this.match[2])) {
             this.checkAliases();
             this.deAliases = [];
             this.aliases = [];
@@ -669,9 +700,9 @@ export class Validator {
         this.previousSection = this.currentSection;
         this.currentSettings = [];
         this.ifSettings.clear();
-        this.currentSection = TextRange.create(this.match[Validator.CONTENT_POSITION], Range.create(
+        this.currentSection = TextRange.create(this.match[2], Range.create(
             this.currentLineNumber, this.match[1].length,
-            this.currentLineNumber, this.match[1].length + this.match[Validator.CONTENT_POSITION].length,
+            this.currentLineNumber, this.match[1].length + this.match[2].length,
         ));
 
         if (isInMap(this.currentSection.text, parentSections)) {
@@ -686,7 +717,7 @@ export class Validator {
         const line: string = this.getCurrentLine();
         if (!this.currentSection || !/(?:tag|key)s?/.test(this.currentSection.text)) {
             // We are not in tags or keys section
-            const name: string = this.match[Validator.CONTENT_POSITION];
+            const name: string = this.match[2];
             const setting: Setting = this.getSettingCheck(name);
             if (!setting) {
                 return;
@@ -705,6 +736,21 @@ export class Validator {
             this.typeCheck(setting);
             this.checkExcludes(setting);
 
+            // Check freemarker
+            this.match = /\$\{(\w+).*\}/.exec(this.match[3]);
+            if (this.match) {
+                const freeMarkerVariables: string[] | undefined = this.variables.get("freemarker");
+                if (!freeMarkerVariables || !freeMarkerVariables.includes(this.match[1])) {
+                    this.result.push(createDiagnostic(
+                        Range.create(
+                            this.currentLineNumber, line.indexOf(this.match[1]),
+                            this.currentLineNumber, line.indexOf(this.match[1]) + this.match[1].length,
+                        ),
+                        DiagnosticSeverity.Error, suggestionMessage(this.match[1], freeMarkerVariables),
+                    ));
+                }
+            }
+
             // Aliases
             if (setting.name === "alias") {
                 this.match = /(^\s*alias\s*=\s*)(\S+)\s*$/m.exec(line);
@@ -719,14 +765,14 @@ export class Validator {
             /(?:tag|key)s?/.test(this.currentSection.text) &&
             /(^[ \t]*)([a-z].*[a-z])[ \t]*=/.test(line)) {
             this.match = /(^[ \t]*)([a-z].*[a-z])[ \t]*=/.exec(line);
-            const setting: Setting = getSetting(this.match[Validator.CONTENT_POSITION]);
+            const setting: Setting = getSetting(this.match[2]);
             if (setting) {
                 this.result.push(createDiagnostic(
                     Range.create(
                         this.currentLineNumber, this.match[1].length,
-                        this.currentLineNumber, this.match[1].length + this.match[Validator.CONTENT_POSITION].length,
+                        this.currentLineNumber, this.match[1].length + this.match[2].length,
                     ),
-                    DiagnosticSeverity.Information, `${this.match[Validator.CONTENT_POSITION]} is interpreted as a` +
+                    DiagnosticSeverity.Information, `${this.match[2]} is interpreted as a` +
                     " series tag and is sent to the server. Remove the setting from the [tags] section or enclose it" +
                     " double-quotes to suppress the warning.",
                 ));
@@ -746,7 +792,7 @@ export class Validator {
      */
     private spellingCheck(): void {
         const indent: number = this.match[1].length;
-        const word: string = this.match[Validator.CONTENT_POSITION];
+        const word: string = this.match[2];
         const dictionary: string[] = possibleSections;
         if (!dictionary.includes(word)) {
             this.result.push(createDiagnostic(
@@ -816,14 +862,13 @@ export class Validator {
      * @param setting the setting to be checked
      */
     private typeCheck(setting: Setting): void {
-        const valuePosition: number = 3;
-        const settingValue: string = this.match[valuePosition];
+        const settingValue: string = this.match[3];
         switch (setting.type) {
             // tslint:disable-next-line:no-null-keyword
             case null:
             case undefined: return;
             case "string": {
-                if (this.match[valuePosition].length !== 0) {
+                if (settingValue.length !== 0) {
                     return;
                 }
                 break;
@@ -875,12 +920,13 @@ export class Validator {
         this.result.push(createDiagnostic(
             Range.create(
                 this.currentLineNumber, this.match[1].length,
-                this.currentLineNumber, this.match[1].length + this.match[Validator.CONTENT_POSITION].length,
+                this.currentLineNumber, this.match[1].length + this.match[2].length,
             ),
             DiagnosticSeverity.Error, (setting.type === "enum") ?
                 `${settingValue} must be one of ${setting.enum.join(", ")}` :
-                `${this.match[Validator.CONTENT_POSITION]} type is ${setting.type}`,
+                `${this.match[2]} type is ${setting.type}`,
         ));
+
     }
 
     /**
