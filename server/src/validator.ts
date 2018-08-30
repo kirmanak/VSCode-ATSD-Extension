@@ -1,13 +1,13 @@
 import { Diagnostic, DiagnosticSeverity, Position, Range } from "vscode-languageserver";
 import {
-    booleanRegExp, displayNames, integerRegExp, intervalRegExp,
-    numberRegExp, parentSections, possibleSections, requiredSectionSettingsMap,
+    booleanRegExp, integerRegExp, intervalRegExp, numberRegExp, parentSections, possibleSections,
+    requiredSectionSettingsMap,
 } from "./resources";
 import { Setting } from "./setting";
 import { TextRange } from "./textRange";
 import {
-    countCsvColumns, createDiagnostic, deleteComments, getSetting, isAnyInArray, isDate,
-    isInMap, mapToArray, suggestionMessage,
+    addDisplayNames, countCsvColumns, createDiagnostic, deleteComments, getSetting, isAnyInArray,
+    isDate, isInMap, mapToArray, suggestionMessage,
 } from "./util";
 
 export class Validator {
@@ -351,13 +351,14 @@ export class Validator {
             if (TextRange.KEYWORD_REGEXP.test(name)) {
                 return undefined;
             }
-            let dictionary: string[] = displayNames;
+            let dictionary: string[] = [];
             if (this.currentSection && this.currentSection.text === "placeholders") {
-                dictionary = displayNames.concat(this.urlParameters);
+                dictionary = this.urlParameters;
                 if (this.urlParameters && this.urlParameters.includes(name)) {
                     return undefined;
                 }
             }
+            dictionary = addDisplayNames(dictionary);
             const message: string = suggestionMessage(name, dictionary);
             this.result.push(createDiagnostic(
                 Range.create(

@@ -1,6 +1,6 @@
 import * as Levenshtein from "levenshtein";
 import { Diagnostic, DiagnosticSeverity, Range } from "vscode-languageserver";
-import { calendarRegExp, localDateRegExp, settings, zonedDateRegExp } from "./resources";
+import { calendarRegExp, localDateRegExp, settingsMap, zonedDateRegExp } from "./resources";
 import { Setting } from "./setting";
 
 const DIAGNOSTIC_SOURCE: string = "Axibase Charts";
@@ -51,21 +51,22 @@ export const mapToArray: (map: Map<string, string[]>) => string[] =
         return array;
     };
 
-export const suggestionMessage: (word: string, dictionary: string[]) => string =
+export const suggestionMessage: (word: string, dictionary: Iterable<string>) => string =
     (word: string, dictionary: string[]): string => {
         if (!word || !dictionary) {
             return undefined;
         }
         let suggestion: string;
         let min: number = Number.MAX_VALUE;
-        dictionary.filter((value: string): boolean => value !== undefined && value !== null)
-            .forEach((value: string) => {
+        for (const value of dictionary) {
+            if (value) {
                 const distance: number = new Levenshtein(value, word).distance;
                 if (distance < min) {
                     min = distance;
                     suggestion = value;
                 }
-            });
+            }
+        }
 
         return errorMessage(word, suggestion);
     };
@@ -74,7 +75,7 @@ export const getSetting: (name: string) => Setting | undefined = (name: string):
     const clearedName: string = name.toLowerCase()
         .replace(/[^a-z]/g, "");
 
-    return settings.find((setting: Setting): boolean => setting.name === clearedName);
+    return settingsMap.get(clearedName);
 };
 
 export const countCsvColumns: (line: string) => number = (line: string): number => {
@@ -128,3 +129,11 @@ export const deleteScripts: (text: string) => string = (text: string): string =>
 
 export const isDate: (text: string) => boolean = (text: string): boolean =>
     calendarRegExp.test(text) || localDateRegExp.test(text) || zonedDateRegExp.test(text);
+
+export const addDisplayNames: (array: string[]) => string[] = (array: string[]): string[] => {
+    for (const item of settingsMap.values()) {
+        array.push(item.displayName);
+    }
+
+    return array;
+};

@@ -316,7 +316,6 @@
                         "name": "threshold_percent",
                         "type": "function",
                         "args": null
-
                     },
                     {
                         "name": "threshold_duration",
@@ -1205,7 +1204,6 @@
                         "name": "threshold_percent",
                         "type": "function",
                         "args": null
-
                     },
                     {
                         "name": "threshold_duration",
@@ -1774,7 +1772,6 @@
                         "name": "threshold_percent",
                         "type": "function",
                         "args": null
-
                     },
                     {
                         "name": "threshold_duration",
@@ -3304,7 +3301,6 @@
                         "name": "threshold_percent",
                         "type": "function",
                         "args": null
-
                     },
                     {
                         "name": "threshold_duration",
@@ -3977,7 +3973,6 @@
                         "name": "threshold_percent",
                         "type": "function",
                         "args": null
-
                     },
                     {
                         "name": "threshold_duration",
@@ -4502,7 +4497,6 @@
                         "name": "threshold_percent",
                         "type": "function",
                         "args": null
-
                     },
                     {
                         "name": "threshold_duration",
@@ -5541,7 +5535,6 @@
                         "name": "threshold_percent",
                         "type": "function",
                         "args": null
-
                     },
                     {
                         "name": "threshold_duration",
@@ -5986,7 +5979,6 @@
                         "name": "threshold_percent",
                         "type": "function",
                         "args": null
-
                     },
                     {
                         "name": "threshold_duration",
@@ -6632,7 +6624,6 @@
                         "name": "threshold_percent",
                         "type": "function",
                         "args": null
-
                     },
                     {
                         "name": "threshold_duration",
@@ -7121,7 +7112,6 @@
                         "name": "threshold_percent",
                         "type": "function",
                         "args": null
-
                     },
                     {
                         "name": "threshold_duration",
@@ -7571,7 +7561,6 @@
                         "name": "threshold_percent",
                         "type": "function",
                         "args": null
-
                     },
                     {
                         "name": "threshold_duration",

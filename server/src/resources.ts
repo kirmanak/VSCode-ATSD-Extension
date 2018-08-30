@@ -1,43 +1,52 @@
 import { readFileSync } from "fs";
 import { join } from "path";
 import { Setting } from "./setting";
+interface IDictionary { $schema: string; settings: Setting[]; }
 
-export const settings: Setting[] = JSON.parse(readFileSync(join(__dirname, "dictionary.json"), "UTF-8")
-    .trim()).settings
-    .filter((setting: Setting): boolean => setting !== undefined && setting !== null)
-    .filter((setting: Setting): boolean => setting.example !== undefined && setting.example !== null)
-    .filter((setting: Setting): boolean => setting.displayName !== undefined && setting.displayName !== null)
-    .filter((setting: Setting): boolean => setting.type !== undefined && setting.type !== null)
-    .map((setting: Setting) =>
-        new Setting(
-            setting.displayName, setting.type, setting.example, setting.defaultValue, setting.enum,
-            setting.multiLine, setting.maxValue, setting.minValue, setting.section, setting.script,
-            setting.description, setting.excludes,
-        ),
-    );
+const readSettings: () => Setting[] = (): Setting[] => {
+    const dictionaryFilePath: string = join(__dirname, "dictionary.json");
+    const jsonContent: string = readFileSync(dictionaryFilePath, "UTF-8");
+    const dictionary: IDictionary = JSON.parse(jsonContent) as IDictionary;
 
-export const displayNames: string[] = settings.map((setting: Setting): string => setting.displayName);
+    return dictionary.settings;
+};
 
-export const requiredSectionSettingsMap: Map<string, Setting[][]> = new Map<string, Setting[][]>();
-requiredSectionSettingsMap.set("series", [
-    [
-        settings.find((setting: Setting): boolean => setting.name === "entity"),
-        settings.find((setting: Setting): boolean => setting.name === "value"),
-        settings.find((setting: Setting): boolean => setting.name === "table"),
-        settings.find((setting: Setting): boolean => setting.name === "attribute"),
-        settings.find((setting: Setting): boolean => setting.name === "entities"),
-    ],
-    [
-        settings.find((setting: Setting): boolean => setting.name === "metric"),
-        settings.find((setting: Setting): boolean => setting.name === "value"),
-        settings.find((setting: Setting): boolean => setting.name === "table"),
-        settings.find((setting: Setting): boolean => setting.name === "attribute"),
-    ],
-]);
-requiredSectionSettingsMap.set("widget", [[settings.find((setting: Setting): boolean => setting.name === "type")]]);
-requiredSectionSettingsMap.set("dropdown", [[
-    settings.find((setting: Setting): boolean => setting.name === "onchange"),
-    settings.find((setting: Setting): boolean => setting.name === "changefield")],
+const isCompleteSetting: (setting?: Partial<Setting>) => boolean = (setting?: Partial<Setting>): boolean =>
+    setting !== undefined &&
+    setting.displayName !== undefined &&
+    setting.type !== undefined &&
+    setting.example !== undefined;
+
+/**
+ * @returns map of settings, key is the setting name, value is instance of Setting
+ */
+const createSettingsMap: () => Map<string, Setting> = (): Map<string, Setting> => {
+    const map: Map<string, Setting> = new Map();
+    for (const setting of readSettings()) {
+        if (isCompleteSetting(setting)) {
+            const completeSetting: Setting = new Setting(setting);
+            map.set(completeSetting.name, completeSetting);
+        }
+    }
+
+    return settingsMap;
+};
+export const settingsMap: Map<string, Setting> = createSettingsMap();
+
+/**
+ * Map of required settings for each section and their "aliases".
+ * For instance, `series` requires `entity`, but `entities` is also allowed.
+ * Additionally, `series` requires `metric`, but `table` with `attribute` is also ok
+ */
+export const requiredSectionSettingsMap: Map<string, Setting[][]> = new Map([
+    ["series", [
+        [settingsMap.get("entity"), settingsMap.get("value"), settingsMap.get("entities")],
+        [settingsMap.get("metric"), settingsMap.get("value"), settingsMap.get("table"), settingsMap.get("attribute")],
+    ]],
+    ["widget", [[settingsMap.get("type")],
+    ]],
+    ["dropdown", [[settingsMap.get("onchange"), settingsMap.get("changefield")],
+    ]],
 ]);
 
 export const calendarKeywords: string[] = [
@@ -52,15 +61,17 @@ export const calendarKeywords: string[] = [
 const intervalUnits: string[] = ["millisecond", "second", "minute", "hour", "day", "week", "month", "quarter", "year"];
 const booleanKeywords: string[] = ["false", "no", "null", "none", "0", "off", "true", "yes", "on", "1"];
 export const intervalRegExp: RegExp = new RegExp(
+    // -5 month, +3 day, .3 year, 2.3 week, all
     `^(?:(?:[-+]?(?:(?:\\d+|(?:\\d+)?\\.\\d+)|@\\{.+\\})[ \\t]*(?:${intervalUnits.join("|")}))|all)$`,
 );
-export const booleanRegExp: RegExp = new RegExp(
-    `^(?:${booleanKeywords.join("|")})$`,
-);
+export const booleanRegExp: RegExp = new RegExp(`^(?:${booleanKeywords.join("|")})$`);
+// 1, 5.2, 0.3, .9, -8, -0.5, +1.4
 export const numberRegExp: RegExp = /^(?:\-|\+)?(?:\.\d+|\d+(?:\.\d+)?)$/;
 export const integerRegExp: RegExp = /^[-+]?\d+$/;
 export const calendarRegExp: RegExp = new RegExp(
+    // current_day
     `^(?:${calendarKeywords.join("|")})` +
+    // + 5 * minute
     `(?:[ \\t]*[-+][ \\t]*(?:\\d+|(?:\\d+)?\\.\\d+)[ \\t]*\\*[ \\t]*(?:${intervalUnits.join("|")}))?$`,
 );
 export const localDateRegExp: RegExp = new RegExp(
@@ -79,20 +90,22 @@ export const zonedDateRegExp: RegExp = new RegExp(
     "(?:[zZ]|[+-](?:[01]\\d|2[0-4]):?(?:[0-5][0-9]))$",
 );
 
-export const parentSections: Map<string, string[]> = new Map<string, string[]>();
-parentSections.set("widget", ["group", "configuration"]);
-parentSections.set("series", ["widget"]);
+export const parentSections: Map<string, string[]> = new Map([
+    ["widget", ["group", "configuration"]],
+    ["series", ["widget"]],
+]);
 
-// Returns array of parent sections for the section
+/**
+ * Returns array of parent sections for the section
+ */
 export const getParents: (section: string) => string[] = (section: string): string[] => {
-    const parents: string[] = [];
+    let parents: string[] = [];
     const found: string[] = parentSections.get(section);
     if (found) {
-        found.forEach((father: string) => {
-            parents.push(father);
-            getParents(father)
-                .forEach((grand: string) => parents.push(grand));
-        });
+        for (const father of found) {
+            // JS recursion is not tail-optimized, replace if possible
+            parents = parents.concat(father, getParents(father));
+        }
     }
 
     return parents;

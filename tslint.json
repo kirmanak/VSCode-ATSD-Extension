@@ -2,7 +2,8 @@
     "extends": "tslint:all",
     "rules": {
         "no-inferrable-types": false,
-        "no-implicit-dependencies": [true, "dev"]
+        "no-implicit-dependencies": [true, "dev"],
+        "comment-format": false
     },
     "jsRules": {
         "max-line-length": {
