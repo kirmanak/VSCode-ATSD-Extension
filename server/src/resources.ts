@@ -3,6 +3,10 @@ import { join } from "path";
 import { Setting } from "./setting";
 interface IDictionary { $schema: string; settings: Setting[]; }
 
+/**
+ * Reads dictionary from "dictionary.json" file
+ * @returns array of settings from the file
+ */
 const readSettings: () => Setting[] = (): Setting[] => {
     const dictionaryFilePath: string = join(__dirname, "dictionary.json");
     const jsonContent: string = readFileSync(dictionaryFilePath, "UTF-8");
@@ -11,6 +15,11 @@ const readSettings: () => Setting[] = (): Setting[] => {
     return dictionary.settings;
 };
 
+/**
+ * Tests if the provided setting complete or not
+ * @param setting the setting to test
+ * @returns true, if setting is complete, false otherwise
+ */
 const isCompleteSetting: (setting?: Partial<Setting>) => boolean = (setting?: Partial<Setting>): boolean =>
     setting !== undefined &&
     setting.displayName !== undefined &&
@@ -49,7 +58,7 @@ export const requiredSectionSettingsMap: Map<string, Setting[][]> = new Map([
     ]],
 ]);
 
-export const calendarKeywords: string[] = [
+const calendarKeywords: string[] = [
     "current_day", "current_hour", "current_minute", "current_month", "current_quarter", "current_week", "current_year",
     "first_day", "first_vacation_day", "first_working_day", "friday", "last_vacation_day", "last_working_day", "monday",
     "next_day", "next_hour", "next_minute", "next_month", "next_quarter", "next_vacation_day", "next_week",
@@ -60,27 +69,33 @@ export const calendarKeywords: string[] = [
 
 const intervalUnits: string[] = ["millisecond", "second", "minute", "hour", "day", "week", "month", "quarter", "year"];
 const booleanKeywords: string[] = ["false", "no", "null", "none", "0", "off", "true", "yes", "on", "1"];
+
 export const intervalRegExp: RegExp = new RegExp(
     // -5 month, +3 day, .3 year, 2.3 week, all
     `^(?:(?:[-+]?(?:(?:\\d+|(?:\\d+)?\\.\\d+)|@\\{.+\\})[ \\t]*(?:${intervalUnits.join("|")}))|all)$`,
 );
+
 export const booleanRegExp: RegExp = new RegExp(`^(?:${booleanKeywords.join("|")})$`);
+
 // 1, 5.2, 0.3, .9, -8, -0.5, +1.4
 export const numberRegExp: RegExp = /^(?:\-|\+)?(?:\.\d+|\d+(?:\.\d+)?)$/;
+
 export const integerRegExp: RegExp = /^[-+]?\d+$/;
+
 export const calendarRegExp: RegExp = new RegExp(
     // current_day
     `^(?:${calendarKeywords.join("|")})` +
     // + 5 * minute
     `(?:[ \\t]*[-+][ \\t]*(?:\\d+|(?:\\d+)?\\.\\d+)[ \\t]*\\*[ \\t]*(?:${intervalUnits.join("|")}))?$`,
 );
+
 export const localDateRegExp: RegExp = new RegExp(
     // 2018-12-31
     "^(?:19[7-9]|[2-9]\\d\\d)\\d(?:-(?:0[1-9]|1[0-2])(?:-(?:0[1-9]|[12][0-9]|3[01])" +
     // 01:13:46.123, 11:26:52
     "(?: (?:[01]\\d|2[0-4]):(?:[0-5][0-9])(?::(?:[0-5][0-9]))?(?:\\.\\d{1,9})?)?)?)?$",
-
 );
+
 export const zonedDateRegExp: RegExp = new RegExp(
     // 2018-12-31
     "^(?:19[7-9]|[2-9]\\d\\d)\\d-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01])" +
@@ -90,6 +105,9 @@ export const zonedDateRegExp: RegExp = new RegExp(
     "(?:[zZ]|[+-](?:[01]\\d|2[0-4]):?(?:[0-5][0-9]))$",
 );
 
+/**
+ * Key is section name, value is array of parent sections for the key section
+ */
 export const parentSections: Map<string, string[]> = new Map([
     ["widget", ["group", "configuration"]],
     ["series", ["widget"]],
@@ -111,6 +129,9 @@ export const getParents: (section: string) => string[] = (section: string): stri
     return parents;
 };
 
+/**
+ * Array of all possible sections
+ */
 export const possibleSections: string[] = [
     "column", "configuration", "dropdown", "group", "keys", "link", "node", "option", "other", "placeholders",
     "properties", "property", "series", "tag", "tags", "threshold", "widget",
