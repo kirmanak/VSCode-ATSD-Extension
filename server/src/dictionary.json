@@ -2465,7 +2465,7 @@
                 "fields": [
                     {
                         "name": "value",
-                        "type": "string"
+                        "type": "number"
                     },
                     {
                         "name": "alert",
@@ -2481,7 +2481,7 @@
                     },
                     {
                         "name": "widget",
-                        "type": "function"
+                        "type": "object"
                     },
                     {
                         "name": "el",
@@ -2497,15 +2497,33 @@
                     },
                     {
                         "name": "filter",
-                        "type": "function"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "filter",
+                                "type": "function"
+                            }
+                        ]
                     },
                     {
                         "name": "dialog",
-                        "type": "function"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "request",
+                                "type": "object"
+                            }
+                        ]
                     },
                     {
                         "name": "series",
-                        "type": "function"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "request",
+                                "type": "object"
+                            }
+                        ]
                     }
                 ]
             }
@@ -4598,7 +4616,7 @@
                 "fields": [
                     {
                         "name": "value",
-                        "type": "string"
+                        "type": "number"
                     },
                     {
                         "name": "alert",
@@ -4614,7 +4632,7 @@
                     },
                     {
                         "name": "widget",
-                        "type": "function"
+                        "type": "object"
                     },
                     {
                         "name": "el",
@@ -4630,15 +4648,33 @@
                     },
                     {
                         "name": "filter",
-                        "type": "function"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "filter",
+                                "type": "function"
+                            }
+                        ]
                     },
                     {
                         "name": "dialog",
-                        "type": "function"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "request",
+                                "type": "object"
+                            }
+                        ]
                     },
                     {
                         "name": "series",
-                        "type": "function"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "request",
+                                "type": "object"
+                            }
+                        ]
                     }
                 ]
             }
@@ -5004,7 +5040,7 @@
                 "fields": [
                     {
                         "name": "value",
-                        "type": "string"
+                        "type": "number"
                     },
                     {
                         "name": "alert",
@@ -5020,7 +5056,7 @@
                     },
                     {
                         "name": "widget",
-                        "type": "function"
+                        "type": "object"
                     },
                     {
                         "name": "el",
@@ -5036,15 +5072,33 @@
                     },
                     {
                         "name": "filter",
-                        "type": "function"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "filter",
+                                "type": "function"
+                            }
+                        ]
                     },
                     {
                         "name": "dialog",
-                        "type": "function"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "request",
+                                "type": "object"
+                            }
+                        ]
                     },
                     {
                         "name": "series",
-                        "type": "function"
+                        "type": "function",
+                        "args": [
+                            {
+                                "name": "request",
+                                "type": "object"
+                            }
+                        ]
                     }
                 ]
             }
