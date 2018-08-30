@@ -45,8 +45,7 @@ export const activate: (context: ExtensionContext) => void = async (context: Ext
     // Start the client. This will also launch the server
     client.start();
     const previewUri: string = "axibaseCharts://authority/axibaseCharts";
-    const provider: AxibaseChartsProvider = new AxibaseChartsProvider();
-    const registration: Disposable = workspace.registerTextDocumentContentProvider("axibaseCharts", provider);
+    let provider: AxibaseChartsProvider;
     const saveListener: Disposable = workspace.onDidSaveTextDocument((document: TextDocument) => {
         if (document.uri === window.activeTextEditor.document.uri) {
             provider.update(Uri.parse(previewUri));
@@ -55,10 +54,46 @@ export const activate: (context: ExtensionContext) => void = async (context: Ext
     const changeListener: Disposable = window.onDidChangeActiveTextEditor(() => {
         provider.update(Uri.parse(previewUri));
     });
-    const disposable: Disposable = commands.registerCommand("axibasecharts.showPortal", () => {
+    const disposable: Disposable = commands.registerCommand("axibasecharts.showPortal", async (): Promise<void> => {
+        if (!provider) {
+            let url: string = configuration.get("url");
+            if (!url) {
+                try {
+                    url = await askUrl();
+                } catch (err) {
+                    return Promise.reject(err);
+                }
+            }
+            let username: string = configuration.get("username");
+            if (!username) {
+                try {
+                    username = await window.showInputBox({
+                        ignoreFocusOut: true, placeHolder: "username",
+                        prompt:
+                            "Specify only if API is closed for guests. Value can be stored in 'axibaseCharts.username'",
+                    });
+                } catch (err) {
+                    username = undefined;
+                }
+            }
+            let password: string;
+            if (username) {
+                try {
+                    password = await window.showInputBox({
+                        ignoreFocusOut: true, password: true,
+                        prompt: "Please, enter the password. Can not be stored",
+                    });
+                } catch (err) {
+                    password = undefined;
+                }
+            }
+            provider = new AxibaseChartsProvider(url, username, password);
+            context.subscriptions.push(workspace.registerTextDocumentContentProvider("axibaseCharts", provider));
+        }
+
         commands.executeCommand("vscode.previewHtml", previewUri, ViewColumn.Two, "Portal");
     });
-    context.subscriptions.push(disposable, registration, saveListener, changeListener);
+    context.subscriptions.push(disposable, saveListener, changeListener);
 };
 
 export const deactivate: () => Thenable<void> = (): Thenable<void> => {
@@ -67,4 +102,27 @@ export const deactivate: () => Thenable<void> = (): Thenable<void> => {
     }
 
     return client.stop();
+};
+
+const validateUrl: (url: string) => boolean = (url: string): boolean =>
+    /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/.test(url);
+
+const askUrl: () => Promise<string> = async (): Promise<string> => {
+    let url: string;
+    try {
+        url = await window.showInputBox({
+            ignoreFocusOut: true, placeHolder: "http(s)://atsd_host:port",
+            prompt: "Can be stored permanently in 'axibaseCharts.url' setting",
+        });
+    } catch (err) {
+        return Promise.reject(err);
+    }
+
+    if (!validateUrl(url)) {
+        window.showErrorMessage("The specified URL is incorrect!");
+
+        return askUrl();
+    }
+
+    return url;
 };

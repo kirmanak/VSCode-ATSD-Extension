@@ -3,23 +3,34 @@ import { request as https } from "https";
 import { URL } from "url";
 import {
   Event, EventEmitter, TextDocument, TextDocumentContentProvider, TextEditor,
-  Uri, window, workspace, WorkspaceConfiguration,
+  Uri, window,
 } from "vscode";
 
 export class AxibaseChartsProvider implements TextDocumentContentProvider {
+  private auth: boolean;
+  private cookie: string;
+  private readonly onDidChangeEmitter: EventEmitter<Uri>;
+  private password: string;
+  private text: string;
+  private url: string;
+  private username: string;
+  private withCredentials: string;
 
   public get onDidChange(): Event<Uri> {
     return this.onDidChangeEmitter.event;
   }
-  private auth: boolean = true;
-  private cookie: string;
-  private readonly onDidChangeEmitter: EventEmitter<Uri>;
-  private text: string;
-  private url: string;
-  private withCredentials: string;
 
-  public constructor() {
+  public constructor(url: string, username?: string, password?: string) {
     this.onDidChangeEmitter = new EventEmitter<Uri>();
+    this.url = url;
+    if (username && password) {
+      this.auth = true;
+      this.username = username;
+      this.password = password;
+    } else {
+      this.auth = false;
+      this.withCredentials = this.url;
+    }
   }
 
   public async provideTextDocumentContent(): Promise<string> {
@@ -32,57 +43,25 @@ export class AxibaseChartsProvider implements TextDocumentContentProvider {
       return Promise.reject();
     }
     this.text = deleteComments(document.getText());
-    const configuration: WorkspaceConfiguration = workspace.getConfiguration("axibaseCharts", document.uri);
-    if (!this.url) {
-      this.url = configuration.get("url");
-      if (!this.url) {
-        await this.askUrl();
-      }
-    }
-    if (!this.url) {
-      window.showInformationMessage("You did not specify an URL address");
-
-      return Promise.reject();
-    }
-
     this.clearUrl();
     this.replaceImports();
 
     if (this.auth && !this.cookie) {
-      let username: string = configuration.get("username");
-      if (!username) {
-        username = await window.showInputBox({
-          ignoreFocusOut: true, placeHolder: "username",
-          prompt: "Specify only if API is closed for guests. Value can be stored in 'axibaseCharts.username'",
-        });
-      }
-      let password: string;
-      if (username) {
-        password = await window.showInputBox({
-          ignoreFocusOut: true, password: true,
-          prompt: "Please, enter the password. Can not be stored",
-        });
-      }
-      if (password && username) {
-        try {
-          [this.withCredentials, this.cookie] = await this.performRequest(username, password);
-          if (new URL(this.withCredentials).pathname.includes("login")) {
-            const errorMessage: string = "Credentials are incorrect";
-            window.showErrorMessage(errorMessage);
+      try {
+        [this.withCredentials, this.cookie] = await this.performRequest(this.username, this.password);
+        if (new URL(this.withCredentials).pathname.includes("login")) {
+          const errorMessage: string = "Credentials are incorrect";
+          window.showErrorMessage(errorMessage);
 
-            return Promise.reject(errorMessage);
-          }
-        } catch (err) {
-          window.showErrorMessage(err);
-
-          return Promise.reject(err);
-        } finally {
-          username = undefined;
-          password = undefined;
+          return Promise.reject(errorMessage);
         }
-      } else {
-        this.auth = false;
-        this.withCredentials = this.url;
+      } catch (err) {
+        window.showErrorMessage(err);
+
+        return Promise.reject(err);
+      } finally {
+        this.username = undefined;
+        this.password = undefined;
       }
     }
     this.addUrl();
@@ -93,10 +72,6 @@ export class AxibaseChartsProvider implements TextDocumentContentProvider {
 
   public update(uri: Uri): void {
     this.onDidChangeEmitter.fire(uri);
-  }
-
-  public validateUrl(): boolean {
-    return /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/.test(this.url);
   }
 
   private addUrl(): void {
@@ -112,18 +87,6 @@ export class AxibaseChartsProvider implements TextDocumentContentProvider {
     }
     this.text = `${this.text.substr(0, match.index + match[0].length + 1)}  url = ${this.withCredentials}
 ${this.text.substr(match.index + match[0].length + 1)}`;
-  }
-
-  private async askUrl(): Promise<void> {
-    this.url = await window.showInputBox({
-      ignoreFocusOut: true, placeHolder: "http(s)://atsd_host:port",
-      prompt: "Can be stored permanently in 'axibaseCharts.url' setting",
-    });
-    if (this.url && !this.validateUrl()) {
-      window.showErrorMessage("The specified URL is incorrect!");
-
-      await this.askUrl();
-    }
   }
 
   private clearUrl(): void {
