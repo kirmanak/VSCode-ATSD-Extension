@@ -4,10 +4,10 @@ import { createDiagnostic } from "../util";
 import { Test } from "./test";
 
 suite("Type check tests", () => {
-  const tests: Test[] = [
-    new Test(
-      "Correct boolean settings",
-      `[configuration]
+    const tests: Test[] = [
+        new Test(
+            "Correct boolean settings",
+            `[configuration]
   add-meta = false
 [configuration]
   add-meta = no
@@ -32,35 +32,35 @@ suite("Type check tests", () => {
 [configuration]
   add-meta = 1
 `,
-      [],
-    ),
-    new Test(
-      "Incorrect boolean setting",
-      `[configuration]
+            [],
+        ),
+        new Test(
+            "Incorrect boolean setting",
+            `[configuration]
   add-meta = not
 [configuration]
   add-meta = false true
 [configuration]
   add-meta = OFF 1
 `,
-      [
-        createDiagnostic(
-          Range.create(1, "  ".length, 1, "  add-meta".length),
-          DiagnosticSeverity.Error, "add-meta type is boolean",
+            [
+                createDiagnostic(
+                    Range.create(1, "  ".length, 1, "  add-meta".length),
+                    DiagnosticSeverity.Error, "add-meta type is boolean",
+                ),
+                createDiagnostic(
+                    Range.create(3, "  ".length, 3, "  add-meta".length),
+                    DiagnosticSeverity.Error, "add-meta type is boolean",
+                ),
+                createDiagnostic(
+                    Range.create(5, "  ".length, 5, "  add-meta".length),
+                    DiagnosticSeverity.Error, "add-meta type is boolean",
+                ),
+            ],
         ),
-        createDiagnostic(
-          Range.create(3, "  ".length, 3, "  add-meta".length),
-          DiagnosticSeverity.Error, "add-meta type is boolean",
-        ),
-        createDiagnostic(
-          Range.create(5, "  ".length, 5, "  add-meta".length),
-          DiagnosticSeverity.Error, "add-meta type is boolean",
-        ),
-      ],
-    ),
-    new Test(
-      "Correct number settings",
-      `[configuration]
+        new Test(
+            "Correct number settings",
+            `[configuration]
   arrow-length = 1
 [configuration]
   arrow-length = 100000
@@ -77,11 +77,11 @@ suite("Type check tests", () => {
 [configuration]
   arrow-length = 1000.333333333
 `,
-      [],
-    ),
-    new Test(
-      "Incorrect number settings",
-      `[configuration]
+            [],
+        ),
+        new Test(
+            "Incorrect number settings",
+            `[configuration]
   arrow-length = false
 [configuration]
   arrow-length = 5 + 5
@@ -104,93 +104,93 @@ suite("Type check tests", () => {
 [configuration]
   arrow-length = hello 5
 `,
-      [
-        createDiagnostic(
-          Range.create(1, "  ".length, 1, "  arrow-length".length),
-          DiagnosticSeverity.Error, "arrow-length type is number",
+            [
+                createDiagnostic(
+                    Range.create(1, "  ".length, 1, "  arrow-length".length),
+                    DiagnosticSeverity.Error, "arrow-length type is number",
+                ),
+                createDiagnostic(
+                    Range.create(3, "  ".length, 3, "  arrow-length".length),
+                    DiagnosticSeverity.Error, "arrow-length type is number",
+                ),
+                createDiagnostic(
+                    Range.create(5, "  ".length, 5, "  arrow-length".length),
+                    DiagnosticSeverity.Error, "arrow-length type is number",
+                ),
+                createDiagnostic(
+                    Range.create(7, "  ".length, 7, "  arrow-length".length),
+                    DiagnosticSeverity.Error, "arrow-length type is number",
+                ),
+                createDiagnostic(
+                    Range.create(9, "  ".length, 9, "  arrow-length".length),
+                    DiagnosticSeverity.Error, "arrow-length type is number",
+                ),
+                createDiagnostic(
+                    Range.create(11, "  ".length, 11, "  arrow-length".length),
+                    DiagnosticSeverity.Error, "arrow-length type is number",
+                ),
+                createDiagnostic(
+                    Range.create(13, "  ".length, 13, "  arrow-length".length),
+                    DiagnosticSeverity.Error, "arrow-length type is number",
+                ),
+                createDiagnostic(
+                    Range.create(15, "  ".length, 15, "  arrow-length".length),
+                    DiagnosticSeverity.Error, "arrow-length type is number",
+                ),
+                createDiagnostic(
+                    Range.create(17, "  ".length, 17, "  arrow-length".length),
+                    DiagnosticSeverity.Error, "arrow-length type is number",
+                ),
+                createDiagnostic(
+                    Range.create(19, "  ".length, 19, "  arrow-length".length),
+                    DiagnosticSeverity.Error, "arrow-length type is number",
+                ),
+                createDiagnostic(
+                    Range.create(21, "  ".length, 21, "  arrow-length".length),
+                    DiagnosticSeverity.Error, "arrow-length type is number",
+                ),
+            ],
         ),
-        createDiagnostic(
-          Range.create(3, "  ".length, 3, "  arrow-length".length),
-          DiagnosticSeverity.Error, "arrow-length type is number",
-        ),
-        createDiagnostic(
-          Range.create(5, "  ".length, 5, "  arrow-length".length),
-          DiagnosticSeverity.Error, "arrow-length type is number",
-        ),
-        createDiagnostic(
-          Range.create(7, "  ".length, 7, "  arrow-length".length),
-          DiagnosticSeverity.Error, "arrow-length type is number",
-        ),
-        createDiagnostic(
-          Range.create(9, "  ".length, 9, "  arrow-length".length),
-          DiagnosticSeverity.Error, "arrow-length type is number",
-        ),
-        createDiagnostic(
-          Range.create(11, "  ".length, 11, "  arrow-length".length),
-          DiagnosticSeverity.Error, "arrow-length type is number",
-        ),
-        createDiagnostic(
-          Range.create(13, "  ".length, 13, "  arrow-length".length),
-          DiagnosticSeverity.Error, "arrow-length type is number",
-        ),
-        createDiagnostic(
-          Range.create(15, "  ".length, 15, "  arrow-length".length),
-          DiagnosticSeverity.Error, "arrow-length type is number",
-        ),
-        createDiagnostic(
-          Range.create(17, "  ".length, 17, "  arrow-length".length),
-          DiagnosticSeverity.Error, "arrow-length type is number",
-        ),
-        createDiagnostic(
-          Range.create(19, "  ".length, 19, "  arrow-length".length),
-          DiagnosticSeverity.Error, "arrow-length type is number",
-        ),
-        createDiagnostic(
-          Range.create(21, "  ".length, 21, "  arrow-length".length),
-          DiagnosticSeverity.Error, "arrow-length type is number",
-        ),
-      ],
-    ),
-    new Test(
-      "Correct enum settings",
-      `[configuration]
+        new Test(
+            "Correct enum settings",
+            `[configuration]
   bottom-axis = percentiles
   buttons = update
   case = upper
   counter-position = top
   `,
-      [],
-    ),
-    new Test(
-      "Incorrect enum settings",
-      `[configuration]
+            [],
+        ),
+        new Test(
+            "Incorrect enum settings",
+            `[configuration]
   bottom-axis = percentile
   buttons = updat
   case = uppe
   counter-position = to
   `,
-      [
-        createDiagnostic(
-          Range.create(1, "  ".length, 1, "  bottom-axis".length),
-          DiagnosticSeverity.Error, "percentile must be one of none, percentiles, values",
+            [
+                createDiagnostic(
+                    Range.create(1, "  ".length, 1, "  bottom-axis".length),
+                    DiagnosticSeverity.Error, "percentile must be one of none, percentiles, values",
+                ),
+                createDiagnostic(
+                    Range.create(2, "  ".length, 2, "  buttons".length),
+                    DiagnosticSeverity.Error, "updat must be one of menu, update",
+                ),
+                createDiagnostic(
+                    Range.create(3, "  ".length, 3, "  case".length),
+                    DiagnosticSeverity.Error, "uppe must be one of upper, lower",
+                ),
+                createDiagnostic(
+                    Range.create(4, "  ".length, 4, "  counter-position".length),
+                    DiagnosticSeverity.Error, "to must be one of none, top, bottom",
+                ),
+            ],
         ),
-        createDiagnostic(
-          Range.create(2, "  ".length, 2, "  buttons".length),
-          DiagnosticSeverity.Error, "updat must be one of menu, update",
-        ),
-        createDiagnostic(
-          Range.create(3, "  ".length, 3, "  case".length),
-          DiagnosticSeverity.Error, "uppe must be one of upper, lower",
-        ),
-        createDiagnostic(
-          Range.create(4, "  ".length, 4, "  counter-position".length),
-          DiagnosticSeverity.Error, "to must be one of none, top, bottom",
-        ),
-      ],
-    ),
-    new Test(
-      "Correct date tests",
-      `[configuration]
+        new Test(
+            "Correct date tests",
+            `[configuration]
   start-time = 2018
 [configuration]
   start-time = 2018-12
@@ -229,11 +229,11 @@ suite("Type check tests", () => {
 [configuration]
   start-time = current_month - .5 * week
 `,
-      [],
-    ),
-    new Test(
-      "Incorrect date tests",
-      `[configuration]
+            [],
+        ),
+        new Test(
+            "Incorrect date tests",
+            `[configuration]
   start-time = 1969
 [configuration]
   start-time = 2018-13
@@ -276,96 +276,96 @@ suite("Type check tests", () => {
 [configuration]
   start-time = current_month - .5 * my_period
 `,
-      [
-        createDiagnostic(
-          Range.create(1, "  ".length, 1, "  start-time".length),
-          DiagnosticSeverity.Error, "start-time type is date",
+            [
+                createDiagnostic(
+                    Range.create(1, "  ".length, 1, "  start-time".length),
+                    DiagnosticSeverity.Error, "start-time type is date",
+                ),
+                createDiagnostic(
+                    Range.create(3, "  ".length, 3, "  start-time".length),
+                    DiagnosticSeverity.Error, "start-time type is date",
+                ),
+                createDiagnostic(
+                    Range.create(5, "  ".length, 5, "  start-time".length),
+                    DiagnosticSeverity.Error, "start-time type is date",
+                ),
+                createDiagnostic(
+                    Range.create(7, "  ".length, 7, "  start-time".length),
+                    DiagnosticSeverity.Error, "start-time type is date",
+                ),
+                createDiagnostic(
+                    Range.create(9, "  ".length, 9, "  start-time".length),
+                    DiagnosticSeverity.Error, "start-time type is date",
+                ),
+                createDiagnostic(
+                    Range.create(11, "  ".length, 11, "  start-time".length),
+                    DiagnosticSeverity.Error, "start-time type is date",
+                ),
+                createDiagnostic(
+                    Range.create(13, "  ".length, 13, "  start-time".length),
+                    DiagnosticSeverity.Error, "start-time type is date",
+                ),
+                createDiagnostic(
+                    Range.create(15, "  ".length, 15, "  start-time".length),
+                    DiagnosticSeverity.Error, "start-time type is date",
+                ),
+                createDiagnostic(
+                    Range.create(17, "  ".length, 17, "  start-time".length),
+                    DiagnosticSeverity.Error, "start-time type is date",
+                ),
+                createDiagnostic(
+                    Range.create(19, "  ".length, 19, "  start-time".length),
+                    DiagnosticSeverity.Error, "start-time type is date",
+                ),
+                createDiagnostic(
+                    Range.create(21, "  ".length, 21, "  start-time".length),
+                    DiagnosticSeverity.Error, "start-time type is date",
+                ),
+                createDiagnostic(
+                    Range.create(23, "  ".length, 23, "  start-time".length),
+                    DiagnosticSeverity.Error, "start-time type is date",
+                ),
+                createDiagnostic(
+                    Range.create(25, "  ".length, 25, "  start-time".length),
+                    DiagnosticSeverity.Error, "start-time type is date",
+                ),
+                createDiagnostic(
+                    Range.create(27, "  ".length, 27, "  start-time".length),
+                    DiagnosticSeverity.Error, "start-time type is date",
+                ),
+                createDiagnostic(
+                    Range.create(29, "  ".length, 29, "  start-time".length),
+                    DiagnosticSeverity.Error, "start-time type is date",
+                ),
+                createDiagnostic(
+                    Range.create(31, "  ".length, 31, "  start-time".length),
+                    DiagnosticSeverity.Error, "start-time type is date",
+                ),
+                createDiagnostic(
+                    Range.create(33, "  ".length, 33, "  start-time".length),
+                    DiagnosticSeverity.Error, "start-time type is date",
+                ),
+                createDiagnostic(
+                    Range.create(35, "  ".length, 35, "  start-time".length),
+                    DiagnosticSeverity.Error, "start-time type is date",
+                ),
+                createDiagnostic(
+                    Range.create(37, "  ".length, 37, "  start-time".length),
+                    DiagnosticSeverity.Error, "start-time type is date",
+                ),
+                createDiagnostic(
+                    Range.create(39, "  ".length, 39, "  start-time".length),
+                    DiagnosticSeverity.Error, "start-time type is date",
+                ),
+                createDiagnostic(
+                    Range.create(41, "  ".length, 41, "  start-time".length),
+                    DiagnosticSeverity.Error, "start-time type is date",
+                ),
+            ],
         ),
-        createDiagnostic(
-          Range.create(3, "  ".length, 3, "  start-time".length),
-          DiagnosticSeverity.Error, "start-time type is date",
-        ),
-        createDiagnostic(
-          Range.create(5, "  ".length, 5, "  start-time".length),
-          DiagnosticSeverity.Error, "start-time type is date",
-        ),
-        createDiagnostic(
-          Range.create(7, "  ".length, 7, "  start-time".length),
-          DiagnosticSeverity.Error, "start-time type is date",
-        ),
-        createDiagnostic(
-          Range.create(9, "  ".length, 9, "  start-time".length),
-          DiagnosticSeverity.Error, "start-time type is date",
-        ),
-        createDiagnostic(
-          Range.create(11, "  ".length, 11, "  start-time".length),
-          DiagnosticSeverity.Error, "start-time type is date",
-        ),
-        createDiagnostic(
-          Range.create(13, "  ".length, 13, "  start-time".length),
-          DiagnosticSeverity.Error, "start-time type is date",
-        ),
-        createDiagnostic(
-          Range.create(15, "  ".length, 15, "  start-time".length),
-          DiagnosticSeverity.Error, "start-time type is date",
-        ),
-        createDiagnostic(
-          Range.create(17, "  ".length, 17, "  start-time".length),
-          DiagnosticSeverity.Error, "start-time type is date",
-        ),
-        createDiagnostic(
-          Range.create(19, "  ".length, 19, "  start-time".length),
-          DiagnosticSeverity.Error, "start-time type is date",
-        ),
-        createDiagnostic(
-          Range.create(21, "  ".length, 21, "  start-time".length),
-          DiagnosticSeverity.Error, "start-time type is date",
-        ),
-        createDiagnostic(
-          Range.create(23, "  ".length, 23, "  start-time".length),
-          DiagnosticSeverity.Error, "start-time type is date",
-        ),
-        createDiagnostic(
-          Range.create(25, "  ".length, 25, "  start-time".length),
-          DiagnosticSeverity.Error, "start-time type is date",
-        ),
-        createDiagnostic(
-          Range.create(27, "  ".length, 27, "  start-time".length),
-          DiagnosticSeverity.Error, "start-time type is date",
-        ),
-        createDiagnostic(
-          Range.create(29, "  ".length, 29, "  start-time".length),
-          DiagnosticSeverity.Error, "start-time type is date",
-        ),
-        createDiagnostic(
-          Range.create(31, "  ".length, 31, "  start-time".length),
-          DiagnosticSeverity.Error, "start-time type is date",
-        ),
-        createDiagnostic(
-          Range.create(33, "  ".length, 33, "  start-time".length),
-          DiagnosticSeverity.Error, "start-time type is date",
-        ),
-        createDiagnostic(
-          Range.create(35, "  ".length, 35, "  start-time".length),
-          DiagnosticSeverity.Error, "start-time type is date",
-        ),
-        createDiagnostic(
-          Range.create(37, "  ".length, 37, "  start-time".length),
-          DiagnosticSeverity.Error, "start-time type is date",
-        ),
-        createDiagnostic(
-          Range.create(39, "  ".length, 39, "  start-time".length),
-          DiagnosticSeverity.Error, "start-time type is date",
-        ),
-        createDiagnostic(
-          Range.create(41, "  ".length, 41, "  start-time".length),
-          DiagnosticSeverity.Error, "start-time type is date",
-        ),
-      ],
-    ),
-    new Test(
-      "Correct interval tests",
-      `[configuration]
+        new Test(
+            "Correct interval tests",
+            `[configuration]
   disconnect-interval = 1 minute
 [configuration]
   disconnect-interval = 20 hour
@@ -378,11 +378,11 @@ suite("Type check tests", () => {
 [configuration]
   disconnect-interval = all
   `,
-      [],
-    ),
-    new Test(
-      "Incorrect interval tests",
-      `[configuration]
+            [],
+        ),
+        new Test(
+            "Incorrect interval tests",
+            `[configuration]
   disconnect-interval = 1 minutes
 [configuration]
   disconnect-interval = 20 hours
@@ -393,30 +393,30 @@ suite("Type check tests", () => {
 [configuration]
   disconnect-interval = . year
   `,
-      [
-        createDiagnostic(
-          Range.create(1, "  ".length, 1, "  disconnect-interval".length),
-          DiagnosticSeverity.Error, "disconnect-interval type is interval",
+            [
+                createDiagnostic(
+                    Range.create(1, "  ".length, 1, "  disconnect-interval".length),
+                    DiagnosticSeverity.Error, "disconnect-interval type is interval",
+                ),
+                createDiagnostic(
+                    Range.create(3, "  ".length, 3, "  disconnect-interval".length),
+                    DiagnosticSeverity.Error, "disconnect-interval type is interval",
+                ),
+                createDiagnostic(
+                    Range.create(5, "  ".length, 5, "  disconnect-interval".length),
+                    DiagnosticSeverity.Error, "disconnect-interval type is interval",
+                ),
+                createDiagnostic(
+                    Range.create(7, "  ".length, 7, "  disconnect-interval".length),
+                    DiagnosticSeverity.Error, "disconnect-interval type is interval",
+                ),
+                createDiagnostic(
+                    Range.create(9, "  ".length, 9, "  disconnect-interval".length),
+                    DiagnosticSeverity.Error, "disconnect-interval type is interval",
+                ),
+            ],
         ),
-        createDiagnostic(
-          Range.create(3, "  ".length, 3, "  disconnect-interval".length),
-          DiagnosticSeverity.Error, "disconnect-interval type is interval",
-        ),
-        createDiagnostic(
-          Range.create(5, "  ".length, 5, "  disconnect-interval".length),
-          DiagnosticSeverity.Error, "disconnect-interval type is interval",
-        ),
-        createDiagnostic(
-          Range.create(7, "  ".length, 7, "  disconnect-interval".length),
-          DiagnosticSeverity.Error, "disconnect-interval type is interval",
-        ),
-        createDiagnostic(
-          Range.create(9, "  ".length, 9, "  disconnect-interval".length),
-          DiagnosticSeverity.Error, "disconnect-interval type is interval",
-        ),
-      ],
-    ),
-  ];
+    ];
 
-  tests.forEach((test: Test): void => { test.validationTest(); });
+    tests.forEach((test: Test): void => { test.validationTest(); });
 });
