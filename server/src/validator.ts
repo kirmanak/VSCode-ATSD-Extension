@@ -1,6 +1,7 @@
 import { Diagnostic, DiagnosticSeverity, Position, Range } from "vscode-languageserver";
 import {
-    booleanRegExp, integerRegExp, intervalRegExp, numberRegExp, parentSections, possibleSections,
+    booleanRegExp, getParents, integerRegExp, intervalRegExp, numberRegExp, parentSections,
+    possibleSections,
     requiredSectionSettingsMap,
 } from "./resources";
 import { Setting } from "./setting";
@@ -358,10 +359,29 @@ export class Validator {
             this.addToSettingArray(this.currentSettings);
         }
 
-        if (isInMap(setting, this.parentSettings)) {
+        if (this.checkShadowing(setting)) {
             // The setting was defined before in a parent section
             this.result.push(createDiagnostic(location, DiagnosticSeverity.Hint, message));
         }
+    }
+
+    /**
+     * Creates diagnostics for each shadowed setting
+     * Shadowed setting - setting declared previously in a parent section
+     * @param setting the setting to check
+     * @returns true, if setting was declared before
+     */
+    private checkShadowing(setting: Setting): boolean {
+        if (this.currentSection) {
+            for (const parent of getParents(this.currentSection.text)) {
+                const parentSettings: Setting[] = this.parentSettings.get(parent);
+                if (parentSettings && parentSettings.includes(setting)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     /**

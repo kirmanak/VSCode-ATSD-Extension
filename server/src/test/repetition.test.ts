@@ -278,6 +278,24 @@ script = stylesheet.innerHTML = ".axi-calendarchart .axi-chart-series rect:not([
 script = document.head.appendChild(stylesheet);`,
             [],
         ),
+        new Test(
+            "Correct nodes and links",
+            `[node]
+      id = mgr_B805B19C
+      label = MQMGR01.QM
+      parent = MQMGR01
+
+    [node]
+      id = DPOWER004
+
+    [node]
+      id = DP.QM2
+      parent = DPOWER004
+
+    [link]
+      label = SWIFT.WPS.1.CH`,
+            [],
+        ),
     ];
 
     tests.forEach((test: Test) => { test.validationTest(); });
