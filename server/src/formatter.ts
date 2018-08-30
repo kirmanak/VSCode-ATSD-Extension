@@ -22,6 +22,10 @@ export class Formatter {
         this.lines = text.split("\n");
     }
 
+    /**
+     * Reads the document line by line and calls corresponding formatting functions
+     * @returns array of text edits to properly format document
+     */
     public lineByLine(): TextEdit[] {
         this.lines.forEach((line: string, index: number) => {
             this.currentLine = index;
@@ -58,6 +62,9 @@ export class Formatter {
         return this.edits;
     }
 
+    /**
+     * Calculates current indent based on current state
+     */
     private calculateIndent(): void {
         this.previous = this.current;
         this.current = this.match[Formatter.CONTENT_POSITION];
@@ -74,6 +81,9 @@ export class Formatter {
         }
     }
 
+    /**
+     * Creates a text edit if the current indent is incorrect
+     */
     private checkIndent(): void {
         this.match = /(^\s*)\S/.exec(this.getCurrentLine());
         if (this.match[1] !== this.currentIndent) {
@@ -84,6 +94,9 @@ export class Formatter {
         }
     }
 
+    /**
+     * Decreases the current indent by one
+     */
     private decreaseIndent(): void {
         if (this.currentIndent.length === 0) { return; }
         let newLength: number = this.currentIndent.length;
@@ -95,10 +108,19 @@ export class Formatter {
         this.currentIndent = this.currentIndent.substring(0, newLength);
     }
 
+    /**
+     * @returns current line
+     */
     private getCurrentLine(): string {
         return this.getLine(this.currentLine);
     }
 
+    /**
+     * Caches last returned line in this.lastLineNumber
+     * To prevent several calls toLowerCase and removeExtraSpaces
+     * @param i the required line number
+     * @returns the required line
+     */
     private getLine(i: number): string {
         if (this.lastLineNumber !== i) {
             const line: string = this.lines[i].toLowerCase();
@@ -110,6 +132,9 @@ export class Formatter {
         return this.lastLine;
     }
 
+    /**
+     * Increases current indent by one
+     */
     private increaseIndent(): void {
         let addition: string = "\t";
         if (this.options.insertSpaces) {
@@ -120,15 +145,24 @@ export class Formatter {
         this.currentIndent += addition;
     }
 
+    /**
+     * @returns true if the current line contains white spaces or nothing, false otherwise
+     */
     private isEmpty(): boolean {
         return /^\s*$/.test(this.getCurrentLine());
     }
 
+    /**
+     * @returns true if the current section is nested in the previous section
+     */
     private isNested(): boolean {
         return getParents(this.current)
             .includes(this.previous);
     }
 
+    /**
+     * @returns true if current and previous section must be placed on the same indent level
+     */
     private isSameLevel(): boolean {
         return (this.previous === undefined) || (this.current === this.previous) ||
             (this.current === "group" && this.previous === "configuration") ||
@@ -138,12 +172,19 @@ export class Formatter {
             (this.current === "node" && this.previous === "link");
     }
 
+    /**
+     * @returns true, if current line is section declaration
+     */
     private isSection(): boolean {
         this.match = /(^\s*)\[([a-z]+)\]/.exec(this.getCurrentLine());
 
         return this.match !== null;
     }
 
+    /**
+     * Removes trailing spaces (at the end and at the beginning)
+     * @param line the target line
+     */
     private removeExtraSpaces(line: string): void {
         const match: RegExpExecArray = /(\s+)$/.exec(line);
         if (match) {
@@ -153,10 +194,17 @@ export class Formatter {
         }
     }
 
+    /**
+     * Sets current indent to the provided
+     * @param newIndent the new indent
+     */
     private setIndent(newIndent: string): void {
         this.currentIndent = newIndent;
     }
 
+    /**
+     * @returns true if current keyword should be closed
+     */
     private shouldBeClosed(): boolean {
         const line: string = this.getCurrentLine();
         this.match = /^[ \t]*((?:var|list)|script =)/.exec(line);
