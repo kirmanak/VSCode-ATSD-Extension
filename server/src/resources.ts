@@ -29,7 +29,7 @@ const createSettingsMap: () => Map<string, Setting> = (): Map<string, Setting> =
         }
     }
 
-    return settingsMap;
+    return map;
 };
 export const settingsMap: Map<string, Setting> = createSettingsMap();
 
@@ -96,7 +96,7 @@ export const parentSections: Map<string, string[]> = new Map([
 ]);
 
 /**
- * Returns array of parent sections for the section
+ * @returns array of parent sections for the section
  */
 export const getParents: (section: string) => string[] = (section: string): string[] => {
     let parents: string[] = [];
