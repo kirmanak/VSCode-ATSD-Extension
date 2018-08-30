@@ -21,6 +21,7 @@
             "section": "widget",
             "example": "value > 5",
             "script": {
+                "returnValue": "boolean",
                 "fields": [
                     {
                         "name": "metric",
@@ -76,23 +77,28 @@
                     },
                     {
                         "name": "detail",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "forecast",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "forecast_deviation",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "lower_confidence",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "upper_confidence",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "percentile",
@@ -303,15 +309,19 @@
                     },
                     {
                         "name": "threshold_count",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "threshold_percent",
-                        "type": null
+                        "type": "function",
+                        "args": null
+
                     },
                     {
                         "name": "threshold_duration",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "time",
@@ -413,8 +423,7 @@
                         "name": "series",
                         "type": "array"
                     }
-                ],
-                "returnValue": "boolean"
+                ]
             }
         },
         {
@@ -957,23 +966,28 @@
                     },
                     {
                         "name": "detail",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "forecast",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "forecast_deviation",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "lower_confidence",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "upper_confidence",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "percentile",
@@ -1184,15 +1198,19 @@
                     },
                     {
                         "name": "threshold_count",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "threshold_percent",
-                        "type": null
+                        "type": "function",
+                        "args": null
+
                     },
                     {
                         "name": "threshold_duration",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "time",
@@ -1517,23 +1535,28 @@
                     },
                     {
                         "name": "detail",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "forecast",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "forecast_deviation",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "lower_confidence",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "upper_confidence",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "percentile",
@@ -1744,15 +1767,19 @@
                     },
                     {
                         "name": "threshold_count",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "threshold_percent",
-                        "type": null
+                        "type": "function",
+                        "args": null
+
                     },
                     {
                         "name": "threshold_duration",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "time",
@@ -3038,23 +3065,28 @@
                     },
                     {
                         "name": "detail",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "forecast",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "forecast_deviation",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "lower_confidence",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "upper_confidence",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "percentile",
@@ -3265,15 +3297,19 @@
                     },
                     {
                         "name": "threshold_count",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "threshold_percent",
-                        "type": null
+                        "type": "function",
+                        "args": null
+
                     },
                     {
                         "name": "threshold_duration",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "time",
@@ -3702,23 +3738,28 @@
                     },
                     {
                         "name": "detail",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "forecast",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "forecast_deviation",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "lower_confidence",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "upper_confidence",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "percentile",
@@ -3929,15 +3970,19 @@
                     },
                     {
                         "name": "threshold_count",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "threshold_percent",
-                        "type": null
+                        "type": "function",
+                        "args": null
+
                     },
                     {
                         "name": "threshold_duration",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "time",
@@ -4218,23 +4263,28 @@
                     },
                     {
                         "name": "detail",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "forecast",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "forecast_deviation",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "lower_confidence",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "upper_confidence",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "percentile",
@@ -4445,15 +4495,19 @@
                     },
                     {
                         "name": "threshold_count",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "threshold_percent",
-                        "type": null
+                        "type": "function",
+                        "args": null
+
                     },
                     {
                         "name": "threshold_duration",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "time",
@@ -5248,23 +5302,28 @@
                     },
                     {
                         "name": "detail",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "forecast",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "forecast_deviation",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "lower_confidence",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "upper_confidence",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "percentile",
@@ -5475,15 +5534,19 @@
                     },
                     {
                         "name": "threshold_count",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "threshold_percent",
-                        "type": null
+                        "type": "function",
+                        "args": null
+
                     },
                     {
                         "name": "threshold_duration",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "time",
@@ -5684,23 +5747,28 @@
                     },
                     {
                         "name": "detail",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "forecast",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "forecast_deviation",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "lower_confidence",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "upper_confidence",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "percentile",
@@ -5911,15 +5979,19 @@
                     },
                     {
                         "name": "threshold_count",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "threshold_percent",
-                        "type": null
+                        "type": "function",
+                        "args": null
+
                     },
                     {
                         "name": "threshold_duration",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "time",
@@ -6321,23 +6393,28 @@
                     },
                     {
                         "name": "detail",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "forecast",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "forecast_deviation",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "lower_confidence",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "upper_confidence",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "percentile",
@@ -6548,15 +6625,19 @@
                     },
                     {
                         "name": "threshold_count",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "threshold_percent",
-                        "type": null
+                        "type": "function",
+                        "args": null
+
                     },
                     {
                         "name": "threshold_duration",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "time",
@@ -6801,23 +6882,28 @@
                     },
                     {
                         "name": "detail",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "forecast",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "forecast_deviation",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "lower_confidence",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "upper_confidence",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "percentile",
@@ -7028,15 +7114,19 @@
                     },
                     {
                         "name": "threshold_count",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "threshold_percent",
-                        "type": null
+                        "type": "function",
+                        "args": null
+
                     },
                     {
                         "name": "threshold_duration",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "time",
@@ -7242,23 +7332,28 @@
                     },
                     {
                         "name": "detail",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "forecast",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "forecast_deviation",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "lower_confidence",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "upper_confidence",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "percentile",
@@ -7469,15 +7564,19 @@
                     },
                     {
                         "name": "threshold_count",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "threshold_percent",
-                        "type": null
+                        "type": "function",
+                        "args": null
+
                     },
                     {
                         "name": "threshold_duration",
-                        "type": null
+                        "type": "function",
+                        "args": null
                     },
                     {
                         "name": "time",
