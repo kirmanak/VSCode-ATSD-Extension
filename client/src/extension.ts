@@ -112,7 +112,7 @@ const askUrl: () => Promise<string> = async (): Promise<string> => {
     try {
         url = await window.showInputBox({
             ignoreFocusOut: true, placeHolder: "http(s)://atsd_host:port",
-            prompt: "Can be stored permanently in 'axibaseCharts.url' setting",
+            prompt: "Enter the target ATSD URL. Can be stored permanently in 'axibaseCharts.url' setting",
         });
     } catch (err) {
         return Promise.reject(err);
