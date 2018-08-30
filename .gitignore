@@ -4,3 +4,4 @@ server/.vscode-test
 client/out
 *.vsix
 *.swp
+examples/.vscode/settings.json

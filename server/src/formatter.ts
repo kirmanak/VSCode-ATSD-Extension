@@ -35,7 +35,7 @@ export class Formatter {
             }
             if (TextRange.isClosing(line)) {
                 const stackHead: string = this.keywordsLevels.pop();
-                if (stackHead) {
+                if (stackHead !== undefined) {
                     this.setIndent(stackHead);
                     if (TextRange.isNotCloseAble(line)) {
                         this.keywordsLevels.push(stackHead);
