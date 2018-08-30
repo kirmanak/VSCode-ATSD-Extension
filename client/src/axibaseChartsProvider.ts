@@ -40,12 +40,17 @@ export class AxibaseChartsProvider implements TextDocumentContentProvider {
           ignoreFocusOut: true, placeHolder: "http(s)://atsd_host:port",
           prompt: "Can be stored permanently in 'axibaseCharts.url' setting",
         });
-        if (!this.url) {
-          window.showInformationMessage("You did not specify an URL address");
-
-          return Promise.reject();
-        }
       }
+    }
+    if (!this.url) {
+      window.showInformationMessage("You did not specify an URL address");
+
+      return Promise.reject();
+    }
+    if (!this.validateUrl()) {
+      window.showErrorMessage("The specified URL is incorrect!");
+
+      return Promise.reject();
     }
     this.clearUrl();
     this.replaceImports();
@@ -95,6 +100,10 @@ export class AxibaseChartsProvider implements TextDocumentContentProvider {
 
   public update(uri: Uri): void {
     this.onDidChangeEmitter.fire(uri);
+  }
+
+  public validateUrl(): boolean {
+    return /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/.test(this.url);
   }
 
   private addUrl(): void {
