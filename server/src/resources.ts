@@ -110,7 +110,11 @@ export const zonedDateRegExp: RegExp = new RegExp(
  */
 export const parentSections: Map<string, string[]> = new Map([
     ["widget", ["group", "configuration"]],
-    ["series", ["widget"]],
+    ["series", ["widget", "column"]],
+    ["tag", ["series"]],
+    ["column", ["widget"]],
+    ["node", ["widget"]],
+    ["link", ["widget"]],
 ]);
 
 /**
