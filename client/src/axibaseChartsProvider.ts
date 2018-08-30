@@ -36,10 +36,7 @@ export class AxibaseChartsProvider implements TextDocumentContentProvider {
     if (!this.url) {
       this.url = configuration.get("url");
       if (!this.url) {
-        this.url = await window.showInputBox({
-          ignoreFocusOut: true, placeHolder: "http(s)://atsd_host:port",
-          prompt: "Can be stored permanently in 'axibaseCharts.url' setting",
-        });
+        await this.askUrl();
       }
     }
     if (!this.url) {
@@ -47,11 +44,7 @@ export class AxibaseChartsProvider implements TextDocumentContentProvider {
 
       return Promise.reject();
     }
-    if (!this.validateUrl()) {
-      window.showErrorMessage("The specified URL is incorrect!");
 
-      return Promise.reject();
-    }
     this.clearUrl();
     this.replaceImports();
 
@@ -119,6 +112,18 @@ export class AxibaseChartsProvider implements TextDocumentContentProvider {
     }
     this.text = `${this.text.substr(0, match.index + match[0].length + 1)}  url = ${this.withCredentials}
 ${this.text.substr(match.index + match[0].length + 1)}`;
+  }
+
+  private async askUrl(): Promise<void> {
+    this.url = await window.showInputBox({
+      ignoreFocusOut: true, placeHolder: "http(s)://atsd_host:port",
+      prompt: "Can be stored permanently in 'axibaseCharts.url' setting",
+    });
+    if (this.url && !this.validateUrl()) {
+      window.showErrorMessage("The specified URL is incorrect!");
+
+      await this.askUrl();
+    }
   }
 
   private clearUrl(): void {
