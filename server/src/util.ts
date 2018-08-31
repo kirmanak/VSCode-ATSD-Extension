@@ -69,12 +69,12 @@ export const mapToArray: (map: Map<string, string[]>) => string[] = (map: Map<st
  * @param dictionary the dictionary to perform search
  * @returns message containing a suggestion if found one
  */
-export const suggestionMessage: (word: string, dictionary: Iterable<string>) => string =
-    (word: string, dictionary: string[]): string => {
-        if (!word || !dictionary) {
-            return undefined;
+export const suggestionMessage: (word: string, dictionary?: Iterable<string>) => string =
+    (word: string, dictionary?: Iterable<string>): string => {
+        if (!dictionary) {
+            return errorMessage(word);
         }
-        let suggestion: string;
+        let suggestion: string | undefined;
         let min: number = Number.MAX_VALUE;
         for (const value of dictionary) {
             if (value) {
@@ -104,7 +104,10 @@ export const getSetting: (name: string) => Setting | undefined = (name: string):
  * @param line a CSV-formatted line
  * @returns number of CSV columns in the line
  */
-export const countCsvColumns: (line: string) => number = (line: string): number => {
+export const countCsvColumns: (line?: string) => number = (line?: string): number => {
+    if (!line) {
+        return 0;
+    }
     const regex: RegExp = /(['"]).+\1|[^, \t]+/g;
     let counter: number = 0;
     while (regex.exec(line)) {
@@ -133,7 +136,7 @@ export const deleteComments: (text: string) => string = (text: string): string =
     let content: string = text;
     const multiLine: RegExp = /\/\*[\s\S]*?\*\//g;
     const oneLine: RegExp = /^[ \t]*#.*/mg;
-    let match: RegExpExecArray = multiLine.exec(content);
+    let match: RegExpExecArray | null = multiLine.exec(content);
     if (!match) {
         match = oneLine.exec(content);
     }
@@ -163,9 +166,9 @@ export const deleteComments: (text: string) => string = (text: string): string =
  * @param suggestion the variant which is present in memory
  * @returns message with or without a suggestion
  */
-export const errorMessage: (found: string, suggestion: string) => string =
-    (found: string, suggestion: string): string =>
-        (suggestion === undefined) ? `${found} is unknown.` : `${found} is unknown. Suggestion: ${suggestion}`;
+export const errorMessage: (found: string, suggestion?: string) => string =
+    (found: string, suggestion?: string): string =>
+        (suggestion) ? `${found} is unknown. Suggestion: ${suggestion}` : `${found} is unknown.`;
 
 /**
  * Replaces scripts body with newline character
@@ -188,10 +191,11 @@ export const isDate: (text: string) => boolean = (text: string): boolean =>
  * @param array the target array
  * @returns array containing both source array content and display names
  */
-export const addDisplayNames: (array: string[]) => string[] = (array: string[]): string[] => {
+export const addDisplayNames: (array?: string[]) => string[] = (array?: string[]): string[] => {
+    const result: string[] = (array) ? array : [];
     for (const item of settingsMap.values()) {
-        array.push(item.displayName);
+        result.push(item.displayName);
     }
 
-    return array;
+    return result;
 };

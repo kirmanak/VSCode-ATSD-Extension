@@ -24,8 +24,8 @@ export class TextRange {
     }
 
     public static parse(line: string, i: number): TextRange | undefined {
-        const match: RegExpExecArray = TextRange.KEYWORD_REGEXP.exec(line);
-        if (match === null) {
+        const match: RegExpExecArray | null = TextRange.KEYWORD_REGEXP.exec(line);
+        if (!match) {
             return undefined;
         }
         const keywordStart: number = match[1].length;
@@ -37,7 +37,6 @@ export class TextRange {
 
     private static readonly KEYWORD_POSITION: number = 2;
 
-    public readonly range: Range;
-    public readonly text: string;
-
+    public readonly range: Range | undefined;
+    public readonly text: string | undefined;
 }

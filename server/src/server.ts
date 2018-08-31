@@ -16,7 +16,7 @@ const connection: IConnection = createConnection(ProposedFeatures.all);
 // Create a simple text document manager.
 const documents: TextDocuments = new TextDocuments();
 
-let hasConfigurationCapability: boolean = false;
+let hasConfigurationCapability: boolean | undefined = false;
 
 connection.onInitialize((params: InitializeParams) => {
     const capabilities: ClientCapabilities = params.capabilities;
@@ -72,7 +72,7 @@ const getDocumentSettings: (resource: string) => Thenable<IServerSettings> =
         if (!hasConfigurationCapability) {
             return Promise.resolve(globalSettings);
         }
-        let result: Thenable<IServerSettings> = documentSettings.get(resource);
+        let result: Thenable<IServerSettings> | undefined = documentSettings.get(resource);
         if (!result) {
             result = connection.workspace.getConfiguration({
                 scopeUri: resource,
@@ -113,15 +113,21 @@ const validateTextDocument: (textDocument: TextDocument) => Promise<void> =
     };
 
 connection.onDocumentFormatting((params: DocumentFormattingParams): TextEdit[] => {
-    const text: string = documents.get(params.textDocument.uri)
-        .getText();
+    const document: TextDocument | undefined = documents.get(params.textDocument.uri);
+    if (!document) {
+        return [];
+    }
+    const text: string | undefined = document.getText();
     const formatter: Formatter = new Formatter(text, params.options);
 
     return formatter.lineByLine();
 });
 
 connection.onCompletion((params: CompletionParams): CompletionItem[] => {
-    const textDocument: TextDocument = documents.get(params.textDocument.uri);
+    const textDocument: TextDocument | undefined = documents.get(params.textDocument.uri);
+    if (!textDocument) {
+        return [];
+    }
     const completionProvider: CompletionProvider = new CompletionProvider(textDocument, params.position);
 
     return completionProvider.getCompletionItems();

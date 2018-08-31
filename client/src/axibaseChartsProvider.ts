@@ -7,14 +7,13 @@ import {
 } from "vscode";
 
 export class AxibaseChartsProvider implements TextDocumentContentProvider {
-    private auth: boolean;
-    private cookie: string;
+    private cookie: string | undefined;
     private readonly onDidChangeEmitter: EventEmitter<Uri>;
-    private password: string;
-    private text: string;
+    private password: string | undefined;
+    private text: string | undefined;
     private url: string;
-    private username: string;
-    private withCredentials: string;
+    private username: string | undefined;
+    private withCredentials: string | undefined;
 
     public get onDidChange(): Event<Uri> {
         return this.onDidChangeEmitter.event;
@@ -24,17 +23,15 @@ export class AxibaseChartsProvider implements TextDocumentContentProvider {
         this.onDidChangeEmitter = new EventEmitter<Uri>();
         this.url = url;
         if (username && password) {
-            this.auth = true;
             this.username = username;
             this.password = password;
         } else {
-            this.auth = false;
             this.withCredentials = this.url;
         }
     }
 
     public async provideTextDocumentContent(): Promise<string> {
-        const editor: TextEditor = window.activeTextEditor;
+        const editor: TextEditor | undefined = window.activeTextEditor;
         if (!editor) {
             return Promise.reject();
         }
@@ -46,7 +43,7 @@ export class AxibaseChartsProvider implements TextDocumentContentProvider {
         this.clearUrl();
         this.replaceImports();
 
-        if (this.auth && !this.cookie) {
+        if (this.password && this.username && !this.cookie) {
             try {
                 [this.withCredentials, this.cookie] = await this.performRequest(this.username, this.password);
                 if (new URL(this.withCredentials).pathname.includes("login")) {
@@ -60,8 +57,8 @@ export class AxibaseChartsProvider implements TextDocumentContentProvider {
 
                 return Promise.reject(err);
             } finally {
-                this.username = undefined;
-                this.password = undefined;
+                delete this.password;
+                delete this.username;
             }
         }
         this.addUrl();
@@ -75,7 +72,10 @@ export class AxibaseChartsProvider implements TextDocumentContentProvider {
     }
 
     private addUrl(): void {
-        let match: RegExpExecArray = /^[ \t]*\[configuration\]/mi.exec(this.text);
+        if (!this.text) {
+            this.text = "[configuration]";
+        }
+        let match: RegExpExecArray | null = /^[ \t]*\[configuration\]/mi.exec(this.text);
         if (match === null) {
             match = /\S/.exec(this.text);
             if (match === null) {
@@ -85,14 +85,16 @@ export class AxibaseChartsProvider implements TextDocumentContentProvider {
                 `${this.text.substr(0, match.index - 1)}[configuration]\n  ${this.text.substr(match.index)}`;
             match = /^[ \t]*\[configuration\]/i.exec(this.text);
         }
-        this.text = `${this.text.substr(0, match.index + match[0].length + 1)}  url = ${this.withCredentials}
+        if (match) {
+            this.text = `${this.text.substr(0, match.index + match[0].length + 1)}  url = ${this.withCredentials}
 ${this.text.substr(match.index + match[0].length + 1)}`;
+        }
     }
 
     private clearUrl(): void {
         this.url = this.url.trim()
             .toLowerCase();
-        const match: RegExpExecArray = /\/+$/.exec(this.url);
+        const match: RegExpExecArray | null = /\/+$/.exec(this.url);
         if (match) {
             this.url = this.url.substr(0, match.index);
         }
@@ -160,30 +162,42 @@ document.cookie = "${this.cookie}";
         const request: (options: RequestOptions | string | URL, callback?: (res: IncomingMessage) => void)
             => ClientRequest = (url.protocol === "https:") ? https : http;
 
-        return new Promise<[string, string]>(
-            (resolve: (value: [string, string]) => void, reject: (reason: Error) => void): void => {
-                const outgoing: OutgoingMessage = request(options, (res: IncomingMessage) => {
-                    res.on("error", reject);
-                    const expectedStatusCode: number = 302;
-                    if (res.statusCode !== expectedStatusCode) {
-                        reject(new Error(`HTTP response code: ${res.statusCode}`));
+        return new Promise<[string, string]>((
+            resolve: (value: [string, string]) => void, reject: (reason: Error) => void): void => {
+            const outgoing: OutgoingMessage = request(options, (res: IncomingMessage) => {
+                res.on("error", reject);
+                const expectedStatusCode: number = 302;
+                if (res.statusCode !== expectedStatusCode) {
+                    return reject(new Error(`HTTP response code: ${res.statusCode}`));
+                }
+                if (res.headers) {
+                    const location: string | undefined = res.headers.location;
+                    const setCookie: string[] | undefined = res.headers["set-cookie"];
+                    if (!setCookie) {
+                        return reject(new Error("Empty cookie"));
                     }
-                    const location: string = res.headers.location;
-                    const cookie: string = res.headers["set-cookie"].join(";");
+                    const cookie: string | undefined = setCookie.join(";");
+                    if (location && cookie) {
+                        return resolve([location, cookie]);
+                    }
+                }
 
-                    resolve([location, cookie]);
-                });
-                outgoing.on("error", reject);
-                outgoing.write(data);
-                outgoing.end();
+                return reject(new Error("Empty headers"));
             });
+            outgoing.on("error", reject);
+            outgoing.write(data);
+            outgoing.end();
+        });
     }
 
     private replaceImports(): void {
+        if (!this.text) {
+            this.text = "";
+        }
         const address: string = (/\//.test(this.url)) ? `${this.url}/portal/resource/scripts/` : this.url;
         const regexp: RegExp = /(^\s*import\s+\S+\s*=\s*)(\S+)\s*$/mg;
         const urlPosition: number = 2;
-        let match: RegExpExecArray = regexp.exec(this.text);
+        let match: RegExpExecArray | null = regexp.exec(this.text);
         while (match) {
             const external: string = match[urlPosition];
             if (!/\//.test(external)) {
@@ -200,7 +214,7 @@ const deleteComments: (text: string) => string = (text: string): string => {
     let content: string = text;
     const multiLine: RegExp = /\/\*[\s\S]*?\*\//g;
     const oneLine: RegExp = /^[ \t]*#.*/mg;
-    let match: RegExpExecArray = multiLine.exec(content);
+    let match: RegExpExecArray | null = multiLine.exec(content);
     if (!match) {
         match = oneLine.exec(content);
     }

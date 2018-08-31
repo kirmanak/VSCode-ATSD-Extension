@@ -47,18 +47,20 @@ export const activate: (context: ExtensionContext) => void = async (context: Ext
     // Start the client. This will also launch the server
     client.start();
     const previewUri: string = "axibaseCharts://authority/axibaseCharts";
-    let provider: AxibaseChartsProvider;
+    let provider: AxibaseChartsProvider | undefined;
     const saveListener: Disposable = workspace.onDidSaveTextDocument((document: TextDocument) => {
-        if (document.uri === window.activeTextEditor.document.uri) {
+        if (window.activeTextEditor && document.uri === window.activeTextEditor.document.uri && provider) {
             provider.update(Uri.parse(previewUri));
         }
     });
     const changeListener: Disposable = window.onDidChangeActiveTextEditor(() => {
-        provider.update(Uri.parse(previewUri));
+        if (provider) {
+            provider.update(Uri.parse(previewUri));
+        }
     });
     const showCommand: Disposable = commands.registerCommand("axibasecharts.showPortal", async (): Promise<void> => {
         if (!provider) {
-            let url: string = configuration.get("url");
+            let url: string | undefined = configuration.get("url");
             if (!url) {
                 try {
                     url = await askUrl();
@@ -66,7 +68,7 @@ export const activate: (context: ExtensionContext) => void = async (context: Ext
                     return Promise.reject(err);
                 }
             }
-            let username: string = configuration.get("username");
+            let username: string | undefined = configuration.get("username");
             if (!username) {
                 try {
                     username = await window.showInputBox({
@@ -78,7 +80,7 @@ export const activate: (context: ExtensionContext) => void = async (context: Ext
                     username = undefined;
                 }
             }
-            let password: string;
+            let password: string | undefined;
             if (username) {
                 try {
                     password = await window.showInputBox({
@@ -105,7 +107,7 @@ export const activate: (context: ExtensionContext) => void = async (context: Ext
 
 export const deactivate: () => Thenable<void> = (): Thenable<void> => {
     if (!client) {
-        return undefined;
+        return Promise.resolve();
     }
 
     return client.stop();
@@ -115,7 +117,7 @@ const validateUrl: (url: string) => boolean = (url: string): boolean => urlRegex
     .test(url);
 
 const askUrl: () => Promise<string> = async (): Promise<string> => {
-    const url: string = await window.showInputBox({
+    const url: string | undefined = await window.showInputBox({
         ignoreFocusOut: true, placeHolder: "http(s)://atsd_host:port",
         prompt: "Enter the target ATSD URL. Can be stored permanently in 'axibaseCharts.url' setting",
     });
