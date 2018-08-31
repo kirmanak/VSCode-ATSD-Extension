@@ -84,11 +84,18 @@
                 "path": "./snippets/snippets.json"
             }
         ],
-        "commands": {
-            "command": "axibasecharts.showPortal",
-            "title": "Show preview",
-            "category": "Axibase Charts"
-        },
+        "commands": [
+            {
+                "command": "axibasecharts.showPortal",
+                "title": "Show preview",
+                "category": "Axibase Charts"
+            },
+            {
+                "command": "axibasecharts.changeUrl",
+                "title": "Change the target ATSD",
+                "category": "Axibase Charts"
+            }
+        ],
         "menus": {
             "editor/title": [
                 {

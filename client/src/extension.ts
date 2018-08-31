@@ -1,4 +1,6 @@
 import { join } from "path";
+// tslint:disable-next-line:no-require-imports
+import urlRegex = require("url-regex");
 import {
     commands, Disposable, ExtensionContext, TextDocument, Uri, ViewColumn, window, workspace, WorkspaceConfiguration,
 } from "vscode";
@@ -54,7 +56,7 @@ export const activate: (context: ExtensionContext) => void = async (context: Ext
     const changeListener: Disposable = window.onDidChangeActiveTextEditor(() => {
         provider.update(Uri.parse(previewUri));
     });
-    const disposable: Disposable = commands.registerCommand("axibasecharts.showPortal", async (): Promise<void> => {
+    const showCommand: Disposable = commands.registerCommand("axibasecharts.showPortal", async (): Promise<void> => {
         if (!provider) {
             let url: string = configuration.get("url");
             if (!url) {
@@ -89,11 +91,16 @@ export const activate: (context: ExtensionContext) => void = async (context: Ext
             }
             provider = new AxibaseChartsProvider(url, username, password);
             context.subscriptions.push(workspace.registerTextDocumentContentProvider("axibaseCharts", provider));
+            provider.update(Uri.parse(previewUri));
         }
 
         commands.executeCommand("vscode.previewHtml", previewUri, ViewColumn.Two, "Portal");
     });
-    context.subscriptions.push(disposable, saveListener, changeListener);
+    const changeCommand: Disposable = commands.registerCommand("axibasecharts.changeUrl", (): void => {
+        provider = undefined;
+        commands.executeCommand("axibasecharts.showPortal");
+    });
+    context.subscriptions.push(showCommand, saveListener, changeListener, changeCommand);
 };
 
 export const deactivate: () => Thenable<void> = (): Thenable<void> => {
@@ -104,18 +111,16 @@ export const deactivate: () => Thenable<void> = (): Thenable<void> => {
     return client.stop();
 };
 
-const validateUrl: (url: string) => boolean = (url: string): boolean =>
-    /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/.test(url);
+const validateUrl: (url: string) => boolean = (url: string): boolean => urlRegex({ exact: true, strict: true })
+    .test(url);
 
 const askUrl: () => Promise<string> = async (): Promise<string> => {
-    let url: string;
-    try {
-        url = await window.showInputBox({
-            ignoreFocusOut: true, placeHolder: "http(s)://atsd_host:port",
-            prompt: "Enter the target ATSD URL. Can be stored permanently in 'axibaseCharts.url' setting",
-        });
-    } catch (err) {
-        return Promise.reject(err);
+    const url: string = await window.showInputBox({
+        ignoreFocusOut: true, placeHolder: "http(s)://atsd_host:port",
+        prompt: "Enter the target ATSD URL. Can be stored permanently in 'axibaseCharts.url' setting",
+    });
+    if (!url) {
+        return Promise.reject("URL is not specified");
     }
 
     if (!validateUrl(url)) {
