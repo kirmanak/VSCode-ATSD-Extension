@@ -284,6 +284,27 @@ export class Validator {
     }
 
     /**
+     * Creates diagnostics for statements like `${variable}`
+     * where the `variable` is not defined
+     */
+    private checkFreemarkerValue(): void {
+        const line: string = this.getCurrentLine();
+        this.match = /\$\{(\w+).*\}/.exec(this.match[3]);
+        if (this.match) {
+            const freeMarkerVariables: string[] | undefined = this.variables.get("freemarker");
+            if (!freeMarkerVariables || !freeMarkerVariables.includes(this.match[1])) {
+                this.result.push(createDiagnostic(
+                    Range.create(
+                        this.currentLineNumber, line.indexOf(this.match[1]),
+                        this.currentLineNumber, line.indexOf(this.match[1]) + this.match[1].length,
+                    ),
+                    DiagnosticSeverity.Error, suggestionMessage(this.match[1], freeMarkerVariables),
+                ));
+            }
+        }
+    }
+
+    /**
      * Creates diagnostics if a section does not contain required settings
      */
     private checkPreviousSection(): void {
@@ -736,35 +757,23 @@ export class Validator {
             this.typeCheck(setting);
             this.checkExcludes(setting);
 
-            // Check freemarker
-            this.match = /\$\{(\w+).*\}/.exec(this.match[3]);
-            if (this.match) {
-                const freeMarkerVariables: string[] | undefined = this.variables.get("freemarker");
-                if (!freeMarkerVariables || !freeMarkerVariables.includes(this.match[1])) {
-                    this.result.push(createDiagnostic(
-                        Range.create(
-                            this.currentLineNumber, line.indexOf(this.match[1]),
-                            this.currentLineNumber, line.indexOf(this.match[1]) + this.match[1].length,
-                        ),
-                        DiagnosticSeverity.Error, suggestionMessage(this.match[1], freeMarkerVariables),
-                    ));
-                }
-            }
+            if (setting.name === "urlparameters") {
+                this.findUrlParams();
+            } else {
+                this.checkFreemarkerValue();
 
+            }
             // Aliases
             if (setting.name === "alias") {
                 this.match = /(^\s*alias\s*=\s*)(\S+)\s*$/m.exec(line);
                 this.addToStringArray(this.aliases);
             }
             this.findDeAliases();
-            if (setting.name === "urlparameters") {
-                this.findUrlParams();
-            }
         } else if (this.currentSection &&
             // We are in tags/keys section
             /(?:tag|key)s?/.test(this.currentSection.text) &&
-            /(^[ \t]*)([a-z].*[a-z])[ \t]*=/.test(line)) {
-            this.match = /(^[ \t]*)([a-z].*[a-z])[ \t]*=/.exec(line);
+            /(^[ \t]*)([a-z].*?[a-z])[ \t]*=/.test(line)) {
+            this.match = /(^[ \t]*)([a-z].*?[a-z])[ \t]*=/.exec(line);
             const setting: Setting = getSetting(this.match[2]);
             if (setting) {
                 this.result.push(createDiagnostic(
