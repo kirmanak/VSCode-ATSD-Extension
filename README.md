@@ -120,6 +120,8 @@ The plugin can show the preview of the portal right in the VSCode using the targ
   You can skip this step via `Esc` or `Enter` buttons if `api.guest.access.enabled` is `true` in `Server properties`.
 * Enter the password if entered the username previously.
 
+To change the target ATSD URL, open `Command Palette` (`F1`, `Ctrl+Shift+P` on PC or `⇧⌘P` on Mac), execute `Axibase Charts: Change the target ATSD URL` command.
+
 ### Syntax highlighting
 
 Theme used to create the screenshot is `Light+(default light)` (Choose theme by **File > Color theme**).
