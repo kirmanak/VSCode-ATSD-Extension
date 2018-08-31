@@ -2,7 +2,7 @@
     "Configuration": {
         "prefix": "configuration",
         "body": [
-            "\n[configuration]",
+            "[configuration]",
             "  offset-right = ${1:50}",
             "  height-units = ${2:2}",
             "  width-units = ${3:2}",
@@ -31,7 +31,7 @@
     "chart-basic": {
         "prefix": "chart-basic",
         "body": [
-            "\n[widget]",
+            "[widget]",
             "  type = chart",
             "  title = ${1:basic chart}",
             "  timespan = ${2:1 day}",
@@ -45,7 +45,7 @@
     "bar": {
         "prefix": "bar",
         "body": [
-            "\n[widget]",
+            "[widget]",
             "  type = bar",
             "  title = ${1:bar}",
             "  timespan = ${2:1 day}",
@@ -62,7 +62,7 @@
     "bar-horizontal": {
         "prefix": "bar-horizontal",
         "body": [
-            "\n[widget]",
+            "[widget]",
             "  type = bar",
             "  title = ${1:Horizontal bar}",
             "  horizontal = true",
@@ -80,7 +80,7 @@
     "box": {
         "prefix": "box",
         "body": [
-            "\n[widget]",
+            "[widget]",
             "  type = box",
             "  title = ${1:Box}",
             "  timespan = ${2:1 day}",
@@ -98,7 +98,7 @@
     "calendar": {
         "prefix": "calendar",
         "body": [
-            "\n[widget]",
+            "[widget]",
             "  type = calendar",
             "  title = ${1:Calendar}",
             "  timespan = ${2:1 day}",
@@ -115,7 +115,7 @@
     "calendar-thresholds": {
         "prefix": "calendar-thresholds",
         "body": [
-            "\n[widget]",
+            "[widget]",
             "  type = calendar",
             "  title = ${1:Calendar}",
             "  timespan = ${2:1 day}",
@@ -136,7 +136,7 @@
     "chart": {
         "prefix": "chart",
         "body": [
-            "\n[widget]",
+            "[widget]",
             "  type = chart",
             "  title = ${1:Chart}",
             "  timespan = ${2:1 day}",
@@ -156,7 +156,7 @@
     "chart-alert": {
         "prefix": "chart-alert",
         "body": [
-            "\n[widget]",
+            "[widget]",
             "  type = chart",
             "  title = ${1:Alert chart}",
             "  timespan = ${2:1 day}",
@@ -174,7 +174,7 @@
     "chart-column": {
         "prefix": "chart-column",
         "body": [
-            "\n[widget]",
+            "[widget]",
             "  type = chart",
             "  title = ${1:Column chart}",
             "  timespan = ${2:1 day}",
@@ -193,7 +193,7 @@
     "chart-combo": {
         "prefix": "chart-combo",
         "body": [
-            "\n[widget]",
+            "[widget]",
             "  type = chart",
             "  title = ${1:Combo chart}",
             "  timespan = ${2:1 day}",
@@ -213,7 +213,7 @@
     "chart-computed": {
         "prefix": "chart-computed",
         "body": [
-            "\n[widget]",
+            "[widget]",
             "  type = chart",
             "  title = ${1:Computed chart}",
             "  timespan = ${2:1 day}",
@@ -242,7 +242,7 @@
     "chart-dual-axis": {
         "prefix": "chart-dual-axis",
         "body": [
-            "\n[widget]",
+            "[widget]",
             "  type = chart",
             "  title = ${1:Dual axis chart}",
             "  timespan = ${2:1 day}",
@@ -269,7 +269,7 @@
     "chart-range": {
         "prefix": "chart-range",
         "body": [
-            "\n[widget]",
+            "[widget]",
             "  type = chart",
             "  title = ${1:Range chart}",
             "  mode = range",
@@ -294,7 +294,7 @@
     "chart-stack": {
         "prefix": "chart-stack",
         "body": [
-            "\n[widget]",
+            "[widget]",
             "  type = chart",
             "  title = ${1:Stack chart}",
             "  mode = stack",
@@ -313,7 +313,7 @@
     "alert-console": {
         "prefix": "alert-console",
         "body": [
-            "\n[widget]",
+            "[widget]",
             "  type = console",
             "  title = ${1:Alert console}",
             "",
@@ -328,7 +328,7 @@
     "message-console": {
         "prefix": "message-console",
         "body": [
-            "\n[widget]",
+            "[widget]",
             "  type = console",
             "  title = ${1:Message console}",
             "  source = message",
@@ -340,7 +340,7 @@
     "gauge": {
         "prefix": "gauge",
         "body": [
-            "\n[widget]",
+            "[widget]",
             "  type = gauge",
             "  title = ${1:Gauge}",
             "  thresholds = ${2:0, 60, 80, 100}",
@@ -357,7 +357,7 @@
     "graph": {
         "prefix": "graph",
         "body": [
-            "\n[widget]",
+            "[widget]",
             "  type = graph",
             "  title = ${1:Graph}",
             "  node-connect = ${2:false}",
@@ -430,7 +430,7 @@
     "pie": {
         "prefix": "pie",
         "body": [
-            "\n[widget]",
+            "[widget]",
             "  type = pie",
             "  title = ${1:Pie}",
             "",
@@ -444,7 +444,7 @@
     "property": {
         "prefix": "property",
         "body": [
-            "\n[widget]",
+            "[widget]",
             "  type = property",
             "  title = ${1:Property}",
             "  width-units = ${2:0.6}",
@@ -468,7 +468,7 @@
     "chart-table": {
         "prefix": "table",
         "body": [
-            "\n[widget]",
+            "[widget]",
             "  type = table",
             "  title = ${1:CPU Usage}",
             "  width-units = ${2:0.3}",
@@ -488,7 +488,7 @@
     "table-grid": {
         "prefix": "table-grid",
         "body": [
-            "\n[widget]",
+            "[widget]",
             "  type = table",
             "  title = ${2:Table grid}",
             "  last = ${3:true}",
@@ -512,7 +512,7 @@
     "text": {
         "prefix": "text",
         "body": [
-            "\n[widget]",
+            "[widget]",
             "  type = text",
             "  title = ${1:Text}",
             "  width-units = ${2:0.2}",
@@ -530,7 +530,7 @@
     "treemap": {
         "prefix": "treemap",
         "body": [
-            "\n[widget]",
+            "[widget]",
             "  type = treemap",
             "  title = ${1:Treemap}",
             "  thresholds = ${2:0, 10, 60, 80, 100}",
@@ -547,7 +547,7 @@
     "histogram": {
         "prefix": "histogram",
         "body": [
-            "\n[widget]",
+            "[widget]",
             "  type = histogram",
             "  title = ${1:Treemap}",
             "  right-axis = ${2:density}",
@@ -567,7 +567,7 @@
     "portal: 3x2": {
         "prefix": "portal: 3x2",
         "body": [
-            "\n[configuration]",
+            "[configuration]",
             "  offset-right = ${1:50}",
             "  width-units = ${2:3}",
             "  height-units = ${3:2}",
@@ -619,7 +619,7 @@
     "series with tags": {
         "prefix": "series with tags",
         "body": [
-            "\n[series]",
+            "[series]",
             "  entity = ${1:entity-1}",
             "  metric = ${2:metric-1}",
             "  [tags]",
@@ -631,7 +631,7 @@
     "detail series": {
         "prefix": "series detail",
         "body": [
-            "\n[series]",
+            "[series]",
             "  entity = ${1:entity-1}",
             "  metric = ${2:metric-1}",
             "  ${0}"
@@ -641,7 +641,7 @@
     "averaged series": {
         "prefix": "series averaged",
         "body": [
-            "\n[series]",
+            "[series]",
             "  entity = ${1:entity-1}",
             "  metric = ${2:metric-1}",
             "  statistics = ${3:avg}",
