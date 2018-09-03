@@ -112,6 +112,7 @@ export const parentSections: Map<string, string[]> = new Map([
     ["widget", ["group", "configuration"]],
     ["series", ["widget", "column"]],
     ["tag", ["series"]],
+    ["tags", ["series"]],
     ["column", ["widget"]],
     ["node", ["widget"]],
     ["link", ["widget"]],
