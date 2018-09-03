@@ -300,14 +300,15 @@ export class Validator {
         const line: string = this.getCurrentLine();
         this.match = /\$\{(\w+).*\}/.exec(this.match[3]);
         if (this.match) {
+            const settingName: string = this.match[1];
             const freeMarkerVariables: string[] | undefined = this.variables.get("freemarker");
-            if (!freeMarkerVariables || !freeMarkerVariables.includes(this.match[1])) {
+            if (!freeMarkerVariables || !freeMarkerVariables.includes(settingName)) {
                 this.result.push(createDiagnostic(
                     Range.create(
-                        this.currentLineNumber, line.indexOf(this.match[1]),
-                        this.currentLineNumber, line.indexOf(this.match[1]) + this.match[1].length,
+                        this.currentLineNumber, line.indexOf(settingName),
+                        this.currentLineNumber, line.indexOf(settingName) + settingName.length,
                     ),
-                    DiagnosticSeverity.Error, suggestionMessage(this.match[1], freeMarkerVariables),
+                    DiagnosticSeverity.Error, suggestionMessage(settingName, freeMarkerVariables),
                 ));
             }
         }
@@ -325,11 +326,11 @@ export class Validator {
         this.requiredSettings = (required) ? required.concat(this.requiredSettings) : this.requiredSettings;
         if (this.requiredSettings.length !== 0) {
             const notFound: string[] = [];
-            for (const options of this.requiredSettings) {
+            this.requiredSettings.forEach((options: Array<Setting | undefined>): void => {
                 if (options) {
                     const setting: Setting | undefined = options[0];
                     if (!setting) {
-                        continue;
+                        return;
                     }
                     const displayName: string = setting.displayName;
                     if (isAnyInArray(options, this.currentSettings)) {
@@ -364,7 +365,7 @@ export class Validator {
                         notFound.push(displayName);
                     }
                 }
-            }
+            });
             for (const option of notFound) {
                 this.result.push(createDiagnostic(
                     this.currentSection.range, DiagnosticSeverity.Error, `${option} is required`,
