@@ -42,7 +42,8 @@ export class Validator {
      * @returns diagnostics for all found mistakes
      */
     public lineByLine(): Diagnostic[] {
-        this.lines.forEach((line: string, index: number) => {
+        this.lines.forEach(
+            (line: string, index: number) => {
             this.currentLineNumber = index;
             this.foundKeyword = TextRange.parse(line, this.currentLineNumber);
 
@@ -62,7 +63,9 @@ export class Validator {
 
                 this.switchKeyword();
             }
-        });
+        },
+            this,
+        );
 
         this.checkAliases();
         this.diagnosticForLeftKeywords();

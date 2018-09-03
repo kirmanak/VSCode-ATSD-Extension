@@ -88,7 +88,7 @@ export class JsDomCaller {
 
     private getCurrentLine(): string {
         const line: string | undefined = this.getLine(this.currentLineNumber);
-        if (!line) {
+        if (line === undefined) {
             throw new Error("this.currentLineNumber points to nowhere");
         }
 
