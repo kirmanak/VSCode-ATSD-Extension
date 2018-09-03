@@ -1,6 +1,7 @@
 import { FormattingOptions, Range, TextEdit } from "vscode-languageserver";
 import { getParents } from "./resources";
 import { TextRange } from "./textRange";
+import { isEmpty } from "./util";
 
 export class Formatter {
     private static readonly CONTENT_POSITION: number = 2;
@@ -8,6 +9,7 @@ export class Formatter {
     private currentIndent: string = "";
     private currentLine: number = 0;
     private readonly edits: TextEdit[] = [];
+    private isKeyword: boolean = false;
     private readonly keywordsLevels: string[] = [];
     private lastLine: string | undefined;
     private lastLineNumber: number | undefined;
@@ -26,37 +28,31 @@ export class Formatter {
      * @returns array of text edits to properly format document
      */
     public lineByLine(): TextEdit[] {
-        for (const line of this.lines) {
-            if (this.isSection() || this.isEmpty()) {
-                if (this.isSection()) {
-                    this.calculateIndent();
-                    this.checkIndent();
-                    this.increaseIndent();
-                }
-
-                continue;
-            }
-            if (TextRange.isClosing(line)) {
-                const stackHead: string | undefined = this.keywordsLevels.pop();
-                if (stackHead !== undefined) {
-                    this.setIndent(stackHead);
-                    if (TextRange.isNotCloseAble(line)) {
-                        this.keywordsLevels.push(stackHead);
+        this.lines.forEach(
+            (line: string, index: number) => {
+                this.currentLine = index;
+                if (this.isSection() || isEmpty(line)) {
+                    if (this.isSection()) {
+                        this.calculateIndent();
+                        this.checkIndent();
+                        this.increaseIndent();
                     }
+
+                    return;
                 }
-            }
-            this.checkIndent();
-            if (this.shouldBeClosed()) {
-                if (TextRange.isCloseAble(line)) {
-                    this.current = undefined;
+                if (TextRange.isClosing(line)) {
+                    const stackHead: string | undefined = this.keywordsLevels.pop();
+                    this.setIndent(stackHead);
+                }
+                this.checkIndent();
+                if (TextRange.isCloseAble(line) && this.shouldBeClosed()) {
                     this.keywordsLevels.push(this.currentIndent);
-                }
-                if (TextRange.isIncreasingIndent(line)) {
                     this.increaseIndent();
+                    this.isKeyword = true;
                 }
-            }
-            this.currentLine++;
-        }
+            },
+            this,
+        );
 
         return this.edits;
     }
@@ -75,6 +71,11 @@ export class Formatter {
 
             return;
         }
+        if (this.isKeyword) {
+            this.isKeyword = false;
+
+            return;
+        }
         this.decreaseIndent();
         if (this.isNested()) {
             this.increaseIndent();
@@ -89,8 +90,9 @@ export class Formatter {
     private checkIndent(): void {
         this.match = /(^\s*)\S/.exec(this.getCurrentLine());
         if (this.match && this.match[1] !== this.currentIndent) {
+            const indent: string = this.match[1];
             this.edits.push(TextEdit.replace(
-                Range.create(this.currentLine, 0, this.currentLine, (this.match[1]) ? this.match[1].length : 0),
+                Range.create(this.currentLine, 0, this.currentLine, indent.length),
                 this.currentIndent,
             ));
         }
@@ -100,7 +102,9 @@ export class Formatter {
      * Decreases the current indent by one
      */
     private decreaseIndent(): void {
-        if (this.currentIndent.length === 0) { return; }
+        if (this.currentIndent.length === 0) {
+            return;
+        }
         let newLength: number = this.currentIndent.length;
         if (this.options.insertSpaces) {
             newLength -= this.options.tabSize;
@@ -157,13 +161,6 @@ export class Formatter {
     }
 
     /**
-     * @returns true if the current line contains white spaces or nothing, false otherwise
-     */
-    private isEmpty(): boolean {
-        return /^\s*$/.test(this.getCurrentLine());
-    }
-
-    /**
      * @returns true if the current section is nested in the previous section
      */
     private isNested(): boolean {
@@ -171,7 +168,7 @@ export class Formatter {
             throw new Error("Current or previous section is not defined, but we're trying to check nested");
         }
         if (this.previous === undefined) {
-            this.previous = "";
+            return false;
         }
 
         return getParents(this.current)
@@ -216,36 +213,53 @@ export class Formatter {
      * Sets current indent to the provided
      * @param newIndent the new indent
      */
-    private setIndent(newIndent: string): void {
-        this.currentIndent = newIndent;
+    private setIndent(newIndent?: string): void {
+        if (newIndent !== undefined) {
+            this.currentIndent = newIndent;
+        }
     }
 
     /**
      * @returns true if current keyword should be closed
      */
     private shouldBeClosed(): boolean {
-        const line: string = this.getCurrentLine();
-        this.match = /^[ \t]*((?:var|list)|script =)/.exec(line);
-        if (!this.match) { return true; }
+        let line: string | undefined = this.getCurrentLine();
+        this.match = /^[ \t]*((?:var|list)|script[ \t]*=)/.exec(line);
+        if (!this.match) {
+            return true;
+        }
         switch (this.match[1]) {
             case "var": {
-                if (/=\s*(\[|\{)(|.*,)\s*$/m.test(line)) { return true; }
-                break;
-            }
-            case "list": {
-                if (/(=|,)[ \t]*$/m.test(line)) { return true; }
-                break;
-            }
-            case "script =": {
-                let j: number = this.currentLine + 1;
-                while (j < this.lines.length) {
-                    if (/\bscript\b/.test(line)) { break; }
-                    if (/\bendscript\b/.test(line)) { return true; }
-                    j++;
+                if (/=\s*(\[|\{)(|.*,)\s*$/m.test(line)) {
+                    return true;
                 }
                 break;
             }
-            default: { return true; }
+            case "list": {
+                if (/(=|,)[ \t]*$/m.test(line)) {
+                    return true;
+                }
+                break;
+            }
+            default: {
+                // since between 'script' and '=' can be different number of spaces
+                // I can't add handle it as a "case"
+                if (this.match[1].includes("script")) {
+                    let j: number = this.currentLine + 1;
+                    line = this.getLine(j);
+                    while (line !== undefined) {
+                        if (/\bscript\b/.test(line)) {
+                            break;
+                        }
+                        if (/\bendscript\b/.test(line)) {
+                            return true;
+                        }
+                        line = this.getLine(++j);
+                    }
+                }
+
+                return true;
+            }
         }
 
         return false;

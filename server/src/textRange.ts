@@ -5,7 +5,7 @@ export class TextRange {
         /^([ \t]*)(import|endvar|endcsv|endfor|elseif|endif|endscript|endlist|script|else|if|list|for|csv|var)\b/i;
 
     public static isCloseAble(line: string): boolean {
-        return /^[ \t]*(?:for|if|list|var|script|csv)\b/.test(line);
+        return /^[ \t]*(?:for|if|list|var|script|csv|else|elseif)\b/.test(line);
     }
 
     public static isClosing(line: string): boolean {

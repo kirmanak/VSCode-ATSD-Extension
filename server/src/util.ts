@@ -199,3 +199,8 @@ export const addDisplayNames: (array?: string[]) => string[] = (array?: string[]
 
     return result;
 };
+
+/**
+ * @returns true if the current line contains white spaces or nothing, false otherwise
+ */
+export const isEmpty: (str: string) => boolean = (str: string): boolean => /^\s*$/.test(str);

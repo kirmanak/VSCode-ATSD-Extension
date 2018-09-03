@@ -69,8 +69,8 @@ width-units = 200
   [widget]
     type = chart
     for server in servers
-    [series]
-      entity = @{server}
+      [series]
+        entity = @{server}
     endfor`,
             [], FormattingOptions.create(2, true),
         ),
@@ -85,7 +85,7 @@ width-units = 200
       [series]
       entity = @{server}
     endfor`,
-            [TextEdit.replace(Range.create(Position.create(6, 0), Position.create(6, "      ".length)), "    ")],
+            [TextEdit.replace(Range.create(Position.create(7, 0), Position.create(7, "      ".length)), "        ")],
             FormattingOptions.create(2, true),
         ),
         new Test(
@@ -94,9 +94,9 @@ width-units = 200
   vds
 endlist
 for item in servers
-[series]
-  entity = @{item}
-  if @{item} = vps
+  [series]
+    entity = @{item}
+    if @{item} = vps
     metric = cpu_busy
     elseif @{item} = vds
     metric = cpu_user
@@ -105,9 +105,9 @@ for item in servers
     endif
 endfor`,
             [
-                TextEdit.replace(Range.create(Position.create(8, 0), Position.create(8, "    ".length)), "  "),
-                TextEdit.replace(Range.create(Position.create(10, 0), Position.create(10, "    ".length)), "  "),
-                TextEdit.replace(Range.create(Position.create(12, 0), Position.create(12, "    ".length)), "  "),
+                TextEdit.replace(Range.create(Position.create(7, 0), Position.create(7, "    ".length)), "      "),
+                TextEdit.replace(Range.create(Position.create(9, 0), Position.create(9, "    ".length)), "      "),
+                TextEdit.replace(Range.create(Position.create(11, 0), Position.create(11, "    ".length)), "      "),
             ],
             FormattingOptions.create(2, true),
         ),
@@ -130,17 +130,19 @@ endfor`,
   endfor
 
   for server in servers
-  [series]
-    entity = @{server}
-    if server == 'nurswgvml007'
-      color = red
-    elseif server == 'nurswgvml006'
-      color = yellow
-    endif
+    [series]
+      entity = @{server}
+      if server == 'nurswgvml007'
+        color = red
+      elseif server == 'nurswgvml006'
+        color = yellow
+      endif
   endfor`,
             [
-                TextEdit.replace(Range.create(Position.create(9, 0), Position.create(9, 0)), "  "),
-                TextEdit.replace(Range.create(Position.create(12, 0), Position.create(12, 0)), "  "),
+                TextEdit.replace(Range.create(Position.create(9, 0), Position.create(9, 0)), "    "),
+                TextEdit.replace(Range.create(Position.create(10, 0), Position.create(10, "    ".length)), "      "),
+                TextEdit.replace(Range.create(Position.create(12, 0), Position.create(12, 0)), "    "),
+                TextEdit.replace(Range.create(Position.create(13, 0), Position.create(13, "    ".length)), "      "),
             ],
             FormattingOptions.create(2, true),
         ),
@@ -178,9 +180,9 @@ endfor`,
   var servers = [ 'vps', 'vds' ]
 
   for item in servers
-  [series]
-    entity = @{item}
-    metric = cpu_busy
+    [series]
+      entity = @{item}
+      metric = cpu_busy
   endfor`,
             [], FormattingOptions.create(2, true),
         ),

@@ -80,7 +80,11 @@
 				},
 				{
 					"name": "keyword.control.axibase.charts",
-					"match": "^[ \t]*(import|csv|endcsv|endvar|for|endfor|in|list|endlist|if|elseif|else|endif)\\b"
+					"match": "\\bin\\b"
+				},
+				{
+					"name": "keyword.control.axibase.charts",
+					"match": "^[ \t]*(import|csv|endcsv|endvar|for|endfor|list|endlist|if|elseif|else|endif)\\b"
 				}
 			]
 		}
