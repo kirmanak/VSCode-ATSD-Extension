@@ -7,6 +7,12 @@ import { TextRange } from "./textRange";
 
 export class JsDomCaller {
     private static readonly CONTENT_POSITION: number = 2;
+    /**
+     * Generates a list of arguments with same name to use in a function call
+     * @param amount number of arguments
+     * @param name arguments name
+     * @returns string containing array of `amount` `name`s
+     */
     private static generateCall(amount: number, name: string): string {
         const names: string = Array(amount)
             .fill(name)
@@ -15,6 +21,11 @@ export class JsDomCaller {
         return `, ${names}`;
     }
 
+    /**
+     * Adds `return` and `;` to the statement and calls JSON.stringify()
+     * @param content statement to be stringified
+     * @returns stringified JavaScript statement
+     */
     private static stringifyStatement(content: string): string {
         let statement: string = content.trim();
         if (!statement.startsWith("return")) {
@@ -31,7 +42,7 @@ export class JsDomCaller {
     private importCounter: number = 0;
     private readonly imports: string[] = [];
     private readonly lines: string[];
-    private match: RegExpExecArray;
+    private match: RegExpExecArray | null | undefined;
     private readonly statements: TextRange[] = [];
 
     public constructor(text: string) {
@@ -39,6 +50,10 @@ export class JsDomCaller {
             .split("\n");
     }
 
+    /**
+     * Evaluates all found JavaScript statements in this.document
+     * @returns diagnostic for each invalid statement
+     */
     public validate(): Diagnostic[] {
         const result: Diagnostic[] = [];
         this.parseJsStatements();
@@ -72,11 +87,16 @@ export class JsDomCaller {
     }
 
     private getCurrentLine(): string {
-        return this.getLine(this.currentLineNumber);
+        const line: string | undefined = this.getLine(this.currentLineNumber);
+        if (!line) {
+            throw new Error("this.currentLineNumber points to nowhere");
+        }
+
+        return line;
     }
 
-    private getLine(i: number): string {
-        return this.lines[i];
+    private getLine(i: number): string | undefined {
+        return (i < this.lines.length) ? this.lines[i] : undefined;
     }
 
     private parseJsStatements(): void {
@@ -111,10 +131,13 @@ export class JsDomCaller {
     }
 
     private processOptions(): void {
+        if (!this.match) {
+            throw new Error("We're trying to process options, but this.match is not defined");
+        }
         const content: string = JsDomCaller.stringifyStatement(this.match[JsDomCaller.CONTENT_POSITION]);
         const matchStart: number = this.match[1].length;
         const proxyFunctionCount: number = 6;
-        const statement: TextRange = TextRange.create(
+        const statement: TextRange = new TextRange(
             "const proxyFunction = new Proxy(new Function(), {});" +
             '(new Function("requestMetricsSeriesValues","requestEntitiesMetricsValues",' +
             '"requestPropertiesValues","requestMetricsSeriesOptions","requestEntitiesMetricsOptions",' +
@@ -129,10 +152,13 @@ export class JsDomCaller {
     }
 
     private processReplaceValue(): void {
+        if (!this.match) {
+            throw new Error("We're trying to process replaceValue, but this.match is not defined");
+        }
         const content: string = JsDomCaller.stringifyStatement(this.match[JsDomCaller.CONTENT_POSITION]);
         const matchStart: number = this.match.index + this.match[1].length;
         const numbersCount: number = 4;
-        const statement: TextRange = TextRange.create(
+        const statement: TextRange = new TextRange(
             `(new Function("value","time","previousValue","previousTime", ${content}))
                 .call(window${JsDomCaller.generateCall(numbersCount, "5")})`,
             Range.create(
@@ -144,7 +170,7 @@ export class JsDomCaller {
     }
 
     private processScript(): void {
-        let line: string = this.getCurrentLine();
+        let line: string | undefined = this.getCurrentLine();
         let content: string;
         let range: Range;
         this.match = /(^[ \t]*script[ \t]*=[\s]*)(\S+[\s\S]*)$/m.exec(line);
@@ -159,23 +185,31 @@ export class JsDomCaller {
                 start: { character: this.match[1].length, line: this.currentLineNumber },
             };
             let j: number = this.currentLineNumber + 1;
-            while (!(/\bscript\b/.test(this.getLine(j)) || /\bendscript\b/.test(this.getLine(j)))) {
-                j++;
-                if (j >= this.lines.length) { break; }
+            let nextLine: string | undefined = this.getLine(j);
+            while (nextLine && !(/\bscript\b/.test(nextLine) || /\bendscript\b/.test(nextLine))) {
+                nextLine = this.getLine(++j);
             }
-            if (!(j === this.lines.length || /\bscript\b/.test(this.getLine(j)))) {
+            if (!(j === this.lines.length || !nextLine || /\bscript\b/.test(nextLine))) {
                 line = this.getLine(++this.currentLineNumber);
                 while (line !== undefined && !/\bendscript\b/.test(line)) {
                     content += `${line}\n`;
                     line = this.getLine(++this.currentLineNumber);
                 }
+                line = this.getLine(this.currentLineNumber - 1);
+                if (!line) {
+                    throw new Error("this.currentLineNumber - 1 points to nowhere");
+                }
                 range.end = {
-                    character: this.getLine(this.currentLineNumber - 1).length, line: this.currentLineNumber - 1,
+                    character: line.length, line: this.currentLineNumber - 1,
                 };
             }
         } else {
+            line = this.getLine(this.currentLineNumber + 1);
+            if (!line) {
+                throw new Error("this.currentLineNumber + 1 points to nowhere");
+            }
             range = {
-                end: { character: this.getLine(this.currentLineNumber + 1).length, line: this.currentLineNumber + 1 },
+                end: { character: line.length, line: this.currentLineNumber + 1 },
                 start: { character: 0, line: this.currentLineNumber + 1 },
             };
             content = "";
@@ -184,13 +218,17 @@ export class JsDomCaller {
                 content += `${line}\n`;
                 line = this.getLine(++this.currentLineNumber);
             }
+            line = this.getLine(this.currentLineNumber - 1);
+            if (!line) {
+                throw new Error("this.currentLineNumber - 1 points to nowhere");
+            }
             range.end = {
-                character: this.getLine(this.currentLineNumber - 1).length, line: this.currentLineNumber - 1,
+                character: line.length, line: this.currentLineNumber - 1,
             };
         }
         content = JSON.stringify(content);
         const proxyCount: number = 2;
-        const statement: TextRange = TextRange.create(
+        const statement: TextRange = new TextRange(
             "const proxy = new Proxy({}, {});" +
             "const proxyFunction = new Proxy(new Function(), {});" +
             `(new Function("widget","config","dialog", ${content}))` +
@@ -203,6 +241,9 @@ export class JsDomCaller {
     }
 
     private processValue(): void {
+        if (!this.match) {
+            throw new Error("We're trying to process value, but this.match is not defined");
+        }
         const content: string = JsDomCaller.stringifyStatement(this.match[JsDomCaller.CONTENT_POSITION]);
         const matchStart: number = this.match.index + this.match[1].length;
         const importList: string = `"${this.imports.join('","')}"`;
@@ -210,7 +251,7 @@ export class JsDomCaller {
         const proxyFunctionCountFirst: number = 33;
         const proxyArrayCount: number = 1;
         const proxyFunctionCountSecond: number = 3;
-        const statement: TextRange = TextRange.create(
+        const statement: TextRange = new TextRange(
             "const proxy = new Proxy({}, {});" +
             "const proxyFunction = new Proxy(new Function(), {});" +
             "const proxyArray = new Proxy([], {});" +

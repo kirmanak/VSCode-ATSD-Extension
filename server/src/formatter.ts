@@ -4,20 +4,19 @@ import { TextRange } from "./textRange";
 
 export class Formatter {
     private static readonly CONTENT_POSITION: number = 2;
-    private current: string;
+    private current: string | undefined;
     private currentIndent: string = "";
     private currentLine: number = 0;
     private readonly edits: TextEdit[] = [];
     private readonly keywordsLevels: string[] = [];
-    private lastLine: string;
-    private lastLineNumber: number;
+    private lastLine: string | undefined;
+    private lastLineNumber: number | undefined;
     private readonly lines: string[];
-    private match: RegExpExecArray;
+    private match: RegExpExecArray | null | undefined;
     private readonly options: FormattingOptions;
-    private previous: string;
+    private previous: string | undefined;
 
     public constructor(text: string, formattingOptions: FormattingOptions) {
-        if (!text || !formattingOptions) { throw new Error("Invalid arguments"); }
         this.options = formattingOptions;
         this.lines = text.split("\n");
     }
@@ -27,8 +26,7 @@ export class Formatter {
      * @returns array of text edits to properly format document
      */
     public lineByLine(): TextEdit[] {
-        this.lines.forEach((line: string, index: number) => {
-            this.currentLine = index;
+        for (const line of this.lines) {
             if (this.isSection() || this.isEmpty()) {
                 if (this.isSection()) {
                     this.calculateIndent();
@@ -36,10 +34,10 @@ export class Formatter {
                     this.increaseIndent();
                 }
 
-                return;
+                continue;
             }
             if (TextRange.isClosing(line)) {
-                const stackHead: string = this.keywordsLevels.pop();
+                const stackHead: string | undefined = this.keywordsLevels.pop();
                 if (stackHead !== undefined) {
                     this.setIndent(stackHead);
                     if (TextRange.isNotCloseAble(line)) {
@@ -57,7 +55,8 @@ export class Formatter {
                     this.increaseIndent();
                 }
             }
-        });
+            this.currentLine++;
+        }
 
         return this.edits;
     }
@@ -66,6 +65,9 @@ export class Formatter {
      * Calculates current indent based on current state
      */
     private calculateIndent(): void {
+        if (!this.match) {
+            throw new Error("this.match or/and this.current is not defined in calculateIndent");
+        }
         this.previous = this.current;
         this.current = this.match[Formatter.CONTENT_POSITION];
         if (/\[(?:group|configuration)\]/i.test(this.getCurrentLine())) {
@@ -86,7 +88,7 @@ export class Formatter {
      */
     private checkIndent(): void {
         this.match = /(^\s*)\S/.exec(this.getCurrentLine());
-        if (this.match[1] !== this.currentIndent) {
+        if (this.match && this.match[1] !== this.currentIndent) {
             this.edits.push(TextEdit.replace(
                 Range.create(this.currentLine, 0, this.currentLine, (this.match[1]) ? this.match[1].length : 0),
                 this.currentIndent,
@@ -112,7 +114,12 @@ export class Formatter {
      * @returns current line
      */
     private getCurrentLine(): string {
-        return this.getLine(this.currentLine);
+        const line: string | undefined = this.getLine(this.currentLine);
+        if (line === undefined) {
+            throw new Error("this.currentLine points to nowhere");
+        }
+
+        return line;
     }
 
     /**
@@ -121,9 +128,13 @@ export class Formatter {
      * @param i the required line number
      * @returns the required line
      */
-    private getLine(i: number): string {
-        if (this.lastLineNumber !== i) {
-            const line: string = this.lines[i].toLowerCase();
+    private getLine(i: number): string | undefined {
+        if (!this.lastLine || this.lastLineNumber !== i) {
+            let line: string | undefined = this.lines[i];
+            if (line === undefined) {
+                return undefined;
+            }
+            line = line.toLowerCase();
             this.removeExtraSpaces(line);
             this.lastLine = line;
             this.lastLineNumber = i;
@@ -156,6 +167,13 @@ export class Formatter {
      * @returns true if the current section is nested in the previous section
      */
     private isNested(): boolean {
+        if (this.current === undefined) {
+            throw new Error("Current or previous section is not defined, but we're trying to check nested");
+        }
+        if (this.previous === undefined) {
+            this.previous = "";
+        }
+
         return getParents(this.current)
             .includes(this.previous);
     }
@@ -186,7 +204,7 @@ export class Formatter {
      * @param line the target line
      */
     private removeExtraSpaces(line: string): void {
-        const match: RegExpExecArray = /(\s+)$/.exec(line);
+        const match: RegExpExecArray | null = /(\s+)$/.exec(line);
         if (match) {
             this.edits.push(TextEdit.replace(
                 Range.create(this.currentLine, line.length - match[1].length, this.currentLine, line.length), "",

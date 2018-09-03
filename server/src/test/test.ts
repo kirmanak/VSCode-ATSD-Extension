@@ -6,7 +6,7 @@ import { Validator } from "../validator";
 export class Test {
     private readonly expected: Diagnostic[] | TextEdit[];
     private readonly name: string;
-    private readonly options: FormattingOptions;
+    private readonly options: FormattingOptions | undefined;
     private readonly text: string;
 
     public constructor(name: string, text: string, expected: Diagnostic[] | TextEdit[], options?: FormattingOptions) {
@@ -18,6 +18,9 @@ export class Test {
 
     public formatTest(): void {
         test((this.name), () => {
+            if (!this.options) {
+                throw new Error("We're trying to test formatter without formatting options");
+            }
             assert.deepEqual(new Formatter(this.text, this.options).lineByLine(), this.expected);
         });
     }

@@ -27,7 +27,7 @@ export class Validator {
     private readonly parentSettings: Map<string, Setting[]> = new Map<string, Setting[]>();
     private previousSection: TextRange | undefined;
     private previousSettings: Setting[] = [];
-    private requiredSettings: Setting[][] = [];
+    private requiredSettings: Array<Array<Setting | undefined>> = [];
     private readonly result: Diagnostic[] = [];
     private urlParameters: string[] | undefined;
     private readonly variables: Map<string, string[]> = new Map<string, string[]>();
@@ -320,44 +320,51 @@ export class Validator {
         if (!this.currentSection) {
             return;
         }
-        const required: Setting[][] | undefined = requiredSectionSettingsMap.get(this.currentSection.text);
+        const required: Array<Array<Setting | undefined>> | undefined =
+            requiredSectionSettingsMap.get(this.currentSection.text);
         this.requiredSettings = (required) ? required.concat(this.requiredSettings) : this.requiredSettings;
         if (this.requiredSettings.length !== 0) {
             const notFound: string[] = [];
-            this.requiredSettings.forEach((options: Setting[]): void => {
-                const displayName: string = options[0].displayName;
-                if (isAnyInArray(options, this.currentSettings)) {
-                    return;
-                }
-                for (const array of this.parentSettings.values()) {
-                    // Trying to find in this section parents
-                    if (isAnyInArray(options, array)) {
+            for (const options of this.requiredSettings) {
+                if (options) {
+                    const setting: Setting | undefined = options[0];
+                    if (!setting) {
+                        continue;
+                    }
+                    const displayName: string = setting.displayName;
+                    if (isAnyInArray(options, this.currentSettings)) {
                         return;
                     }
-                }
-                if (this.ifSettings && this.ifSettings.size !== 0) {
-                    for (const array of this.ifSettings.values()) {
-                        // Trying to find in each one of if-elseif-else... statement
-                        if (!isAnyInArray(options, array)) {
-                            notFound.push(displayName);
-
+                    for (const array of this.parentSettings.values()) {
+                        // Trying to find in this section parents
+                        if (isAnyInArray(options, array)) {
                             return;
                         }
                     }
-                    let ifCounter: number = 0;
-                    let elseCounter: number = 0;
-                    for (const statement of this.ifSettings.keys()) {
-                        if (/\bif\b/.test(statement)) {
-                            ifCounter++;
-                        } else if (/\belse\b/.test(statement)) {
-                            elseCounter++;
+                    if (this.ifSettings && this.ifSettings.size !== 0) {
+                        for (const array of this.ifSettings.values()) {
+                            // Trying to find in each one of if-elseif-else... statement
+                            if (!isAnyInArray(options, array)) {
+                                notFound.push(displayName);
+
+                                return;
+                            }
                         }
+                        let ifCounter: number = 0;
+                        let elseCounter: number = 0;
+                        for (const statement of this.ifSettings.keys()) {
+                            if (/\bif\b/.test(statement)) {
+                                ifCounter++;
+                            } else if (/\belse\b/.test(statement)) {
+                                elseCounter++;
+                            }
+                        }
+                        if (ifCounter !== elseCounter) { notFound.push(displayName); }
+                    } else {
+                        notFound.push(displayName);
                     }
-                    if (ifCounter !== elseCounter) { notFound.push(displayName); }
-                } else {
-                    notFound.push(displayName);
                 }
-            });
+            }
             for (const option of notFound) {
                 this.result.push(createDiagnostic(
                     this.currentSection.range, DiagnosticSeverity.Error, `${option} is required`,
@@ -472,7 +479,7 @@ export class Validator {
         const deAliasPosition: number = 2;
         this.match = regexp.exec(line);
         while (this.match) {
-            this.deAliases.push(TextRange.create(this.match[deAliasPosition], Range.create(
+            this.deAliases.push(new TextRange(this.match[deAliasPosition], Range.create(
                 this.currentLineNumber, this.match.index + "value('".length,
                 this.currentLineNumber, this.match.index + "value('".length + this.match[deAliasPosition].length,
             )));
@@ -501,7 +508,7 @@ export class Validator {
      */
     private getCurrentLine(): string {
         const line: string | undefined = this.getLine(this.currentLineNumber);
-        if (!line) {
+        if (line === undefined) {
             throw new Error(`Current line is ${line}`);
         }
 
@@ -732,11 +739,8 @@ export class Validator {
             let nextLine: string | undefined = this.getLine(j);
             while (nextLine && !(/\bscript\b/.test(nextLine) || /\bendscript\b/.test(nextLine))) {
                 nextLine = this.getLine(++j);
-                if (!nextLine) {
-                    break;
-                }
             }
-            if (!nextLine || /\bscript\b/.test(nextLine)) {
+            if (nextLine === undefined || /\bscript\b/.test(nextLine)) {
                 return;
             }
         }
@@ -768,7 +772,7 @@ export class Validator {
         this.previousSection = this.currentSection;
         this.currentSettings = [];
         this.ifSettings.clear();
-        this.currentSection = TextRange.create(this.match[2], Range.create(
+        this.currentSection = new TextRange(this.match[2], Range.create(
             this.currentLineNumber, this.match[1].length,
             this.currentLineNumber, this.match[1].length + this.match[2].length,
         ));

@@ -47,7 +47,7 @@ export const settingsMap: Map<string, Setting> = createSettingsMap();
  * For instance, `series` requires `entity`, but `entities` is also allowed.
  * Additionally, `series` requires `metric`, but `table` with `attribute` is also ok
  */
-export const requiredSectionSettingsMap: Map<string, Setting[][]> = new Map([
+export const requiredSectionSettingsMap: Map<string, Array<Array<Setting | undefined>>> = new Map([
     ["series", [
         [settingsMap.get("entity"), settingsMap.get("value"), settingsMap.get("entities")],
         [settingsMap.get("metric"), settingsMap.get("value"), settingsMap.get("table"), settingsMap.get("attribute")],
@@ -122,7 +122,7 @@ export const parentSections: Map<string, string[]> = new Map([
  */
 export const getParents: (section: string) => string[] = (section: string): string[] => {
     let parents: string[] = [];
-    const found: string[] = parentSections.get(section);
+    const found: string[] | undefined = parentSections.get(section);
     if (found) {
         for (const father of found) {
             // JS recursion is not tail-optimized, replace if possible

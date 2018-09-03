@@ -17,10 +17,13 @@ export class CompletionProvider {
             .concat(this.completeIf());
     }
 
+    /**
+     * @returns Completion for `for` loop declaration based on previously declared lists and vars
+     */
     private completeFor(): CompletionItem {
         const regexp: RegExp = /^[ \t]*(?:list|var)[ \t]+(\S+)[ \t]*=/mg;
-        let match: RegExpExecArray = regexp.exec(this.text);
-        let lastMatch: RegExpExecArray;
+        let match: RegExpExecArray | null = regexp.exec(this.text);
+        let lastMatch: RegExpExecArray | undefined;
 
         while (match) {
             lastMatch = match;
@@ -49,14 +52,17 @@ endfor`;
         return completion;
     }
 
+    /**
+     * @returns Completion for `if` condition declaration based on previously declared for loops
+     */
     private completeIf(): CompletionItem[] {
         const regexp: RegExp = /^[ \t]*for[ \t]+(\w+)[ \t]+in/img;
         const endFor: RegExp = /^[ \t]*endfor/img;
-        let match: RegExpExecArray = regexp.exec(this.text);
-        let lastMatch: RegExpExecArray;
+        let match: RegExpExecArray | null = regexp.exec(this.text);
+        let lastMatch: RegExpExecArray | undefined;
 
         while (match) {
-            const end: RegExpExecArray = endFor.exec(this.text);
+            const end: RegExpExecArray | null = endFor.exec(this.text);
             if (!end || end.index < match.index) {
                 lastMatch = match;
             }
