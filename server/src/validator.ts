@@ -30,7 +30,9 @@ export class Validator {
     private requiredSettings: Array<Array<Setting | undefined>> = [];
     private readonly result: Diagnostic[] = [];
     private urlParameters: string[] | undefined;
-    private readonly variables: Map<string, string[]> = new Map<string, string[]>();
+    private readonly variables: Map<string, string[]> = new Map([
+        ["freemarker", ["entity", "entities"]],
+    ]);
 
     public constructor(text: string) {
         this.lines = deleteComments(text)
@@ -44,26 +46,26 @@ export class Validator {
     public lineByLine(): Diagnostic[] {
         this.lines.forEach(
             (line: string, index: number) => {
-            this.currentLineNumber = index;
-            this.foundKeyword = TextRange.parse(line, this.currentLineNumber);
+                this.currentLineNumber = index;
+                this.foundKeyword = TextRange.parse(line, this.currentLineNumber);
 
-            if (this.areWeIn("script") && (!this.foundKeyword || this.foundKeyword.text !== "endscript")) {
-                return;
-            }
-            if (this.areWeIn("csv") && (!this.foundKeyword || this.foundKeyword.text !== "endcsv")) {
-                this.validateCsv();
-            }
-
-            this.eachLine();
-
-            if (this.foundKeyword) {
-                if (/\b(if|for|csv)\b/i.test(this.foundKeyword.text)) {
-                    this.keywordsStack.push(this.foundKeyword);
+                if (this.areWeIn("script") && (!this.foundKeyword || this.foundKeyword.text !== "endscript")) {
+                    return;
+                }
+                if (this.areWeIn("csv") && (!this.foundKeyword || this.foundKeyword.text !== "endcsv")) {
+                    this.validateCsv();
                 }
 
-                this.switchKeyword();
-            }
-        },
+                this.eachLine();
+
+                if (this.foundKeyword) {
+                    if (/\b(if|for|csv)\b/i.test(this.foundKeyword.text)) {
+                        this.keywordsStack.push(this.foundKeyword);
+                    }
+
+                    this.switchKeyword();
+                }
+            },
             this,
         );
 

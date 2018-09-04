@@ -146,7 +146,7 @@ var servers = {
 endvar`,
             [createDiagnostic(
                 Range.create(0, "for srv in ".length, 0, "for srv in ".length + "servers".length),
-                DiagnosticSeverity.Error, errorMessage("servers", undefined),
+                DiagnosticSeverity.Error, errorMessage("servers", "entity"),
             )],
         ),
         new Test(
@@ -160,7 +160,7 @@ var servers = {
 endvar`,
             [createDiagnostic(
                 Range.create(0, "for srv in ".length, 0, "for srv in ".length + "servers".length),
-                DiagnosticSeverity.Error, errorMessage("servers", undefined),
+                DiagnosticSeverity.Error, errorMessage("servers", "entity"),
             )],
         ),
         new Test(
